@@ -31,6 +31,7 @@ from typing import Optional
 from app.services.openrouter_service import OpenRouterService
 from app.services.chunking_service import get_all_section_contexts, semantic_chunk
 from app.routes.ai import _extract_text_from_file  # Reuse helper từ ai.py
+from app.models.template_store import TemplateStore
 
 bp = APIBlueprint('stream', __name__)
 
@@ -44,16 +45,17 @@ class StreamPipelineRequest(BaseModel):
 # ─── Default Template & Activities ────────────────────────────────────────────
 
 _DEFAULT_NODE_NAMES = [
-    "Khởi động (Warm-up)",
-    "Lý thuyết cốt lõi (Core Theory)",
-    "Thực hành & Vận dụng (Practice)",
+    "Khởi động",
+    "Lý thuyết cốt lõi",
+    "Thực hành & Vận dụng",
 ]
 
 _DEFAULT_SYSTEM_TEMPLATE = (
-    "Khung bài học 3 phần:\n"
-    "Node 1: Khởi động (Warm-up) - Kích hoạt kiến thức nền của học sinh\n"
-    "Node 2: Lý thuyết cốt lõi (Core Theory) - Giới thiệu và giải thích nội dung chính\n"
-    "Node 3: Thực hành & Vận dụng (Practice) - Học sinh áp dụng kiến thức vào bài tập"
+    "Khung bài học 3 node:\n"
+    "Node 1 — node_type: 'Khởi động' | Mục tiêu: Kích hoạt kiến thức nền của học sinh\n"
+    "Node 2 — node_type: 'Lý thuyết cốt lõi' | Mục tiêu: Giới thiệu và giải thích nội dung chính\n"
+    "Node 3 — node_type: 'Thực hành & Vận dụng' | Mục tiêu: Học sinh áp dụng kiến thức vào bài tập\n\n"
+    "QUY TẪC: Trường 'title' phải là tiêu đề ngắn gọn mô tả NỘI DUNG CỤ THỂ của node này trong bài học (ĐÔNG thêm vào 'node_type')."
 )
 
 _DEFAULT_RAG_ACTIVITIES = [
@@ -104,6 +106,34 @@ def _sse_error(message: str, details: str = None) -> str:
     })
 
 
+def _sse_raw_data(raw_text: str) -> str:
+    return _sse_event("raw_data", {
+        "raw_text": raw_text,
+        "timestamp": time.time(),
+    })
+
+
+def _sse_chunks(chunks: list) -> str:
+    return _sse_event("chunks", {
+        "chunks": chunks,
+        "timestamp": time.time(),
+    })
+
+
+def _sse_mapped_nodes(mapped_nodes: list) -> str:
+    return _sse_event("mapped_nodes", {
+        "mapped_nodes": mapped_nodes,
+        "timestamp": time.time(),
+    })
+
+
+def _sse_content_summary(summary: str) -> str:
+    return _sse_event("content_summary", {
+        "summary": summary,
+        "timestamp": time.time(),
+    })
+
+
 # ─── Pipeline Core (generator) ────────────────────────────────────────────────
 
 def _run_streaming_pipeline(
@@ -111,13 +141,25 @@ def _run_streaming_pipeline(
     model: Optional[str] = None,
     enable_faithfulness: bool = False,
     k_chunks: int = 5,
+    template_id: Optional[str] = None,
 ):
     """
     Generator function thực thi pipeline và yield SSE events.
     Chạy trong context của stream_with_context().
     """
-    total_steps = 5  # Extract → Chunk → Map → Parallel Enrich → Done
+    node_names = _DEFAULT_NODE_NAMES
+    system_template = _DEFAULT_SYSTEM_TEMPLATE
+    rag_activities = _DEFAULT_RAG_ACTIVITIES
 
+    if template_id:
+        template = TemplateStore.get_by_id(template_id)
+        if template:
+            node_names = [node["node_type"] for node in template["nodes"]]
+            system_template = TemplateStore.build_system_template_string(template)
+            if template.get("rag_activities"):
+                rag_activities = template["rag_activities"]
+
+    total_steps = 5  # Extract → Chunk → Map → Parallel Enrich → Done
     # ── Bước 1: Extract text ─────────────────────────────────────────────────
     yield _sse_progress("📄 Đang trích xuất nội dung tài liệu...", 1, total_steps)
 
@@ -129,6 +171,9 @@ def _run_streaming_pipeline(
         yield _sse_error("Nội dung file trống hoặc không đọc được.")
         return
 
+    # Yield raw data event
+    yield _sse_raw_data(extracted_text)
+
     # ── Bước 2: Semantic Chunking ────────────────────────────────────────────
     yield _sse_progress(
         f"✂️ Đang phân tích và chia nhỏ nội dung thành các chunks ngữ nghĩa...",
@@ -138,9 +183,12 @@ def _run_streaming_pipeline(
     chunks = semantic_chunk(extracted_text)
     total_chunks = len(chunks)
 
+    # Yield chunks event
+    yield _sse_chunks(chunks)
+
     section_contexts = get_all_section_contexts(
         text=extracted_text,
-        node_names=_DEFAULT_NODE_NAMES,
+        node_names=node_names,
         k=k_chunks,
     )
 
@@ -156,7 +204,7 @@ def _run_streaming_pipeline(
 
     map_result = OpenRouterService.map_knowledge_to_template(
         extracted_knowledge=extracted_text,
-        system_template=_DEFAULT_SYSTEM_TEMPLATE,
+        system_template=system_template,
         model=model,
         temperature=0.3,
         use_chunking=True,
@@ -181,6 +229,31 @@ def _run_streaming_pipeline(
             mapped_nodes = [mapped_nodes]
     except Exception:
         mapped_nodes = [{"node_name": "Bài học", "_raw": mapped_content}]
+
+    # Yield mapped nodes event (apply template)
+    yield _sse_mapped_nodes(mapped_nodes)
+
+    # ── Tạo và Yield Content Summary ──────────────────────────────────────────
+    yield _sse_progress("📝 Đang tóm tắt cấu trúc kịch bản bài học...", 3, total_steps)
+    summary_prompt = (
+        "Dựa trên kết quả phân bổ bài học sau, hãy viết một đoạn tóm tắt cực kỳ ngắn gọn (2-3 câu) "
+        "tổng quan xem kịch bản bài học này gồm những phần/node nào và tập trung vào nội dung giảng dạy chính gì.\n"
+        "LƯU Ý: Không sử dụng các ký tự định dạng markdown như dấu sao kép '**' để bôi đậm chữ. "
+        "Hãy viết dưới dạng văn bản thuần túy (plain text) rõ ràng.\n\n"
+        f"Cấu trúc phân bổ: {json.dumps(mapped_nodes, ensure_ascii=False)}"
+    )
+    summary_res = OpenRouterService.generate_chat_completion(
+        messages=[{"role": "user", "content": summary_prompt}],
+        model=model,
+        temperature=0.5,
+        max_tokens=300
+    )
+    content_summary = (
+        summary_res.get("content", "").strip()
+        if summary_res.get("success")
+        else "Tổng quan cấu trúc bài học gồm các phần Khởi động, Lý thuyết cốt lõi và Thực hành."
+    )
+    yield _sse_content_summary(content_summary)
 
     # ── Bước 4: Parallel Enrich ───────────────────────────────────────────────
     yield _sse_progress(
@@ -216,7 +289,7 @@ def _run_streaming_pipeline(
             context = node_contexts.get(node_name, "")
             result = OpenRouterService.enrich_single_node(
                 node=node,
-                rag_activities=_DEFAULT_RAG_ACTIVITIES,
+                rag_activities=rag_activities,
                 model=model,
                 temperature=0.5,
                 section_context=context,
@@ -268,6 +341,7 @@ def _run_streaming_pipeline(
 
     yield _sse_done({
         "success": True,
+        "content_summary": content_summary,
         "stats": {
             "total_chars_extracted": len(extracted_text),
             "total_chunks": total_chunks,
@@ -309,6 +383,7 @@ def stream_pipeline(form: StreamPipelineRequest):
     model = request.form.get('model', None)
     enable_faithfulness = request.form.get('enable_faithfulness', 'false').lower() == 'true'
     k_chunks = int(request.form.get('k_chunks', '3'))  # Mặc định 3 thay vì 5 — giảm context size, tránh timeout
+    template_id = request.form.get('template_id', None)
 
     if not file or file.filename == '':
         def _error_gen():
@@ -349,6 +424,7 @@ def stream_pipeline(form: StreamPipelineRequest):
             model=model,
             enable_faithfulness=enable_faithfulness,
             k_chunks=k_chunks,
+            template_id=template_id,
         )
 
     return Response(

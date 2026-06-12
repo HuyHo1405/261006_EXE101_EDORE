@@ -22,19 +22,23 @@ from flask import current_app
 # Dùng trong system prompt để ép AI trả về đúng cấu trúc
 
 MAPPED_NODE_SCHEMA = """{
-  "node_name": "string — Tên node (giữ nguyên từ template)",
+  "node_type": "string — ENUM ngắn gọn, một trong: 'Khởi động', 'Lý thuyết cốt lõi', 'Thực hành & Vận dụng'",
+  "title": "string — Tiêu đề ngắn gọn mô tả NỘI DUNG CỤ THỂ của node này trong bài học (VD: 'Khái niệm End User và Economic Buyer')",
   "node_intent": "string — Mục tiêu sư phạm của node này",
-  "mapped_knowledge": ["string — Khái niệm/điểm kiến thức 1", "..."]
+  "mapped_knowledge": ["string — Khái niệm/điểm kiến thức 1", "..."],
+  "node_content": ["string — Ý chính nội dung kiến thức giảng dạy tương ứng chi tiết của node này lấy từ tài liệu gốc, viết dưới dạng các gạch đầu dòng chuẩn, rõ ràng, không tóm tắt quá ngắn"]
 }"""
 
 ENRICHED_NODE_SCHEMA = """{
-  "node_name": "string — Tên node",
+  "node_type": "string — ENUM ngắn gọn, một trong: 'Khởi động', 'Lý thuyết cốt lõi', 'Thực hành & Vận dụng'",
+  "title": "string — Tiêu đề ngắn gọn mô tả NỘI DUNG CỤ THỂ của node này (VD: 'Phân tích vai trò End User vs Economic Buyer')",
   "node_intent": "string — Mục tiêu sư phạm",
   "mapped_knowledge": ["string"],
-  "applied_activity": "string — Tên hoạt động dạy học được chọn",
+  "node_content": ["string — Nội dung kiến thức giảng dạy tương ứng của node này (dưới dạng danh sách các gạch đầu dòng chi tiết, đầy đủ)"],
+  "applied_activity": "string — Tên hoạt động dạy học được chọn từ RAG",
   "execution_steps": ["string — Bước thực hiện chi tiết 1", "..."],
   "estimated_time_minutes": "number — Thời gian ước tính (phút)",
-  "materials_needed": ["string — Vật liệu/công cụ cần thiết (nếu có)"]
+  "materials_needed": ["string — Vật liệu/công cụ cần thiết"]
 }"""
 
 
@@ -286,7 +290,8 @@ class OpenRouterService:
             "CRITICAL RULES:\n"
             "1. Use ONLY activities from the provided list. Adapt them — do not invent new ones.\n"
             "2. Execution steps must be specific, actionable, and practical for a classroom.\n"
-            "3. Respond ONLY with a single valid JSON object. No markdown, no array, no extra text.\n\n"
+            "3. Keep and pass through the 'node_content' array from the input node exactly into your response.\n"
+            "4. Respond ONLY with a single valid JSON object. No markdown, no array, no extra text.\n\n"
             "The object MUST follow this exact schema:\n"
             f"{ENRICHED_NODE_SCHEMA}"
         )
@@ -340,7 +345,8 @@ class OpenRouterService:
             "that bridges the node's intent with the assigned core content.\n\n"
             "CRITICAL RULES:\n"
             "1. Use ONLY activities from the provided list.\n"
-            "2. Respond ONLY with a valid JSON array of objects. No markdown, no extra text.\n\n"
+            "2. Keep and pass through the 'node_content' array from each input node exactly into your response objects.\n"
+            "3. Respond ONLY with a valid JSON array of objects. No markdown, no extra text.\n\n"
             "Each object in the array MUST follow this exact schema:\n"
             f"{ENRICHED_NODE_SCHEMA}"
         )

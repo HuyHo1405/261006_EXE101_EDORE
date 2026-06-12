@@ -41,6 +41,9 @@ def create_app(config_class=Config):
     from app.routes.stream import bp as stream_bp
     app.register_api(stream_bp, url_prefix='/api/ai')
 
+    from app.routes.templates import bp as templates_bp
+    app.register_api(templates_bp, url_prefix='/api')
+
     # Global error handlers
     @app.errorhandler(404)
     def not_found_error(error):
