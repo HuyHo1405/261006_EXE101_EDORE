@@ -120,7 +120,7 @@ export default function FilterModal({ fileName, onBack, onConfirm }) {
       />
 
       {/* Main Bottom Sheet / Modal Card Container */}
-      <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto w-full max-w-2xl mx-auto bg-gradient-to-br from-white to-[#f8fafc] border-t md:border border-[#e2e8f0] rounded-t-3xl md:rounded-2xl shadow-2xl md:shadow-xl flex flex-col overflow-hidden animate-slide-up md:animate-fade-slide-up z-50 max-h-[88vh] md:max-h-none">
+      <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto md:left-auto md:right-auto w-full max-w-2xl mx-auto bg-gradient-to-br from-white to-[#f8fafc] border-t md:border border-[#e2e8f0] rounded-t-3xl md:rounded-2xl shadow-2xl md:shadow-xl flex flex-col overflow-hidden z-50 max-h-[88vh] md:max-h-none stage-enter">
         
         {/* Bottom Sheet Drag Handle for Mobile */}
         <div className="md:hidden flex justify-center py-2.5 shrink-0 bg-[#f8fafc]">

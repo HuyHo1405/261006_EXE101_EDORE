@@ -1,24 +1,40 @@
 import { useState, useRef, useCallback } from 'react'
-import FilterModal from '../features/playground/FilterModal'
 import ContentInput from '../features/playground/ContentInput'
 import ProcessingLoader from '../features/playground/ProcessingLoader'
 import TimelineEditor from '../features/playground/TimelineEditor'
+import ClassroomConfigModal from '../features/playground/ClassroomConfigModal'
+import FileStartModal from '../features/playground/FileStartModal'
 import { streamPipeline, mapNodeToTimelineStep } from '../services/pipelineService'
+import { useStageTransition } from '../hooks/useStageTransition'
+
+const DEFAULT_CTX = {
+  duration: 45,
+  studentCount: '11-30',
+  template_id: 'standard-3-node',
+  learning_outcome: ''
+}
 
 /**
  * Playground
  *
  * Workflow stages:
- *   filters → input → processing → results
+ *   input → processing → results
  *
  * State owned here; features are pure UI components.
  */
 export default function Playground() {
-  // ── Stage machine ──────────────────────────────────────────────────────────
-  const [stage, setStage] = useState('filters')
+  // ── Stage machine (with fade transition) ───────────────────────────────────
+  const { visibleStage: stage, isExiting, goTo: setStage } = useStageTransition('input')
 
-  // ── Context (from FilterModal) ─────────────────────────────────────────────
-  const [classroomCtx, setClassroomCtx] = useState(null)
+  // ── Context (Classroom Context from localStorage or default) ──────────────
+  const [classroomCtx, setClassroomCtx] = useState(() => {
+    try {
+      const saved = localStorage.getItem('edore_classroom_ctx')
+      return saved ? JSON.parse(saved) : DEFAULT_CTX
+    } catch (e) {
+      return DEFAULT_CTX
+    }
+  })
 
   // ── Upload / input ─────────────────────────────────────────────────────────
   const [inputFile, setInputFile] = useState(null)   // File | null
@@ -33,6 +49,9 @@ export default function Playground() {
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const abortRef = useRef(null)
+
+  // ── Pending file (waiting for FileStartModal confirmation) ────────────────
+  const [pendingFile, setPendingFile] = useState(null)  // { file, isText, text }
 
   // ── Results ────────────────────────────────────────────────────────────────
   const [timelineSteps, setTimelineSteps] = useState([])
@@ -49,9 +68,9 @@ export default function Playground() {
   }
 
   // ── Handlers ──────────────────────────────────────────────────────────────
-  const handleFilterConfirm = (ctx) => {
+  const handleConfigChange = (ctx) => {
     setClassroomCtx(ctx)
-    setStage('input')
+    localStorage.setItem('edore_classroom_ctx', JSON.stringify(ctx))
   }
 
   const startPipeline = useCallback((formData) => {
@@ -114,32 +133,34 @@ export default function Playground() {
 
   const handleFileSelected = (file) => {
     setInputFile(file)
-    const fd = new FormData()
-    fd.append('file', file)
-    if (classroomCtx) {
-      Object.entries(classroomCtx).forEach(([key, val]) => {
-        if (val !== undefined && val !== null) {
-          fd.append(key, val)
-        }
-      })
-    }
-    startPipeline(fd)
+    // Intercept: show FileStartModal before starting pipeline
+    setPendingFile({ file, isText: false })
   }
 
   const handleManualSubmit = (text) => {
     setInputText(text)
-    // Wrap as a Blob so the server receives a real file upload
     const blob = new Blob([text], { type: 'text/plain' })
+    // Intercept: show FileStartModal before starting pipeline
+    setPendingFile({ file: blob, isText: true, text })
+  }
+
+  // Called when FileStartModal confirms — merges template/learning_outcome then starts
+  const handleFileStartConfirm = (updatedCtx) => {
+    const { file, isText, text } = pendingFile
+    setPendingFile(null)
+    handleConfigChange(updatedCtx)
     const fd = new FormData()
-    fd.append('file', blob, 'manual_input.txt')
-    if (classroomCtx) {
-      Object.entries(classroomCtx).forEach(([key, val]) => {
-        if (val !== undefined && val !== null) {
-          fd.append(key, val)
-        }
-      })
-    }
+    fd.append('file', isText ? new Blob([text], { type: 'text/plain' }) : file, isText ? 'manual_input.txt' : file.name)
+    Object.entries(updatedCtx).forEach(([key, val]) => {
+      if (val !== undefined && val !== null) fd.append(key, val)
+    })
     startPipeline(fd)
+  }
+
+  const handleFileStartCancel = () => {
+    setPendingFile(null)
+    setInputFile(null)
+    setInputText('')
   }
 
   const handleCancel = () => {
@@ -153,23 +174,53 @@ export default function Playground() {
     resetPipelineState()
     setInputFile(null)
     setInputText('')
-    setStage('filters')
+    setStage('input')
   }
 
   // ── Stage header label map ─────────────────────────────────────────────────
   const stageLabels = {
-    filters: { step: 1, label: 'Cấu hình ngữ cảnh' },
-    input: { step: 2, label: 'Nạp tài liệu' },
-    processing: { step: 3, label: 'AI đang xử lý' },
-    results: { step: 4, label: 'Kịch bản giảng dạy' },
+    input: { step: 1, label: 'Nạp tài liệu' },
+    processing: { step: 2, label: 'AI đang xử lý' },
+    results: { step: 3, label: 'Kịch bản giảng dạy' },
   }
   const { step: currentStep, label: currentLabel } = stageLabels[stage] ?? {}
 
+  const templateName = classroomCtx.template_id === 'extended-4-node' ? 'Extended (4-node)' : 'Standard (3-node)'
+  const [isConfigOpen, setIsConfigOpen] = useState(false)
+
   return (
-    <div className="w-full bg-[#faf8ff] min-h-[85vh] text-[#151b2d] font-sans antialiased relative rounded-2xl border border-[#c2c6d6] shadow-sm p-8">
-      {/* ── Page header with step indicator ── */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between flex-wrap gap-4">
+    <div className="w-full flex flex-col gap-6 font-sans antialiased text-[#151b2d]">
+      {/* ── Stepper outside the large container ── */}
+      <div className="flex justify-center mt-2 stage-enter">
+        <div className="flex items-center gap-2 text-[10px] font-mono bg-white border border-[#c2c6d6] px-4 py-2 rounded-full shadow-sm">
+          {Object.entries(stageLabels).map(([key, { step, label }], i) => {
+            const isActive = stage === key
+            const isDone = Object.keys(stageLabels).indexOf(stage) > i
+            return (
+              <div key={key} className="flex items-center gap-2">
+                <div
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all ${
+                    isActive
+                      ? 'bg-[#0058be] text-white border-[#0058be] font-bold'
+                      : isDone
+                        ? 'bg-[#eaedff] text-[#0058be] border-[#0058be]/30'
+                        : 'bg-white text-[#727785] border-[#e2e8f0]'
+                  }`}
+                >
+                  <span>{isDone ? '✓' : step}</span>
+                  <span>{label}</span>
+                </div>
+                {i < 2 && <span className="text-[#c2c6d6] font-bold">›</span>}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* ── Main Container ── */}
+      <div className="w-full bg-[#faf8ff] min-h-[85vh] relative rounded-2xl border border-[#c2c6d6] shadow-sm p-8">
+        {/* Title area - Left-aligned with Config Button on the right (old stepper position) */}
+        <div className="mb-8 border-b border-[#e2e8f0] pb-4 flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="font-extrabold text-2xl text-[#151b2d]">Playground AI</h1>
             <p className="text-xs text-[#727785] font-mono mt-0.5">
@@ -177,68 +228,66 @@ export default function Playground() {
             </p>
           </div>
 
-          {/* Step breadcrumb */}
-          <div className="flex items-center gap-2 text-[10px] font-mono">
-            {Object.entries(stageLabels).map(([key, { step, label }], i) => {
-              const isActive = stage === key
-              const isDone = Object.keys(stageLabels).indexOf(stage) > i
-              return (
-                <div key={key} className="flex items-center gap-2">
-                  <div
-                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all ${
-                      isActive
-                        ? 'bg-[#0058be] text-white border-[#0058be] font-bold'
-                        : isDone
-                          ? 'bg-[#eaedff] text-[#0058be] border-[#0058be]/30'
-                          : 'bg-white text-[#727785] border-[#e2e8f0]'
-                    }`}
-                  >
-                    <span>{isDone ? '✓' : step}</span>
-                    <span className="hidden sm:inline">{label}</span>
-                  </div>
-                  {i < 3 && <span className="text-[#c2c6d6]">›</span>}
-                </div>
-              )
-            })}
-          </div>
+          {/* Config Button in the header (only in 'input' stage) */}
+          {stage === 'input' && (
+            <button
+              onClick={() => setIsConfigOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#e2e8f0] rounded-xl hover:border-[#c2c6d6] hover:bg-[#f8fafc] text-xs font-semibold shadow-sm transition-all active:scale-95 text-[#424754]"
+            >
+              <span className="material-symbols-outlined text-base text-[#0058be]">settings</span>
+              <span>Cấu hình lớp học:</span>
+              <span className="bg-[#eaedff] text-[#0058be] font-bold px-2 py-0.5 rounded text-[10px]">
+                {classroomCtx.duration}p · {classroomCtx.studentCount} HS · {templateName}
+              </span>
+              <span className="material-symbols-outlined text-xs text-[#727785]">edit</span>
+            </button>
+          )}
+        </div>
+
+        {/* ── Stage renderers — keyed so React remounts on every stage change ── */}
+        <div key={stage} className={isExiting ? 'stage-exit' : 'stage-enter'}>
+          {stage === 'input' && (
+            <ContentInput
+              onFileSelected={handleFileSelected}
+              onManualSubmit={handleManualSubmit}
+              classroomCtx={classroomCtx}
+              onConfigChange={handleConfigChange}
+            />
+          )}
+
+          {stage === 'processing' && (
+            <ProcessingLoader
+              hasError={hasError}
+              errorMessage={errorMessage}
+              onCancel={handleCancel}
+            />
+          )}
+
+          {stage === 'results' && (
+            <TimelineEditor
+              steps={timelineSteps}
+              onStepsChange={setTimelineSteps}
+              contentSummary={contentSummary}
+              onRestart={handleRestart}
+            />
+          )}
         </div>
       </div>
 
-      {/* ── Stage renderers ── */}
-      {stage === 'filters' && (
-        <FilterModal
-          fileName={fileName}
-          onBack={() => {}}      // No back from first step
-          onConfirm={handleFilterConfirm}
+      {isConfigOpen && (
+        <ClassroomConfigModal
+          ctx={classroomCtx}
+          onChange={handleConfigChange}
+          onClose={() => setIsConfigOpen(false)}
         />
       )}
 
-      {stage === 'input' && (
-        <ContentInput
-          onFileSelected={handleFileSelected}
-          onManualSubmit={handleManualSubmit}
-        />
-      )}
-
-      {stage === 'processing' && (
-        <ProcessingLoader
-          progressEvents={progressEvents}
-          metadata={metadata}
-          contentSummary={contentSummary}
-          sectionsDone={sectionsDone}
-          totalSections={metadata?.sections?.length ?? 0}
-          hasError={hasError}
-          errorMessage={errorMessage}
-          onCancel={handleCancel}
-        />
-      )}
-
-      {stage === 'results' && (
-        <TimelineEditor
-          steps={timelineSteps}
-          onStepsChange={setTimelineSteps}
-          contentSummary={contentSummary}
-          onRestart={handleRestart}
+      {pendingFile && (
+        <FileStartModal
+          fileName={pendingFile.isText ? 'Nội dung nhập thủ công' : pendingFile.file?.name}
+          ctx={classroomCtx}
+          onConfirm={handleFileStartConfirm}
+          onCancel={handleFileStartCancel}
         />
       )}
     </div>

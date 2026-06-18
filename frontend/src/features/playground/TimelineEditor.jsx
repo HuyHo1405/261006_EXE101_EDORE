@@ -7,7 +7,7 @@ function formatInlineMarkdown(text, isDark = false) {
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <strong key={i} className={`font-semibold text-[#0f172a] font-bold}`}>
+        <strong key={i} className="font-bold text-[#151b2d]">
           {part.slice(2, -2)}
         </strong>
       );
@@ -18,7 +18,7 @@ function formatInlineMarkdown(text, isDark = false) {
 
 // Helper to format structured sidebar content
 function formatSidebarText(text, isDark = false) {
-  if (!text) return <p className={`text-xs italic text-[#727785]`}>Không có nội dung.</p>;
+  if (!text) return <p className="text-xs italic text-[#727785]">Không có nội dung.</p>;
   const lines = text.split('\n');
   return (
     <ul className="space-y-3">
@@ -32,9 +32,8 @@ function formatSidebarText(text, isDark = false) {
           const marker = stepMatch[1];
           const content = stepMatch[2];
           return (
-            <li key={idx} className={`flex gap-2 text-xs leading-relaxed text-[#334155]`}>
-              <span className={`font-bold shrink-0 font-mono px-2 py-0.5 rounded text-[10px] h-fit 'bg-[#eaedff] text-[#0058be]'
-                }`}>
+            <li key={idx} className="flex gap-2 text-xs leading-relaxed text-[#334155]">
+              <span className="font-bold shrink-0 font-mono px-2 py-0.5 rounded text-[10px] h-fit bg-[#eaedff] text-[#0058be]">
                 {marker}
               </span>
               <span className="flex-1">{formatInlineMarkdown(content, isDark)}</span>
@@ -43,13 +42,75 @@ function formatSidebarText(text, isDark = false) {
         }
 
         return (
-          <li key={idx} className={`text-xs leading-relaxed list-none pl-2 border-l-2 text-[#334155] border-slate-300
-            `}>
+          <li key={idx} className="text-xs leading-relaxed list-none pl-2 border-l-2 text-[#334155] border-slate-300">
             {formatInlineMarkdown(trimmed, isDark)}
           </li>
         );
       })}
     </ul>
+  );
+}
+
+// Helper to format teaching content with headers, lists, bold text, etc.
+function formatTeachingContent(text) {
+  if (!text) return <p className="text-sm italic text-[#727785]">Không có nội dung giảng dạy.</p>;
+
+  const lines = text.split('\n');
+  return (
+    <div className="space-y-3 text-sm text-[#424754] leading-relaxed">
+      {lines.map((line, idx) => {
+        const trimmed = line.trim();
+        if (!trimmed) return <div key={idx} className="h-2" />;
+
+        // Headers: ### Header, ## Header, # Header
+        const headerMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+        if (headerMatch) {
+          const level = headerMatch[1].length;
+          const content = headerMatch[2];
+          const sizeClass =
+            level === 1 ? 'text-lg font-extrabold text-[#151b2d]' :
+              level === 2 ? 'text-base font-bold text-[#151b2d]' :
+                'text-sm font-bold text-[#151b2d]';
+          return (
+            <div key={idx} className={`pt-3 pb-1 border-b border-[#e2e8f0]/40 ${sizeClass}`}>
+              {formatInlineMarkdown(content)}
+            </div>
+          );
+        }
+
+        // Check for bullet list (-, *, +)
+        const bulletMatch = trimmed.match(/^[-*+]\s+(.*)$/);
+        if (bulletMatch) {
+          const content = bulletMatch[1];
+          return (
+            <div key={idx} className="flex gap-2 pl-4 list-none text-[#424754]">
+              <span className="text-[#0058be] font-bold select-none">•</span>
+              <span className="flex-1">{formatInlineMarkdown(content)}</span>
+            </div>
+          );
+        }
+
+        // Check for numbered list (1., 2., etc.)
+        const numMatch = trimmed.match(/^(\d+)\.\s+(.*)$/);
+        if (numMatch) {
+          const num = numMatch[1];
+          const content = numMatch[2];
+          return (
+            <div key={idx} className="flex gap-2 pl-4 list-none text-[#424754]">
+              <span className="text-[#0058be] font-semibold font-mono select-none">{num}.</span>
+              <span className="flex-1">{formatInlineMarkdown(content)}</span>
+            </div>
+          );
+        }
+
+        // Default paragraph
+        return (
+          <p key={idx} className="text-[#424754]">
+            {formatInlineMarkdown(trimmed)}
+          </p>
+        );
+      })}
+    </div>
   );
 }
 
@@ -80,19 +141,30 @@ function AutoExpandingTextarea({ value, onChange, placeholder, className, rows =
 function getShortNodeName(step, idx) {
   const stepType = step.type || step.node_name || '';
   const lower = stepType.toLowerCase();
+
   if (lower.includes('khởi động') || lower.includes('warm')) return 'Khởi động';
   if (lower.includes('lý thuyết') || lower.includes('core')) return 'Lý thuyết';
   if (lower.includes('thực hành') || lower.includes('practice')) return 'Thực hành';
-  return step.title || step.applied_activity || `Phần ${idx + 1}`;
+
+  // Đã sửa: Trả về trực tiếp loại node (stepType) thay vì title
+  return stepType || `Phần ${idx + 1}`;
 }
 
 export default function TimelineEditor({ steps = [], onStepsChange, onRestart, contentSummary = '' }) {
   const [activeIdx, setActiveIdx] = useState(-1) // -1 is Overview & TOC
   const [isContentExpanded, setIsContentExpanded] = useState(true)
 
-  // Edit mode toggles for sidebar panels
+  // Edit mode toggles for sidebar panels and main content
   const [editingSuggestions, setEditingSuggestions] = useState(false)
   const [editingInstructions, setEditingInstructions] = useState(false)
+  const [editingContent, setEditingContent] = useState(false)
+
+  // Reset all edit modes when active index changes
+  useEffect(() => {
+    setEditingSuggestions(false)
+    setEditingInstructions(false)
+    setEditingContent(false)
+  }, [activeIdx])
 
   const current = steps[activeIdx] ?? {}
 
@@ -156,9 +228,9 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
   }
 
   return (
-    <div className="space-y-6 animate-fade-slide-up">
+    <div className="space-y-6">
       {/* ─── Top Navigation Bar (wrapping, no scroll) ─── */}
-      <nav className="flex flex-wrap items-center gap-2 p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl shadow-sm">
+      <nav className="flex flex-wrap items-center gap-2 p-2 bg-[#f8fafc] border border-[#e2e8f0] rounded-xl shadow-sm stage-enter delay-0">
         {/* Section 0: Overview & TOC */}
         <button
           onClick={() => setActiveIdx(-1)}
@@ -176,7 +248,7 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
 
         {/* Teaching Nodes */}
         {steps.map((step, idx) => {
-          const stepTitle = getShortNodeName(step, idx)
+          const stepTitle = getShortNodeName(step, idx) //TODO sửa lại dùng node type thay vì title
           const stepDuration = step.duration || (step.estimated_time_minutes ? `${step.estimated_time_minutes}'` : "10'")
           const isActive = activeIdx === idx
 
@@ -391,24 +463,50 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
                         Nội dung giảng dạy tương ứng
                       </h3>
                     </div>
+                    {isContentExpanded && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingContent(!editingContent);
+                        }}
+                        className="p-1 text-[#727785] hover:text-[#0058be] hover:bg-[#eaedff] rounded-md transition-colors flex items-center justify-center"
+                        title={editingContent ? 'Lưu / Xem trước' : 'Chỉnh sửa'}
+                      >
+                        <span className="material-symbols-outlined text-[16px]">
+                          {editingContent ? 'preview' : 'edit'}
+                        </span>
+                      </button>
+                    )}
                   </div>
 
                   {isContentExpanded && (
-                    <div className="p-5 bg-white">
-                      {Array.isArray(current.originalContent) || typeof current.originalContent === 'object' ? (
-                        <AutoExpandingTextarea
-                          value={Array.isArray(current.originalContent) ? current.originalContent.join('\n') : JSON.stringify(current.originalContent)}
-                          onChange={(e) => updateStep({ originalContent: e.target.value.split('\n') })}
-                          className="w-full text-sm text-[#424754] bg-white border border-[#e2e8f0] hover:border-[#c2c6d6] focus:border-[#0058be] focus:outline-none p-3.5 rounded-xl leading-relaxed shadow-inner"
-                          placeholder="Ý chính nội dung dạy..."
-                        />
+                    <div className="p-6 bg-white border-t border-[#e2e8f0]">
+                      {editingContent ? (
+                        Array.isArray(current.originalContent) || typeof current.originalContent === 'object' ? (
+                          <AutoExpandingTextarea
+                            value={Array.isArray(current.originalContent) ? current.originalContent.join('\n') : JSON.stringify(current.originalContent)}
+                            onChange={(e) => updateStep({ originalContent: e.target.value.split('\n') })}
+                            className="w-full text-sm text-[#424754] bg-white border border-[#e2e8f0] hover:border-[#c2c6d6] focus:border-[#0058be] focus:outline-none p-3.5 rounded-xl leading-relaxed shadow-inner"
+                            placeholder="Ý chính nội dung dạy..."
+                          />
+                        ) : (
+                          <AutoExpandingTextarea
+                            value={current.originalContent ?? ''}
+                            onChange={(e) => updateStep({ originalContent: e.target.value })}
+                            className="w-full text-sm text-[#424754] bg-white border border-[#e2e8f0] hover:border-[#c2c6d6] focus:border-[#0058be] focus:outline-none p-3.5 rounded-xl leading-relaxed shadow-inner"
+                            placeholder="Ý chính nội dung dạy..."
+                          />
+                        )
                       ) : (
-                        <AutoExpandingTextarea
-                          value={current.originalContent ?? ''}
-                          onChange={(e) => updateStep({ originalContent: e.target.value })}
-                          className="w-full text-sm text-[#424754] bg-white border border-[#e2e8f0] hover:border-[#c2c6d6] focus:border-[#0058be] focus:outline-none p-3.5 rounded-xl leading-relaxed shadow-inner"
-                          placeholder="Ý chính nội dung dạy..."
-                        />
+                        <div className="prose max-w-none">
+                          {formatTeachingContent(
+                            Array.isArray(current.originalContent)
+                              ? current.originalContent.join('\n')
+                              : typeof current.originalContent === 'object'
+                                ? JSON.stringify(current.originalContent, null, 2)
+                                : current.originalContent
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
@@ -477,21 +575,39 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
                 </div>
 
                 {/* Body màu nhạt, chữ tối màu dễ đọc */}
-                <div className="p-4">
-                  {editingSuggestions ? (
-                    <AutoExpandingTextarea
-                      value={Array.isArray(current.pedagogNote) ? current.pedagogNote.join('\n') : (current.pedagogNote ?? '')}
-                      onChange={(e) => updateStep({ pedagogNote: e.target.value })}
-                      // Cập nhật màu chữ text-[#151b2d] giống textarea ở dưới
-                      className="w-full text-xs text-[#151b2d] bg-white border border-[#0058be]/30 focus:border-[#0058be] focus:outline-none p-3 rounded-lg leading-relaxed shadow-inner"
-                      placeholder="Nhập vật tư cần chuẩn bị..."
-                    />
-                  ) : (
-                    // Cập nhật class: Đổi text-[#0a2351] thành text-[#424754] và xóa font-medium
-                    <div className="prose max-w-none text-[#424754] text-sm leading-relaxed">
-                      {formatSidebarText(Array.isArray(current.pedagogNote) ? current.pedagogNote.join('\n') : current.pedagogNote, true)}
-                    </div>
-                  )}
+                <div className="p-4 space-y-4">
+                  {/* Hoạt động áp dụng */}
+                  <div className="">
+                    {editingSuggestions ? (
+                      <input
+                        type="text"
+                        value={current.appliedActivity || current.applied_activity || ''}
+                        onChange={(e) => updateStep({ appliedActivity: e.target.value, applied_activity: e.target.value })}
+                        className="w-full text-xs text-[#151b2d] bg-white border border-[#0058be]/30 focus:border-[#0058be] focus:outline-none px-3 py-2 rounded-lg leading-relaxed shadow-inner font-semibold"
+                        placeholder="Tên hoạt động..."
+                      />
+                    ) : (
+                      <p className="text-xs font-bold text-[#151b2d] bg-[#f4f8fd] border border-[#0058be]/10 px-3 py-2 rounded-lg shadow-sm">
+                        {activeAppliedActivity}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Dụng cụ & Học liệu cần chuẩn bị */}
+                  <div>
+                    {editingSuggestions ? (
+                      <AutoExpandingTextarea
+                        value={Array.isArray(current.pedagogNote) ? current.pedagogNote.join('\n') : (current.pedagogNote ?? '')}
+                        onChange={(e) => updateStep({ pedagogNote: e.target.value })}
+                        className="w-full text-xs text-[#151b2d] bg-white border border-[#0058be]/30 focus:border-[#0058be] focus:outline-none p-3 rounded-lg leading-relaxed shadow-inner"
+                        placeholder="Nhập vật tư cần chuẩn bị..."
+                      />
+                    ) : (
+                      <div className="prose max-w-none text-[#424754] text-xs leading-relaxed bg-[#f4f8fd] border border-[#0058be]/10 p-3 rounded-lg shadow-sm">
+                        {formatSidebarText(Array.isArray(current.pedagogNote) ? current.pedagogNote.join('\n') : current.pedagogNote, true)}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 

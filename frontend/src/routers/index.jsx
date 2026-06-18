@@ -14,6 +14,7 @@ const AddContent = lazy(() => import('../pages/AddContent'))
 const FilterLogistics = lazy(() => import('../pages/FilterLogistics'))
 const FilterActiveView = lazy(() => import('../pages/FilterActiveView'))
 const TeachingScript = lazy(() => import('../pages/TeachingScript'))
+const DemoUI = lazy(() => import('../pages/DemoUI'))
 
 function PageFallback() {
   return (
@@ -33,6 +34,9 @@ export default function AppRouter() {
 
         {/* Core interactive page */}
         <Route path="/playground" element={<Playground />} />
+
+        {/* Demo UI Page */}
+        <Route path="/demo-ui" element={<DemoUI />} />
 
         {/* Dashboard */}
         <Route path="/dashboard" element={<Dashboard />} />

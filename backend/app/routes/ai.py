@@ -4,9 +4,14 @@ from pydantic import BaseModel, Field
 from typing import Optional
 import pypdf
 import io
+try:
+    import docx as python_docx
+    _DOCX_AVAILABLE = True
+except ImportError:
+    _DOCX_AVAILABLE = False
 
 from app.services.openrouter_service import OpenRouterService
-from app.services.chunking_service import get_all_section_contexts, semantic_chunk
+from app.services.chunking_service import get_all_section_contexts, semantic_chunk, extract_outline
 
 bp = APIBlueprint('ai', __name__)
 
@@ -27,7 +32,8 @@ class MapRequest(BaseModel):
 
 class EnrichRequest(BaseModel):
     mapped_nodes: object = Field(..., description="Mapped node array or JSON string (output of Feature 2).")
-    rag_activities: object = Field(..., description="List of teaching methodology strings from RAG context.")
+    rag_activities: Optional[object] = Field(None, description="List of teaching methodology strings from RAG context.")
+    classroom_ctx: Optional[dict] = Field(None, description="Optional classroom context configuration.")
     model: Optional[str] = Field(None, description="Optional OpenRouter model override.")
     temperature: Optional[float] = Field(0.5, description="Sampling temperature (default 0.5).")
 
@@ -47,9 +53,9 @@ class PipelineAdvancedRequest(BaseModel):
 # Default pedagogical template used by the pipeline
 _DEFAULT_SYSTEM_TEMPLATE = (
     "Khung bài học 3 phần:\n"
-    "Node 1: Khởi động (Warm-up) - Kích hoạt kiến thức nền của học sinh\n"
-    "Node 2: Lý thuyết cốt lõi (Core Theory) - Giới thiệu và giải thích nội dung chính\n"
-    "Node 3: Thực hành & Vận dụng (Practice) - Học sinh áp dụng kiến thức vào bài tập"
+    "Node 1: Khởi động (Warm-up) - Kích hoạt kiến thức nền và tạo hứng thú cho học sinh\n"
+    "Node 2: Hình thành kiến thức (Core Theory) - Giới thiệu, giải thích và xây dựng các khái niệm, kiến thức mới cốt lõi\n"
+    "Node 3: Luyện tập (Practice) - Học sinh thực hành, làm các bài tập củng cố ngay tại lớp"
 )
 
 # Default RAG activities pool used by the pipeline
@@ -57,15 +63,15 @@ _DEFAULT_RAG_ACTIVITIES = [
     "1. Trò chơi Kahoot câu hỏi trắc nghiệm ôn tập nhanh (5-7 phút)",
     "2. Thảo luận nhóm tranh biện (Think-Pair-Share)",
     "3. Sơ đồ tư duy tiếp sức theo nhóm (Mind Map Relay)",
-    "4. Nhập vai xử lý tình huống thực tế (Role Play)",
+    "4. Thẻ câu hỏi xoay vòng (Quiz Cards)",
     "5. Thí nghiệm hoặc mô phỏng thực hành có hướng dẫn",
 ]
 
 # Default node names matching the system template
 _DEFAULT_NODE_NAMES = [
     "Khởi động (Warm-up)",
-    "Lý thuyết cốt lõi (Core Theory)",
-    "Thực hành & Vận dụng (Practice)",
+    "Hình thành kiến thức (Core Theory)",
+    "Luyện tập (Practice)",
 ]
 
 # ─── Helper: extract text from uploaded file ─────────────────────────────────
@@ -73,6 +79,16 @@ _DEFAULT_NODE_NAMES = [
 def _extract_text_from_file(file) -> tuple[str | None, str | None]:
     """Returns (extracted_text, error_message)."""
     filename = file.filename.lower()
+    MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+    try:
+        file.seek(0, 2)
+        size = file.tell()
+        file.seek(0)
+        if size > MAX_FILE_SIZE:
+            return None, "Kích thước file vượt quá giới hạn cho phép (tối đa 50MB)."
+    except Exception:
+        pass
+
     try:
         if filename.endswith('.pdf'):
             pdf_bytes = io.BytesIO(file.read())
@@ -84,8 +100,35 @@ def _extract_text_from_file(file) -> tuple[str | None, str | None]:
                     text += t + "\n"
         elif filename.endswith(('.txt', '.md')):
             text = file.read().decode('utf-8', errors='ignore')
+        elif filename.endswith(('.docx', '.doc')):
+            if not _DOCX_AVAILABLE:
+                return None, "Thư viện python-docx chưa được cài đặt. Chạy: pip install python-docx"
+            docx_bytes = io.BytesIO(file.read())
+            doc = python_docx.Document(docx_bytes)
+            lines = []
+            # Trích xuất paragraphs (giữ nguyên heading cấu trúc)
+            for para in doc.paragraphs:
+                stripped = para.text.strip()
+                if not stripped:
+                    continue
+                style_name = para.style.name if para.style else ""
+                if style_name.startswith("Heading"):
+                    try:
+                        level = int(style_name.split()[-1])
+                    except ValueError:
+                        level = 1
+                    lines.append("#" * level + " " + stripped)
+                else:
+                    lines.append(stripped)
+            # Trích xuất nội dung bảng
+            for table in doc.tables:
+                for row in table.rows:
+                    row_texts = [cell.text.strip() for cell in row.cells if cell.text.strip()]
+                    if row_texts:
+                        lines.append(" | ".join(row_texts))
+            text = "\n".join(lines)
         else:
-            return None, "Only PDF, TXT, and MD files are supported."
+            return None, "Only PDF, DOCX, TXT, and MD files are supported."
         return text.strip(), None
     except Exception as e:
         return None, str(e)
@@ -162,11 +205,13 @@ def map_pedagogy(body: MapRequest):
     if not extracted_knowledge or not system_template:
         return jsonify({"error": "Bad Request", "message": "Both 'extracted_knowledge' and 'system_template' are required."}), 400
 
+    outline = extract_outline(extracted_knowledge)
     result = OpenRouterService.map_knowledge_to_template(
         extracted_knowledge=extracted_knowledge,
         system_template=system_template,
         model=model,
-        temperature=temperature
+        temperature=temperature,
+        outline=outline
     )
     if result.get("success"):
         return jsonify({"success": True, "mapped_nodes": result.get("content")}), 200
@@ -187,17 +232,22 @@ def enrich_pedagogy(body: EnrichRequest):
     """POST /api/ai/pedagogy/enrich"""
     mapped_nodes = body.mapped_nodes
     rag_activities = body.rag_activities
+    classroom_ctx = body.classroom_ctx
     model = body.model
     temperature = body.temperature if body.temperature is not None else 0.5
 
-    if not mapped_nodes or not rag_activities:
-        return jsonify({"error": "Bad Request", "message": "Both 'mapped_nodes' and 'rag_activities' are required."}), 400
+    if not mapped_nodes:
+        return jsonify({"error": "Bad Request", "message": "'mapped_nodes' is required."}), 400
+
+    if not rag_activities and not classroom_ctx:
+        return jsonify({"error": "Bad Request", "message": "Either 'rag_activities' or 'classroom_ctx' is required."}), 400
 
     result = OpenRouterService.enrich_nodes_with_activities(
         mapped_nodes=mapped_nodes,
         rag_activities=rag_activities,
         model=model,
-        temperature=temperature
+        temperature=temperature,
+        classroom_ctx=classroom_ctx
     )
     if result.get("success"):
         return jsonify({"success": True, "enriched_script": result.get("content")}), 200
@@ -243,6 +293,7 @@ def pipeline_pedagogy(form: PipelineRequest):
     )
 
     # ── Phase 2: Map (AI) với section-aware context ───────────────────────────
+    outline = extract_outline(extracted_text)
     map_result = OpenRouterService.map_knowledge_to_template(
         extracted_knowledge=extracted_text,
         system_template=system_template,
@@ -250,6 +301,7 @@ def pipeline_pedagogy(form: PipelineRequest):
         temperature=0.3,
         use_chunking=True,
         section_contexts=section_contexts,
+        outline=outline
     )
     if not map_result.get("success"):
         return jsonify({"success": False, "error": f"Mapping phase failed: {map_result.get('error')}"}), 500

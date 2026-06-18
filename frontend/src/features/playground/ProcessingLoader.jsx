@@ -1,171 +1,157 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
+
+const LOADING_STEPS = [
+  { icon: 'description',   label: 'Đang trích xuất nội dung tài liệu...' },
+  { icon: 'auto_fix_high', label: 'Đang phân tích và chunk ngữ nghĩa...' },
+  { icon: 'psychology',    label: 'AI đang tạo kịch bản bài học...' },
+  { icon: 'check_circle',  label: 'Hoàn thiện và sắp xếp kết quả...' },
+]
 
 /**
  * ProcessingLoader — Stage: 'processing'
- * Shows real-time SSE progress events as the pipeline runs.
+ * Simple animated loader while the pipeline runs.
  *
  * Props:
- *   progressEvents  Array<{ message, step, total_steps }>   — accumulated progress
- *   metadata        object | null                           — metadata event payload
- *   sectionsDone    number                                  — how many section events received
- *   totalSections   number                                  — expected total (from metadata)
- *   hasError        boolean
- *   errorMessage    string
- *   onCancel()      — abort the stream
+ *   hasError       boolean
+ *   errorMessage   string
+ *   onCancel()     abort callback
  */
-export default function ProcessingLoader({
-  progressEvents = [],
-  metadata = null,
-  contentSummary = '',
-  sectionsDone = 0,
-  totalSections = 0,
-  hasError = false,
-  errorMessage = '',
-  onCancel,
-}) {
-  const logRef = useRef(null)
+export default function ProcessingLoader({ hasError = false, errorMessage = '', onCancel }) {
+  const [activeStep, setActiveStep] = useState(0)
+  const [dots, setDots] = useState('')
 
-  // Auto-scroll the log
+  // Cycle through fake step labels every ~2.2s
   useEffect(() => {
-    if (logRef.current) {
-      logRef.current.scrollTop = logRef.current.scrollHeight
-    }
-  }, [progressEvents, sectionsDone])
+    if (hasError) return
+    const id = setInterval(() => {
+      setActiveStep((s) => (s + 1) % LOADING_STEPS.length)
+    }, 2200)
+    return () => clearInterval(id)
+  }, [hasError])
 
-  // Derive overall progress (0-100) from step / total_steps
-  const latest = progressEvents[progressEvents.length - 1]
-  const rawPct = latest
-    ? Math.round((latest.step / latest.total_steps) * 100)
-    : sectionsDone > 0 && totalSections > 0
-      ? Math.round((sectionsDone / totalSections) * 100)
-      : 0
-  const pct = Math.min(rawPct, 99) // cap at 99 until 'done' event
-
-  const statusIcon = hasError ? '❌' : rawPct >= 100 ? '✅' : '⚡'
+  // Animated dots
+  useEffect(() => {
+    if (hasError) return
+    const id = setInterval(() => {
+      setDots((d) => (d.length >= 3 ? '' : d + '.'))
+    }, 400)
+    return () => clearInterval(id)
+  }, [hasError])
 
   return (
-    <div className="max-w-xl mx-auto py-10 space-y-8 animate-fade-slide-up">
-      {/* Spinner ring */}
-      <div className="flex flex-col items-center gap-4">
-        <div className="relative inline-flex items-center justify-center">
-          {/* Background track */}
-          <svg className="w-24 h-24 -rotate-90" viewBox="0 0 96 96">
-            <circle
-              cx="48" cy="48" r="40"
-              fill="none" stroke="#eaedff" strokeWidth="8"
-            />
-            <circle
-              cx="48" cy="48" r="40"
-              fill="none"
-              stroke={hasError ? '#ba1a1a' : '#0058be'}
-              strokeWidth="8"
-              strokeLinecap="round"
-              strokeDasharray={`${2 * Math.PI * 40}`}
-              strokeDashoffset={`${2 * Math.PI * 40 * (1 - pct / 100)}`}
-              className="transition-all duration-500"
-            />
-          </svg>
-          <span className="absolute text-sm font-bold text-[#0058be] font-mono">
-            {hasError ? '!' : `${pct}%`}
-          </span>
-        </div>
+    <div className="flex flex-col items-center justify-center py-20 gap-10">
 
-        <div className="text-center space-y-1">
-          <h3 className="text-xl font-bold text-[#151b2d]">
-            {hasError ? 'Đã xảy ra lỗi' : 'Hệ thống AI đang xử lý kịch bản'}
-          </h3>
-          {latest && !hasError && (
-            <p className="text-xs text-[#727785] font-mono">{latest.message}</p>
-          )}
-          {hasError && (
-            <p className="text-xs text-[#ba1a1a] font-mono">{errorMessage}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Metadata chip row */}
-      {metadata && (
-        <div className="flex flex-wrap gap-2 justify-center">
-          {[
-            { icon: 'description', label: `${metadata.total_chars?.toLocaleString()} ký tự` },
-            { icon: 'layers', label: `${metadata.total_chunks} chunks` },
-            { icon: 'account_tree', label: `${metadata.sections?.length ?? 0} nodes` },
-          ].map(({ icon, label }) => (
-            <span
-              key={label}
-              className="flex items-center gap-1 text-[10px] font-mono bg-[#eaedff] text-[#0058be] px-3 py-1 rounded-full border border-[#0058be]/20"
-            >
-              <span className="material-symbols-outlined text-[12px]">{icon}</span>
-              {label}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Content Summary Card */}
-      {contentSummary && (
-        <div className="bg-[#f2f3ff] border border-[#0058be]/20 rounded-2xl p-5 space-y-2.5 animate-fade-slide-up text-left shadow-sm">
-          <h4 className="font-bold text-xs text-[#0058be] uppercase tracking-wider flex items-center gap-1.5 font-mono">
-            <span className="material-symbols-outlined text-[16px] text-[#0058be]">summarize</span>
-            Tóm tắt cấu trúc kịch bản bài học
-          </h4>
-          <p className="text-sm text-[#424754] leading-relaxed italic">
-            "{contentSummary}"
-          </p>
-        </div>
-      )}
-
-      {/* Progress bar */}
-      <div className="space-y-1">
-        <div className="w-full bg-[#eaedff] h-2 rounded-full overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-500 ${
-              hasError
-                ? 'bg-[#ba1a1a]'
-                : 'bg-gradient-to-r from-[#0058be] to-[#6b38d4]'
-            }`}
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-        {totalSections > 0 && (
-          <p className="text-center text-[10px] text-[#727785] font-mono">
-            Hoàn thành {sectionsDone}/{totalSections} sections
-          </p>
-        )}
-      </div>
-
-      {/* Event log */}
-      {progressEvents.length > 0 && (
-        <div
-          ref={logRef}
-          className="bg-[#151b2d] rounded-xl p-4 max-h-40 overflow-y-auto space-y-1 text-[10px] font-mono"
-        >
-          {progressEvents.map((ev, i) => (
-            <div key={i} className="flex items-start gap-2">
-              <span className="text-[#6b38d4] shrink-0">[{ev.step}/{ev.total_steps}]</span>
-              <span className="text-[#a8c0e8]">{ev.message}</span>
-            </div>
-          ))}
-          {sectionsDone > 0 && (
-            <div className="flex items-start gap-2 text-[#6cf8bb]">
-              <span className="shrink-0">[section]</span>
-              <span>✓ {sectionsDone} node(s) hoàn thành và đã stream về</span>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Cancel */}
-      {!hasError && (
-        <div className="flex justify-center">
+      {hasError ? (
+        /* ── Error state ── */
+        <div className="flex flex-col items-center gap-5 max-w-md text-center stage-enter">
+          <div className="w-20 h-20 rounded-full bg-red-50 border-2 border-red-200 flex items-center justify-center shadow-lg">
+            <span className="material-symbols-outlined text-4xl text-[#ba1a1a]">error_outline</span>
+          </div>
+          <div className="space-y-1.5">
+            <h3 className="text-lg font-extrabold text-[#151b2d]">Đã xảy ra lỗi</h3>
+            <p className="text-xs text-[#ba1a1a] leading-relaxed font-mono bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+              {errorMessage || 'Không thể xử lý tài liệu. Vui lòng thử lại.'}
+            </p>
+          </div>
           <button
             onClick={onCancel}
-            className="text-xs text-[#727785] hover:text-[#ba1a1a] transition-colors flex items-center gap-1 font-mono"
+            className="px-6 py-2.5 bg-[#0058be] text-white rounded-xl text-xs font-bold hover:bg-[#2170e4] transition-all shadow-md active:scale-95"
+          >
+            ← Quay lại
+          </button>
+        </div>
+      ) : (
+        /* ── Loading state ── */
+        <>
+          {/* Orbital spinner */}
+          <div className="relative flex items-center justify-center w-32 h-32">
+            {/* Outer slow ring */}
+            <svg className="absolute inset-0 w-full h-full animate-spin" style={{ animationDuration: '3s' }} viewBox="0 0 128 128">
+              <circle cx="64" cy="64" r="58" fill="none" stroke="#eaedff" strokeWidth="4" />
+              <circle
+                cx="64" cy="64" r="58"
+                fill="none"
+                stroke="url(#grad1)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray="80 284"
+              />
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#0058be" />
+                  <stop offset="100%" stopColor="#6b38d4" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* Inner fast ring */}
+            <svg className="absolute inset-0 w-full h-full animate-spin" style={{ animationDuration: '1.2s', animationDirection: 'reverse' }} viewBox="0 0 128 128">
+              <circle
+                cx="64" cy="64" r="42"
+                fill="none"
+                stroke="#eaedff"
+                strokeWidth="3"
+              />
+              <circle
+                cx="64" cy="64" r="42"
+                fill="none"
+                stroke="#6b38d4"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeDasharray="40 224"
+                strokeOpacity="0.5"
+              />
+            </svg>
+
+            {/* Center icon */}
+            <div className="relative z-10 w-14 h-14 rounded-full bg-white shadow-lg border border-[#e2e8f0] flex items-center justify-center">
+              <span
+                key={activeStep}
+                className="material-symbols-outlined text-[28px] text-[#0058be] animate-fade-in"
+              >
+                {LOADING_STEPS[activeStep].icon}
+              </span>
+            </div>
+          </div>
+
+          {/* Text */}
+          <div className="text-center space-y-3">
+            <h3 className="text-xl font-extrabold text-[#151b2d]">
+              Hệ thống AI đang xử lý{dots}
+            </h3>
+            <p
+              key={activeStep}
+              className="text-xs text-[#727785] font-mono animate-fade-slide-up"
+            >
+              {LOADING_STEPS[activeStep].label}
+            </p>
+          </div>
+
+          {/* Step indicators */}
+          <div className="flex gap-2">
+            {LOADING_STEPS.map((_, i) => (
+              <div
+                key={i}
+                className={`rounded-full transition-all duration-500 ${
+                  i === activeStep
+                    ? 'w-6 h-2 bg-[#0058be]'
+                    : i < activeStep
+                      ? 'w-2 h-2 bg-[#6b38d4]/40'
+                      : 'w-2 h-2 bg-[#e2e8f0]'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Cancel */}
+          <button
+            onClick={onCancel}
+            className="text-xs text-[#727785] hover:text-[#ba1a1a] transition-colors flex items-center gap-1 font-mono mt-2"
           >
             <span className="material-symbols-outlined text-[14px]">cancel</span>
             Hủy xử lý
           </button>
-        </div>
+        </>
       )}
     </div>
   )
