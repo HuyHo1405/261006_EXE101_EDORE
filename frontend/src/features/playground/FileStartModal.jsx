@@ -3,15 +3,17 @@ import { useState, useEffect } from 'react'
 const templateOptions = [
   {
     value: 'standard-3-node',
-    label: 'Khung 3 phần chuẩn',
-    description: 'Khởi động → Hình thành kiến thức → Luyện tập',
-    tags: ['Phổ biến', '45–90 phút'],
+    label: 'Khung 3 phần',
+    description: 'Tập trung vào kiến thức trọng tâm',
+    tags: ['Phổ biến', '45-90 phút'],
+    icon: 'school' // Gợi ý icon
   },
   {
     value: 'extended-4-node',
-    label: 'Khung 4 phần mở rộng',
-    description: 'Khởi động → Hình thành kiến thức → Luyện tập → Vận dụng',
+    label: 'Khung 4 phần',
+    description: 'Kết hợp thực hành và ứng dụng',
     tags: ['Chuyên sâu', '90 phút+'],
+    icon: 'psychology_alt' // Gợi ý icon
   },
 ]
 
@@ -46,7 +48,6 @@ export default function FileStartModal({ fileName, ctx, onConfirm, onCancel }) {
         </div>
 
         {/* Content */}
-        {/* Đã bỏ overflow-y-auto để nội dung không bị cuộn */}
         <div className="p-6 space-y-6 flex-1">
           {/* Template selection */}
           <div className="space-y-2.5">
@@ -56,27 +57,32 @@ export default function FileStartModal({ fileName, ctx, onConfirm, onCancel }) {
                 <button
                   key={opt.value}
                   onClick={() => setTemplateId(opt.value)}
-                  className={`w-full text-left p-4 rounded-xl border transition-all flex flex-col h-full
-                    ${templateId === opt.value
+                  className={`relative w-full p-5 rounded-xl border transition-all flex flex-col items-center text-center gap-3 h-full
+          ${templateId === opt.value
                       ? 'border-[#0058be] bg-[#0058be]/5 shadow-sm'
                       : 'border-[#e2e8f0] hover:border-[#c2c6d6]'}`}
                 >
-                  <div className="flex items-start justify-between gap-2 w-full mb-2">
-                    <p className={`text-sm font-bold ${templateId === opt.value ? 'text-[#0058be]' : 'text-[#151b2d]'}`}>
-                      {opt.label}
-                    </p>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all
-                      ${templateId === opt.value ? 'border-[#0058be] bg-[#0058be]' : 'border-[#c2c6d6]'}`}
-                    >
-                      {templateId === opt.value && (
-                        <span className="material-symbols-outlined text-white text-[10px] font-bold">check</span>
-                      )}
-                    </div>
+                  {/* Checkmark */}
+                  <div className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all
+          ${templateId === opt.value ? 'border-[#0058be] bg-[#0058be]' : 'border-[#c2c6d6]'}`}
+                  >
+                    {templateId === opt.value && (
+                      <span className="material-symbols-outlined text-white text-[10px] font-bold">check</span>
+                    )}
                   </div>
 
-                  <p className="text-[11px] text-[#727785] mb-3 flex-1 leading-relaxed">{opt.description}</p>
+                  {/* Icon */}
+                  <div className={`p-3 rounded-full ${templateId === opt.value ? 'bg-[#0058be]/10 text-[#0058be]' : 'bg-gray-100 text-gray-500'}`}>
+                    <span className="material-symbols-outlined text-2xl">{opt.icon || 'article'}</span>
+                  </div>
 
-                  <div className="flex flex-wrap gap-1 mt-auto">
+                  {/* Title (Đóng vai trò là nhãn chính) */}
+                  <p className={`text-sm font-bold ${templateId === opt.value ? 'text-[#0058be]' : 'text-[#151b2d]'}`}>
+                    {opt.label}
+                  </p>
+
+                  {/* Tags (Giữ nguyên để tạo sự sinh động) */}
+                  <div className="flex flex-wrap gap-1 justify-center mt-auto">
                     {opt.tags.map(tag => (
                       <span key={tag} className="text-[10px] bg-[#f1f5f9] text-[#424754] px-2 py-0.5 rounded-full font-medium">
                         {tag}

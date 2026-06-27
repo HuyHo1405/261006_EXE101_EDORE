@@ -6,3 +6,6 @@ pypdf==4.2.0
 python-docx==1.1.2
 flask-openapi3[swagger]>=3.1.0
 pydantic>=2.10
+# Vector DB & Embedding
+qdrant-client>=1.9.0
+sentence-transformers>=2.7.0

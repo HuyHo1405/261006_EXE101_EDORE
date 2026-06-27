@@ -182,64 +182,6 @@ class OpenRouterService:
             except ValueError as val_err:
                 return {"success": False, "error": str(val_err)}
 
-    # ─── Streaming Chat Completion ─────────────────────────────────────────────
-
-    @classmethod
-    def stream_chat_completion(
-        cls,
-        messages: list,
-        model: str = None,
-        temperature: float = 0.7,
-        max_tokens: int = 2000,
-    ) -> Generator[str, None, None]:
-        """
-        Generator: Yield từng token chunk từ OpenRouter qua SSE.
-
-        Yields:
-            str: Từng delta token text (hoặc chuỗi rỗng khi nhận [DONE])
-
-        Raises:
-            ValueError: Nếu OPENROUTER_API_KEY chưa set
-            requests.exceptions.RequestException: Nếu network error
-        """
-        url = current_app.config.get('OPENROUTER_BASE_URL')
-        selected_model = model or current_app.config.get('OPENROUTER_MODEL')
-
-        payload = {
-            "model": selected_model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "stream": True,
-        }
-
-        with get_session().post(
-            url,
-            headers=cls.get_headers(),
-            json=payload,
-            stream=True,
-            timeout=180,  # Stream timeout cao hơn: pipeline có thể mất 2-3 phút tổng
-        ) as response:
-            response.raise_for_status()
-            for raw_line in response.iter_lines(decode_unicode=True):
-                if not raw_line:
-                    continue
-                if raw_line.startswith("data: "):
-                    data_str = raw_line[6:].strip()
-                    if data_str == "[DONE]":
-                        return
-                    try:
-                        data = json.loads(data_str)
-                        delta = (
-                            data.get("choices", [{}])[0]
-                            .get("delta", {})
-                            .get("content", "")
-                        )
-                        if delta:
-                            yield delta
-                    except json.JSONDecodeError:
-                        continue  # Skip malformed lines
-
     # ─── Feature 2: Map với Section-aware Chunking ────────────────────────────
 
     @classmethod
@@ -253,6 +195,8 @@ class OpenRouterService:
         section_contexts: Dict[str, str] = None,
         outline: str = None,
         nodes: List[Dict[str, Any]] = None,
+        lop: Optional[int] = None,
+        bai_so: Optional[int] = None,
     ) -> dict:
         """
         Feature 2: Map extracted knowledge → lesson nodes.
@@ -264,6 +208,8 @@ class OpenRouterService:
             section_contexts: { node_name → context_string } từ chunking_service
             outline: Cấu trúc outline (headings H1-H3) của tài liệu
             nodes: Danh sách các nodes từ template ban đầu để tạo prompt chính xác
+            lop: Lớp học để query RAG đối chiếu kiến thức chuẩn
+            bai_so: Số bài để query RAG đối chiếu kiến thức chuẩn
 
         Returns:
             dict: { "success": bool, "content": str (JSON array), ... }
@@ -286,6 +232,29 @@ class OpenRouterService:
         num_nodes = len(nodes) if nodes else 3
         expected_structure = " -> ".join(f"'{n.get('node_type')}'" for n in nodes) if nodes else "3 nodes ('Khởi động' -> 'Lý thuyết cốt lõi' -> 'Thực hành & Vận dụng')"
 
+        # --- RAG SGK Cross-Verification integration ---
+        sgk_context = ""
+        cross_verification_rule = ""
+        if lop is not None and bai_so is not None:
+            try:
+                from app.services.qdrant_service import QdrantService
+                query = outline if outline else extracted_knowledge[:200]
+                # Lấy context chuẩn của bài học từ Qdrant
+                sgk_context = QdrantService.get_context_for_bai(
+                    query=query,
+                    lop=lop,
+                    bai_so=bai_so,
+                    top_k=6
+                )
+                if sgk_context and sgk_context.strip():
+                    cross_verification_rule = (
+                        f"\nCROSS-VERIFICATION & ALIGNMENT RULE:\n"
+                        f"- Bạn phải đối chiếu chặt chẽ thông tin trong tài liệu của người dùng với Sách Giáo Khoa (SGK) Lớp {lop} Bài {bai_so} được cung cấp trong phần STANDARD TEXTBOOK CONTENT.\n"
+                        f"- Nếu tài liệu người dùng bị thiếu kiến thức cốt lõi, hoặc có điểm sai lệch số liệu, mốc thời gian, tên nhân vật/sự kiện so với SGK, hãy tự động bổ sung và sửa đổi thông tin trong 'node_content' theo đúng chuẩn SGK để đảm bảo đầu ra chính xác 100%.\n"
+                    )
+            except Exception as e:
+                print(f"[RAG-Integration] Error fetching SGK context: {str(e)}")
+
         system_prompt = (
             "You are an Expert Pedagogical Architect AI.\n"
             "Your task is to map the provided key concepts into a pre-defined lesson template.\n\n"
@@ -295,7 +264,8 @@ class OpenRouterService:
             f"3. The output JSON array MUST contain exactly {num_nodes} objects, corresponding to the {num_nodes} nodes in the template in the exact order specified.\n"
             "4. Every piece of knowledge must be mapped to exactly one node.\n"
             "5. Respond ONLY with a valid JSON array. No markdown, no extra text.\n"
-            "6. Format the elements in 'node_content' array using rich markdown (headings with '###', lists with '-' or '1.', bold text with '**') for visual clarity.\n\n"
+            "6. Format the elements in 'node_content' array using rich markdown (headings with '###', lists with '-' or '1.', bold text with '**') for visual clarity.\n"
+            f"{cross_verification_rule}\n"
             "Each object in the array MUST follow this exact schema:\n"
             f"{dynamic_schema}\n\n"
             f"The array MUST contain exactly {num_nodes} objects, one for each node in this exact sequence: {expected_structure}."
@@ -331,7 +301,12 @@ class OpenRouterService:
         if outline:
             outline_block = f"DOCUMENT STRUCTURE/OUTLINE:\n{outline}\n\n"
 
+        sgk_block = ""
+        if sgk_context:
+            sgk_block = f"STANDARD TEXTBOOK CONTENT (SGK Lớp {lop} Bài {bai_so} - ĐỐI CHIẾU VÀ SỬA LỖI NẾU TÀI LIỆU DƯỚI BỊ THIẾU HOẶC SAI):\n{sgk_context}\n\n"
+
         user_content = (
+            f"{sgk_block}"
             f"{outline_block}"
             f"EXTRACTED KNOWLEDGE (use ONLY this as your source):\n"
             f"{knowledge_block}\n\n"
@@ -835,124 +810,3 @@ class OpenRouterService:
             messages, model=model, temperature=temperature, max_tokens=3000
         )
 
-    # ─── Feature 3: Parallel Enrich ───────────────────────────────────────────
-
-    @classmethod
-    def parallel_enrich_nodes(
-        cls,
-        nodes: List[Any],
-        rag_activities: Any,
-        model: str = None,
-        temperature: float = 0.5,
-        section_contexts: Dict[str, str] = None,
-        classroom_ctx: Dict[str, Any] = None,
-        max_workers: int = 3,
-    ) -> dict:
-        """
-        Enrich toàn bộ nodes SONG SONG dùng ThreadPoolExecutor.
-        Tổng thời gian ≈ thời gian của node chậm nhất (không phải tổng tất cả).
-
-        Args:
-            nodes: List các node objects đã được map
-            rag_activities: Danh sách hoạt động dạy học
-            section_contexts: { node_name → context } từ chunking_service (optional)
-            classroom_ctx: Optional — Cấu hình lớp học từ client
-            max_workers: Số thread parallel tối đa (default 3 = số node mặc định)
-            model, temperature: Override params
-
-        Returns:
-            dict: {
-                "success": bool,
-                "content": list — Danh sách enriched nodes theo thứ tự gốc,
-                "errors": list — Danh sách lỗi nếu có (per node),
-                "partial": bool — True nếu một số node thất bại nhưng có kết quả một phần
-            }
-        """
-        if not nodes:
-            return {"success": False, "error": "No nodes to enrich."}
-
-        # Parse nodes nếu là JSON string
-        if isinstance(nodes, str):
-            try:
-                nodes = json.loads(nodes)
-            except json.JSONDecodeError:
-                return {"success": False, "error": "mapped_nodes is not valid JSON."}
-
-        if not isinstance(nodes, list):
-            nodes = [nodes]
-
-        results: List[Optional[dict]] = [None] * len(nodes)
-        errors: List[Optional[str]] = [None] * len(nodes)
-
-        # Capture app instance before entering thread execution
-        app = current_app._get_current_object()
-
-        def _enrich_task(index: int, node: Any, app_obj: Any) -> tuple:
-            """Task chạy trong thread pool."""
-            with app_obj.app_context():
-                # Lấy context riêng cho node này (nếu có)
-                context = None
-                if section_contexts and isinstance(node, dict):
-                    node_name = node.get("node_name", "")
-                    context = section_contexts.get(node_name)
-
-                result = cls.enrich_single_node(
-                    node=node,
-                    rag_activities=rag_activities,
-                    model=model,
-                    temperature=temperature,
-                    section_context=context,
-                    classroom_ctx=classroom_ctx,
-                )
-                return index, result
-
-        with ThreadPoolExecutor(max_workers=min(max_workers, len(nodes))) as executor:
-            futures = {
-                executor.submit(_enrich_task, i, node, app): i
-                for i, node in enumerate(nodes)
-            }
-
-            for future in as_completed(futures):
-                try:
-                    index, result = future.result()
-                    if result.get("success"):
-                        # Parse single node JSON từ content string
-                        content_str = result.get("content", "").strip()
-                        content_str = re.sub(r'```json|```', '', content_str).strip()
-                        try:
-                            parsed_node = json.loads(content_str)
-                            # Force override node_type to match the mapped input exactly
-                            original_node = nodes[index]
-                            if isinstance(original_node, dict) and isinstance(parsed_node, dict):
-                                orig_type = original_node.get("node_type") or original_node.get("node_name") or original_node.get("type")
-                                if orig_type:
-                                    parsed_node["node_type"] = orig_type
-                            results[index] = parsed_node
-                        except json.JSONDecodeError:
-                            # Nếu không parse được, giữ nguyên string
-                            results[index] = {"_raw": content_str}
-                            errors[index] = f"Node {index}: JSON parse error on response."
-                    else:
-                        errors[index] = f"Node {index}: {result.get('error', 'Unknown error')}"
-                except Exception as e:
-                    idx = futures[future]
-                    errors[index] = f"Node {idx}: Thread exception — {str(e)}"
-
-        # Lọc kết quả
-        successful = [r for r in results if r is not None]
-        actual_errors = [e for e in errors if e is not None]
-        has_partial = len(actual_errors) > 0 and len(successful) > 0
-
-        if not successful:
-            return {
-                "success": False,
-                "error": "All node enrichment tasks failed.",
-                "errors": actual_errors,
-            }
-
-        return {
-            "success": True,
-            "content": successful,
-            "errors": actual_errors if actual_errors else [],
-            "partial": has_partial,
-        }

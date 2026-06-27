@@ -190,32 +190,6 @@ export default function Playground() {
 
   return (
     <div className="w-full flex flex-col gap-6 font-sans antialiased text-[#151b2d]">
-      {/* ── Stepper outside the large container ── */}
-      <div className="flex justify-center mt-2 stage-enter">
-        <div className="flex items-center gap-2 text-[10px] font-mono bg-white border border-[#c2c6d6] px-4 py-2 rounded-full shadow-sm">
-          {Object.entries(stageLabels).map(([key, { step, label }], i) => {
-            const isActive = stage === key
-            const isDone = Object.keys(stageLabels).indexOf(stage) > i
-            return (
-              <div key={key} className="flex items-center gap-2">
-                <div
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all ${
-                    isActive
-                      ? 'bg-[#0058be] text-white border-[#0058be] font-bold'
-                      : isDone
-                        ? 'bg-[#eaedff] text-[#0058be] border-[#0058be]/30'
-                        : 'bg-white text-[#727785] border-[#e2e8f0]'
-                  }`}
-                >
-                  <span>{isDone ? '✓' : step}</span>
-                  <span>{label}</span>
-                </div>
-                {i < 2 && <span className="text-[#c2c6d6] font-bold">›</span>}
-              </div>
-            )
-          })}
-        </div>
-      </div>
 
       {/* ── Main Container ── */}
       <div className="w-full bg-[#faf8ff] min-h-[85vh] relative rounded-2xl border border-[#c2c6d6] shadow-sm p-8">
@@ -252,6 +226,7 @@ export default function Playground() {
               onManualSubmit={handleManualSubmit}
               classroomCtx={classroomCtx}
               onConfigChange={handleConfigChange}
+              onOpenConfig={() => setIsConfigOpen(true)}
             />
           )}
 
