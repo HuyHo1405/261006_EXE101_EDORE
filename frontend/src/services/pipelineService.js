@@ -18,7 +18,7 @@
  */
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
-const STREAM_ENDPOINT = `${BASE_URL}/api/ai/pedagogy/stream`
+const STREAM_ENDPOINT = `${BASE_URL}/api/ai/pedagogy/pipeline`
 
 /**
  * Stream the pedagogy pipeline.

@@ -247,10 +247,12 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
         <span className="text-[#c2c6d6] text-xs select-none">·</span>
 
         {/* Teaching Nodes */}
+        {/* Teaching Nodes */}
         {steps.map((step, idx) => {
-          const stepTitle = getShortNodeName(step, idx) //TODO sửa lại dùng node type thay vì title
+          const stepTitle = getShortNodeName(step, idx)
           const stepDuration = step.duration || (step.estimated_time_minutes ? `${step.estimated_time_minutes}'` : "10'")
           const isActive = activeIdx === idx
+          const isLoading = step.isLoading === true
 
           return (
             <button
@@ -261,9 +263,13 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
                 : 'bg-white hover:bg-[#eaedff]/30 text-[#424754] border-[#e2e8f0]'
                 }`}
             >
-              <span className={`text-[10px] font-bold font-mono px-1.5 py-0.5 rounded ${isActive ? 'bg-white/20' : 'bg-[#f1f5f9]'}`}>
-                {stepDuration.endsWith("'") ? stepDuration : `${stepDuration}'`}
-              </span>
+              {isLoading ? (
+                <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin shrink-0" />
+              ) : (
+                <span className={`text-[10px] font-bold font-mono px-1.5 py-0.5 rounded ${isActive ? 'bg-white/20' : 'bg-[#f1f5f9]'}`}>
+                  {stepDuration.endsWith("'") ? stepDuration : `${stepDuration}'`}
+                </span>
+              )}
               <span>{stepTitle}</span>
             </button>
           )
@@ -323,9 +329,9 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
 
                   <div className="divide-y divide-[#e2e8f0] border border-[#e2e8f0] rounded-xl overflow-hidden shadow-inner bg-white">
                     {steps.map((step, idx) => {
-                      const stepTitle = step.title || step.applied_activity || `Node ${idx + 1}`
+                      const stepTitle = step.isLoading ? `Đang khởi tạo phần ${idx + 1}...` : (step.title || step.applied_activity || `Node ${idx + 1}`)
                       const stepType = step.type || step.node_name || 'Hoạt động'
-                      const stepDuration = step.duration || (step.estimated_time_minutes ? `${step.estimated_time_minutes}'` : '--')
+                      const stepDuration = step.isLoading ? '--' : (step.duration || (step.estimated_time_minutes ? `${step.estimated_time_minutes}'` : '--'))
 
                       return (
                         <div
@@ -348,9 +354,13 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
                           </div>
 
                           <div className="flex items-center gap-3">
-                            <span className="text-xs font-mono bg-[#eaedff] text-[#0058be] px-2.5 py-0.5 rounded-full font-semibold">
-                              {stepDuration}
-                            </span>
+                            {step.isLoading ? (
+                              <span className="w-4 h-4 border-2 border-[#0058be] border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <span className="text-xs font-mono bg-[#eaedff] text-[#0058be] px-2.5 py-0.5 rounded-full font-semibold">
+                                {stepDuration}
+                              </span>
+                            )}
                             <span className="material-symbols-outlined text-[#c2c6d6] group-hover:text-[#0058be] transition-colors">
                               chevron_right
                             </span>
@@ -463,7 +473,7 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
                         Nội dung giảng dạy tương ứng
                       </h3>
                     </div>
-                    {isContentExpanded && (
+                    {isContentExpanded && !current.isLoading && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -481,7 +491,13 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
 
                   {isContentExpanded && (
                     <div className="p-6 bg-white border-t border-[#e2e8f0]">
-                      {editingContent ? (
+                      {current.isLoading ? (
+                        <div className="animate-pulse space-y-3 py-2">
+                          <div className="h-4 bg-slate-100 rounded w-full"></div>
+                          <div className="h-4 bg-slate-100 rounded w-11/12"></div>
+                          <div className="h-4 bg-slate-100 rounded w-4/5"></div>
+                        </div>
+                      ) : editingContent ? (
                         Array.isArray(current.originalContent) || typeof current.originalContent === 'object' ? (
                           <AutoExpandingTextarea
                             value={Array.isArray(current.originalContent) ? current.originalContent.join('\n') : JSON.stringify(current.originalContent)}
@@ -563,22 +579,26 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
                     <h4 className="text-xs font-bold uppercase text-white font-mono">Gợi ý hoạt động / Chuẩn bị</h4>
                   </div>
 
-                  <button
-                    onClick={() => setEditingSuggestions(!editingSuggestions)}
-                    className="p-1 text-white/80 hover:text-white hover:bg-white/20 rounded-md transition-colors flex items-center justify-center"
-                    title={editingSuggestions ? 'Lưu / Xem trước' : 'Chỉnh sửa'}
-                  >
-                    <span className="material-symbols-outlined text-[16px]">
-                      {editingSuggestions ? 'preview' : 'edit'}
-                    </span>
-                  </button>
+                  {!current.isLoading && (
+                    <button
+                      onClick={() => setEditingSuggestions(!editingSuggestions)}
+                      className="p-1 text-white/80 hover:text-white hover:bg-white/20 rounded-md transition-colors flex items-center justify-center"
+                      title={editingSuggestions ? 'Lưu / Xem trước' : 'Chỉnh sửa'}
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        {editingSuggestions ? 'preview' : 'edit'}
+                      </span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Body màu nhạt, chữ tối màu dễ đọc */}
                 <div className="p-4 space-y-4">
                   {/* Hoạt động áp dụng */}
                   <div className="">
-                    {editingSuggestions ? (
+                    {current.isLoading ? (
+                      <div className="h-6 bg-slate-200/50 rounded animate-pulse w-2/3"></div>
+                    ) : editingSuggestions ? (
                       <input
                         type="text"
                         value={current.appliedActivity || current.applied_activity || ''}
@@ -595,7 +615,12 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
 
                   {/* Dụng cụ & Học liệu cần chuẩn bị */}
                   <div>
-                    {editingSuggestions ? (
+                    {current.isLoading ? (
+                      <div className="animate-pulse space-y-2 py-1">
+                        <div className="h-3 bg-slate-200/50 rounded w-full"></div>
+                        <div className="h-3 bg-slate-200/50 rounded w-5/6"></div>
+                      </div>
+                    ) : editingSuggestions ? (
                       <AutoExpandingTextarea
                         value={Array.isArray(current.pedagogNote) ? current.pedagogNote.join('\n') : (current.pedagogNote ?? '')}
                         onChange={(e) => updateStep({ pedagogNote: e.target.value })}
@@ -613,25 +638,34 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
 
               {/* Instructions Panel - Clean White (Nền trắng tinh, thanh tiêu đề xám siêu nhạt) */}
               <div className="border border-[#0058be] rounded-xl overflow-hidden flex flex-col shadow-sm bg-[#f0f7ff] transition-shadow hover:shadow-md">
-                <div className="px-4 py-3 bg-[#e0efff]/60 border-b border-[#0058be] flex items-center justify-between">                  <div className="flex items-center gap-1.5">
-                  {/* Chỉ giữ lại màu xanh ở Icon để đồng bộ */}
-                  <span className="material-symbols-outlined text-[#0058be] text-[18px]">list_alt</span>
-                  <h4 className="text-xs font-bold uppercase text-[#151b2d] font-mono">Hướng dẫn thực hiện</h4>
-                </div>
+                <div className="px-4 py-3 bg-[#e0efff]/60 border-b border-[#0058be] flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    {/* Chỉ giữ lại màu xanh ở Icon để đồng bộ */}
+                    <span className="material-symbols-outlined text-[#0058be] text-[18px]">list_alt</span>
+                    <h4 className="text-xs font-bold uppercase text-[#151b2d] font-mono">Hướng dẫn thực hiện</h4>
+                  </div>
 
-                  <button
-                    onClick={() => setEditingInstructions(!editingInstructions)}
-                    className="p-1 text-[#727785] hover:text-[#0058be] hover:bg-[#eaedff] rounded-md transition-colors flex items-center justify-center"
-                    title={editingInstructions ? 'Lưu / Xem trước' : 'Chỉnh sửa'}
-                  >
-                    <span className="material-symbols-outlined text-[16px]">
-                      {editingInstructions ? 'preview' : 'edit'}
-                    </span>
-                  </button>
+                  {!current.isLoading && (
+                    <button
+                      onClick={() => setEditingInstructions(!editingInstructions)}
+                      className="p-1 text-[#727785] hover:text-[#0058be] hover:bg-[#eaedff] rounded-md transition-colors flex items-center justify-center"
+                      title={editingInstructions ? 'Lưu / Xem trước' : 'Chỉnh sửa'}
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        {editingInstructions ? 'preview' : 'edit'}
+                      </span>
+                    </button>
+                  )}
                 </div>
 
                 <div className="p-4 bg-white">
-                  {editingInstructions ? (
+                  {current.isLoading ? (
+                    <div className="animate-pulse space-y-2 py-1">
+                      <div className="h-3 bg-slate-200/50 rounded w-full"></div>
+                      <div className="h-3 bg-slate-200/50 rounded w-11/12"></div>
+                      <div className="h-3 bg-slate-200/50 rounded w-4/5"></div>
+                    </div>
+                  ) : editingInstructions ? (
                     <AutoExpandingTextarea
                       value={Array.isArray(current.details) ? current.details.join('\n') : (current.details ?? '')}
                       onChange={(e) => updateStep({ details: e.target.value.split('\n') })}

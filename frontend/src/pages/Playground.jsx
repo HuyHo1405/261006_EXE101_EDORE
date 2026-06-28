@@ -77,6 +77,20 @@ export default function Playground() {
     resetPipelineState()
     setStage('processing')
 
+    let fakeTimer = null
+    let canTransitionToResults = false
+    let pendingSteps = null
+
+    // Thiết lập fake delay 2 phút (120 giây) cho loader
+    fakeTimer = setTimeout(() => {
+      canTransitionToResults = true
+      // Nếu đã có dữ liệu sườn từ metadata hoặc section, ta chuyển stage ngay
+      if (pendingSteps) {
+        setTimelineSteps(pendingSteps)
+        setStage('results')
+      }
+    }, 120000) // 2 phút chờ ở loader
+
     const abort = streamPipeline(formData, {
       onProgress(data) {
         setProgressEvents((prev) => [...prev, data])
@@ -86,16 +100,45 @@ export default function Playground() {
       },
       onMetadata(data) {
         setMetadata(data)
+        if (data?.sections && Array.isArray(data.sections)) {
+          const skeletonSteps = data.sections.map((sectionName, i) => ({
+            time: existingTimeForIndex(i, classroomCtx.template_id),
+            title: sectionName,
+            duration: "15'",
+            type: sectionName,
+            intent: '',
+            details: [],
+            originalContent: '',
+            pedagogNote: '',
+            isLoading: true,
+          }))
+          
+          if (canTransitionToResults) {
+            setTimelineSteps(skeletonSteps)
+            setStage('results')
+          } else {
+            pendingSteps = skeletonSteps
+          }
+        }
       },
       onSection(data) {
-        // data = { index, node, timestamp }
         setSectionsDone((n) => n + 1)
         const step = mapNodeToTimelineStep(data.node, data.index)
-        setTimelineSteps((prev) => {
+        
+        const updateFunc = (prev) => {
           const next = [...prev]
-          next[data.index] = step
+          while (next.length <= data.index) {
+            next.push({ isLoading: true })
+          }
+          next[data.index] = { ...step, isLoading: false }
           return next
-        })
+        }
+
+        if (canTransitionToResults) {
+          setTimelineSteps(updateFunc)
+        } else {
+          pendingSteps = updateFunc(pendingSteps || [])
+        }
       },
       onNodeError(data) {
         console.warn('Node error:', data)
@@ -104,32 +147,50 @@ export default function Playground() {
         if (data?.content_summary) {
           setContentSummary(data.content_summary)
         }
-        // If the pipeline returned final_pedagogical_script, use it as the canonical steps
-        if (
-          data?.final_pedagogical_script &&
-          Array.isArray(data.final_pedagogical_script) &&
-          data.final_pedagogical_script.length > 0
-        ) {
-          const steps = data.final_pedagogical_script.map((node, i) =>
-            mapNodeToTimelineStep(node, i)
-          )
-          setTimelineSteps(steps)
+        
+        const updateFunc = () => {
+          if (
+            data?.final_pedagogical_script &&
+            Array.isArray(data.final_pedagogical_script) &&
+            data.final_pedagogical_script.length > 0
+          ) {
+            return data.final_pedagogical_script.map((node, i) =>
+              mapNodeToTimelineStep(node, i)
+            )
+          }
+          return pendingSteps || []
         }
-        // Short pause then show results
-        setTimeout(() => setStage('results'), 500)
+
+        if (canTransitionToResults) {
+          setTimelineSteps(updateFunc())
+          setStage('results')
+        } else {
+          pendingSteps = updateFunc()
+        }
       },
       onError(data) {
+        clearTimeout(fakeTimer)
         setHasError(true)
         setErrorMessage(data?.message ?? 'Unknown error')
       },
       onComplete() {
-        // If we got an error but no done event, stay on processing so user sees it
-        // Otherwise transitions are handled in onDone
+        // Hoàn tất pipeline
       },
     })
 
-    abortRef.current = abort
-  }, [])
+    // Helper xác định timing cơ bản theo vị trí của node
+    function existingTimeForIndex(index, templateId) {
+      const times = templateId === 'extended-4-node' 
+        ? ['00:00', '00:10', '00:35', '01:05']
+        : ['00:00', '00:10', '00:30']
+      return times[index] || `Node ${index + 1}`
+    }
+
+    abortRef.current = () => {
+      clearTimeout(fakeTimer)
+      abort()
+    }
+  }, [classroomCtx.template_id])
 
   const handleFileSelected = (file) => {
     setInputFile(file)
@@ -202,20 +263,6 @@ export default function Playground() {
             </p>
           </div>
 
-          {/* Config Button in the header (only in 'input' stage) */}
-          {stage === 'input' && (
-            <button
-              onClick={() => setIsConfigOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#e2e8f0] rounded-xl hover:border-[#c2c6d6] hover:bg-[#f8fafc] text-xs font-semibold shadow-sm transition-all active:scale-95 text-[#424754]"
-            >
-              <span className="material-symbols-outlined text-base text-[#0058be]">settings</span>
-              <span>Cấu hình lớp học:</span>
-              <span className="bg-[#eaedff] text-[#0058be] font-bold px-2 py-0.5 rounded text-[10px]">
-                {classroomCtx.duration}p · {classroomCtx.studentCount} HS · {templateName}
-              </span>
-              <span className="material-symbols-outlined text-xs text-[#727785]">edit</span>
-            </button>
-          )}
         </div>
 
         {/* ── Stage renderers — keyed so React remounts on every stage change ── */}
