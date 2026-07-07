@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import Container from '../components/Container'
 import ContentInput from '../features/playground/ContentInput'
 import ProcessingLoader from '../features/playground/ProcessingLoader'
 import TimelineEditor from '../features/playground/TimelineEditor'
@@ -22,9 +23,9 @@ const DEFAULT_CTX = {
  *
  * State owned here; features are pure UI components.
  */
-export default function Playground() {
+export default function Playground({ isMockup = false, mockScript = null, forcedStage = undefined, onPipelineDone = null }) {
   // ── Stage machine (with fade transition) ───────────────────────────────────
-  const { visibleStage: stage, isExiting, goTo: setStage } = useStageTransition('input')
+  const { visibleStage: stage, isExiting, goTo: setStage } = useStageTransition(forcedStage || 'input')
 
   // ── Context (Classroom Context from localStorage or default) ──────────────
   const [classroomCtx, setClassroomCtx] = useState(() => {
@@ -54,7 +55,36 @@ export default function Playground() {
   const [pendingFile, setPendingFile] = useState(null)  // { file, isText, text }
 
   // ── Results ────────────────────────────────────────────────────────────────
-  const [timelineSteps, setTimelineSteps] = useState([])
+  const [timelineSteps, setTimelineSteps] = useState(() => {
+    if (isMockup && forcedStage === 'results' && mockScript) {
+      return mockScript.steps || []
+    }
+    return []
+  })
+  const [activeScriptId, setActiveScriptId] = useState(null)
+
+  // ── Load editing script from Library on mount ─────────────────────────────
+  useEffect(() => {
+    const editingScriptRaw = localStorage.getItem('edore_active_editing_script')
+    if (editingScriptRaw) {
+      try {
+        const editingScript = JSON.parse(editingScriptRaw)
+        if (editingScript && editingScript.steps) {
+          setTimelineSteps(editingScript.steps)
+          setContentSummary(editingScript.summary || '')
+          setActiveScriptId(editingScript.id)
+          if (editingScript.classroomCtx) {
+            setClassroomCtx(editingScript.classroomCtx)
+          }
+          setStage('results')
+        }
+      } catch (e) {
+        console.error('Error loading editing script', e)
+      } finally {
+        localStorage.removeItem('edore_active_editing_script')
+      }
+    }
+  }, [setStage])
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   const resetPipelineState = () => {
@@ -65,6 +95,7 @@ export default function Playground() {
     setHasError(false)
     setErrorMessage('')
     setTimelineSteps([])
+    setActiveScriptId(null)
   }
 
   // ── Handlers ──────────────────────────────────────────────────────────────
@@ -73,9 +104,43 @@ export default function Playground() {
     localStorage.setItem('edore_classroom_ctx', JSON.stringify(ctx))
   }
 
+  const handleStepsChange = (newSteps) => {
+    setTimelineSteps(newSteps)
+    if (activeScriptId) {
+      try {
+        const savedRaw = localStorage.getItem('edore_saved_scripts')
+        if (savedRaw) {
+          const list = JSON.parse(savedRaw)
+          const updated = list.map((s) =>
+            s.id === activeScriptId
+              ? { ...s, steps: newSteps, nodesCount: newSteps.length }
+              : s
+          )
+          localStorage.setItem('edore_saved_scripts', JSON.stringify(updated))
+        }
+      } catch (e) {
+        console.error('Error updating edited script steps', e)
+      }
+    }
+  }
+
   const startPipeline = useCallback((formData) => {
     resetPipelineState()
     setStage('processing')
+
+    if (isMockup) {
+      const timer = setTimeout(() => {
+        const finalSteps = mockScript ? mockScript.steps : []
+        setTimelineSteps(finalSteps)
+        setStage('results')
+        if (onPipelineDone) onPipelineDone()
+      }, 1500)
+      abortRef.current = () => {
+        clearTimeout(timer)
+        setStage('input')
+      }
+      return
+    }
 
     let fakeTimer = null
     let canTransitionToResults = false
@@ -112,7 +177,7 @@ export default function Playground() {
             pedagogNote: '',
             isLoading: true,
           }))
-          
+
           if (canTransitionToResults) {
             setTimelineSteps(skeletonSteps)
             setStage('results')
@@ -124,7 +189,7 @@ export default function Playground() {
       onSection(data) {
         setSectionsDone((n) => n + 1)
         const step = mapNodeToTimelineStep(data.node, data.index)
-        
+
         const updateFunc = (prev) => {
           const next = [...prev]
           while (next.length <= data.index) {
@@ -147,7 +212,7 @@ export default function Playground() {
         if (data?.content_summary) {
           setContentSummary(data.content_summary)
         }
-        
+
         const updateFunc = () => {
           if (
             data?.final_pedagogical_script &&
@@ -161,11 +226,41 @@ export default function Playground() {
           return pendingSteps || []
         }
 
+        const finalSteps = updateFunc()
+
+        // Create script ID
+        const newId = `script-${Date.now()}`
+        setActiveScriptId(newId)
+
+        // Auto-save script to library on done
+        try {
+          const savedRaw = localStorage.getItem('edore_saved_scripts')
+          let list = savedRaw ? JSON.parse(savedRaw) : []
+          const newScript = {
+            id: newId,
+            title: classroomCtx.learning_outcome || fileName || 'Kịch bản mới từ AI',
+            subject: `Giáo án lớp ${classroomCtx.duration}p`,
+            bloomLevel: 'Vận dụng',
+            duration: `${classroomCtx.duration} phút`,
+            nodesCount: finalSteps.length,
+            createdAt: new Date().toISOString().split('T')[0],
+            summary: data.content_summary || 'Kịch bản giảng dạy tự động được tối ưu bằng EDORE AI.',
+            color: 'from-blue-500 to-indigo-600',
+            favorite: false,
+            steps: finalSteps,
+            classroomCtx: classroomCtx
+          }
+          list = [newScript, ...list]
+          localStorage.setItem('edore_saved_scripts', JSON.stringify(list))
+        } catch (e) {
+          console.error('Error saving new AI script', e)
+        }
+
         if (canTransitionToResults) {
-          setTimelineSteps(updateFunc())
+          setTimelineSteps(finalSteps)
           setStage('results')
         } else {
-          pendingSteps = updateFunc()
+          pendingSteps = finalSteps
         }
       },
       onError(data) {
@@ -180,7 +275,7 @@ export default function Playground() {
 
     // Helper xác định timing cơ bản theo vị trí của node
     function existingTimeForIndex(index, templateId) {
-      const times = templateId === 'extended-4-node' 
+      const times = templateId === 'extended-4-node'
         ? ['00:00', '00:10', '00:35', '01:05']
         : ['00:00', '00:10', '00:30']
       return times[index] || `Node ${index + 1}`
@@ -190,7 +285,7 @@ export default function Playground() {
       clearTimeout(fakeTimer)
       abort()
     }
-  }, [classroomCtx.template_id])
+  }, [classroomCtx.template_id, classroomCtx.duration, fileName])
 
   const handleFileSelected = (file) => {
     setInputFile(file)
@@ -250,20 +345,11 @@ export default function Playground() {
   const [isConfigOpen, setIsConfigOpen] = useState(false)
 
   return (
-    <div className="w-full flex flex-col gap-6 font-sans antialiased text-[#151b2d]">
+    <Container className="flex flex-col gap-6">
 
       {/* ── Main Container ── */}
       <div className="w-full bg-[#faf8ff] min-h-[85vh] relative rounded-2xl border border-[#c2c6d6] shadow-sm p-8">
-        {/* Title area - Left-aligned with Config Button on the right (old stepper position) */}
-        <div className="mb-8 border-b border-[#e2e8f0] pb-4 flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="font-extrabold text-2xl text-[#151b2d]">Playground AI</h1>
-            <p className="text-xs text-[#727785] font-mono mt-0.5">
-              Tạo kịch bản giảng dạy từ tài liệu của bạn
-            </p>
-          </div>
 
-        </div>
 
         {/* ── Stage renderers — keyed so React remounts on every stage change ── */}
         <div key={stage} className={isExiting ? 'stage-exit' : 'stage-enter'}>
@@ -288,7 +374,7 @@ export default function Playground() {
           {stage === 'results' && (
             <TimelineEditor
               steps={timelineSteps}
-              onStepsChange={setTimelineSteps}
+              onStepsChange={handleStepsChange}
               contentSummary={contentSummary}
               onRestart={handleRestart}
             />
@@ -312,6 +398,6 @@ export default function Playground() {
           onCancel={handleFileStartCancel}
         />
       )}
-    </div>
+    </Container>
   )
 }

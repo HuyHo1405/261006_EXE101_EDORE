@@ -29,16 +29,9 @@ export default function ContentInput({ onFileSelected, onManualSubmit, classroom
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef(null)
 
-  const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50 MB
-
   const handleFileChange = (e) => {
     const file = e.target.files?.[0]
     if (file) {
-      if (file.size > MAX_FILE_SIZE) {
-        alert('Kích thước file vượt quá giới hạn cho phép (tối đa 50MB).')
-        e.target.value = ''
-        return
-      }
       onFileSelected(file)
     }
   }
@@ -48,10 +41,6 @@ export default function ContentInput({ onFileSelected, onManualSubmit, classroom
     setIsDragging(false)
     const file = e.dataTransfer.files?.[0]
     if (file) {
-      if (file.size > MAX_FILE_SIZE) {
-        alert('Kích thước file vượt quá giới hạn cho phép (tối đa 50MB).')
-        return
-      }
       onFileSelected(file)
     }
   }

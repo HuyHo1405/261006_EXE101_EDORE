@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import TimelineEditor from '../features/playground/TimelineEditor'
+import Container from '../components/Container'
 
 const MOCK_STEPS = [
   {
@@ -47,7 +48,7 @@ const MOCK_STEPS = [
     pedagogNote: "Chuẩn bị thước đo góc di động nếu có điều kiện cho học sinh đo thực tế.",
     warningContext: ""
   }
-];
+]
 
 export default function DemoUI() {
   const [timelineSteps, setTimelineSteps] = useState(MOCK_STEPS)
@@ -57,25 +58,24 @@ export default function DemoUI() {
   }
 
   return (
-    <div className="w-full bg-[#faf8ff] min-h-[85vh] text-[#151b2d] font-sans antialiased relative rounded-2xl border border-[#c2c6d6] shadow-sm p-8">
-      {/* ── Page header ── */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="font-extrabold text-2xl text-[#151b2d]">Demo UI Playground</h1>
-            <p className="text-xs text-[#727785] font-mono mt-0.5">
-              Trang demo giao diện với dữ liệu giả lập để kiểm tra định dạng hiển thị
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <TimelineEditor
-        steps={timelineSteps}
-        onStepsChange={setTimelineSteps}
-        contentSummary="Đây là kịch bản demo giảng dạy mẫu để kiểm tra tính năng hiển thị nội dung học liệu phong phú và định dạng markdown trực quan mới."
-        onRestart={handleRestart}
-      />
-    </div>
+    <Container>
+      <div className="w-full bg-[#faf8ff] rounded-2xl border border-[#c2c6d6] shadow-sm p-8">
+        {/* ── Page header ── */}
+        <div className="mb-8">
+          <h1 className="font-extrabold text-2xl text-[#151b2d]">Demo UI Playground</h1>
+          <p className="text-xs text-[#727785] font-mono mt-0.5">
+            Trang demo giao diện với dữ liệu giả lập để kiểm tra định dạng hiển thị
+          </p>
+        </div>
+
+        <TimelineEditor
+          steps={timelineSteps}
+          onStepsChange={setTimelineSteps}
+          contentSummary="Đây là kịch bản demo giảng dạy mẫu để kiểm tra tính năng hiển thị nội dung học liệu phong phú và định dạng markdown trực quan mới."
+          onRestart={handleRestart}
+        />
+      </div>
+    </Container>
   )
 }
