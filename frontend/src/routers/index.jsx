@@ -27,7 +27,6 @@ const FilterActiveView = lazy(() => import('../pages/FilterActiveView'))
 const TeachingScript = lazy(() => import('../pages/TeachingScript'))
 const DemoUI = lazy(() => import('../pages/DemoUI'))
 const PricingPage = lazy(() => import('../pages/PricingPage'))
-const MockupPage = lazy(() => import('../pages/MockupPage'))
 
 function PageFallback() {
   return (
@@ -64,23 +63,15 @@ export default function AppRouter() {
               </PublicRoute>
             }
           />
-          <Route path="/mockup" element={<MockupPage />} />
         </Route>
 
         {/* ── Main Layout: Header + Footer ── */}
         <Route element={<MainLayout />}>
-          {/* Default → dashboard */}
-          <Route index element={<Navigate to="/dashboard" replace />} />
+          {/* Default → studio */}
+          <Route index element={<Navigate to="/studio" replace />} />
 
           {/* Core Protected Pages */}
-          <Route
-            path="/playground"
-            element={
-              <ProtectedRoute>
-                <Playground />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/studio" element={<Playground />} />
           <Route
             path="/dashboard"
             element={

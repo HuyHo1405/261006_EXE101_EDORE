@@ -33,7 +33,18 @@ export default function FileStartModal({ fileName, ctx, onConfirm, onCancel }) {
   }, [])
 
   const handleConfirm = () => {
-    onConfirm({ ...ctx, template_id: templateId, learning_outcome: learningOutcome })
+    let updatedDuration = ctx.duration || 45;
+    if (templateId === 'extended-4-node' && (updatedDuration === 45 || updatedDuration === '45')) {
+      updatedDuration = 90;
+    } else if (templateId === 'standard-3-node' && (updatedDuration === 90 || updatedDuration === '90')) {
+      updatedDuration = 45;
+    }
+    onConfirm({ 
+      ...ctx, 
+      template_id: templateId, 
+      learning_outcome: learningOutcome,
+      duration: updatedDuration
+    })
   }
 
   return (

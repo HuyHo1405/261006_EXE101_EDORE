@@ -16,6 +16,287 @@ function formatInlineMarkdown(text, isDark = false) {
   });
 }
 
+// Helper to parse markdown to HTML for rich editing
+function mdToHtml(md) {
+  if (!md) return '';
+  const lines = md.trim().replace(/\r\n/g, '\n').split('\n');
+  let html = '';
+  let inList = false;
+  let listType = null;
+
+  const closeList = () => {
+    if (inList) {
+      html += `</${listType}>`;
+      inList = false;
+      listType = null;
+    }
+  };
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      closeList();
+      html += '<p><br></p>';
+      return;
+    }
+
+    // Header (strip bold formatting inside headers)
+    const headerMatch = trimmed.match(/^(#{1,6})\s*(.*)$/);
+    if (headerMatch) {
+      closeList();
+      const content = headerMatch[2].replace(/\*\*/g, '');
+      html += `<h3>${content}</h3>`;
+      return;
+    }
+
+    // Bullet list
+    const bulletMatch = trimmed.match(/^[-*+]\s+(.*)$/);
+    if (bulletMatch) {
+      if (!inList || listType !== 'ul') {
+        closeList();
+        html += '<ul>';
+        inList = true;
+        listType = 'ul';
+      }
+      const content = bulletMatch[1].replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      html += `<li>${content}</li>`;
+      return;
+    }
+
+    // Numbered list
+    const numMatch = trimmed.match(/^(\d+)\.\s+(.*)$/);
+    if (numMatch) {
+      if (!inList || listType !== 'ol') {
+        closeList();
+        html += '<ol>';
+        inList = true;
+        listType = 'ol';
+      }
+      const content = numMatch[2].replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      html += `<li>${content}</li>`;
+      return;
+    }
+
+    // Normal paragraph
+    closeList();
+    const content = trimmed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    html += `<p>${content}</p>`;
+  });
+
+  closeList();
+  return html;
+}
+
+// Helper to convert HTML back to markdown
+function htmlToMd(html) {
+  if (!html) return '';
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = html;
+
+  function traverse(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.nodeValue;
+    }
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName.toLowerCase();
+      let childrenContent = Array.from(node.childNodes).map(traverse).join('');
+
+      if (tag === 'strong' || tag === 'b') {
+        return `**${childrenContent}**`;
+      }
+      if (tag === 'p') {
+        return `\n${childrenContent}\n`;
+      }
+      if (tag === 'br') {
+        return '\n';
+      }
+      if (tag === 'li') {
+        const cleanContent = childrenContent.replace(/^([-*+]\s*|\d+\.\s*)/, '');
+        return `\n- ${cleanContent}\n`;
+      }
+      if (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'h4' || tag === 'h5' || tag === 'h6') {
+        // Strip bold markdown markers in case any children were bold
+        const cleanContent = childrenContent.replace(/\*\*/g, '').replace(/^(#{1,6})\s*/, '');
+        return `\n### ${cleanContent}\n`;
+      }
+      return childrenContent;
+    }
+    return '';
+  }
+
+  const rawMd = Array.from(tempDiv.childNodes).map(traverse).join('');
+  return rawMd
+    .split('\n')
+    .map(line => line.trim())
+    .filter((line, i, arr) => line !== '' || arr[i - 1] !== '')
+    .join('\n')
+    .trim();
+}
+
+// Rich Text Editor Component
+function RichTextEditor({ value, onChange, placeholder }) {
+  const editorRef = useRef(null);
+  const [toolbarStyle, setToolbarStyle] = useState({ position: 'absolute', opacity: 0, pointerEvents: 'none', top: '-9999px', left: '-9999px' });
+
+  useEffect(() => {
+    if (editorRef.current) {
+      const currentHtml = editorRef.current.innerHTML;
+      const convertedHtml = mdToHtml(value);
+      if (htmlToMd(currentHtml) !== htmlToMd(convertedHtml)) {
+        editorRef.current.innerHTML = convertedHtml;
+      }
+    }
+  }, [value]);
+
+  const handleInput = () => {
+    if (editorRef.current) {
+      const currentHtml = editorRef.current.innerHTML;
+      const md = htmlToMd(currentHtml);
+      onChange(md);
+    }
+  };
+
+  const execCommand = (command, value = null) => {
+    document.execCommand(command, false, value);
+    handleInput();
+  };
+
+  const toggleHeader = () => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      let parent = selection.getRangeAt(0).startContainer;
+      while (parent && parent !== editorRef.current) {
+        if (parent.nodeName === 'H3' || parent.nodeName === 'H2' || parent.nodeName === 'H1') {
+          execCommand('formatBlock', '<p>');
+          return;
+        }
+        parent = parent.parentNode;
+      }
+    }
+    execCommand('formatBlock', '<h3>');
+    setTimeout(() => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        let node = sel.getRangeAt(0).startContainer;
+        while (node && node !== editorRef.current) {
+          if (node.nodeName === 'H3' || node.nodeName === 'H2' || node.nodeName === 'H1') {
+            const strongs = node.querySelectorAll('strong, b');
+            strongs.forEach(s => {
+              const textNode = document.createTextNode(s.textContent);
+              s.parentNode.replaceChild(textNode, s);
+            });
+            handleInput();
+            break;
+          }
+          node = node.parentNode;
+        }
+      }
+      updateToolbarPosition();
+    }, 0);
+  };
+
+  const updateToolbarPosition = () => {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
+      setToolbarStyle({ position: 'absolute', opacity: 0, pointerEvents: 'none', top: '-9999px', left: '-9999px' });
+      return;
+    }
+
+    const range = sel.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    
+    if (editorRef.current) {
+      const containerRect = editorRef.current.parentNode.getBoundingClientRect();
+      const top = rect.top - containerRect.top - 48; // 48px above selected text
+      const left = rect.left - containerRect.left + (rect.width / 2);
+
+      setToolbarStyle({
+        position: 'absolute',
+        top: `${top}px`,
+        left: `${left}px`,
+        transform: 'translateX(-50%)',
+        opacity: 1,
+        pointerEvents: 'auto',
+        transition: 'opacity 0.15s ease, transform 0.15s ease',
+      });
+    }
+  };
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      setTimeout(updateToolbarPosition, 10);
+    };
+
+    document.addEventListener('selectionchange', handleSelectionChange);
+    return () => {
+      document.removeEventListener('selectionchange', handleSelectionChange);
+    };
+  }, []);
+
+  return (
+    <div className="relative border border-[#e2e8f0] rounded-xl bg-white transition-all duration-200 hover:border-[#0058be]/30 focus-within:border-[#0058be] focus-within:ring-2 focus-within:ring-[#0058be]/10">
+      <style>{`
+        .rich-editor-content ul { list-style-type: disc !important; padding-left: 1.25rem !important; margin-top: 0px !important; margin-bottom: 0.5rem !important; }
+        .rich-editor-content ol { list-style-type: decimal !important; padding-left: 1.25rem !important; margin-top: 0px !important; margin-bottom: 0.5rem !important; }
+        .rich-editor-content h3 { font-size: 1.125rem !important; font-weight: 700 !important; color: #151b2d !important; margin-top: 0.75rem; margin-bottom: 0.5rem; }
+        .rich-editor-content h2 { font-size: 1.25rem !important; font-weight: 700 !important; color: #151b2d !important; margin-top: 0.75rem; margin-bottom: 0.5rem; }
+        .rich-editor-content h1 { font-size: 1.5rem !important; font-weight: 800 !important; color: #151b2d !important; margin-top: 0.75rem; margin-bottom: 0.5rem; }
+      `}</style>
+      
+      {/* Selection-based Floating Menu */}
+      <div 
+        style={toolbarStyle}
+        className="bg-white border border-[#e2e8f0] rounded-xl shadow-lg px-2 py-1 flex items-center gap-1 z-30"
+      >
+        <button
+          type="button"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            execCommand('bold');
+          }}
+          className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-700 flex items-center justify-center transition-colors"
+          title="In đậm (Ctrl+B)"
+        >
+          <span className="material-symbols-outlined text-[18px]">format_bold</span>
+        </button>
+        <div className="w-[1px] h-4 bg-[#e2e8f0]" />
+        <button
+          type="button"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            execCommand('insertUnorderedList');
+          }}
+          className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-700 flex items-center justify-center transition-colors"
+          title="Danh sách dấu chấm"
+        >
+          <span className="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+        </button>
+        <div className="w-[1px] h-4 bg-[#e2e8f0]" />
+        <button
+          type="button"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            toggleHeader();
+          }}
+          className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-700 flex items-center justify-center font-bold text-xs transition-colors"
+          title="Tiêu đề (H3)"
+        >
+          H
+        </button>
+      </div>
+
+      <div
+        ref={editorRef}
+        contentEditable
+        onInput={handleInput}
+        className="w-full min-h-[150px] text-sm text-[#424754] p-4 focus:outline-none leading-relaxed rich-editor-content"
+        placeholder={placeholder}
+        style={{ outline: 'none' }}
+      />
+    </div>
+  );
+}
+
 // Helper to format structured sidebar content
 function formatSidebarText(text, isDark = false) {
   if (!text) return <p className="text-xs italic text-[#727785]">Không có nội dung.</p>;
@@ -498,21 +779,23 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
                           <div className="h-4 bg-slate-100 rounded w-4/5"></div>
                         </div>
                       ) : editingContent ? (
-                        Array.isArray(current.originalContent) || typeof current.originalContent === 'object' ? (
-                          <AutoExpandingTextarea
-                            value={Array.isArray(current.originalContent) ? current.originalContent.join('\n') : JSON.stringify(current.originalContent)}
-                            onChange={(e) => updateStep({ originalContent: e.target.value.split('\n') })}
-                            className="w-full text-sm text-[#424754] bg-white border border-[#e2e8f0] hover:border-[#c2c6d6] focus:border-[#0058be] focus:outline-none p-3.5 rounded-xl leading-relaxed shadow-inner"
-                            placeholder="Ý chính nội dung dạy..."
-                          />
-                        ) : (
-                          <AutoExpandingTextarea
-                            value={current.originalContent ?? ''}
-                            onChange={(e) => updateStep({ originalContent: e.target.value })}
-                            className="w-full text-sm text-[#424754] bg-white border border-[#e2e8f0] hover:border-[#c2c6d6] focus:border-[#0058be] focus:outline-none p-3.5 rounded-xl leading-relaxed shadow-inner"
-                            placeholder="Ý chính nội dung dạy..."
-                          />
-                        )
+                        <RichTextEditor
+                          value={
+                            Array.isArray(current.originalContent)
+                              ? current.originalContent.join('\n')
+                              : typeof current.originalContent === 'object'
+                                ? JSON.stringify(current.originalContent)
+                                : (current.originalContent ?? '')
+                          }
+                          onChange={(md) => {
+                            if (Array.isArray(current.originalContent)) {
+                              updateStep({ originalContent: md.split('\n') });
+                            } else {
+                              updateStep({ originalContent: md });
+                            }
+                          }}
+                          placeholder="Ý chính nội dung dạy..."
+                        />
                       ) : (
                         <div className="prose max-w-none">
                           {formatTeachingContent(
@@ -621,10 +904,15 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
                         <div className="h-3 bg-slate-200/50 rounded w-5/6"></div>
                       </div>
                     ) : editingSuggestions ? (
-                      <AutoExpandingTextarea
+                      <RichTextEditor
                         value={Array.isArray(current.pedagogNote) ? current.pedagogNote.join('\n') : (current.pedagogNote ?? '')}
-                        onChange={(e) => updateStep({ pedagogNote: e.target.value })}
-                        className="w-full text-xs text-[#151b2d] bg-white border border-[#0058be]/30 focus:border-[#0058be] focus:outline-none p-3 rounded-lg leading-relaxed shadow-inner"
+                        onChange={(md) => {
+                          if (Array.isArray(current.pedagogNote)) {
+                            updateStep({ pedagogNote: md.split('\n') });
+                          } else {
+                            updateStep({ pedagogNote: md });
+                          }
+                        }}
                         placeholder="Nhập vật tư cần chuẩn bị..."
                       />
                     ) : (
@@ -666,10 +954,15 @@ export default function TimelineEditor({ steps = [], onStepsChange, onRestart, c
                       <div className="h-3 bg-slate-200/50 rounded w-4/5"></div>
                     </div>
                   ) : editingInstructions ? (
-                    <AutoExpandingTextarea
+                    <RichTextEditor
                       value={Array.isArray(current.details) ? current.details.join('\n') : (current.details ?? '')}
-                      onChange={(e) => updateStep({ details: e.target.value.split('\n') })}
-                      className="w-full text-xs text-[#151b2d] bg-[#f8fafc] border border-[#e2e8f0] focus:border-[#0058be] focus:outline-none p-3 rounded-lg leading-relaxed shadow-inner"
+                      onChange={(md) => {
+                        if (Array.isArray(current.details)) {
+                          updateStep({ details: md.split('\n') });
+                        } else {
+                          updateStep({ details: md });
+                        }
+                      }}
                       placeholder="Nhập các bước hướng dẫn cụ thể..."
                     />
                   ) : (

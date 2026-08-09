@@ -142,19 +142,8 @@ export default function Playground({ isMockup = false, mockScript = null, forced
       return
     }
 
-    let fakeTimer = null
-    let canTransitionToResults = false
+    let canTransitionToResults = true
     let pendingSteps = null
-
-    // Thiết lập fake delay 2 phút (120 giây) cho loader
-    fakeTimer = setTimeout(() => {
-      canTransitionToResults = true
-      // Nếu đã có dữ liệu sườn từ metadata hoặc section, ta chuyển stage ngay
-      if (pendingSteps) {
-        setTimelineSteps(pendingSteps)
-        setStage('results')
-      }
-    }, 120000) // 2 phút chờ ở loader
 
     const abort = streamPipeline(formData, {
       onProgress(data) {
@@ -167,9 +156,9 @@ export default function Playground({ isMockup = false, mockScript = null, forced
         setMetadata(data)
         if (data?.sections && Array.isArray(data.sections)) {
           const skeletonSteps = data.sections.map((sectionName, i) => ({
-            time: existingTimeForIndex(i, classroomCtx.template_id),
+            time: `Node ${i + 1}`,
             title: sectionName,
-            duration: "15'",
+            duration: "",
             type: sectionName,
             intent: '',
             details: [],
@@ -178,12 +167,8 @@ export default function Playground({ isMockup = false, mockScript = null, forced
             isLoading: true,
           }))
 
-          if (canTransitionToResults) {
-            setTimelineSteps(skeletonSteps)
-            setStage('results')
-          } else {
-            pendingSteps = skeletonSteps
-          }
+          // Lưu skeletonSteps vào pending để hiển thị khi hoàn thành, không chuyển trang sớm
+          pendingSteps = skeletonSteps
         }
       },
       onSection(data) {
@@ -264,7 +249,6 @@ export default function Playground({ isMockup = false, mockScript = null, forced
         }
       },
       onError(data) {
-        clearTimeout(fakeTimer)
         setHasError(true)
         setErrorMessage(data?.message ?? 'Unknown error')
       },
@@ -273,31 +257,32 @@ export default function Playground({ isMockup = false, mockScript = null, forced
       },
     })
 
-    // Helper xác định timing cơ bản theo vị trí của node
-    function existingTimeForIndex(index, templateId) {
-      const times = templateId === 'extended-4-node'
-        ? ['00:00', '00:10', '00:35', '01:05']
-        : ['00:00', '00:10', '00:30']
-      return times[index] || `Node ${index + 1}`
-    }
-
     abortRef.current = () => {
-      clearTimeout(fakeTimer)
       abort()
     }
   }, [classroomCtx.template_id, classroomCtx.duration, fileName])
 
   const handleFileSelected = (file) => {
+    const MAX_SIZE_BYTES = 150 * 1024;
+    if (file && file.size > MAX_SIZE_BYTES) {
+      alert("Kích thước file vượt quá giới hạn cho phép (tối đa 150KB). Vui lòng chuẩn bị file nhỏ hơn để tối ưu hóa xử lý.");
+      return;
+    }
     setInputFile(file)
     // Intercept: show FileStartModal before starting pipeline
     setPendingFile({ file, isText: false })
   }
 
   const handleManualSubmit = (text) => {
+    const textBlob = new Blob([text], { type: 'text/plain' });
+    const MAX_SIZE_BYTES = 150 * 1024;
+    if (textBlob.size > MAX_SIZE_BYTES) {
+      alert("Độ dài văn bản nhập thủ công vượt quá giới hạn cho phép (tối đa 150KB). Vui lòng tinh gọn nội dung.");
+      return;
+    }
     setInputText(text)
-    const blob = new Blob([text], { type: 'text/plain' })
     // Intercept: show FileStartModal before starting pipeline
-    setPendingFile({ file: blob, isText: true, text })
+    setPendingFile({ file: textBlob, isText: true, text })
   }
 
   // Called when FileStartModal confirms — merges template/learning_outcome then starts
