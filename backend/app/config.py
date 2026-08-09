@@ -3,10 +3,9 @@ import os
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-    # OpenRouter API configurations
-    OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY', '')
-    OPENROUTER_MODEL = os.getenv('OPENROUTER_MODEL', 'meta-llama/llama-3-8b-instruct:free')
-    OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
+    # Gemini API configurations (Beeknoee Platform Provider)
+    GEMINI_API_KEY = os.getenv('BEEKNOEE_API_KEY', '')
+    GEMINI_MODEL   = os.getenv('BEEKNOEE_MODEL', 'gemini-3.5-flash')
 
     # Qdrant Vector DB
     QDRANT_HOST = os.getenv('QDRANT_HOST', 'localhost')

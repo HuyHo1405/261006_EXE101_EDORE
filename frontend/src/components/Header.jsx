@@ -96,7 +96,7 @@ export default function Header() {
 
                 {/* Nút Tạo kịch bản */}
                 <Link
-                  to="/playground"
+                  to="/studio"
                   title="Tạo kịch bản mới"
                   className="h-8 w-8 ml-1 rounded-full bg-[#0058be] text-white flex items-center justify-center hover:bg-[#004799] hover:shadow-md transition-all duration-200"
                 >
@@ -134,7 +134,7 @@ export default function Header() {
                       Thư viện của tôi
                     </Link>
                     <Link
-                      to="/playground"
+                      to="/studio"
                       onClick={() => setIsDropdownOpen(false)}
                       className="w-full text-left px-3 py-2 text-xs font-semibold text-[#424754] hover:bg-[#f0f2f8] hover:text-[#0058be] rounded-xl flex items-center gap-2 transition-all"
                     >
@@ -189,7 +189,7 @@ export default function Header() {
           {isLoggedIn ? (
             <>
               <Link
-                to="/playground"
+                to="/studio"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-center gap-2 w-full px-4 py-3.5 rounded-xl bg-[#0058be] text-white text-base font-bold active:scale-95 transition-all"
               >

@@ -11,7 +11,7 @@ const MOCK_LIBRARY_SEEDS = [
     duration: '45 phút',
     nodesCount: 3,
     createdAt: '2026-07-06',
-    summary: 'Bài giảng giúp học sinh nắm được điều kiện tự nhiên, quá trình thống nhất Trung Quốc dưới thời Tần Thuỷ Hoàng và các thành tựu văn minh tiêu biểu trước thế kỉ VII.',
+    summary: 'Khám phá địa lý, quá trình thống nhất của Tần Thủy Hoàng và văn minh Trung Hoa cổ đại.',
     color: 'from-red-500 to-amber-600',
     favorite: true
   },
@@ -23,7 +23,7 @@ const MOCK_LIBRARY_SEEDS = [
     duration: '45 phút',
     nodesCount: 3,
     createdAt: '2026-07-06',
-    summary: 'Bài giảng giúp học sinh phân tích tác động của điều kiện tự nhiên, tổ chức nhà nước đế chế và các thành tựu văn hoá tiêu biểu của La Mã cổ đại.',
+    summary: 'Tìm hiểu điều kiện tự nhiên, bộ máy nhà nước đế chế và di sản văn hóa La Mã cổ đại.',
     color: 'from-purple-500 to-slate-700',
     favorite: false
   }
@@ -41,9 +41,9 @@ export default function Dashboard({ isMockup = false, onMockupCreate, onMockupEd
     if (savedRaw) {
       try {
         const parsed = JSON.parse(savedRaw)
-        // Reset nếu data cũ (seed cũ khác title)
-        const firstId = parsed?.[0]?.title
-        if (firstId !== MOCK_LIBRARY_SEEDS[0].title) {
+        // Reset nếu data cũ (seed cũ khác summary)
+        const firstSummary = parsed?.[0]?.summary
+        if (firstSummary !== MOCK_LIBRARY_SEEDS[0].summary) {
           setScripts(MOCK_LIBRARY_SEEDS)
           localStorage.setItem('edore_saved_scripts', JSON.stringify(MOCK_LIBRARY_SEEDS))
         } else {
@@ -77,7 +77,7 @@ export default function Dashboard({ isMockup = false, onMockupCreate, onMockupEd
     if (isMockup) {
       onMockupEdit?.(script)
     } else {
-      navigate('/playground')
+      navigate('/studio')
     }
   }
   // Filters logic
@@ -130,7 +130,7 @@ export default function Dashboard({ isMockup = false, onMockupCreate, onMockupEd
             </button>
           ) : (
             <Link
-              to="/playground"
+              to="/studio"
               className="inline-flex items-center gap-2 px-5 py-3 bg-[#0058be] hover:bg-[#004799] text-white font-bold rounded-2xl shadow-md transition-all active:scale-[0.98]"
             >
               <span className="material-symbols-outlined text-lg">add</span>
@@ -247,7 +247,7 @@ export default function Dashboard({ isMockup = false, onMockupCreate, onMockupEd
               </button>
             ) : (
               <Link
-                to="/playground"
+                to="/studio"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0058be] text-white font-bold rounded-xl text-xs hover:bg-[#004799] transition-all"
               >
                 Tạo bài học đầu tiên

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import LoginPage from './auth/LoginPage'
 import Dashboard from './Dashboard'
-import PricingPage from './PricingPage'
 import Playground from './Playground'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -15,7 +14,7 @@ const GALLERY_ITEMS = [
     duration: '45 phút',
     nodesCount: 3,
     createdAt: '2026-07-06',
-    summary: 'Bài giảng giúp học sinh nắm được điều kiện tự nhiên, quá trình thống nhất Trung Quốc dưới thời Tần Thuỷ Hoàng và các thành tựu văn minh tiêu biểu trước thế kỉ VII.',
+    summary: 'Khám phá địa lý, quá trình thống nhất của Tần Thủy Hoàng và văn minh Trung Hoa cổ đại.',
     color: 'from-red-500 to-amber-600',
     favorite: true,
     steps: [
@@ -62,7 +61,7 @@ const GALLERY_ITEMS = [
     duration: '45 phút',
     nodesCount: 3,
     createdAt: '2026-07-06',
-    summary: 'Bài giảng giúp học sinh phân tích tác động của điều kiện tự nhiên, tổ chức nhà nước đế chế và các thành tựu văn hoá tiêu biểu của La Mã cổ đại.',
+    summary: 'Tìm hiểu điều kiện tự nhiên, bộ máy nhà nước đế chế và di sản văn hóa La Mã cổ đại.',
     color: 'from-purple-500 to-slate-700',
     favorite: false,
     steps: [
@@ -105,7 +104,6 @@ const GALLERY_ITEMS = [
 
 const STEPS_META = [
   { id: 'auth', label: 'Đăng nhập' },
-  { id: 'pricing', label: 'Bảng giá' },
   { id: 'gallery', label: 'Thư viện' },
   { id: 'input', label: 'Tải tệp' },
   { id: 'output', label: 'Kịch bản' },
@@ -152,11 +150,7 @@ export default function MockupPage() {
       {/* Nội dung trang (Outlet area) */}
       <main className="flex-1 pt-20 pb-10 flex flex-col bg-[#0058be]">
         {currentStep === 'auth' && (
-          <LoginPage isMockup={true} onMockupNext={() => setCurrentStep('pricing')} />
-        )}
-
-        {currentStep === 'pricing' && (
-          <PricingPage isMockup={true} onMockupSelect={() => setCurrentStep('gallery')} />
+          <LoginPage isMockup={true} onMockupNext={() => setCurrentStep('gallery')} />
         )}
 
         {currentStep === 'gallery' && (
@@ -197,10 +191,10 @@ export default function MockupPage() {
                 Xem lại từ đầu
               </button>
               <button
-                onClick={() => { window.location.href = '/playground' }}
+                onClick={() => { window.location.href = '/studio' }}
                 className="px-5 py-2.5 bg-white text-[#0058be] font-bold text-xs rounded-xl shadow-md hover:bg-white/90 transition-all cursor-pointer"
               >
-                Vào Playground thực tế
+                Vào Studio thực tế
               </button>
             </div>
           </div>

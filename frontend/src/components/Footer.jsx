@@ -32,7 +32,7 @@ export default function Footer() {
               Sản phẩm
             </h3>
             <div className="flex flex-col gap-3 text-sm text-gray-500">
-              <Link to="/playground" className="hover:text-blue-600 transition-colors">Playground AI</Link>
+              <Link to="/studio" className="hover:text-blue-600 transition-colors">Studio AI</Link>
               <Link to="/dashboard"  className="hover:text-blue-600 transition-colors">Dashboard</Link>
               <Link to="/pricing"    className="hover:text-blue-600 transition-colors">Bảng giá</Link>
             </div>

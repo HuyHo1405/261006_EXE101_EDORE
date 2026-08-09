@@ -3,9 +3,13 @@ import { createContext, useContext, useState, useEffect } from 'react'
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState({
+    name: 'Edore Admin',
+    email: 'admin@edore.co',
+    avatar: 'A'
+  })
+  const [isLoggedIn, setIsLoggedIn] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     try {
@@ -13,7 +17,6 @@ export function AuthProvider({ children }) {
       if (savedUser) {
         const parsed = JSON.parse(savedUser)
         setUser(parsed)
-        setIsLoggedIn(true)
       }
     } catch (e) {
       console.error('Error loading auth from localStorage', e)
