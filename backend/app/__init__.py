@@ -35,17 +35,10 @@ def create_app(config_class=Config):
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     # ── Register Controllers (HTTP layer) ─────────────────────────────────────
-    from app.controllers.general_controller import bp as general_bp
-    app.register_api(general_bp, url_prefix='/api')
-
-    from app.controllers.ai_controller import bp as ai_bp
+    from app.ai_pipeline.routes import bp as ai_bp
     app.register_api(ai_bp, url_prefix='/api/ai')
 
-    from app.controllers.template_controller import bp as templates_bp
-    app.register_api(templates_bp, url_prefix='/api')
-
-
-    from app.controllers.qdrant_controller import bp as qdrant_bp
+    from app.vector_db.routes import bp as qdrant_bp
     app.register_api(qdrant_bp, url_prefix='/api/qdrant')
 
     # ── Global Error Handlers ─────────────────────────────────────────────────
