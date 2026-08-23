@@ -1,12 +1,98 @@
-version: '3.8'
-
 services:
+
+  # ── AI vector DB (edore-ai profile, skip for now) ────────────────────────
   qdrant:
     image: qdrant/qdrant:latest
     container_name: qdrant_db
+    profiles: [edore-ai]
     ports:
       - "6333:6333"
       - "6334:6334"
     volumes:
       - ./qdrant_storage:/qdrant/storage
     restart: unless-stopped
+
+  # ── edore-backend ─────────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: edore_postgres
+    profiles: [edore-backend]
+    environment:
+      POSTGRES_DB: ${DB_NAME:-edore}
+      POSTGRES_USER: ${DB_USERNAME:-edore}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-edore}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-edore} -d ${DB_NAME:-edore}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: edore_redis
+    profiles: [edore-backend]
+    command: >
+      redis-server
+      ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  db-web-gui:
+    image: dbgate/dbgate
+    container_name: db-web-gui
+    profiles: [edore-backend]
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./java-backend
+      dockerfile: Dockerfile
+    container_name: edore_backend
+    profiles: [edore-backend]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-edore}
+      DB_USERNAME: ${DB_USERNAME:-edore}
+      DB_PASSWORD: ${DB_PASSWORD:-edore}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      MAIL_HOST: ${MAIL_HOST:-localhost}
+      MAIL_PORT: ${MAIL_PORT:-1025}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  db-web-gui:

@@ -1,0 +1,49 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# EDORE Docker Quick Commands
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Prerequisites: Copy env file
+cp .env.example .env
+
+# ──────────────────────────────────────────────────────────────────────────────
+# OPTION A: Run everything in Docker (including the Java App)
+# ──────────────────────────────────────────────────────────────────────────────
+
+# 1. Start all backend services (Postgres, Redis, pgAdmin, and Spring Boot App)
+docker compose --profile edore-backend up -d
+
+# 2. Build and start (use this when you change Java code)
+docker compose --profile edore-backend up -d --build
+
+# 3. Stop the stack
+docker compose --profile edore-backend down
+
+# 4. Stop and delete database volumes (clean slate)
+docker compose --profile edore-backend down -v
+
+# 5. Tail Spring Boot application logs
+docker compose logs -f backend
+
+# ──────────────────────────────────────────────────────────────────────────────
+# OPTION B: Run Postgres/Redis in Docker, but run the Java App locally
+# ──────────────────────────────────────────────────────────────────────────────
+
+# 1. Start only database and cache dependencies in the background
+docker compose up -d postgres redis pgadmin
+
+# 2. Run the Java backend locally on your machine
+cd java-backend
+mvn spring-boot:run
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Command Utilities
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Open interactive PostgreSQL shell
+docker exec -it edore_postgres psql -U edore -d edore
+
+# Open interactive Redis CLI shell
+docker exec -it edore_redis redis-cli
+
+# Start AI vector database (Qdrant)
+docker compose --profile edore-ai up -d

@@ -1,0 +1,31 @@
+# Maven build output
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.rar
+
+# Logs
+*.log
+logs/
+
+# Environment and local configs
+.env
+.env.local
+application-local.properties
+application-dev.properties
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.factorypath
+nbproject/
+*.nb-attrs
+
+# OS generated files
+.DS_Store
+Thumbs.db
