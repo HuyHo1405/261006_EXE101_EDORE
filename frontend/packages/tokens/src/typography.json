@@ -1,0 +1,45 @@
+{
+  "font": {
+    "family": {
+      "header": { "value": "'Saira Extra Condensed', sans-serif", "comment": "Bold/ExtraBold, luôn uppercase, letter-spacing âm nhẹ. Dùng cho heading." },
+      "body":   { "value": "'Mulish', sans-serif",                 "comment": "Weight 300–800. Dùng cho toàn bộ nội dung, input, button, label." },
+      "mono":   { "value": "'IBM Plex Mono', monospace",            "comment": "Label form, code snippet, token name." }
+    },
+    "size": {
+      "xs":   { "value": "12px", "comment": "Caption nhỏ, helper text" },
+      "sm":   { "value": "14px", "comment": "Label, secondary text" },
+      "base": { "value": "16px", "comment": "Body mặc định" },
+      "lg":   { "value": "18px", "comment": "Body lớn, subheading nhỏ" },
+      "xl":   { "value": "20px", "comment": "Subheading" },
+      "2xl":  { "value": "24px", "comment": "Heading nhỏ (h4/h3)" },
+      "3xl":  { "value": "30px", "comment": "Heading trung (h3/h2)" },
+      "4xl":  { "value": "36px", "comment": "Heading lớn (h2)" },
+      "5xl":  { "value": "48px", "comment": "Hero heading (h1)" },
+      "6xl":  { "value": "60px", "comment": "Display / marketing hero" }
+    },
+    "weight": {
+      "light":     { "value": "300" },
+      "regular":   { "value": "400" },
+      "medium":    { "value": "500" },
+      "semibold":  { "value": "600" },
+      "bold":      { "value": "700" },
+      "extrabold": { "value": "800" }
+    },
+    "letterSpacing": {
+      "tight":   { "value": "-0.02em", "comment": "Header Saira" },
+      "snug":    { "value": "-0.01em" },
+      "normal":  { "value": "0em" },
+      "wide":    { "value": "0.025em" },
+      "wider":   { "value": "0.05em" },
+      "widest":  { "value": "0.1em" }
+    },
+    "lineHeight": {
+      "none":    { "value": "1" },
+      "tight":   { "value": "1.25" },
+      "snug":    { "value": "1.375" },
+      "normal":  { "value": "1.5",  "comment": "Body mặc định" },
+      "relaxed": { "value": "1.625" },
+      "loose":   { "value": "2" }
+    }
+  }
+}

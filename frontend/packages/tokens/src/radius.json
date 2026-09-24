@@ -1,0 +1,12 @@
+{
+  "radius": {
+    "none": { "value": "0px",    "comment": "Bảng dữ liệu, full-bleed image" },
+    "xs":   { "value": "4px",    "comment": "Chip, tag, checkbox" },
+    "sm":   { "value": "6px",    "comment": "Input, select, textarea, button nhỏ" },
+    "md":   { "value": "8px",    "comment": "Button mặc định, dropdown, item danh sách" },
+    "lg":   { "value": "12px",   "comment": "Card, panel, toast" },
+    "xl":   { "value": "16px",   "comment": "Modal, bottom sheet, card lớn" },
+    "2xl":  { "value": "24px",   "comment": "Hero panel, media lớn" },
+    "full": { "value": "9999px", "comment": "Pill, avatar tròn, icon button tròn, FAB" }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "space": {
+    "comment": "Thang 4px — padding, margin, gap. Không dùng giá trị ngoài danh sách này.",
+    "1":  { "value": "4px",  "comment": "Micro gap — icon inner padding" },
+    "2":  { "value": "8px",  "comment": "Tight — badge, chip padding" },
+    "3":  { "value": "12px", "comment": "Small — input padding-y" },
+    "4":  { "value": "16px", "comment": "Base — card padding, section gap nhỏ" },
+    "5":  { "value": "20px", "comment": "Medium — button padding-x md" },
+    "6":  { "value": "24px", "comment": "Comfortable — section gap, list item" },
+    "8":  { "value": "32px", "comment": "Large — card padding lớn, section heading gap" },
+    "10": { "value": "40px", "comment": "XL — hero section inner" },
+    "12": { "value": "48px", "comment": "2XL — between sections" },
+    "16": { "value": "64px", "comment": "3XL — page top/bottom padding" }
+  }
+}

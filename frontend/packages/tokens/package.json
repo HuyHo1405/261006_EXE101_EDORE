@@ -1,0 +1,29 @@
+{
+  "name": "@edore/tokens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Edore design tokens — single source of truth. Build với Style Dictionary.",
+  "scripts": {
+    "build":       "style-dictionary build --config style-dictionary.config.js",
+    "build:watch": "nodemon --watch src --ext json --exec \"style-dictionary build --config style-dictionary.config.js\""
+  },
+  "main": "build/js/tokens.js",
+  "types": "build/js/tokens.d.ts",
+  "exports": {
+    ".":                 { "import": "./build/js/tokens.js", "require": "./build/js/tokens.js" },
+    "./css":             "./build/css/tokens.css",
+    "./build/css/tokens.css": "./build/css/tokens.css"
+  },
+  "files": [
+    "build/"
+  ],
+  "dependencies": {
+    "style-dictionary": "^3.9.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

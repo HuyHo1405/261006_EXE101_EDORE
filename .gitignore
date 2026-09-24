@@ -76,3 +76,5 @@ packages/tokens/build/
 # Data & test files
 /data/
 /test-files/
+*.crdownload
+*.part

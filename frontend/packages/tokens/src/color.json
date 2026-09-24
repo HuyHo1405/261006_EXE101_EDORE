@@ -1,0 +1,63 @@
+{
+  "color": {
+    "primary": {
+      "comment": "Brand blue — base #034ce4 (hsl ~222°, 97%, 45%)",
+      "50":  { "value": "#eef2fd", "comment": "Lightest tint — hover bg, selected row" },
+      "100": { "value": "#d4e0fa", "comment": "Subtle bg — chips, badges" },
+      "200": { "value": "#a9c1f5", "comment": "Hover ring, light border" },
+      "300": { "value": "#6e96ef", "comment": "Focus ring" },
+      "400": { "value": "#2d6aeb", "comment": "Hover state của button primary" },
+      "500": { "value": "#034ce4", "comment": "Base — CTA, link, nhấn mạnh" },
+      "600": { "value": "#0240c0", "comment": "Pressed state" },
+      "700": { "value": "#02329a", "comment": "Dark variant" },
+      "800": { "value": "#012474", "comment": "Darker variant" },
+      "900": { "value": "#01164e", "comment": "Darkest — text on light bg" }
+    },
+    "secondary": {
+      "comment": "Amber — base #f28c0f (hsl ~33°, 90%, 50%)",
+      "50":  { "value": "#fef9f0", "comment": "Lightest tint" },
+      "100": { "value": "#fdecd1", "comment": "Subtle bg" },
+      "200": { "value": "#fbd4a0", "comment": "Light" },
+      "300": { "value": "#f7b561", "comment": "Moderate" },
+      "400": { "value": "#f49827", "comment": "Warning indicator — color-warning alias" },
+      "500": { "value": "#f28c0f", "comment": "Base — accent, warning highlight" },
+      "600": { "value": "#c97208", "comment": "Pressed" },
+      "700": { "value": "#a05806", "comment": "Dark" },
+      "800": { "value": "#773f04", "comment": "Darker" },
+      "900": { "value": "#4e2802", "comment": "Darkest" }
+    },
+    "tertiary": {
+      "comment": "Teal — base #12ab83 (hsl ~164°, 81%, 37%)",
+      "50":  { "value": "#edfaf7", "comment": "Lightest tint" },
+      "100": { "value": "#c7f2ea", "comment": "Subtle bg" },
+      "200": { "value": "#8ee5d5", "comment": "Light" },
+      "300": { "value": "#4dcfbc", "comment": "Moderate" },
+      "400": { "value": "#1fba9d", "comment": "Hover state" },
+      "500": { "value": "#12ab83", "comment": "Base — success, growth" },
+      "600": { "value": "#0e8868", "comment": "Pressed" },
+      "700": { "value": "#0a664f", "comment": "Dark" },
+      "800": { "value": "#074436", "comment": "Darker" },
+      "900": { "value": "#04221c", "comment": "Darkest" }
+    },
+    "neutral": {
+      "comment": "Gray scale — text, surface, border. Light → dark.",
+      "50":  { "value": "#fafafa", "comment": "Background default" },
+      "100": { "value": "#f4f5f6", "comment": "Hover bg nhẹ" },
+      "200": { "value": "#edf0f2", "comment": "Card / panel surface" },
+      "300": { "value": "#d9d9d9", "comment": "Border mặc định" },
+      "400": { "value": "#b0b3b8", "comment": "Placeholder, icon phụ" },
+      "500": { "value": "#808590", "comment": "Text phụ, caption" },
+      "600": { "value": "#5c6068", "comment": "Label, subheading" },
+      "700": { "value": "#3d4047", "comment": "Body text thứ cấp" },
+      "800": { "value": "#2a2d32", "comment": "Body text chính" },
+      "900": { "value": "#1a1c1f", "comment": "Heading, high-emphasis text" }
+    },
+    "semantic": {
+      "brand":   { "value": "{color.primary.500}", "comment": "Alias → primary-500" },
+      "error":   { "value": "#ef4444", "comment": "Red — lỗi, xoá, nguy hiểm" },
+      "success": { "value": "{color.tertiary.500}", "comment": "Alias → tertiary-500" },
+      "warning": { "value": "{color.secondary.400}", "comment": "Alias → secondary-400" },
+      "info":    { "value": "{color.primary.400}", "comment": "Alias → primary-400" }
+    }
+  }
+}
