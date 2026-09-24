@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import com.edore.backend.features.auth.code.AuthResponseCode;
 import org.springframework.validation.FieldError;
@@ -94,6 +95,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleBadCredentials(BadCredentialsException ex,
                                                                     HttpServletRequest request) {
         ResponseCode rc = AuthResponseCode.INVALID_CREDENTIALS;
+        return ResponseEntity.status(rc.getStatus())
+                .body(ApiResponse.error(rc, request.getRequestURI()));
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDisabled(DisabledException ex,
+                                                                HttpServletRequest request) {
+        ResponseCode rc = AuthResponseCode.USER_NOT_ACTIVE;
         return ResponseEntity.status(rc.getStatus())
                 .body(ApiResponse.error(rc, request.getRequestURI()));
     }

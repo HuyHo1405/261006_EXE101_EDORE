@@ -1,6 +1,7 @@
 package com.edore.backend.features.auth.entity;
 
 import com.edore.backend.core.infrastructure.BaseAuditEntity;
+import com.edore.backend.features.user.entity.UserSettings;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -40,6 +41,9 @@ public class User extends BaseAuditEntity {
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private Boolean isActive = true;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private UserSettings settings;
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)

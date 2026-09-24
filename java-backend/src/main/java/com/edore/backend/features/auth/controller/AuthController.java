@@ -28,13 +28,21 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Auth APIs", description = "Authentication APIs (login, register, password management, OTP)")
+@Tag(   name = "1. Auth APIs", 
+        description = "Authentication APIs (login, register, password management, OTP)")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenService authenService;
 
-    @Operation(summary = "Login", description = "Authenticate user and return JWT access token")
+    @Operation( summary = "1. Get enums")
+    @GetMapping("/enums")
+    public ResponseEntity<ApiResponse<List<EnumResponseDTO>>> getEnums() {
+        return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.GET_ENUMS_SUCCESS, authenService.getEnums()));
+    }
+
+    @Operation( summary = "2. Login", 
+                description = "Authenticate user and return JWT access token")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponseDTO>> login(
             @Valid @RequestBody LoginRequestDTO loginRequestDTO) {
@@ -53,18 +61,8 @@ public class AuthController {
                 .body(ApiResponse.of(AuthResponseCode.LOGIN_SUCCESS, loginResponse));
     }
 
-    @Operation(
-            summary = "Logout",
-            description = "Blacklist current JWT access token",
-            security = @SecurityRequirement(name = "Bearer Authentication")
-    )
-    @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(HttpServletRequest request) {
-        authenService.logout(request.getHeader("Authorization"));
-        return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.LOGOUT_SUCCESS));
-    }
-
-    @Operation(summary = "Register", description = "Register new user account (inactive by default)")
+    @Operation( summary = "3. Register", 
+                description = "Register new user account (inactive by default)")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> register(
             @Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
@@ -72,23 +70,8 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.REGISTER_SUCCESS));
     }
 
-    @Operation(summary = "Send OTP", description = "Send 6-digit OTP code to user's email for REGISTER or RESET_PASSWORD")
-    @PostMapping("/send-otp")
-    public ResponseEntity<ApiResponse<Void>> sendOtp(
-            @Valid @RequestBody SendOtpRequestDTO requestDTO) {
-        authenService.sendOtp(requestDTO);
-        return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.VERIFY_OTP_SUCCESS));
-    }
-
-    @Operation(summary = "Verify OTP", description = "Verify 6-digit OTP code. If type is RESET_PASSWORD, returns resetToken for password reset.")
-    @PostMapping("/verify-otp")
-    public ResponseEntity<ApiResponse<VerifyOtpResponseDTO>> verifyOtp(
-            @Valid @RequestBody VerifyOtpRequestDTO requestDTO) {
-        VerifyOtpResponseDTO result = authenService.verifyOtp(requestDTO);
-        return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.VERIFY_OTP_SUCCESS, result));
-    }
-
-    @Operation(summary = "Forgot password request", description = "Trigger reset password OTP sent to email")
+    @Operation( summary = "4. Forgot password request", 
+                description = "Trigger reset password OTP sent to email")
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<Void>> forgotPassword(
             @Valid @RequestBody ForgotPasswordRequestDTO requestDTO) {
@@ -96,7 +79,26 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.FORGOT_PASSWORD_SUCCESS));
     }
 
-    @Operation(summary = "Reset password", description = "Reset password after OTP verification")
+    @Operation( summary = "5. Send OTP", 
+                description = "Send 6-digit OTP code to user's email for REGISTER or RESET_PASSWORD")
+    @PostMapping("/send-otp")
+    public ResponseEntity<ApiResponse<Void>> sendOtp(
+            @Valid @RequestBody SendOtpRequestDTO requestDTO) {
+        authenService.sendOtp(requestDTO);
+        return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.VERIFY_OTP_SUCCESS));
+    }
+
+    @Operation( summary = "6. Verify OTP", 
+                description = "Verify 6-digit OTP code. If type is RESET_PASSWORD, returns resetToken for password reset.")
+    @PostMapping("/verify-otp")
+    public ResponseEntity<ApiResponse<VerifyOtpResponseDTO>> verifyOtp(
+            @Valid @RequestBody VerifyOtpRequestDTO requestDTO) {
+        VerifyOtpResponseDTO result = authenService.verifyOtp(requestDTO);
+        return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.VERIFY_OTP_SUCCESS, result));
+    }
+
+    @Operation( summary = "7. Reset password", 
+                description = "Reset password after OTP verification")
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<ResetPasswordResponseDTO>> resetPassword(
             @Valid @RequestBody ResetPasswordRequestDTO requestDTO) {
@@ -104,11 +106,9 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.RESET_PASSWORD_SUCCESS, result));
     }
 
-    @Operation(
-            summary = "Change password",
-            description = "Change password for logged-in user using old password",
-            security = @SecurityRequirement(name = "Bearer Authentication")
-    )
+    @Operation( summary = "8. Change password", 
+                description = "Change password for logged-in user using old password",
+                security = @SecurityRequirement(name = "Bearer Authentication"))
     @PostMapping("/change-password")
     public ResponseEntity<ApiResponse<ResetPasswordResponseDTO>> changePassword(
             @CurrentUser UUID userId,
@@ -117,7 +117,8 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.RESET_PASSWORD_SUCCESS, result));
     }
 
-    @Operation(summary = "Refresh token", description = "Generate new access token using existing refresh token")
+    @Operation( summary = "9. Refresh token", 
+                description = "Generate new access token using existing refresh token")
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<LoginResponseDTO>> refresh(
             @RequestBody(required = false) TokenRefreshRequestDTO requestDTO,
@@ -149,9 +150,13 @@ public class AuthController {
                 .body(ApiResponse.of(AuthResponseCode.REFRESH_TOKEN_SUCCESS, refreshResponse));
     }
 
-    @Operation(summary = "Get enums")
-    @GetMapping("/enums")
-    public ResponseEntity<ApiResponse<List<EnumResponseDTO>>> getEnums() {
-        return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.GET_ENUMS_SUCCESS, authenService.getEnums()));
+    @Operation( summary = "10. Logout",
+                description = "Blacklist current JWT access token",
+                security = @SecurityRequirement(name = "Bearer Authentication"))
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(HttpServletRequest request) {
+        authenService.logout(request.getHeader("Authorization"));
+        return ResponseEntity.ok(ApiResponse.of(AuthResponseCode.LOGOUT_SUCCESS));
     }
+
 }
