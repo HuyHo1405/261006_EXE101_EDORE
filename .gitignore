@@ -66,3 +66,13 @@ java-backend/target/
 *.ear
 *.class
 *.log
+
+# Design token pipeline — auto-generated, rebuild từ npm run tokens:build
+packages/tokens/build/
+
+# Turborepo cache
+.turbo/
+
+# Data & test files
+/data/
+/test-files/
