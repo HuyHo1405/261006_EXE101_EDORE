@@ -6,10 +6,10 @@
 cp .env.example .env
 
 # ──────────────────────────────────────────────────────────────────────────────
-# OPTION A: Run everything in Docker (including the Java App)
+# OPTION A: Run everything in Docker (Full Stack)
 # ──────────────────────────────────────────────────────────────────────────────
 
-# 1. Start all backend services (Postgres, Redis, pgAdmin, and Spring Boot App)
+# 1. Start all backend services (Postgres, Redis, Qdrant, TEI Embedding, DBGate, Spring Boot App)
 docker compose --profile edore-backend up -d
 
 # 2. Build and start (use this when you change Java code)
@@ -18,26 +18,36 @@ docker compose --profile edore-backend up -d --build
 # 3. Stop the stack
 docker compose --profile edore-backend down
 
-# 4. Stop and delete database volumes (clean slate)
+# 4. Stop and delete database/vector volumes (clean slate)
 docker compose --profile edore-backend down -v
 
 # 5. Tail Spring Boot application logs
 docker compose logs -f backend
 
+# 6. Check System Health
+curl http://localhost:8080/api/health
+curl http://localhost:8080/actuator/health
+
 # ──────────────────────────────────────────────────────────────────────────────
-# OPTION B: Run Postgres/Redis in Docker, but run the Java App locally
+# OPTION B: Run Infrastructure Services in Docker, Run Java App Locally
 # ──────────────────────────────────────────────────────────────────────────────
 
-# 1. Start only database and cache dependencies in the background
-docker compose up -d postgres redis pgadmin
+# 1. Start Postgres, Redis, Qdrant Vector DB, Jina TEI Embedding, & DB Web GUI
+docker compose --profile edore-backend up -d postgres redis qdrant embedding db-web-gui
 
 # 2. Run the Java backend locally on your machine
 cd java-backend
 mvn spring-boot:run
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Command Utilities
+# Command Utilities & Individual Services
 # ──────────────────────────────────────────────────────────────────────────────
+
+# Start only Qdrant Vector DB
+docker compose --profile edore-backend up -d qdrant
+
+# Start only Jina Embedding Service (TEI)
+docker compose --profile edore-backend up -d embedding
 
 # Open interactive PostgreSQL shell
 docker exec -it edore_postgres psql -U edore -d edore
@@ -45,5 +55,7 @@ docker exec -it edore_postgres psql -U edore -d edore
 # Open interactive Redis CLI shell
 docker exec -it edore_redis redis-cli
 
-# Start AI vector database (Qdrant)
-docker compose --profile edore-ai up -d
+# Test TEI Embedding endpoint manually
+curl http://localhost:8001/v1/embeddings \
+  -H "Content-Type: application/json" \
+  -d '{"model":"jinaai/jina-embeddings-v5-text-small","input":["Test embedding vector"]}'
