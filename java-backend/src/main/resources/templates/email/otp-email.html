@@ -3,85 +3,267 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Xác nhận đăng ký</title>
+    <title>Xác thực tài khoản - Edore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@600;700&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&family=Saira+Extra+Condensed:wght@700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; padding: 40px 20px; }
-        .wrapper { max-width: 520px; margin: 0 auto; }
-        .card { background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-
-        /* Header */
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; }
-        .header .icon { font-size: 48px; margin-bottom: 12px; }
-        .header h1 { color: #ffffff; font-size: 22px; font-weight: 600; }
-
-        /* Body */
-        .body { padding: 36px 30px; }
-        .greeting { font-size: 16px; color: #333; margin-bottom: 16px; }
-        .greeting strong { color: #667eea; }
-        .message { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 28px; }
-
-        /* OTP Box */
-        .otp-label { font-size: 13px; color: #999; text-align: center; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .otp-box { background: linear-gradient(135deg, #f5f7ff 0%, #ede9fe 100%);
-            border: 2px dashed #667eea; border-radius: 12px;
-            text-align: center; padding: 20px;
-            font-size: 42px; font-weight: 800;
-            color: #4c3fcb; letter-spacing: 14px;
-            margin-bottom: 24px; }
-
-        /* Timer */
-        .timer { display: flex; align-items: center; justify-content: center; gap: 8px;
-            background: #fff8e1; border-radius: 8px; padding: 12px;
-            font-size: 13px; color: #e65100; margin-bottom: 28px; }
-
-        /* Warning */
-        .warning { background: #fff3cd; border-left: 4px solid #ffc107;
-            border-radius: 4px; padding: 12px 16px;
-            font-size: 13px; color: #856404; line-height: 1.5; }
-
-        /* Footer */
-        .footer { background: #f8f9fa; padding: 20px 30px; text-align: center;
-            font-size: 12px; color: #aaa; border-top: 1px solid #eee; }
-        .footer a { color: #667eea; text-decoration: none; }
+        body {
+            font-family: 'Mulish', Arial, sans-serif;
+            background-color: #fafafa;
+            color: #1a1c1f;
+            line-height: 1.6;
+            font-size: 14px;
+            padding: 40px 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #d9d9d9;
+            border-radius: 12px;
+            padding: 40px 36px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #034ce4;
+            margin-bottom: 32px;
+        }
+        .logo-title {
+            font-family: 'Saira Extra Condensed', Arial Narrow, sans-serif;
+            font-size: 40px;
+            font-weight: 800;
+            color: #034ce4;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+            line-height: 1;
+            margin: 0;
+        }
+        .salutation {
+            font-size: 15.5px;
+            font-weight: 700;
+            color: #1a1c1f;
+            margin-bottom: 16px;
+        }
+        .paragraph {
+            font-size: 14px;
+            color: #1a1c1f;
+            margin-bottom: 14px;
+        }
+        .highlight-text {
+            color: #034ce4;
+            font-weight: 700;
+        }
+        .brand-link {
+            color: #034ce4;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+        .otp-container {
+            background-color: #edf0f2;
+            border: 1.5px dashed #034ce4;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 24px 0;
+        }
+        .otp-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1a1c1f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .otp-code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 36px;
+            font-weight: 700;
+            color: #034ce4;
+            letter-spacing: 8px;
+        }
+        .section-header {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #1a1c1f;
+            margin: 20px 0 8px 0;
+        }
+        .notice-underline {
+            text-decoration: underline;
+            font-weight: 700;
+            color: #1a1c1f;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .dashed-divider {
+            border: none;
+            border-top: 1px dashed #d9d9d9;
+            margin: 32px 0;
+        }
+        .notes-block {
+            margin-top: 16px;
+        }
+        .notes-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1a1c1f;
+            margin-bottom: 8px;
+        }
+        .notes-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .notes-list li {
+            font-size: 13.5px;
+            color: #1a1c1f;
+            font-style: italic;
+            margin-bottom: 6px;
+            position: relative;
+            padding-left: 14px;
+        }
+        .notes-list li::before {
+            content: "-";
+            position: absolute;
+            left: 0;
+            color: #1a1c1f;
+        }
+        .signoff {
+            margin-top: 24px;
+            font-size: 14px;
+            color: #1a1c1f;
+        }
+        .footer {
+            margin-top: 36px;
+            padding-top: 0;
+            text-align: left;
+            font-size: 13.5px;
+            color: #1a1c1f;
+            border-top: none;
+            font-family: 'Mulish', Arial, sans-serif;
+        }
     </style>
 </head>
 <body>
-<div class="wrapper">
-    <div class="card">
+<div class="container">
+    <!-- Header: EDORE Brand Title Only -->
+    <div class="header">
+        <h1 class="logo-title">EDORE</h1>
+    </div>
 
-        <!-- Header -->
-        <div class="header">
-            <div class="icon">✉️</div>
-            <h1>Xác nhận đăng ký tài khoản</h1>
-        </div>
+    <!-- VIETNAMESE SECTION -->
+    <div class="salutation">
+        Kính gửi Quý khách <span th:text="${fullName}" class="highlight-text">HỒ GIA BẢO HUY</span>!!
+    </div>
 
-        <!-- Body -->
-        <div class="body">
-            <p class="greeting">Xin chào, <strong th:text="${fullName}">Người dùng</strong>!</p>
-            <p class="message">
-                Cảm ơn bạn đã đăng ký tài khoản. Vui lòng sử dụng mã OTP bên dưới để xác nhận tài khoản của bạn.
-            </p>
+    <p class="paragraph">
+        Edore.vn xin gửi lời cảm ơn đến Quý khách đã tin tưởng và sử dụng dịch vụ của chúng tôi.
+    </p>
 
-            <p class="otp-label">Mã xác nhận của bạn</p>
-            <div class="otp-box" th:text="${otpCode}">000000</div>
+    <p class="paragraph">
+        Chúng tôi đã nhận được yêu cầu xác thực tài khoản dịch vụ <a href="#" class="brand-link">edore.id.vn</a> của Quý khách.
+    </p>
 
-            <div class="timer">
-                ⏱️ &nbsp; Mã OTP sẽ hết hạn sau <strong>&nbsp;5 phút</strong>
-            </div>
+    <p class="paragraph">
+        Mã xác thực (OTP) của Quý khách là:
+    </p>
 
-            <div class="warning">
-                ⚠️ <strong>Lưu ý:</strong> Không chia sẻ mã này với bất kỳ ai.
-                Chúng tôi sẽ không bao giờ yêu cầu mã OTP của bạn.
-            </div>
-        </div>
+    <div class="otp-container">
+        <div class="otp-label">MÃ XÁC THỰC / OTP CODE</div>
+        <div class="otp-code" th:text="${otp}">123456</div>
+    </div>
 
-        <!-- Footer -->
-        <div class="footer">
-            <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email.</p>
-            <p style="margin-top: 8px;">© 2026 SBA301 Group Project</p>
-        </div>
+    <div class="section-header">[Hướng dẫn xác thực tài khoản]</div>
+    <p class="paragraph">
+        1. Nhập mã OTP ở trên vào trang xác thực dịch vụ Edore.<br/>
+        2. Mã OTP có hiệu lực trong vòng <strong>5 phút</strong> kể từ khi nhận được email.<br/>
+        3. Tuyệt đối không chia sẻ mã này cho bất kỳ ai khác.
+    </p>
 
+    <p class="notice-underline">
+        Ngay sau khi Quý khách hoàn tất xác thực, mã OTP trên sẽ tự động bị vô hiệu hóa.
+    </p>
+
+    <div class="notes-block">
+        <div class="notes-title">Lưu ý:</div>
+        <ul class="notes-list">
+            <li>Nếu Quý khách không gửi yêu cầu này, vui lòng bỏ qua email hoặc liên hệ với bộ phận hỗ trợ của Edore.</li>
+            <li>Để đảm bảo an toàn, không cung cấp mã OTP cho bất kỳ ai, kể cả nhân viên hỗ trợ Edore.</li>
+        </ul>
+    </div>
+
+    <p class="paragraph" style="margin-top: 16px;">
+        Nếu có bất kỳ thắc mắc nào liên quan đến dịch vụ, Quý khách vui lòng liên hệ ngay với Edore.vn để được hỗ trợ kịp thời.
+    </p>
+
+    <p class="signoff">
+        Chân thành cảm ơn sự hợp tác của Quý khách!
+    </p>
+
+    <!-- DASHED DIVIDER BETWEEN LANGUAGES -->
+    <hr class="dashed-divider"/>
+
+    <!-- ENGLISH SECTION -->
+    <div class="salutation">
+        Dear <span th:text="${fullName}" class="highlight-text">HỒ GIA BẢO HUY</span>!
+    </div>
+
+    <p class="paragraph">
+        Edore.vn would like to sincerely thank you for your trust in and continued use of our services.
+    </p>
+
+    <p class="paragraph">
+        We have received an account verification request for your account <a href="#" class="brand-link">edore.id.vn</a>.
+    </p>
+
+    <p class="paragraph">
+        Your One-Time Password (OTP) is:
+    </p>
+
+    <div class="otp-container">
+        <div class="otp-label">MÃ XÁC THỰC / OTP CODE</div>
+        <div class="otp-code" th:text="${otp}">123456</div>
+    </div>
+
+    <div class="section-header">[Account Verification Instructions]</div>
+    <p class="paragraph">
+        1. Enter the OTP code above into the Edore verification page.<br/>
+        2. The OTP code is valid for <strong>5 minutes</strong> from the time this email was sent.<br/>
+        3. Do not share this code with anyone.
+    </p>
+
+    <p class="notice-underline">
+        After completing verification, the OTP code will automatically expire.
+    </p>
+
+    <div class="notes-block">
+        <div class="notes-title">Important Notes:</div>
+        <ul class="notes-list">
+            <li>If you did not initiate this request, please ignore this email or contact Edore support.</li>
+            <li>For security reasons, never disclose your OTP to anyone, including Edore staff.</li>
+        </ul>
+    </div>
+
+    <p class="paragraph" style="margin-top: 16px;">
+        Should you have any questions regarding our services, please do not hesitate to contact Edore.vn for assistance.
+    </p>
+
+    <p class="paragraph">
+        Thank you for your cooperation.
+    </p>
+
+    <p class="signoff">
+        Best regards,<br/><br/>
+        <strong>Edore.vn</strong>
+    </p>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        [FOOTER]
     </div>
 </div>
 </body>

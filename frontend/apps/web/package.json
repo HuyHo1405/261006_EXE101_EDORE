@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prebuild": "npm run tokens:build --prefix ../..",
     "dev": "next dev --turbo",
-    "build": "next build",
+    "build": "npm run tokens:build --prefix ../.. && next build",
     "start": "next start",
     "lint": "eslint",
     "type-check": "tsc --noEmit"
@@ -41,6 +42,12 @@
   },
   "optionalDependencies": {
     "@next/swc-wasm-nodejs": "16.3.4",
-    "@next/swc-win32-x64-msvc": "16.3.4"
+    "@next/swc-win32-x64-msvc": "16.3.4",
+    "@tailwindcss/oxide-linux-x64-gnu": "4.3.3",
+    "@tailwindcss/oxide-linux-x64-musl": "4.3.3",
+    "@tailwindcss/oxide-win32-x64-msvc": "4.3.3",
+    "lightningcss": "^1.29.1",
+    "lightningcss-linux-x64-gnu": "^1.29.1",
+    "lightningcss-linux-x64-musl": "^1.29.1"
   }
 }

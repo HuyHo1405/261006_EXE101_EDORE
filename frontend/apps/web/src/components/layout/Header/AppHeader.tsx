@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Menu, X, Plus, Folder, LogOut } from "@/components/ui/icons";
+import { BookOpen } from "lucide-react";
 import { EdoreLogo } from "./EdoreLogo";
 import { UserAvatar } from "./UserAvatar";
 import { MegaMenu, Subject, Classroom } from "./MegaMenu";
@@ -287,6 +288,15 @@ export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
                       Tạo kịch bản mới
                     </Link>
 
+                    <Link
+                      href="/guide"
+                      onClick={closeUserDropdown}
+                      className="w-full px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] hover:bg-[#EAEFFD] hover:text-[var(--color-primary-700)] rounded-lg flex items-center gap-2.5 transition-all"
+                    >
+                      <BookOpen className="w-4 h-4 text-[var(--color-primary-500)]" />
+                      Hướng dẫn luồng dự án
+                    </Link>
+
                     <button
                       type="button"
                       onClick={handleLogout}
@@ -300,12 +310,21 @@ export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
               </div>
             </div>
           ) : (
-            /* Guest — Nút ĐĂNG NHẬP dùng shadcn Button */
-            <Button asChild size="header">
-              <Link href="/login" id="header-login-btn">
-                Đăng nhập
+            /* Guest — Nút Hướng dẫn + Nút ĐĂNG NHẬP */
+            <div className="flex items-center gap-3">
+              <Link
+                href="/guide"
+                className="px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] hover:text-[var(--color-primary-600)] transition-colors flex items-center gap-1.5"
+              >
+                <BookOpen className="w-4 h-4 text-[var(--color-primary-500)]" />
+                Hướng dẫn
               </Link>
-            </Button>
+              <Button asChild size="header">
+                <Link href="/login" id="header-login-btn">
+                  Đăng nhập
+                </Link>
+              </Button>
+            </div>
           )}
         </div>
 
