@@ -27,8 +27,8 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/courses")
-@Tag(   name = "6. Course APIs", 
+@RequestMapping("/api/v1/courses")
+@Tag(   name = "06. Course APIs", 
         description = "User Course management — workspace for teaching scripts")
 @RequiredArgsConstructor
 public class CourseController {

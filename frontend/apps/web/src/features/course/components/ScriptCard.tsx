@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { FileText, MoreVertical, Trash2, Clock, Pencil, Check, X } from "lucide-react";
 import type { ScriptCardViewModel } from "@edore/types";
 import { useRouter } from "next/navigation";
@@ -19,7 +20,12 @@ export function ScriptCard({ script, onDelete, onRename, courseId, displayColor 
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(script.title);
+  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isEditing) {
@@ -95,41 +101,12 @@ export function ScriptCard({ script, onDelete, onRename, courseId, displayColor 
             <FileText className="h-4.5 w-4.5" />
           </div>
 
-          {isEditing ? (
-            <div className="flex items-center gap-1.5 flex-1" onClick={(e) => e.stopPropagation()}>
-              <input
-                ref={inputRef}
-                type="text"
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="w-full rounded-lg border border-slate-300 px-2 py-1 font-header font-bold text-sm uppercase text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
-              <button
-                type="button"
-                onClick={handleSaveRename}
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
-                title="Lưu"
-              >
-                <Check className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={handleCancelRename}
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200"
-                title="Hủy"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          ) : (
-            <h3
-              className="line-clamp-2 font-header font-bold text-base uppercase tracking-tight transition-colors duration-200 leading-snug flex-1"
-              style={{ color: isHovered ? accentColor : "#0f172a" }}
-            >
-              {script.title || "Kịch bản bài giảng"}
-            </h3>
-          )}
+          <h3
+            className="line-clamp-2 font-header font-bold text-base uppercase tracking-tight transition-colors duration-200 leading-snug flex-1"
+            style={{ color: isHovered ? accentColor : "#0f172a" }}
+          >
+            {script.title || "Kịch bản bài giảng"}
+          </h3>
         </div>
 
         {/* Footer Info: Clock + Updated Time on Left, Action Menu on Right */}
@@ -192,6 +169,85 @@ export function ScriptCard({ script, onDelete, onRename, courseId, displayColor 
           </div>
         </div>
       </div>
+
+      {/* ── Form Popup Modal for Renaming Script (Portal to Body) ── */}
+      {isEditing && mounted && createPortal(
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-200 font-body cursor-default"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <div
+            className="w-full max-w-md bg-white rounded-[var(--radius-xl)] border border-[var(--color-neutral-200)] shadow-2xl p-6 flex flex-col gap-5 animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-[var(--color-neutral-200)] pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-[var(--radius-lg)] bg-[var(--color-primary-50)] text-[var(--color-primary-600)]">
+                  <Pencil className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="font-mono text-[10px] uppercase font-bold text-[var(--color-neutral-400)] block tracking-wider">
+                    Cập nhật kịch bản
+                  </span>
+                  <h3 className="font-header font-extrabold text-base uppercase tracking-tight text-[var(--color-neutral-900)]">
+                    Đổi tên kịch bản
+                  </h3>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleCancelRename}
+                className="p-1.5 rounded-[var(--radius-md)] text-[var(--color-neutral-400)] hover:bg-[var(--color-neutral-100)] hover:text-[var(--color-neutral-800)] transition-colors cursor-pointer"
+              >
+                <X className="w-4.5 h-4.5" />
+              </button>
+            </div>
+
+            {/* Form Input */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-[var(--color-neutral-600)] uppercase tracking-wider block">
+                Tên kịch bản mới <span className="text-[var(--color-secondary-500)]">*</span>
+              </label>
+              <div className="relative flex items-center">
+                <FileText className="w-4 h-4 absolute left-3.5 text-[var(--color-neutral-400)]" />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Nhập tên kịch bản bài giảng..."
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-[var(--radius-lg)] border border-[var(--color-neutral-300)] focus:border-[var(--color-primary-500)] focus:ring-4 focus:ring-[var(--color-primary-50)] outline-none text-sm font-bold text-[var(--color-neutral-900)] transition-all shadow-xs"
+                />
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--color-neutral-100)]">
+              <button
+                type="button"
+                onClick={handleCancelRename}
+                className="px-4 py-2 rounded-[var(--radius-md)] text-xs font-bold text-[var(--color-neutral-600)] hover:bg-[var(--color-neutral-100)] transition-colors cursor-pointer"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveRename}
+                disabled={!editTitle.trim() || editTitle.trim() === script.title}
+                className="flex items-center gap-1.5 px-5 py-2 rounded-[var(--radius-md)] text-xs font-bold bg-[var(--color-primary-500)] text-white hover:bg-[var(--color-primary-600)] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md cursor-pointer"
+              >
+                <Check className="w-3.5 h-3.5" />
+                Cập nhật
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

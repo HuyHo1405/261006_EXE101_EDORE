@@ -10,6 +10,7 @@ import ClassroomConfigModal from '@/features/playground/components/ClassroomConf
 import FileStartModal from '@/features/playground/components/FileStartModal'
 import { useStageTransition } from '@/lib/hooks/useStageTransition'
 import { useMyCourses, useGenerateScriptWithAiMutation } from '@/features/course/queries/courseQueries'
+import { courseService } from '@/features/course/api/courseService'
 import type { ClassroomCtx } from '@/features/playground/components/ClassroomConfigModal'
 import { toast } from '@/components/ui/toast'
 
@@ -48,6 +49,8 @@ export default function NewScriptPage() {
   // ── SSE pipeline state ────────────────────────────────────────────────────────
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [progress, setProgress] = useState(0)
+  const pollingRef = useRef<NodeJS.Timeout | null>(null)
 
   // ── Pending file (waiting for FileStartModal) ─────────────────────────────────
   const [pendingFile, setPendingFile] = useState<{ file: Blob; isText: boolean; text?: string } | null>(null)
@@ -66,6 +69,8 @@ export default function NewScriptPage() {
   const resetPipelineState = () => {
     setHasError(false)
     setErrorMessage('')
+    setProgress(0)
+    if (pollingRef.current) clearInterval(pollingRef.current)
   }
 
   const handleFileSelected = (file: File) => {
@@ -96,8 +101,12 @@ export default function NewScriptPage() {
     const fileBlob = isText ? new Blob([text || ''], { type: 'text/plain' }) : file
     const uploadFileName = isText ? 'manual_input.txt' : (file as File).name || 'input.txt'
     fd.append('file', fileBlob, uploadFileName)
-    fd.append('templateId', updatedCtx.template_id === 'standard-4-node' ? '2' : '1')
+    fd.append('templateId', updatedCtx.template_id === 'extended-4-node' || updatedCtx.template_id === '2' ? '2' : '1')
     fd.append('courseId', courseIdParam)
+    if (updatedCtx.scriptTitle) {
+      fd.append('scriptTitle', updatedCtx.scriptTitle)
+      fd.append('title', updatedCtx.scriptTitle)
+    }
     if (updatedCtx.learning_outcome) {
       fd.append('learningOutcome', updatedCtx.learning_outcome)
     }
@@ -106,8 +115,45 @@ export default function NewScriptPage() {
 
     generateAiMutation.mutate(fd, {
       onSuccess: (data) => {
+        const jobId = data?.jobId
         const scriptId = data?.scriptId || data?.id
-        if (scriptId) {
+        
+        if (jobId) {
+          // New Async Flow
+          toast.success('Đã tiếp nhận yêu cầu, đang xử lý ngầm...')
+          
+          if (pollingRef.current) clearInterval(pollingRef.current)
+          pollingRef.current = setInterval(async () => {
+            try {
+              const statusData = await courseService.getAiJobStatus(jobId)
+              
+              if (statusData.status === 'COMPLETED') {
+                clearInterval(pollingRef.current!)
+                setProgress(100)
+                toast.success('Sinh kịch bản AI thành công!')
+                const finalScriptId = statusData.scriptId || statusData.result?.scriptId || statusData.result?.id
+                if (finalScriptId) {
+                  router.push(`/dashboard/scripts/${finalScriptId}?courseId=${courseIdParam}`)
+                } else {
+                  router.push(`/dashboard?courseId=${courseIdParam}`)
+                }
+              } else if (statusData.status === 'FAILED') {
+                clearInterval(pollingRef.current!)
+                setHasError(true)
+                const msg = statusData.errorMessage || 'AI gặp lỗi trong quá trình sinh kịch bản.'
+                setErrorMessage(msg)
+                toast.error(msg)
+              } else {
+                setProgress(statusData.progress || 0)
+              }
+            } catch (err) {
+               // Log error but keep polling unless we want to abort
+               console.warn('Lỗi khi kiểm tra tiến độ:', err)
+            }
+          }, 3000)
+          
+        } else if (scriptId) {
+          // Old Sync Flow fallback
           toast.success('Sinh và lưu kịch bản AI thành công!')
           router.push(`/dashboard/scripts/${scriptId}?courseId=${courseIdParam}`)
         } else {
@@ -117,7 +163,7 @@ export default function NewScriptPage() {
       },
       onError: (err: any) => {
         setHasError(true)
-        const msg = err?.message || 'Có lỗi xảy ra trong quá trình sinh kịch bản AI.'
+        const msg = err?.message || 'Có lỗi xảy ra trong quá trình khởi tạo kịch bản AI.'
         setErrorMessage(msg)
         toast.error(msg)
       },
@@ -166,6 +212,7 @@ export default function NewScriptPage() {
                 <ProcessingLoader
                   hasError={hasError}
                   errorMessage={errorMessage}
+                  progress={progress}
                   onCancel={handleCancel}
                 />
               )}

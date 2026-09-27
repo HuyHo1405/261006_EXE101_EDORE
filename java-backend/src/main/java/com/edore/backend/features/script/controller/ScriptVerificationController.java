@@ -36,8 +36,8 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/scripts")
-@Tag(name = "A7. Script Verification APIs", description = "Fact-check verification pipeline for AI-generated lesson scripts")
+@RequestMapping("/api/v1/scripts")
+@Tag(name = "09. Script Verification APIs", description = "Fact-check verification pipeline for AI-generated lesson scripts")
 @SecurityRequirement(name = "Bearer Authentication")
 @RequiredArgsConstructor
 public class ScriptVerificationController {

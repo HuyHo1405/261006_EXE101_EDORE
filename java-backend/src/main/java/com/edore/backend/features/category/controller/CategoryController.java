@@ -16,8 +16,8 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/categories")
-@Tag(name = "15. Category APIs", description = "Taxonomy category management")
+@RequestMapping("/api/v1/categories")
+@Tag(name = "11. Category APIs", description = "Taxonomy category management")
 @RequiredArgsConstructor
 public class CategoryController {
 

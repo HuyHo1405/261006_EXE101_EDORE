@@ -22,8 +22,8 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
-@Tag(name = "7. Script Management APIs", description = "Lesson script management within courses")
+@RequestMapping("/api/v1")
+@Tag(name = "07. Script APIs", description = "Lesson script management within courses")
 @SecurityRequirement(name = "Bearer Authentication")
 @RequiredArgsConstructor
 public class ScriptController {

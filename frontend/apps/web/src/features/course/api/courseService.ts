@@ -29,18 +29,18 @@ export function createCourseService(client: ApiClientFn = apiClient) {
       if (params?.include) queryParams.set("include", params.include);
 
       const queryStr = queryParams.toString();
-      const endpoint = `/api/courses${queryStr ? `?${queryStr}` : ""}`;
+      const endpoint = `/api/v1/courses${queryStr ? `?${queryStr}` : ""}`;
       const res = await client<PageResponseDTO<CourseResponseDTO>>(endpoint, { method: "GET" });
       return res.result!;
     },
 
     async getCourseById(id: string): Promise<CourseDetailResponseDTO> {
-      const res = await client<CourseDetailResponseDTO>(`/api/courses/${id}`, { method: "GET" });
+      const res = await client<CourseDetailResponseDTO>(`/api/v1/courses/${id}`, { method: "GET" });
       return res.result!;
     },
 
     async createCourse(payload: CourseCreatePayload): Promise<CourseDetailResponseDTO> {
-      const res = await client<CourseDetailResponseDTO>("/api/courses", {
+      const res = await client<CourseDetailResponseDTO>("/api/v1/courses", {
         method: "POST",
         body: JSON.stringify(payload),
       });
@@ -48,7 +48,7 @@ export function createCourseService(client: ApiClientFn = apiClient) {
     },
 
     async updateCourse(id: string, payload: CourseCreatePayload): Promise<CourseDetailResponseDTO> {
-      const res = await client<CourseDetailResponseDTO>(`/api/courses/${id}`, {
+      const res = await client<CourseDetailResponseDTO>(`/api/v1/courses/${id}`, {
         method: "PUT",
         body: JSON.stringify(payload),
       });
@@ -56,33 +56,33 @@ export function createCourseService(client: ApiClientFn = apiClient) {
     },
 
     async deleteCourse(id: string): Promise<void> {
-      await client(`/api/courses/${id}`, { method: "DELETE" });
+      await client(`/api/v1/courses/${id}`, { method: "DELETE" });
     },
 
     // Script sub-resource APIs
     async getCourseScripts(courseId: string): Promise<ScriptResponseDTO[]> {
-      const res = await client<ScriptResponseDTO[]>(`/api/courses/${courseId}/scripts`, {
+      const res = await client<ScriptResponseDTO[]>(`/api/v1/courses/${courseId}/scripts`, {
         method: "GET",
       });
       return res.result || [];
     },
 
     async getScriptById(scriptId: string): Promise<ScriptResponseDTO> {
-      const res = await client<ScriptResponseDTO>(`/api/scripts/${scriptId}`, {
+      const res = await client<ScriptResponseDTO>(`/api/v1/scripts/${scriptId}`, {
         method: "GET",
       });
       return res.result!;
     },
 
     async getScriptNodes(scriptId: string): Promise<ScriptNodeResponseDTO[]> {
-      const res = await client<ScriptNodeResponseDTO[]>(`/api/scripts/${scriptId}/nodes`, {
+      const res = await client<ScriptNodeResponseDTO[]>(`/api/v1/scripts/${scriptId}/nodes`, {
         method: "GET",
       });
       return res.result || [];
     },
 
     async createScript(courseId: string, payload?: ScriptCreatePayload): Promise<ScriptResponseDTO> {
-      const res = await client<ScriptResponseDTO>(`/api/courses/${courseId}/scripts`, {
+      const res = await client<ScriptResponseDTO>(`/api/v1/courses/${courseId}/scripts`, {
         method: "POST",
         body: JSON.stringify(payload || {}),
       });
@@ -90,7 +90,7 @@ export function createCourseService(client: ApiClientFn = apiClient) {
     },
 
     async updateScript(scriptId: string, payload: ScriptUpdatePayload): Promise<ScriptResponseDTO> {
-      const res = await client<ScriptResponseDTO>(`/api/scripts/${scriptId}`, {
+      const res = await client<ScriptResponseDTO>(`/api/v1/scripts/${scriptId}`, {
         method: "PATCH",
         body: JSON.stringify(payload),
       });
@@ -98,14 +98,14 @@ export function createCourseService(client: ApiClientFn = apiClient) {
     },
 
     async deleteScript(scriptId: string): Promise<void> {
-      await client(`/api/scripts/${scriptId}`, { method: "DELETE" });
+      await client(`/api/v1/scripts/${scriptId}`, { method: "DELETE" });
     },
 
     async generateScriptWithAi(formData: FormData): Promise<any> {
       const { useAuthStore } = await import("@/features/auth/stores/useAuthStore");
       const token = useAuthStore.getState().accessToken;
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const res = await fetch(`${baseUrl}/api/ai/pedagogy`, {
+      const res = await fetch(`${baseUrl}/api/v1/ai/pedagogy`, {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
@@ -115,13 +115,29 @@ export function createCourseService(client: ApiClientFn = apiClient) {
         throw new Error(`Sinh kịch bản AI thất bại (${res.status}): ${text}`);
       }
       const data = await res.json();
-      return data.result;
+      return data.result || data.data; // Backend mới trả về ApiResponse.of(...)
+    },
+
+    async getAiJobStatus(jobId: string): Promise<any> {
+      const { useAuthStore } = await import("@/features/auth/stores/useAuthStore");
+      const token = useAuthStore.getState().accessToken;
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      const res = await fetch(`${baseUrl}/api/v1/ai/jobs/${jobId}/status`, {
+        method: "GET",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Kiểm tra trạng thái job thất bại (${res.status}): ${text}`);
+      }
+      const data = await res.json();
+      return data.result || data.data;
     },
 
     // Category APIs
     async getCategories(type?: string): Promise<CategoryResponseDTO[]> {
       const queryStr = type ? `?type=${type}` : "";
-      const res = await client<CategoryResponseDTO[]>(`/api/categories${queryStr}`, {
+      const res = await client<CategoryResponseDTO[]>(`/api/v1/categories${queryStr}`, {
         method: "GET",
       });
       return res.result || [];

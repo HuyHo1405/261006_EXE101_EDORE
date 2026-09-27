@@ -440,19 +440,34 @@ export default function TimelineEditor({
   const [activeIdx, setActiveIdx] = useState(-1)
   const [expandedMaterialIdx, setExpandedMaterialIdx] = useState<number | null>(0)
   const [expandedStepIdx, setExpandedStepIdx] = useState<number | null>(0)
+  const [activeUnitIdx, setActiveUnitIdx] = useState<number | null>(0)
   const stepRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     setExpandedMaterialIdx(0)
     setExpandedStepIdx(0)
+    setActiveUnitIdx(0)
   }, [activeIdx])
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      if (e.detail !== undefined && typeof e.detail.uIdx === 'number') {
+        setActiveUnitIdx(e.detail.uIdx)
+      }
+    }
+    window.addEventListener('knowledge-unit-expanded', handler)
+    return () => window.removeEventListener('knowledge-unit-expanded', handler)
+  }, [])
 
   const current = steps[activeIdx] ?? ({} as Partial<TimelineStep>)
   const updateStep = (patch: Partial<TimelineStep>) => onStepsChange(steps.map((s, i) => (i === activeIdx ? { ...s, ...patch } : s)))
 
   const scrollToStep = (idx: number) => {
     setExpandedStepIdx(idx < 0 ? null : idx)
-    if (idx < 0) return
+    if (idx < 0) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
     setTimeout(() => {
       const el = stepRefs.current[idx]
       if (!el) return
@@ -736,6 +751,28 @@ export default function TimelineEditor({
                   </div>
                 )}
               </div>
+
+              {/* ─── NÚT ĐIỀU HƯỚNG QUA PHẦN KHÁC (DẠNG LINK) ─── */}
+              <div className="flex items-center justify-between pt-4 border-t border-[var(--color-neutral-200)] mt-4">
+                <button
+                  onClick={() => setActiveIdx(Math.max(-1, activeIdx - 1))}
+                  disabled={activeIdx <= -1}
+                  className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] hover:underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed transition-colors cursor-pointer py-1 px-2 rounded-[var(--radius-md)] hover:bg-[var(--color-primary-50)]"
+                  title="Phần trước"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Phần trước
+                </button>
+                <button
+                  onClick={() => setActiveIdx(Math.min(steps.length - 1, activeIdx + 1))}
+                  disabled={activeIdx >= steps.length - 1}
+                  className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] hover:underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed transition-colors cursor-pointer py-1 px-2 rounded-[var(--radius-md)] hover:bg-[var(--color-primary-50)]"
+                  title="Phần tiếp theo"
+                >
+                  Phần tiếp
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </main>
 
             {/* Right Sidebar: Interface Blueprint Specification */}
@@ -780,30 +817,94 @@ export default function TimelineEditor({
                         <div className="h-3 bg-[var(--color-neutral-100)] rounded w-4/5 animate-pulse" />
                       </div>
                     ) : (
-                      <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-1">
-                        {subSteps.map((step, idx) => {
-                          const isExpanded = expandedStepIdx === idx
-                          const titleText = step.title || step.raw.replace(/^(Bước\s+\d+|[0-9]+\.)\s*/i, '').trim()
-                          return (
-                            <div
-                              key={idx}
-                              onClick={() => scrollToStep(isExpanded ? -1 : idx)}
-                              title={step.raw}
-                              className={`px-2.5 py-1.5 rounded-[var(--radius-md)] text-xs cursor-pointer transition-all flex items-center gap-2 select-none ${
-                                isExpanded
-                                  ? 'bg-[var(--color-primary-50)] border border-[var(--color-primary-300)] text-[var(--color-primary-900)] font-bold shadow-2xs'
-                                  : 'bg-white border border-[var(--color-neutral-200)] text-[var(--color-neutral-700)] hover:border-[var(--color-primary-200)] hover:bg-slate-50'
-                              }`}
-                            >
-                              <span className="font-mono text-[10px] font-bold shrink-0 px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
-                                B{idx + 1}
-                              </span>
-                              <span className="truncate flex-1 font-body text-xs">{titleText}</span>
-                            </div>
-                          )
-                        })}
+                      <div className="space-y-1.5 pr-1">
+                        {(() => {
+                          return subSteps.map((step, idx) => {
+                            const isExpanded = expandedStepIdx === idx
+                            const titleText = step.title || step.raw.replace(/^(Bước\s+\d+|[0-9]+\.)\s*/i, '').trim()
+                            
+                            // Gắn trực tiếp knowledge_units vào Bước 1 (index 0) theo yêu cầu
+                            const isContentStep = idx === 0
+                            const hasKnowledge = isContentStep && cur.nodePayload?.knowledge_units && Array.isArray(cur.nodePayload.knowledge_units) && cur.nodePayload.knowledge_units.length > 0
+
+                            return (
+                              <div key={idx} className="flex flex-col gap-1.5">
+                                <div
+                                  onClick={() => scrollToStep(isExpanded ? -1 : idx)}
+                                  title={step.raw}
+                                  className={`px-2.5 py-1.5 rounded-[var(--radius-md)] text-xs cursor-pointer transition-all flex items-center gap-2 select-none ${
+                                    isExpanded
+                                      ? 'bg-[var(--color-primary-50)] border border-[var(--color-primary-300)] text-[var(--color-primary-900)] font-bold shadow-2xs'
+                                      : 'bg-white border border-[var(--color-neutral-200)] text-[var(--color-neutral-700)] hover:border-[var(--color-primary-200)] hover:bg-slate-50'
+                                  }`}
+                                >
+                                  <span className="font-mono text-[10px] font-bold shrink-0 px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                    B{idx + 1}
+                                  </span>
+                                  <span className="truncate flex-1 font-body text-xs">{titleText}</span>
+                                </div>
+
+                                {/* Nested Knowledge Units for Content Step (Nav Style) */}
+                                {hasKnowledge && (
+                                  <div className="pl-6 pr-1 py-0.5 space-y-0.5 border-l-[1.5px] border-dashed border-[var(--color-primary-300)] ml-4 mb-1">
+                                    {cur.nodePayload.knowledge_units.map((unit: any, uIdx: number) => {
+                                      const isUnitActive = activeUnitIdx === uIdx && expandedStepIdx === 0
+                                      return (
+                                        <button
+                                          key={uIdx}
+                                          onClick={() => {
+                                            setActiveUnitIdx(uIdx)
+                                            setExpandedStepIdx(0) // Chỉ mở step 1, không cuộn
+                                            setTimeout(() => {
+                                              window.dispatchEvent(new CustomEvent('expand-knowledge-unit', { detail: { uIdx, shouldScroll: true } }))
+                                            }, 50)
+                                          }}
+                                          title={unit.core_content || unit.teacher_delivery || 'Chi tiết đơn vị kiến thức'}
+                                          className={`text-left w-full group flex items-center gap-1.5 px-2 py-1.5 text-xs transition-all rounded-[var(--radius-md)] ${
+                                            isUnitActive
+                                              ? 'bg-[var(--color-primary-50)] text-[var(--color-primary-900)] font-bold shadow-2xs'
+                                              : 'bg-transparent text-[var(--color-neutral-600)] hover:bg-[var(--color-primary-50)]/50 hover:text-[var(--color-primary-700)]'
+                                          }`}
+                                        >
+                                          <span className={`text-[10px] font-mono font-bold ${isUnitActive ? 'text-[var(--color-primary-700)]' : 'text-[var(--color-primary-500)] group-hover:text-[var(--color-primary-600)]'}`}>
+                                            {uIdx + 1}.
+                                          </span>
+                                          <span className="truncate font-body flex-1">
+                                            {unit.unit_title || 'Đơn vị kiến thức'}
+                                          </span>
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })
+                        })()}
                       </div>
                     )}
+                  </div>
+
+                  {/* Nút chuyển Node (Phần trước / Phần tiếp - Dạng link button) */}
+                  <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-[var(--color-neutral-200)]">
+                    <button
+                      onClick={() => setActiveIdx(Math.max(-1, activeIdx - 1))}
+                      disabled={activeIdx <= -1}
+                      className="flex items-center gap-1 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] hover:underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed transition-colors cursor-pointer py-1 px-1.5 rounded-[var(--radius-md)] hover:bg-[var(--color-primary-50)]"
+                      title="Phần trước"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      Phần trước
+                    </button>
+                    <button
+                      onClick={() => setActiveIdx(Math.min(steps.length - 1, activeIdx + 1))}
+                      disabled={activeIdx >= steps.length - 1}
+                      className="flex items-center gap-1 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] hover:underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed transition-colors cursor-pointer py-1 px-1.5 rounded-[var(--radius-md)] hover:bg-[var(--color-primary-50)]"
+                      title="Phần tiếp theo"
+                    >
+                      Phần tiếp
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
 

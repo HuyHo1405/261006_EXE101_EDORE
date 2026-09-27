@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/orders/payment")
-@Tag(   name = "WH1. Payment Webhook APIs", 
+@RequestMapping("/api/v1/orders/payment")
+@Tag(   name = "WH01. Payment Webhook APIs", 
         description = "Public payment provider webhook APIs")
 @RequiredArgsConstructor
 public class PaymentWebhookController {

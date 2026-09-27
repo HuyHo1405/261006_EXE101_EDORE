@@ -15,6 +15,7 @@ public interface AiPipelineService {
             MultipartFile file,
             Long templateId,
             UUID courseId,
+            String scriptTitle,
             String learningOutcome
     );
 
@@ -22,7 +23,20 @@ public interface AiPipelineService {
             MultipartFile file,
             Long templateId,
             UUID courseId,
+            String scriptTitle,
             String learningOutcome,
             Boolean enableFactCheck
     );
+
+    void generateScriptAsync(
+            String jobId,
+            String rawText,
+            Long templateId,
+            UUID courseId,
+            String scriptTitle,
+            String learningOutcome,
+            Boolean enableFactCheck
+    );
+
+    void validateGenerationParams(Long templateId, UUID courseId);
 }

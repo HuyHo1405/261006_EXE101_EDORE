@@ -23,10 +23,12 @@ import { courseService } from "@/features/course/api/courseService";
 import { createCourseCardViewModel } from "@/features/course/viewmodels/courseViewModel";
 import type { CourseCardViewModel, CourseResponseDTO } from "@edore/types";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const courseIdParam = searchParams.get("courseId") || searchParams.get("course") || "";
 
   // Navigation & Filter States
   const [activeTab, setActiveTab] = useState<"courses" | "scripts" | "classConfigs">("courses");
@@ -57,20 +59,32 @@ export default function DashboardPage() {
     ascending: sortOrder === "asc",
   });
 
-  const { data: detailCourseDto } = useCourseDetail(selectedCourse?.id || "");
+  const effectiveCourseId = selectedCourse?.id || courseIdParam || "";
+  const { data: detailCourseDto } = useCourseDetail(effectiveCourseId);
 
-  // Real-time active selected course computation (updates UI instantly upon edit mutation)
+  // Real-time active selected course computation (updates UI instantly upon edit mutation or URL navigation)
   const activeSelectedCourse = React.useMemo(() => {
-    if (!selectedCourse) return null;
-    if (detailCourseDto) {
-      return createCourseCardViewModel(detailCourseDto);
+    if (selectedCourse) {
+      if (detailCourseDto && detailCourseDto.id === selectedCourse.id) {
+        return createCourseCardViewModel(detailCourseDto);
+      }
+      const updatedDto = coursePage?.content?.find((c) => c?.id === selectedCourse.id);
+      if (updatedDto) {
+        return createCourseCardViewModel(updatedDto);
+      }
+      return selectedCourse;
     }
-    const updatedDto = coursePage?.content?.find((c) => c?.id === selectedCourse.id);
-    if (updatedDto) {
-      return createCourseCardViewModel(updatedDto);
+    if (courseIdParam) {
+      if (detailCourseDto && detailCourseDto.id === courseIdParam) {
+        return createCourseCardViewModel(detailCourseDto);
+      }
+      const matchedDto = coursePage?.content?.find((c) => c?.id === courseIdParam);
+      if (matchedDto) {
+        return createCourseCardViewModel(matchedDto);
+      }
     }
-    return selectedCourse;
-  }, [selectedCourse, detailCourseDto, coursePage?.content]);
+    return null;
+  }, [selectedCourse, courseIdParam, detailCourseDto, coursePage?.content]);
 
   const { data: scripts = [], isLoading: isLoadingScripts } = useCourseScripts(
     activeSelectedCourse?.id || ""
@@ -102,25 +116,24 @@ export default function DashboardPage() {
   };
 
   const handleCreateScriptForCourse = (courseId: string) => {
-    courseService.createScript(courseId).then((newScript) => {
-      queryClient.invalidateQueries({ queryKey: courseKeys.scripts(courseId) });
-      router.push(`/dashboard/scripts/${newScript.id}?courseId=${courseId}`);
-    });
+    router.push(`/dashboard/scripts/new?courseId=${courseId}`);
   };
 
   const handleSelectCourse = (course: CourseCardViewModel) => {
     setSelectedCourse(course);
     setSearchTerm("");
+    router.push(`/dashboard?courseId=${course.id}`);
   };
 
   const handleBackToCourses = () => {
     setSelectedCourse(null);
     setSearchTerm("");
+    router.push("/dashboard");
   };
 
   const handleActionClick = () => {
     if (activeSelectedCourse) {
-      createScriptMutation.mutate();
+      router.push(`/dashboard/scripts/new?courseId=${activeSelectedCourse.id}`);
     } else {
       // Root level -> Open Create Course Modal
       handleOpenCreateCourse();
@@ -182,17 +195,20 @@ export default function DashboardPage() {
               setActiveTab(tab);
               setSelectedCourse(null);
               setPageNumber(0);
+              if (courseIdParam) router.push("/dashboard");
             }}
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={(catId) => {
               setSelectedCategoryId(catId);
               setSelectedCourse(null);
               setPageNumber(0);
+              if (courseIdParam) router.push("/dashboard");
             }}
             courses={coursePage?.content || []}
             selectedCourseId={activeSelectedCourse?.id}
             onSelectCourse={(courseDto) => {
               setSelectedCourse(createCourseCardViewModel(courseDto));
+              router.push(`/dashboard?courseId=${courseDto.id}`);
             }}
             onCreateCourse={handleOpenCreateCourse}
             onCreateScriptForCourse={handleCreateScriptForCourse}

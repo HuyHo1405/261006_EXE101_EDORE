@@ -13,18 +13,27 @@ const LOADING_STEPS = [
 interface ProcessingLoaderProps {
   hasError?: boolean
   errorMessage?: string
+  progress?: number
   onCancel?: () => void
 }
 
-export default function ProcessingLoader({ hasError = false, errorMessage = '', onCancel }: ProcessingLoaderProps) {
+export default function ProcessingLoader({ hasError = false, errorMessage = '', progress = 0, onCancel }: ProcessingLoaderProps) {
   const [activeStep, setActiveStep] = useState(0)
   const [dots, setDots] = useState('')
 
   useEffect(() => {
     if (hasError) return
-    const id = setInterval(() => setActiveStep((s) => (s + 1) % LOADING_STEPS.length), 2200)
-    return () => clearInterval(id)
-  }, [hasError])
+    if (progress > 0) {
+       // Sync active step based on progress
+       if (progress < 25) setActiveStep(0)
+       else if (progress < 50) setActiveStep(1)
+       else if (progress < 80) setActiveStep(2)
+       else setActiveStep(3)
+    } else {
+       const id = setInterval(() => setActiveStep((s) => (s + 1) % LOADING_STEPS.length), 2200)
+       return () => clearInterval(id)
+    }
+  }, [hasError, progress])
 
   useEffect(() => {
     if (hasError) return
@@ -99,6 +108,17 @@ export default function ProcessingLoader({ hasError = false, errorMessage = '', 
                 : 'w-2 h-2 bg-[var(--color-neutral-200)]'
               }`} />
             ))}
+          </div>
+          
+          {/* Progress Bar */}
+          <div className="w-64 h-2 bg-[var(--color-neutral-100)] rounded-full overflow-hidden mt-2 relative">
+             <div 
+               className="h-full bg-[var(--color-primary-500)] transition-all duration-700 ease-out" 
+               style={{ width: `${progress}%` }}
+             />
+          </div>
+          <div className="font-mono text-xs font-bold text-[var(--color-primary-600)]">
+             {progress}%
           </div>
 
           <button

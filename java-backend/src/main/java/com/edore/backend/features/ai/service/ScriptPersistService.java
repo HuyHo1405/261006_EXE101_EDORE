@@ -24,5 +24,6 @@ public interface ScriptPersistService {
      * without an extra DB round-trip.
      */
     SaveScriptResult saveScript(UUID courseId, Template template,
-                                List<NodeType> nodes, List<ScriptNodeResultDto> nodeResults);
+                                List<NodeType> nodes, List<ScriptNodeResultDto> nodeResults,
+                                String scriptTitle);
 }

@@ -110,11 +110,9 @@ export default function ScriptEditPage() {
       const steps = realNodes.map((node, i) => mapNodeDtoToTimelineStep(node, i))
       setTimelineSteps(steps)
       setIsLoaded(true)
-      toast.success(`Đã tải thành công ${realNodes.length} phần bài giảng.`)
     } else if (realNodes && realNodes.length === 0) {
       setTimelineSteps([])
       setIsLoaded(true)
-      toast.info('Kịch bản chưa có nội dung bài giảng.')
     }
   }, [realNodes])
 
@@ -129,7 +127,6 @@ export default function ScriptEditPage() {
 
   const handleStepsChange = (newSteps: TimelineStep[]) => {
     setTimelineSteps(newSteps)
-    toast.success('Đã cập nhật tiến trình kịch bản!')
   }
 
   const handleRestart = () => {

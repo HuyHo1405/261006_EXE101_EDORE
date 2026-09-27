@@ -25,8 +25,8 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/class-configs")
-@Tag(   name = "5. ClassConfig APIs", 
+@RequestMapping("/api/v1/class-configs")
+@Tag(   name = "05. ClassConfig APIs", 
         description = "Classroom configuration management — create and reuse classroom setups across courses")
 @RequiredArgsConstructor
 public class ClassConfigController {

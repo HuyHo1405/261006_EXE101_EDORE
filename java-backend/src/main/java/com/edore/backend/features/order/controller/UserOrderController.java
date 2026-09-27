@@ -31,8 +31,8 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/orders")
-@Tag(   name = "4. User Order APIs", 
+@RequestMapping("/api/v1/orders")
+@Tag(   name = "04. User Order APIs", 
         description = "User order management, checkout, and verification APIs")
 @RequiredArgsConstructor
 public class UserOrderController {

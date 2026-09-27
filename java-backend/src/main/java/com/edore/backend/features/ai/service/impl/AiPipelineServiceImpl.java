@@ -7,6 +7,7 @@ import com.edore.backend.features.ai.client.dto.LlmMessage;
 import com.edore.backend.features.ai.code.AiResponseCode;
 import com.edore.backend.features.ai.dto.response.ScriptNodeResultDto;
 import com.edore.backend.features.ai.dto.response.ScriptResultDto;
+import com.edore.backend.features.ai.dto.response.AiJobStatus;
 import com.edore.backend.features.ai.helper.AiPromptBuilder;
 import com.edore.backend.features.ai.helper.AiResponseParser;
 import com.edore.backend.features.ai.service.*;
@@ -66,6 +67,7 @@ public class AiPipelineServiceImpl implements AiPipelineService {
     private final ScriptVerificationService   scriptVerificationService;
     private final VectorMatchProperties       vectorMatchProperties;
     private final LlmProperties               llmProperties;
+    private final AiJobService                aiJobService;
 
     private final AiPromptBuilder             aiPromptBuilder;
     private final AiResponseParser            aiResponseParser;
@@ -78,13 +80,66 @@ public class AiPipelineServiceImpl implements AiPipelineService {
 
     @Override
     @Transactional
-    public ScriptResultDto generateScript(MultipartFile file, Long templateId, UUID courseId, String learningOutcome) {
-        return generateScript(file, templateId, courseId, learningOutcome, null);
+    public ScriptResultDto generateScript(MultipartFile file, Long templateId, UUID courseId, String scriptTitle, String learningOutcome) {
+        return generateScript(file, templateId, courseId, scriptTitle, learningOutcome, null);
     }
 
     @Override
     @Transactional
-    public ScriptResultDto generateScript(MultipartFile file, Long templateId, UUID courseId, String learningOutcome, Boolean enableFactCheck) {
+    public ScriptResultDto generateScript(MultipartFile file, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck) {
+        long t1 = System.currentTimeMillis();
+        String rawText = fileExtractService.extract(file);
+        if (rawText == null || rawText.isBlank()) {
+            throw new ApiException(AiResponseCode.EMPTY_EXTRACTED_TEXT);
+        }
+        long extractMs = System.currentTimeMillis() - t1;
+        return generateScriptInternal(rawText, extractMs, templateId, courseId, scriptTitle, learningOutcome, enableFactCheck, null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateGenerationParams(Long templateId, UUID courseId) {
+        Template template = templateRepository.findById(templateId)
+                .orElseThrow(() -> new ApiException(AiResponseCode.TEMPLATE_NOT_FOUND));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ApiException(AiResponseCode.COURSE_NOT_FOUND));
+        if (course.getClassConfig() == null) {
+            log.warn("[Pipeline] Course {} does not have an assigned ClassConfig", courseId);
+            throw new ApiException(AiResponseCode.CLASS_CONFIG_NOT_FOUND);
+        }
+        if (template.getNodeTypes().isEmpty()) {
+            log.warn("[Pipeline] Template {} has no node types", templateId);
+            throw new ApiException(AiResponseCode.TEMPLATE_NOT_FOUND);
+        }
+    }
+
+    @Override
+    @Transactional
+    @org.springframework.scheduling.annotation.Async
+    public void generateScriptAsync(String jobId, String rawText, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck) {
+        AiJobStatus status = aiJobService.getJobStatus(jobId);
+        try {
+            status.setStatus("PROCESSING");
+            status.setProgress(10);
+            aiJobService.updateJobStatus(status);
+
+            // Run the internal logic
+            ScriptResultDto result = generateScriptInternal(rawText, 0, templateId, courseId, scriptTitle, learningOutcome, enableFactCheck, status);
+
+            status.setStatus("COMPLETED");
+            status.setProgress(100);
+            status.setScriptId(result.scriptId());
+            status.setResult(result);
+            aiJobService.updateJobStatus(status);
+        } catch (Exception e) {
+            log.error("[Pipeline] Async generation failed for job {}", jobId, e);
+            status.setStatus("FAILED");
+            status.setErrorMessage(e.getMessage());
+            aiJobService.updateJobStatus(status);
+        }
+    }
+
+    private ScriptResultDto generateScriptInternal(String rawText, long extractMs, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck, AiJobStatus jobStatus) {
         long pipelineStart = System.currentTimeMillis();
 
         // ── 1. Resolve template + course + classConfig ─────────────────────────
@@ -106,21 +161,27 @@ public class AiPipelineServiceImpl implements AiPipelineService {
             throw new ApiException(AiResponseCode.TEMPLATE_NOT_FOUND);
         }
 
-        // ── 2. Extract text ────────────────────────────────────────────────────
-        long t1 = System.currentTimeMillis();
-        String rawText = fileExtractService.extract(file);
-        long extractMs = System.currentTimeMillis() - t1;
-
+        // ── 2. Check raw text ────────────────────────────────────────────────────
         if (rawText == null || rawText.isBlank()) {
             throw new ApiException(AiResponseCode.EMPTY_EXTRACTED_TEXT);
         }
-        log.info("[Pipeline] Extracted {} chars in {}ms", rawText.length(), extractMs);
+        log.info("[Pipeline] Input text length={}", rawText.length());
+
+        if (jobStatus != null) {
+            jobStatus.setProgress(20);
+            aiJobService.updateJobStatus(jobStatus);
+        }
 
         // ── 3. Chunk ───────────────────────────────────────────────────────────
         long t2 = System.currentTimeMillis();
         List<String> chunks = chunkingService.chunk(rawText);
         long chunkMs = System.currentTimeMillis() - t2;
         String keyFacts = chunkingService.extractKeyFacts(rawText);
+
+        if (jobStatus != null) {
+            jobStatus.setProgress(40);
+            aiJobService.updateJobStatus(jobStatus);
+        }
 
         // ── 3.5 Input Grounding Check (Qdrant Vector) ──────────────────────────
         long tQdrant = System.currentTimeMillis();
@@ -142,6 +203,11 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                 ? chunkingService.getContextPerNode(chunks, nodeCodes)
                 : nodeCodes.stream().collect(Collectors.toMap(code -> code, code -> rawText));
 
+        if (jobStatus != null) {
+            jobStatus.setProgress(60);
+            aiJobService.updateJobStatus(jobStatus);
+        }
+
         // ── 5. Build prompt via AiPromptBuilder ────────────────────────────────
         String systemPrompt = aiPromptBuilder.buildSystemPrompt(nodes, classConfig, learningOutcome, groundingResult.level());
         String userContent  = aiPromptBuilder.buildUserContent(nodes, contextPerNode, classConfig, learningOutcome, keyFacts, course);
@@ -156,8 +222,13 @@ public class AiPipelineServiceImpl implements AiPipelineService {
         List<ScriptNodeResultDto> nodeResults = callAndParseWithRetry(messages, nodes);
         long aiMs = System.currentTimeMillis() - t3;
 
+        if (jobStatus != null) {
+            jobStatus.setProgress(90);
+            aiJobService.updateJobStatus(jobStatus);
+        }
+
         // ── 7. Persist (Phase 1 complete) ─────────────────────────────────────
-        SaveScriptResult saved = scriptPersistService.saveScript(courseId, template, nodes, nodeResults);
+        SaveScriptResult saved = scriptPersistService.saveScript(courseId, template, nodes, nodeResults, scriptTitle);
         Script script          = saved.script();
 
         long totalMs = System.currentTimeMillis() - pipelineStart;

@@ -24,8 +24,8 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/admin/vector")
-@Tag(name = "A6. Vector Admin APIs", description = "Admin endpoint for managing and testing Qdrant vector collections")
+@RequestMapping("/api/v1/admin/vector")
+@Tag(name = "A06. Vector Admin APIs", description = "Admin endpoint for managing and testing Qdrant vector collections")
 // @PreAuthorize("hasRole('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")
 @EnableConfigurationProperties(VectorMatchProperties.class)

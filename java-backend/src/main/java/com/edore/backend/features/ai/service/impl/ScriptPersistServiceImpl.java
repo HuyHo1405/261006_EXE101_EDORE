@@ -36,18 +36,21 @@ public class ScriptPersistServiceImpl implements ScriptPersistService {
     @Override
     @Transactional
     public SaveScriptResult saveScript(UUID courseId, Template template,
-                                       List<NodeType> nodes, List<ScriptNodeResultDto> nodeResults) {
+                                       List<NodeType> nodes, List<ScriptNodeResultDto> nodeResults,
+                                       String scriptTitle) {
         // ── 1. Resolve Course ────────────────────────────────────────────────
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ApiException(AiResponseCode.COURSE_NOT_FOUND));
 
-        // ── 2. Derive title from first node ───────────────────────────────────
-        String title = nodeResults.isEmpty() ? "Kịch bản bài học"
-                : nodeResults.stream()
-                        .map(ScriptNodeResultDto::title)
-                        .filter(Objects::nonNull)
-                        .findFirst()
-                        .orElse("Kịch bản bài học");
+        // ── 2. Derive title from custom user title or first node ────────────────
+        String title = (scriptTitle != null && !scriptTitle.isBlank())
+                ? scriptTitle.trim()
+                : (nodeResults.isEmpty() ? "Kịch bản bài học"
+                        : nodeResults.stream()
+                                .map(ScriptNodeResultDto::title)
+                                .filter(Objects::nonNull)
+                                .findFirst()
+                                .orElse("Kịch bản bài học"));
 
         // ── 3. Save Script ─────────────────────────────────────────────────────
         Script script = Script.builder()

@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/activities")
-@Tag(    name = "8. Activity APIs",
+@RequestMapping("/api/v1/activities")
+@Tag(    name = "10. Activity APIs",
          description = "Activity pool — browse teaching activities compatible with your classroom setup")
 @RequiredArgsConstructor
 public class ActivityController {

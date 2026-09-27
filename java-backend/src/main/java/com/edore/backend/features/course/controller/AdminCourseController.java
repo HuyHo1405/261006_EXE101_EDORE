@@ -21,8 +21,8 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/admin/courses")
-@Tag(   name = "A4. Admin Course APIs", 
+@RequestMapping("/api/v1/admin/courses")
+@Tag(   name = "A04. Admin Course APIs", 
         description = "Admin management of all system courses")
 @PreAuthorize("hasRole('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")

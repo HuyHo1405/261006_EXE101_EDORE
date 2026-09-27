@@ -27,8 +27,8 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/auth")
-@Tag(   name = "1. Auth APIs", 
+@RequestMapping("/api/v1/auth")
+@Tag(   name = "01. Auth APIs", 
         description = "Authentication APIs (login, register, password management, OTP)")
 @RequiredArgsConstructor
 public class AuthController {

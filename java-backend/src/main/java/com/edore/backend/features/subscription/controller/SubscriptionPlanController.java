@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/subscription-plans")
-@Tag(   name = "3. Subscription Plan APIs", 
+@RequestMapping("/api/v1/subscription-plans")
+@Tag(   name = "03. Subscription Plan APIs", 
         description = "Public subscription plan queries")
 @RequiredArgsConstructor
 public class SubscriptionPlanController {

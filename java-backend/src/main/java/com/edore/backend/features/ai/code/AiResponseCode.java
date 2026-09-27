@@ -16,6 +16,8 @@ public enum AiResponseCode implements ResponseCode {
     CLASS_CONFIG_NOT_FOUND(2204, "Không tìm thấy cấu hình lớp học.", HttpStatus.NOT_FOUND, "ai.class_config_not_found"),
     COURSE_NOT_FOUND(2205, "Không tìm thấy khoá học.", HttpStatus.NOT_FOUND, "ai.course_not_found"),
     EMPTY_EXTRACTED_TEXT(2206, "Không trích xuất được nội dung từ file.", HttpStatus.BAD_REQUEST, "ai.empty_extracted_text"),
+    JOB_NOT_FOUND(2207, "Không tìm thấy tiến trình AI.", HttpStatus.NOT_FOUND, "ai.job_not_found"),
+    JOB_ACCEPTED(1201, "Yêu cầu đã được tiếp nhận và đang xử lý.", HttpStatus.ACCEPTED, "ai.job_accepted"),
 
     // ── Server / external errors ──────────────────────────────────────────────
     FILE_EXTRACT_ERROR(3200, "Lỗi khi trích xuất nội dung file.", HttpStatus.INTERNAL_SERVER_ERROR, "ai.file_extract_error"),

@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/admin/class-configs")
-@Tag(   name = "A3. Admin ClassConfig APIs", 
+@RequestMapping("/api/v1/admin/class-configs")
+@Tag(   name = "A03. Admin ClassConfig APIs", 
         description = "Admin management of all system classroom configurations")
 @PreAuthorize("hasRole('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")

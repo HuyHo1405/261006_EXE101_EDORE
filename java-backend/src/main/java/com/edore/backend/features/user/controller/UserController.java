@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/users")
-@Tag(   name = "2. User APIs",
-        description = "User profile management APIs (/api/users/me)")
+@RequestMapping("/api/v1/users")
+@Tag(   name = "02. User APIs",
+        description = "User profile management APIs (/api/v1/users/me)")
 @RequiredArgsConstructor
 public class UserController {
 

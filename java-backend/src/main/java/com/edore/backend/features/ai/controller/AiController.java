@@ -4,6 +4,10 @@ import com.edore.backend.core.response.ApiResponse;
 import com.edore.backend.features.ai.code.AiResponseCode;
 import com.edore.backend.features.ai.dto.response.ScriptResultDto;
 import com.edore.backend.features.ai.service.AiPipelineService;
+import com.edore.backend.features.ai.dto.response.AiJobStatus;
+import com.edore.backend.features.ai.service.AiJobService;
+import com.edore.backend.features.ai.service.FileExtractService;
+import com.edore.backend.core.exception.ApiException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -19,13 +23,15 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/ai")
-@Tag(   name = "7. AI APIs", 
+@RequestMapping("/api/v1/ai")
+@Tag(   name = "08. AI APIs", 
         description = "AI Pedagogy Pipeline — generate lesson scripts from uploaded files")
 @RequiredArgsConstructor
 public class AiController {
 
     private final AiPipelineService aiPipelineService;
+    private final AiJobService aiJobService;
+    private final FileExtractService fileExtractService;
 
     @Operation( summary = "1. Generate lesson script from file",
                 description = """
@@ -43,7 +49,7 @@ public class AiController {
                     """,
                 security = @SecurityRequirement(name = "Bearer Authentication"))
     @PostMapping(value = "/pedagogy", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<ScriptResultDto>> generateScript(
+    public ResponseEntity<ApiResponse<AiJobStatus>> generateScript(
 
             @Parameter(description = "Lesson content file (PDF/DOCX/TXT/MD, max 150KB)", required = true)
             @RequestParam("file") MultipartFile file,
@@ -54,20 +60,55 @@ public class AiController {
             @Parameter(description = "Course UUID (ClassConfig is retrieved automatically from course)", required = true)
             @RequestParam("courseId") UUID courseId,
 
+            @Parameter(description = "Optional script title")
+            @RequestParam(value = "scriptTitle", required = false) String scriptTitle,
+
+            @Parameter(description = "Optional title alias")
+            @RequestParam(value = "title", required = false) String title,
+
             @Parameter(description = "Optional learning outcome / objective hint for AI")
             @RequestParam(value = "learningOutcome", required = false) String learningOutcome,
 
             @Parameter(description = "Optional override for fact-check verification (true/false). If omitted, defaults to user settings.")
             @RequestParam(value = "enableFactCheck", required = false) Boolean enableFactCheck
     ) {
-        log.info("[AiController] generateScript: file='{}' size={}KB templateId={} courseId={} enableFactCheck={}",
+        String effectiveTitle = (scriptTitle != null && !scriptTitle.isBlank()) ? scriptTitle : title;
+
+        log.info("[AiController] generateScript: file='{}' size={}KB templateId={} courseId={} title='{}' enableFactCheck={}",
                 file.getOriginalFilename(),
                 file.getSize() / 1024,
-                templateId, courseId, enableFactCheck);
+                templateId, courseId, effectiveTitle, enableFactCheck);
 
-        ScriptResultDto result = aiPipelineService.generateScript(
-                file, templateId, courseId, learningOutcome, enableFactCheck);
+        // Validate inputs early before expensive file processing and async job creation
+        aiPipelineService.validateGenerationParams(templateId, courseId);
 
-        return ResponseEntity.ok(ApiResponse.of(AiResponseCode.SCRIPT_GENERATED, result));
+        // Extract file text synchronously
+        String rawText = fileExtractService.extract(file);
+        if (rawText == null || rawText.isBlank()) {
+            throw new ApiException(AiResponseCode.EMPTY_EXTRACTED_TEXT);
+        }
+
+        // Create job
+        String jobId = UUID.randomUUID().toString();
+        AiJobStatus jobStatus = AiJobStatus.builder()
+                .jobId(jobId)
+                .status("PENDING")
+                .progress(0)
+                .build();
+        aiJobService.createJob(jobStatus);
+
+        // Start async task
+        aiPipelineService.generateScriptAsync(jobId, rawText, templateId, courseId, effectiveTitle, learningOutcome, enableFactCheck);
+
+        return ResponseEntity.accepted().body(ApiResponse.of(AiResponseCode.JOB_ACCEPTED, jobStatus));
+    }
+
+    @Operation( summary = "2. Get job status",
+                description = "Polling endpoint to check generation progress.",
+                security = @SecurityRequirement(name = "Bearer Authentication"))
+    @GetMapping("/jobs/{jobId}/status")
+    public ResponseEntity<ApiResponse<AiJobStatus>> getJobStatus(@PathVariable String jobId) {
+        AiJobStatus status = aiJobService.getJobStatus(jobId);
+        return ResponseEntity.ok(ApiResponse.of(AiResponseCode.SCRIPT_GENERATED, status));
     }
 }

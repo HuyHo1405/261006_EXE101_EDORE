@@ -26,7 +26,7 @@ public enum NodeTypeEnum {
           "knowledge_units": [
             {
               "unit_title": "string",
-              "core_content": "string — Markdown, giữ nguyên 100% số liệu từ file input",
+              "core_content": "string — Markdown. BẮT BUỘC chia thành nhiều đoạn ngắn (mỗi đoạn 2-4 câu, cách nhau bằng dòng trống \\n\\n), KHÔNG viết thành 1 khối văn liền mạch dù nội dung dài. Chia đoạn theo mốc thời gian/ý chính/giai đoạn khi có thể. Nếu có liệt kê nhiều mục ngang hàng (danh sách, các loại, các thành phần), dùng đúng cú pháp Markdown list (- hoặc 1. xuống dòng từng mục), không viết dính liền trong 1 câu văn. Giữ nguyên 100% số liệu từ file input",
               "teacher_delivery": "string",
               "checkpoint_question": "string"
             }

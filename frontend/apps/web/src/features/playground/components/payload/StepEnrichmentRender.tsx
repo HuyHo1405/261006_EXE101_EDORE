@@ -174,23 +174,58 @@ function HookCard({
 // ─── 2. BulletList ────────────────────────────────────────────────────────────
 function BulletList({ items, onChange }: { items: string[]; onChange?: (newList: string[]) => void }) {
   const listItems = Array.isArray(items) ? items : []
-  const textValue = listItems.join('\n')
+  const editorRef = useRef<HTMLUListElement>(null)
+
+  useEffect(() => {
+    if (editorRef.current) {
+      const lis = Array.from(editorRef.current.querySelectorAll('li'))
+      const currentTexts = lis.map(li => li.textContent || '')
+      
+      let isSame = currentTexts.length === listItems.length && currentTexts.every((t, i) => t === listItems[i])
+      
+      // Bắt buộc phải là dạng list (li), nếu người dùng bôi đen xoá hết mất thẻ li thì ép reset lại
+      if (lis.length === 0) isSame = false
+      
+      if (!isSame) {
+        editorRef.current.innerHTML = listItems.length > 0 
+          ? listItems.map(item => `<li>${item}</li>`).join('') 
+          : '<li><br></li>'
+      }
+    }
+  }, [items])
+
+  const handleInput = () => {
+    if (editorRef.current) {
+      const lis = Array.from(editorRef.current.querySelectorAll('li'))
+      // Nếu xoá sạch thẻ li (chỉ còn br) thì lis.length = 0
+      if (lis.length === 0) {
+        onChange?.([])
+        return
+      }
+      const newItems = lis.map(li => li.textContent || '')
+      // Cập nhật lên parent
+      onChange?.(newItems)
+    }
+  }
 
   return (
-    <div className="p-3.5 bg-slate-50/80 border border-slate-200 rounded-[var(--radius-lg)] space-y-1.5">
+    <div className="p-3.5 bg-slate-50/80 border border-slate-200 rounded-[var(--radius-lg)] space-y-2">
       <div className="text-[10px] font-mono font-bold uppercase text-slate-500 tracking-wider">
-        Dự kiến phản hồi của học sinh (xuống dòng mỗi ý)
+        Dự kiến phản hồi của học sinh
       </div>
-      <AutoResizeTextarea
-        value={textValue}
-        onChange={(val) => {
-          const lines = val.split('\n')
-          onChange?.(lines)
-        }}
-        placeholder="Nhập dự kiến phản hồi của học sinh (mỗi dòng 1 ý)..."
-        className="font-body text-xs text-slate-800 leading-relaxed bg-white hover:border-slate-300 focus:border-slate-400 p-2.5 rounded border border-slate-200 outline-none transition-all"
-        minRows={3}
-      />
+      <div className="bg-white border border-slate-200 hover:border-slate-300 focus-within:border-sky-400 focus-within:ring-1 focus-within:ring-sky-400 rounded-md transition-all p-3">
+        <style>{`
+          .bullet-editor li { margin-bottom: 0.35rem; padding-left: 0.25rem; min-height: 1.5em; }
+          .bullet-editor li:last-child { margin-bottom: 0; }
+          .bullet-editor:empty:before { content: 'Nhập dự kiến phản hồi...'; color: #94a3b8; font-style: italic; pointer-events: none; display: block; margin-left: -1.25rem; }
+        `}</style>
+        <ul
+          ref={editorRef}
+          contentEditable
+          onInput={handleInput}
+          className="bullet-editor font-body text-xs text-slate-800 leading-[1.6] outline-none list-disc pl-5 marker:text-sky-500"
+        />
+      </div>
     </div>
   )
 }
@@ -237,6 +272,25 @@ function ChipGroup({ items }: { items: string[] }) {
 function KnowledgeUnitsRender({ units, onChange }: { units: any[]; onChange?: (newUnits: any[]) => void }) {
   const [expandedUnitIdx, setExpandedUnitIdx] = useState<number | null>(0)
 
+  useEffect(() => {
+    const handleExpand = (e: any) => {
+      if (e.detail !== undefined && typeof e.detail.uIdx === 'number') {
+        setExpandedUnitIdx(e.detail.uIdx)
+        if (e.detail.shouldScroll) {
+          setTimeout(() => {
+            const el = document.getElementById(`ku-${e.detail.uIdx}`)
+            if (el) {
+              const top = el.getBoundingClientRect().top + window.scrollY - 160
+              window.scrollTo({ top, behavior: 'smooth' })
+            }
+          }, 150)
+        }
+      }
+    }
+    window.addEventListener('expand-knowledge-unit', handleExpand)
+    return () => window.removeEventListener('expand-knowledge-unit', handleExpand)
+  }, [])
+
   if (!Array.isArray(units) || units.length === 0) return null
   return (
     <div className="space-y-2.5">
@@ -251,6 +305,7 @@ function KnowledgeUnitsRender({ units, onChange }: { units: any[]; onChange?: (n
         return (
           <div
             key={idx}
+            id={`ku-${idx}`}
             className={`border-2 rounded-[var(--radius-xl)] overflow-hidden transition-all duration-200 ${
               isExpanded
                 ? 'border-sky-500 ring-2 ring-sky-100 bg-white shadow-xs'
@@ -259,7 +314,21 @@ function KnowledgeUnitsRender({ units, onChange }: { units: any[]; onChange?: (n
           >
             {/* Header */}
             <div
-              onClick={() => setExpandedUnitIdx(isExpanded ? null : idx)}
+              onClick={() => {
+                const nextIdx = isExpanded ? null : idx
+                setExpandedUnitIdx(nextIdx)
+                window.dispatchEvent(new CustomEvent('knowledge-unit-expanded', { detail: { uIdx: nextIdx } }))
+
+                if (nextIdx !== null) {
+                  setTimeout(() => {
+                    const el = document.getElementById(`ku-${idx}`)
+                    if (el) {
+                      const top = el.getBoundingClientRect().top + window.scrollY - 160
+                      window.scrollTo({ top, behavior: 'smooth' })
+                    }
+                  }, 150) // Chờ mở accordion rồi scroll xuống một tí
+                }
+              }}
               className="px-4 py-3 bg-slate-50/80 hover:bg-sky-50/60 cursor-pointer flex items-center justify-between gap-3 select-none"
             >
               <div className="flex items-center gap-2.5 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>

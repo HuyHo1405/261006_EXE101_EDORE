@@ -16,6 +16,7 @@ import org.springframework.web.client.RestClient;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 /**
  * HTTP client for Beeknoee LLM Platform (OpenAI-compatible API).
@@ -29,6 +30,7 @@ public class LlmApiClient {
 
     private final LlmProperties llmProperties;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Semaphore semaphore = new Semaphore(2); // Giới hạn 2 request đồng thời
 
     /**
      * Send a chat completion request to the LLM API.
@@ -54,14 +56,23 @@ public class LlmApiClient {
                 "model",      model,
                 "messages",   messages,
                 "max_tokens", maxTokens,
-                "temperature", temperature
+                "temperature", temperature,
+                "response_format", Map.of("type", "json_object")
         );
 
         String url = llmProperties.baseUrl() + "/v1/chat/completions";
         log.info("[LlmApiClient] POST {} model={} messages={} maxTokens={}",
                 url, model, messages.size(), maxTokens);
 
-        for (int attempt = 1; attempt <= 3; attempt++) {
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ApiException(CommonResponseCode.EXTERNAL_SERVICE_ERROR);
+        }
+
+        try {
+            for (int attempt = 1; attempt <= 3; attempt++) {
             try {
                 RestClient client = RestClient.builder()
                         .baseUrl(llmProperties.baseUrl())
@@ -115,7 +126,10 @@ public class LlmApiClient {
                     Thread.currentThread().interrupt();
                 }
             }
+            }
+            throw new ApiException(CommonResponseCode.EXTERNAL_SERVICE_ERROR);
+        } finally {
+            semaphore.release();
         }
-        throw new ApiException(CommonResponseCode.EXTERNAL_SERVICE_ERROR);
     }
 }

@@ -52,7 +52,7 @@ export async function apiClient<T = void>(
     const refreshToken = useAuthStore.getState().refreshToken;
     if (refreshToken) {
       try {
-        const refreshRes = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+        const refreshRes = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ refreshToken }),

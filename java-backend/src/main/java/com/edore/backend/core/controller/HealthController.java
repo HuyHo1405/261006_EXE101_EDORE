@@ -17,8 +17,8 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping
-@Tag(name = "0. System Health", description = "Public health check endpoints for Docker, load balancers, and monitoring tools")
+@RequestMapping("/api/v1/health")
+@Tag(name = "00. System Health", description = "Public health check endpoints for Docker, load balancers, and monitoring tools")
 @RequiredArgsConstructor
 public class HealthController {
 
@@ -26,7 +26,7 @@ public class HealthController {
     private final QdrantConnectionProperties qdrantProperties;
 
     @Operation(summary = "1. Health check status (Public)", description = "Returns system uptime status and dependency connectivity overview.")
-    @GetMapping({"/api/health", "/health"})
+    @GetMapping({"", "/api/health", "/health"})
     public ResponseEntity<Map<String, Object>> getHealthStatus() {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "UP");

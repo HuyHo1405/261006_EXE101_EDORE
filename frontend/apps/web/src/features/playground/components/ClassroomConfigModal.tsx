@@ -12,6 +12,7 @@ export interface ClassroomCtx {
   studentCount?: string
   template_id?: string
   learning_outcome?: string
+  scriptTitle?: string
   learningSpace?: string
   seatingArrangement?: string
   classroomInfra?: string[]

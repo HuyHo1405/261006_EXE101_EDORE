@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/admin/activities")
-@Tag(    name = "A5. Admin Activity APIs",
+@RequestMapping("/api/v1/admin/activities")
+@Tag(    name = "A05. Admin Activity APIs",
          description = "Admin management of the activity pool (full CRUD)")
 @PreAuthorize("hasRole('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")
