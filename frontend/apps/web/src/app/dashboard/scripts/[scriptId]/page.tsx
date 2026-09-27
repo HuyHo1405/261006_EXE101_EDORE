@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { AuthGuard } from '@/features/auth/components/AuthGuard'
 import { DashboardAside } from '@/features/course/components/DashboardAside'
@@ -57,7 +57,7 @@ function mapNodeDtoToTimelineStep(node: ScriptNodeResponseDTO, index: number): T
 }
 
 
-export default function ScriptEditPage() {
+function ScriptEditContent() {
   const router = useRouter()
   const params = useParams()
   const searchParams = useSearchParams()
@@ -177,5 +177,17 @@ export default function ScriptEditPage() {
         </div>
       </div>
     </AuthGuard>
+  )
+}
+
+export default function ScriptEditPage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full bg-[var(--color-primary-500)] min-h-screen flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ScriptEditContent />
+    </Suspense>
   )
 }

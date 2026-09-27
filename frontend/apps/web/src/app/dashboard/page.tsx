@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { AuthGuard } from "@/features/auth/components/AuthGuard";
 import { DashboardAside } from "@/features/course/components/DashboardAside";
 import { DashboardHeader, DashboardToolbar, DashboardCourseActions } from "@/features/course/components/DashboardHeader";
@@ -25,7 +25,7 @@ import type { CourseCardViewModel, CourseResponseDTO } from "@edore/types";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function DashboardPage() {
+function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const courseIdParam = searchParams.get("courseId") || searchParams.get("course") || "";
@@ -310,5 +310,17 @@ export default function DashboardPage() {
         </div>
       </div>
     </AuthGuard>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full bg-[var(--color-primary-500)] min-h-screen flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
