@@ -90,6 +90,8 @@ services:
       dockerfile: Dockerfile
     container_name: edore_backend
     profiles: [edore-backend]
+    env_file:
+      - .env
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -101,7 +103,7 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}
       QDRANT_ENABLED: ${QDRANT_ENABLED:-true}
       QDRANT_HOST: qdrant
-      QDRANT_PORT: 6334
+      QDRANT_PORT: ${QDRANT_PORT:-6333}
       EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-http://embedding:80}
       JWT_SECRET: ${JWT_SECRET}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
@@ -117,8 +119,6 @@ services:
       redis:
         condition: service_healthy
       qdrant:
-        condition: service_healthy
-      embedding:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "cat /dev/null > /dev/tcp/localhost/8080 || exit 1"]
