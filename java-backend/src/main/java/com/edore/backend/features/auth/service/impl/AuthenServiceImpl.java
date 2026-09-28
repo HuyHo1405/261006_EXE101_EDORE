@@ -173,12 +173,17 @@ public class AuthenServiceImpl implements AuthenService {
 
         try {
             Map<String, Object> variables = new HashMap<>();
-            variables.put("fullName", request.email());
+            String displayName = userRepository.findByEmail(request.email())
+                    .map(u -> u.getUsername() != null && !u.getUsername().isBlank() ? u.getUsername() : u.getEmail())
+                    .orElse(request.email());
+
+            variables.put("fullName", displayName);
+            variables.put("otp", otpCode);
             variables.put("otpCode", otpCode);
 
             String subject = request.type() == OtpType.REGISTER
-                    ? "Mã OTP kích hoạt tài khoản"
-                    : "Mã OTP đặt lại mật khẩu";
+                    ? "[EDORE] Mã OTP kích hoạt tài khoản"
+                    : "[EDORE] Mã OTP đặt lại mật khẩu";
 
             mailService.sendWithTemplate(
                     request.email(),

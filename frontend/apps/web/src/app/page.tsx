@@ -22,43 +22,32 @@ import {
   CornerDownRight,
 } from "@/components/ui/icons";
 
-const DEFAULT_STARTER_FEATURES = [
-  "Khởi tạo tối đa 3 Khóa học & Lớp học",
-  "AI Phân tích tài liệu PDF/Word (tối đa 10 trang)",
-  "Studio Timeline biên soạn kịch bản cơ bản",
-  "Xuất kịch bản dạng Văn bản (Text)",
-  "Hỗ trợ qua Email",
-];
-
-const DEFAULT_PRO_FEATURES = [
-  "Không giới hạn Khóa học & Lớp học",
-  "AI Phân tích tài liệu & Slide giảng dạy nâng cao",
-  "Studio Timeline tương tác & nhảy bước đầy đủ",
-  "Sidebar Gợi ý Hoạt động Sư phạm cá nhân hóa",
-  "Lưu trữ ngân hàng kịch bản tái sử dụng",
-];
-
-const DEFAULT_TEAM_FEATURES: string[] = [];
-
 export default function Home() {
   const { user, isAuthenticated, togglePlan } = useAuthStore();
   const [plans, setPlans] = useState<SubscriptionPlanDTO[]>([]);
+  const [isLoadingPlans, setIsLoadingPlans] = useState(true);
 
   useEffect(() => {
-    subscriptionService.getActivePlans().then((data) => {
-      if (data && data.length > 0) {
-        setPlans(data);
-      }
-    });
+    subscriptionService
+      .getActivePlans()
+      .then((data) => {
+        setPlans(data || []);
+      })
+      .catch(() => {
+        setPlans([]);
+      })
+      .finally(() => {
+        setIsLoadingPlans(false);
+      });
   }, []);
 
-  const starterPlan = plans.find((p) => p.name.toLowerCase().includes("starter"));
-  const proPlan = plans.find((p) => p.name.toLowerCase().includes("pro"));
-  const teamPlan = plans.find((p) => p.name.toLowerCase().includes("team"));
+  const starterPlan = plans.find((p) => p.name.toLowerCase().includes("starter") && p.features?.length > 0) || plans.find((p) => p.name.toLowerCase().includes("starter"));
+  const proPlan = plans.find((p) => p.name.toLowerCase().includes("pro") && p.features?.length > 0) || plans.find((p) => p.name.toLowerCase().includes("pro"));
+  const teamPlan = plans.find((p) => p.name.toLowerCase().includes("team") && p.features?.length > 0) || plans.find((p) => p.name.toLowerCase().includes("team"));
 
-  const starterFeatures = starterPlan?.features?.length ? starterPlan.features : DEFAULT_STARTER_FEATURES;
-  const proFeatures = proPlan?.features?.length ? proPlan.features : DEFAULT_PRO_FEATURES;
-  const teamFeatures = teamPlan?.features?.length ? teamPlan.features : DEFAULT_TEAM_FEATURES;
+  const starterFeatures = starterPlan?.features || [];
+  const proFeatures = proPlan?.features || [];
+  const teamFeatures = teamPlan?.features || [];
 
   return (
     /* ── BASE PRIMARY BLUE BACKGROUND CANVAS (MÀU XANH PRIMARY BASE #034ce4) ────── */
@@ -295,7 +284,7 @@ export default function Home() {
         </section>
 
 
-        {/* ── SECTION 4: PRICING (SỬA THEO DESIGN TOKENS: MÀU PRIMARY BRAND BLUE & CARD ALIGNMENT ĐỀU NHAU) ────── */}
+        {/* ── SECTION 4: PRICING (BẢNG GIÁ DỊCH VỤ VỚI CỘT TÍNH NĂNG CHI TIẾT BÊN DƯỚI) ────────────────────────── */}
         <section id="pricing" className="space-y-8 pt-4 scroll-mt-20 md:scroll-mt-24">
           
           {/* Header ở giữa */}
@@ -308,7 +297,7 @@ export default function Home() {
           {/* Wrapper nền xám nhạt bo góc lớn */}
           <div className="bg-slate-50/80 border border-slate-200/80 rounded-3xl p-4 sm:p-6 md:p-8 space-y-6">
             
-            {/* 1. HÀNG 3 THẺ TRẮNG Ở TRÊN (CĂN BẰNG NHAU 100% NHỜ GRID ITEMS-STRETCH & H-FULL) */}
+            {/* 1. HÀNG 3 THẺ TRẮNG Ở TRÊN (STARTER, PRO PLAN, TEAM PLAN) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch max-w-6xl mx-auto">
               
               {/* TOP WHITE CARD 1: STARTER */}
@@ -425,46 +414,68 @@ export default function Home() {
 
             </div>
 
-            {/* 2. HÀNG BẢNG TÍNH NĂNG Ở DƯỚI (MỖI CỘT NẰM NGAY DƯỚI THẺ TRẮNG TƯƠNG ỨNG) */}
+            {/* 2. HÀNG BẢNG TÍNH NĂNG CHI TIẾT Ở DƯỚI (MỖI CỘT NẰM NGAY DƯỚI THẺ TRẮNG TƯƠNG ỨNG) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-start max-w-6xl mx-auto pt-2">
               
-              {/* TÍNH NĂNG CỘT 1 */}
+              {/* TÍNH NĂNG CỘT 1: STARTER */}
               <div className="px-2 space-y-4">
                 <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase block">
                   BẮT ĐẦU VỚI
                 </span>
 
-                <ul className="space-y-3">
-                  {starterFeatures.map((feat, i) => (
-                    <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-600">
-                      <span className="w-5 h-5 rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
-                        <Check className="w-3 h-3 stroke-[3]" />
-                      </span>
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
+                {isLoadingPlans ? (
+                  <div className="flex items-center gap-2 text-xs text-slate-400 font-body py-2">
+                    <div className="w-3.5 h-3.5 border-2 border-[var(--color-primary-500)] border-t-transparent rounded-full animate-spin" />
+                    <span>Đang kết nối dữ liệu gói dịch vụ...</span>
+                  </div>
+                ) : starterFeatures.length > 0 ? (
+                  <ul className="space-y-3">
+                    {starterFeatures.map((feat, i) => (
+                      <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-600">
+                        <span className="w-5 h-5 rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </span>
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-slate-400 italic py-2 font-body">
+                    Hệ thống đang cập nhật tính năng...
+                  </p>
+                )}
               </div>
 
-              {/* TÍNH NĂNG CỘT 2 */}
+              {/* TÍNH NĂNG CỘT 2: PRO PLAN */}
               <div className="px-2 space-y-4">
                 <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase block">
                   BAO GỒM TẤT CẢ CỦA STARTER
                 </span>
 
-                <ul className="space-y-3">
-                  {proFeatures.map((feat, i) => (
-                    <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-600">
-                      <span className="w-5 h-5 rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
-                        <Check className="w-3 h-3 stroke-[3]" />
-                      </span>
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
+                {isLoadingPlans ? (
+                  <div className="flex items-center gap-2 text-xs text-slate-400 font-body py-2">
+                    <div className="w-3.5 h-3.5 border-2 border-[var(--color-primary-500)] border-t-transparent rounded-full animate-spin" />
+                    <span>Đang kết nối dữ liệu gói dịch vụ...</span>
+                  </div>
+                ) : proFeatures.length > 0 ? (
+                  <ul className="space-y-3">
+                    {proFeatures.map((feat, i) => (
+                      <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-600">
+                        <span className="w-5 h-5 rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </span>
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-slate-400 italic py-2 font-body">
+                    Hệ thống đang cập nhật tính năng...
+                  </p>
+                )}
               </div>
 
-              {/* TÍNH NĂNG CỘT 3 */}
+              {/* TÍNH NĂNG CỘT 3: TEAM PLAN */}
               <div className="px-2 space-y-4">
                 <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase block">
                   BAO GỒM TẤT CẢ CỦA PRO
@@ -482,7 +493,7 @@ export default function Home() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-xs text-slate-400 italic py-2">
+                  <p className="text-xs text-slate-400 italic py-2 font-body">
                     Tính năng đang được cập nhật...
                   </p>
                 )}

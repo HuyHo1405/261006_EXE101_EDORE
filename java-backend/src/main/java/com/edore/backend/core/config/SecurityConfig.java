@@ -79,6 +79,10 @@ public class SecurityConfig {
         configuration.addAllowedOriginPattern("https://127.0.0.1:*");
         configuration.addAllowedOriginPattern("https://50.17.27.98:*");
         configuration.addAllowedOriginPattern("https://50.17.27.98");
+        configuration.addAllowedOriginPattern("https://edore.id.vn");
+        configuration.addAllowedOriginPattern("https://*.edore.id.vn");
+        configuration.addAllowedOriginPattern("http://edore.id.vn");
+        configuration.addAllowedOriginPattern("https://*.vercel.app");
         configuration.addAllowedOriginPattern("https://electrokinetic-colourationally-carlie.ngrok-free.dev");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
