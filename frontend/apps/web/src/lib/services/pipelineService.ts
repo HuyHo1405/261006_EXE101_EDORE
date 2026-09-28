@@ -17,9 +17,11 @@
  *   // call abort() to cancel
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
 const cleanBaseUrl = BASE_URL.replace(/\/api$/, '')
-const STREAM_ENDPOINT = `${cleanBaseUrl}/api/ai/pedagogy/pipeline`
+const STREAM_ENDPOINT = cleanBaseUrl
+  ? `${cleanBaseUrl}/api/ai/pedagogy/pipeline`
+  : `/api/ai/pedagogy/pipeline` // fallback: dùng rewrite từ vercel.json
 
 export interface PipelineHandlers {
   onProgress?: (data: Record<string, unknown>) => void

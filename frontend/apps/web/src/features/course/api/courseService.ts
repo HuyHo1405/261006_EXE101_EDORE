@@ -104,8 +104,8 @@ export function createCourseService(client: ApiClientFn = apiClient) {
     async generateScriptWithAi(formData: FormData): Promise<any> {
       const { useAuthStore } = await import("@/features/auth/stores/useAuthStore");
       const token = useAuthStore.getState().accessToken;
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const res = await fetch(`${baseUrl}/api/v1/ai/pedagogy`, {
+      // Dùng relative URL → đi qua vercel.json rewrite → tới https://api.edore.id.vn
+      const res = await fetch(`/api/v1/ai/pedagogy`, {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
@@ -121,8 +121,8 @@ export function createCourseService(client: ApiClientFn = apiClient) {
     async getAiJobStatus(jobId: string): Promise<any> {
       const { useAuthStore } = await import("@/features/auth/stores/useAuthStore");
       const token = useAuthStore.getState().accessToken;
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const res = await fetch(`${baseUrl}/api/v1/ai/jobs/${jobId}/status`, {
+      // Dùng relative URL → đi qua vercel.json rewrite → tới https://api.edore.id.vn
+      const res = await fetch(`/api/v1/ai/jobs/${jobId}/status`, {
         method: "GET",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
