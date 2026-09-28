@@ -1,3 +1,5 @@
+services:
+
   # ── AI Vector DB (Qdrant) ────────────────────────────────────────────────
   qdrant:
     image: qdrant/qdrant:latest
