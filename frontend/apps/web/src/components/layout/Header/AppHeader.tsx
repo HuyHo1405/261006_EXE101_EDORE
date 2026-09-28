@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { ChevronDown, Menu, X, Plus, Folder, LogOut } from "@/components/ui/icons";
@@ -40,7 +40,7 @@ export interface AppHeaderProps {
   user?: User | null;
 }
 
-export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
+function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -357,3 +357,36 @@ export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
     </header>
   );
 }
+
+function HeaderFallbackShell() {
+  return (
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-[var(--color-neutral-200)] shadow-xs px-2.5 sm:px-4 md:px-6">
+      <div className="relative flex items-center justify-between h-[84px] max-w-[1400px] mx-auto w-full">
+        <div className="w-16 flex items-center justify-center shrink-0">
+          <Link href="/" className="flex items-center shrink-0">
+            <EdoreLogo size={56} />
+          </Link>
+        </div>
+        <Link href="/" className="absolute left-1/2 -translate-x-1/2 font-header font-bold text-[30px] md:text-[43px] text-[var(--color-primary-500)] uppercase tracking-[-0.01em]">
+          EDORE
+        </Link>
+        <div className="hidden md:flex items-center gap-2 shrink-0">
+          <Button asChild size="header">
+            <Link href="/login" id="header-login-btn">
+              Đăng nhập
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export function AppHeader(props: AppHeaderProps) {
+  return (
+    <Suspense fallback={<HeaderFallbackShell />}>
+      <AppHeaderContent {...props} />
+    </Suspense>
+  );
+}
+

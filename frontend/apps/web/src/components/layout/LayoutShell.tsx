@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import { AppHeader } from "@/components/layout/Header";
 import { AppFooter } from "@/components/layout/Footer";
@@ -23,7 +24,9 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <AppHeader user={null} />
+      <Suspense fallback={null}>
+        <AppHeader user={null} />
+      </Suspense>
       <main className="flex-1">{children}</main>
       <AppFooter />
     </>
