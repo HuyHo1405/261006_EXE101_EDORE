@@ -1,7 +1,7 @@
 import { ApiResponse } from "@edore/types";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 export class FetchError extends Error {
   code: number;
