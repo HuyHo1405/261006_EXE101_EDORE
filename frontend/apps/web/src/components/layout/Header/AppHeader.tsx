@@ -2,9 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { ChevronDown, Menu, X, Plus, Folder, LogOut } from "@/components/ui/icons";
-import { BookOpen } from "lucide-react";
 import { EdoreLogo } from "./EdoreLogo";
 import { UserAvatar } from "./UserAvatar";
 import { MegaMenu, Subject, Classroom } from "./MegaMenu";
@@ -12,21 +11,23 @@ import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 
 const MOCK_SUBJECTS: Subject[] = [
-  { id: "1", name: "Toán học",     href: "/subjects/toan-hoc" },
-  { id: "2", name: "Vật lý",       href: "/subjects/vat-ly" },
-  { id: "3", name: "Hóa học",      href: "/subjects/hoa-hoc" },
-  { id: "4", name: "Sinh học",     href: "/subjects/sinh-hoc" },
-  { id: "5", name: "Ngữ văn",      href: "/subjects/ngu-van" },
-  { id: "6", name: "Tiếng Anh",    href: "/subjects/tieng-anh" },
-  { id: "7", name: "Lịch sử",      href: "/subjects/lich-su" },
-  { id: "8", name: "Địa lý",       href: "/subjects/dia-ly" },
-  { id: "9", name: "Tin học",      href: "/subjects/tin-hoc" },
-  { id: "10", name: "Khoa học",    href: "/subjects/khoa-hoc" },
+  { id: "1", name: "Toán học", href: "/dashboard?categoryId=1" },
+  { id: "2", name: "Vật lý", href: "/dashboard?categoryId=2" },
+  { id: "3", name: "Hóa học", href: "/dashboard?categoryId=3" },
+  { id: "4", name: "Sinh học", href: "/dashboard?categoryId=4" },
+  { id: "5", name: "Ngữ văn", href: "/dashboard?categoryId=5" },
+  { id: "6", name: "Tiếng Anh", href: "/dashboard?categoryId=6" },
+  { id: "7", name: "Lịch sử", href: "/dashboard?categoryId=7" },
+  { id: "8", name: "Địa lý", href: "/dashboard?categoryId=8" },
+  { id: "9", name: "Tin học", href: "/dashboard?categoryId=9" },
+  { id: "10", name: "Khoa học", href: "/dashboard?categoryId=10" },
 ];
 
 const MOCK_CLASSROOMS: Classroom[] = [
-  { id: "1", name: "Lớp 10A1", href: "/classrooms/10a1" },
-  { id: "2", name: "Lớp 11B2", href: "/classrooms/11b2" },
+  { id: "1", name: "Tất cả bài giảng", href: "/dashboard" },
+  { id: "2", name: "Danh mục Khóa học", href: "/dashboard" },
+  { id: "3", name: "Kịch bản bài học (Scripts)", href: "/dashboard" },
+  { id: "4", name: "Cấu hình Lớp học", href: "/dashboard" },
 ];
 
 interface User {
@@ -41,6 +42,27 @@ export interface AppHeaderProps {
 
 export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const courseId = searchParams ? (searchParams.get("courseId") || searchParams.get("course")) : null;
+
+  const isInsideCourse = Boolean(
+    courseId || (pathname && (pathname.includes("/dashboard/course/") || pathname.includes("/dashboard/scripts/")))
+  );
+
+  const plusActionHref = isInsideCourse
+    ? (courseId ? `/dashboard/scripts/new?courseId=${courseId}` : `/studio`)
+    : `/dashboard?action=create-course`;
+
+  const plusActionTitle = isInsideCourse ? "Tạo kịch bản mới" : "Tạo khóa học mới";
+
+  const handlePlusClick = (e: React.MouseEvent) => {
+    if (!isInsideCourse && pathname === "/dashboard") {
+      e.preventDefault();
+      router.push(`/dashboard?action=create-course&t=${Date.now()}`);
+    }
+  };
+
   const [mounted, setMounted] = useState(false);
   const storeUser = useAuthStore((state) => state.user);
   const _hasHydrated = useAuthStore((state) => state._hasHydrated);
@@ -165,13 +187,13 @@ export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
   // Props mở MegaMenu khi hover vào Logo hoặc Chữ EDORE
   const triggerProps = user
     ? {
-        onMouseEnter: openMegaMenu,
-        onMouseLeave: scheduleCloseMegaMenu,
-        role: "button" as const,
-        tabIndex: 0,
-        "aria-haspopup": "true" as const,
-        "aria-expanded": megaMenuOpen,
-      }
+      onMouseEnter: openMegaMenu,
+      onMouseLeave: scheduleCloseMegaMenu,
+      role: "button" as const,
+      tabIndex: 0,
+      "aria-haspopup": "true" as const,
+      "aria-expanded": megaMenuOpen,
+    }
     : {};
 
   return (
@@ -215,14 +237,15 @@ export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
                   <Folder className="w-5 h-5" />
                 </Link>
 
-                {/* Nút Tạo kịch bản mới (Dấu + nền Xanh Primary) */}
+                {/* Nút Tạo mới có chữ chuẩn như Dashboard (Tạo khóa học / Tạo kịch bản dựa trên ngữ cảnh) */}
                 <Link
-                  href="/studio"
-                  title="Tạo kịch bản mới"
-                  aria-label="Tạo kịch bản mới"
-                  className="w-[38px] h-[38px] rounded-lg bg-[var(--color-primary-500)] text-white flex items-center justify-center hover:bg-[var(--color-primary-600)] hover:shadow-sm active:scale-95 transition-all duration-200 shrink-0"
+                  href={plusActionHref}
+                  title={plusActionTitle}
+                  aria-label={plusActionTitle}
+                  className="h-[38px] px-3 gap-1.5 rounded-lg bg-[var(--color-primary-500)] text-white flex items-center justify-center hover:bg-[var(--color-primary-600)] hover:shadow-sm active:scale-95 transition-all duration-200 shrink-0 font-bold text-xs whitespace-nowrap"
                 >
-                  <Plus className="w-5 h-5 font-bold" />
+                  <Plus className="w-4 h-4 font-bold" />
+                  <span>{isInsideCourse ? "Tạo kịch bản" : "Tạo khóa học"}</span>
                 </Link>
               </div>
 
@@ -243,9 +266,8 @@ export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
                 >
                   <UserAvatar name={user.name} variant={user.plan} size={47} />
                   <ChevronDown
-                    className={`w-4 h-4 text-[var(--color-neutral-600)] group-hover:text-[var(--color-primary-600)] transition-all duration-200 ${
-                      userDropdownOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-4 h-4 text-[var(--color-neutral-600)] group-hover:text-[var(--color-primary-600)] transition-all duration-200 ${userDropdownOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
 
@@ -280,21 +302,12 @@ export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
                     </Link>
 
                     <Link
-                      href="/studio"
+                      href={plusActionHref}
                       onClick={closeUserDropdown}
                       className="w-full px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] hover:bg-[#EAEFFD] hover:text-[var(--color-primary-700)] rounded-lg flex items-center gap-2.5 transition-all"
                     >
                       <Plus className="w-4 h-4 text-[var(--color-primary-500)]" />
-                      Tạo kịch bản mới
-                    </Link>
-
-                    <Link
-                      href="/guide"
-                      onClick={closeUserDropdown}
-                      className="w-full px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] hover:bg-[#EAEFFD] hover:text-[var(--color-primary-700)] rounded-lg flex items-center gap-2.5 transition-all"
-                    >
-                      <BookOpen className="w-4 h-4 text-[var(--color-primary-500)]" />
-                      Hướng dẫn luồng dự án
+                      {plusActionTitle}
                     </Link>
 
                     <button
@@ -310,21 +323,12 @@ export function AppHeader({ user: initialUser = null }: AppHeaderProps) {
               </div>
             </div>
           ) : (
-            /* Guest — Nút Hướng dẫn + Nút ĐĂNG NHẬP */
-            <div className="flex items-center gap-3">
-              <Link
-                href="/guide"
-                className="px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] hover:text-[var(--color-primary-600)] transition-colors flex items-center gap-1.5"
-              >
-                <BookOpen className="w-4 h-4 text-[var(--color-primary-500)]" />
-                Hướng dẫn
+            /* Guest — Nút ĐĂNG NHẬP dùng shadcn Button */
+            <Button asChild size="header">
+              <Link href="/login" id="header-login-btn">
+                Đăng nhập
               </Link>
-              <Button asChild size="header">
-                <Link href="/login" id="header-login-btn">
-                  Đăng nhập
-                </Link>
-              </Button>
-            </div>
+            </Button>
           )}
         </div>
 

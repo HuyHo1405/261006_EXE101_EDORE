@@ -32,7 +32,10 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
                 .description(plan.getDescription())
                 .price(plan.getPrice())
                 .durationDays(plan.getDurationDays())
+                .maxCourses(plan.getMaxCourses())
+                .maxStudentsPerClass(plan.getMaxStudentsPerClass())
                 .isActive(plan.getIsActive())
+                .features(plan.getFeatures() != null ? plan.getFeatures() : List.of())
                 .build();
     }
 }

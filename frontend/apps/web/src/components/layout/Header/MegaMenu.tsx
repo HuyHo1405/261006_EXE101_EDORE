@@ -40,10 +40,10 @@ export interface MegaMenuProps {
 }
 
 const accountLinks = [
-  { label: "Thông tin cá nhân", href: "/profile" },
-  { label: "Bảng giá dịch vụ",  href: "/pricing" },
-  { label: "Môn học của tôi",   href: "/my-subjects" },
-  { label: "Soạn bài giảng",    href: "/dashboard/scripts/new" },
+  { id: "dashboard-lib", label: "Dashboard Thư viện", href: "/dashboard" },
+  { id: "pricing-plan", label: "Bảng giá dịch vụ", href: "/pricing" },
+  { id: "all-lessons", label: "Tất cả bài giảng", href: "/dashboard" },
+  { id: "new-script", label: "Soạn kịch bản mới", href: "/studio" },
 ];
 
 export function MegaMenu({
@@ -114,17 +114,17 @@ export function MegaMenu({
         onMouseLeave={onMouseLeave}
       >
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-6 flex flex-col md:flex-row gap-6 md:gap-0">
-          {/* ── Cột 1: Môn học (Dạng 2 cột) ─────────────────────────────── */}
+          {/* ── Cột 1: Danh mục Môn học ─────────────────────────────── */}
           <div className="flex-[1.4] min-w-0 px-0 md:px-6 first:pl-0 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] pb-4 md:pb-0">
             <p className="font-body text-xs font-bold uppercase tracking-wider text-[var(--color-neutral-500)] mb-3">
-              Môn học
+              Danh mục Môn học
             </p>
             {isLoadingSubjects ? (
               <SkeletonList count={4} />
             ) : subjects.length === 0 ? (
               <EmptyState
                 message="Bạn chưa có môn học nào"
-                cta={{ label: "Khám phá môn học", href: "/subjects" }}
+                cta={{ label: "Vào Dashboard Thư viện", href: "/dashboard" }}
                 onClose={onClose}
               />
             ) : (
@@ -144,17 +144,17 @@ export function MegaMenu({
             )}
           </div>
 
-          {/* ── Cột 2: Lớp học (Dạng 2 cột) ─────────────────────────────── */}
+          {/* ── Cột 2: Khóa học & Phân loại ─────────────────────────────── */}
           <div className="flex-[1.4] min-w-0 px-0 md:px-6 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] pb-4 md:pb-0">
             <p className="font-body text-xs font-bold uppercase tracking-wider text-[var(--color-neutral-500)] mb-3">
-              Lớp học
+              Khóa học & Lớp học
             </p>
             {isLoadingClassrooms ? (
               <SkeletonList count={4} />
             ) : classrooms.length === 0 ? (
               <EmptyState
                 message="Bạn chưa có lớp học nào"
-                cta={{ label: "Tham gia lớp học", href: "/classrooms" }}
+                cta={{ label: "Vào Dashboard Thư viện", href: "/dashboard" }}
                 onClose={onClose}
               />
             ) : (
@@ -182,7 +182,7 @@ export function MegaMenu({
             <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
               {isAuthenticated
                 ? accountLinks.map((link) => (
-                    <li key={link.href}>
+                    <li key={link.id}>
                       <Link
                         href={link.href}
                         className="block w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-4"

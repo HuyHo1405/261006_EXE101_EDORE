@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { CreativeFlowIllustration } from "@/components/illustrations/CreativeFlo
 import { JoinIllustration } from "@/components/illustrations/JoinIllustration";
 import { ArticlesIllustration } from "@/components/illustrations/ArticlesIllustration";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
+import { subscriptionService, SubscriptionPlanDTO } from "@/features/subscription/api/subscriptionService";
 import {
   Sparkles,
   BookOpen,
@@ -20,8 +22,43 @@ import {
   CornerDownRight,
 } from "@/components/ui/icons";
 
+const DEFAULT_STARTER_FEATURES = [
+  "Khởi tạo tối đa 3 Khóa học & Lớp học",
+  "AI Phân tích tài liệu PDF/Word (tối đa 10 trang)",
+  "Studio Timeline biên soạn kịch bản cơ bản",
+  "Xuất kịch bản dạng Văn bản (Text)",
+  "Hỗ trợ qua Email",
+];
+
+const DEFAULT_PRO_FEATURES = [
+  "Không giới hạn Khóa học & Lớp học",
+  "AI Phân tích tài liệu & Slide giảng dạy nâng cao",
+  "Studio Timeline tương tác & nhảy bước đầy đủ",
+  "Sidebar Gợi ý Hoạt động Sư phạm cá nhân hóa",
+  "Lưu trữ ngân hàng kịch bản tái sử dụng",
+];
+
+const DEFAULT_TEAM_FEATURES: string[] = [];
+
 export default function Home() {
   const { user, isAuthenticated, togglePlan } = useAuthStore();
+  const [plans, setPlans] = useState<SubscriptionPlanDTO[]>([]);
+
+  useEffect(() => {
+    subscriptionService.getActivePlans().then((data) => {
+      if (data && data.length > 0) {
+        setPlans(data);
+      }
+    });
+  }, []);
+
+  const starterPlan = plans.find((p) => p.name.toLowerCase().includes("starter"));
+  const proPlan = plans.find((p) => p.name.toLowerCase().includes("pro"));
+  const teamPlan = plans.find((p) => p.name.toLowerCase().includes("team"));
+
+  const starterFeatures = starterPlan?.features?.length ? starterPlan.features : DEFAULT_STARTER_FEATURES;
+  const proFeatures = proPlan?.features?.length ? proPlan.features : DEFAULT_PRO_FEATURES;
+  const teamFeatures = teamPlan?.features?.length ? teamPlan.features : DEFAULT_TEAM_FEATURES;
 
   return (
     /* ── BASE PRIMARY BLUE BACKGROUND CANVAS (MÀU XANH PRIMARY BASE #034ce4) ────── */
@@ -89,14 +126,14 @@ export default function Home() {
         </section>
 
 
-        {/* ── SECTION 2: FEATURES (CÁC TÍNH NĂNG NỔI BẬT) ─────────────────────────── */}
+        {/* ── SECTION 2: FEATURES (CÁC TÍNH NĂNG NỔI BẬT THEO LUỒNG KHÓA HỌC) ─────────────────────────── */}
         <section id="features" className="space-y-8 pt-2 scroll-mt-20 md:scroll-mt-24">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <h2 className="font-header font-bold text-3xl md:text-4xl uppercase tracking-tight text-slate-900">
-              Công cụ soạn bài giảng & quản lý lớp học toàn diện
+              Công cụ soạn kịch bản & quản lý khóa học toàn diện
             </h2>
             <p className="text-sm md:text-base text-slate-600 font-body">
-              Edore cung cấp đầy đủ giải pháp tự động hóa kịch bản, lưu trữ kho giáo án và theo dõi tiến trình học sinh.
+              Edore cung cấp giải pháp tự động hóa kịch bản từ tài liệu, tùy chỉnh Timeline bài giảng và gợi ý sư phạm thông minh cho từng khóa học.
             </p>
           </div>
 
@@ -109,15 +146,15 @@ export default function Home() {
                     <Sparkles className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Soạn kịch bản AI
+                    Cấu hình Khóa học & Lớp
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Tự động gợi ý nội dung bài giảng, kịch bản tương tác và câu hỏi thảo luận theo chuẩn chương trình chỉ trong vài giây.
+                    Thiết lập thông tin khóa học, chọn tham số thời lượng tiết học, sĩ số và bố trí không gian phòng học vật lý chuẩn hóa.
                   </p>
                 </div>
-                <div className="pt-4 flex items-center text-xs font-bold text-[var(--color-primary-600)] group-hover:translate-x-1 transition-transform">
-                  Tìm hiểu thêm <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </div>
+                <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-[var(--color-primary-600)] group-hover:translate-x-1 transition-transform">
+                  Vào Quản lý Khóa học <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Link>
               </div>
             </AnimateOnScroll>
 
@@ -129,15 +166,15 @@ export default function Home() {
                     <BookOpen className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Ngân hàng kịch bản
+                    Phân Tích AI & Sinh Kịch Bản
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Kho mẫu kịch bản chuẩn hóa phong phú theo từng khối lớp và môn học, hỗ trợ tái sử dụng và tùy biến nhanh chóng.
+                    Tải lên sách giáo khoa, slide, tài liệu PDF/Word để AI tự động trích xuất tri thức và sinh kịch bản bài học chuẩn hóa.
                   </p>
                 </div>
-                <div className="pt-4 flex items-center text-xs font-bold text-[var(--color-secondary-600)] group-hover:translate-x-1 transition-transform">
-                  Khám phá bài giảng <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </div>
+                <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-[var(--color-secondary-600)] group-hover:translate-x-1 transition-transform">
+                  Khám phá kịch bản AI <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Link>
               </div>
             </AnimateOnScroll>
 
@@ -149,15 +186,15 @@ export default function Home() {
                     <Users className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Lớp học tương tác
+                    Studio Timeline Bài Giảng
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Tổ chức nhóm học tập, giao nhiệm vụ và theo dõi tương tác học sinh theo thời gian thực trực quan.
+                    Trình biên soạn kịch bản dạng dòng thời gian trực quan, giúp sắp xếp thứ tự và nhảy bước dễ dàng khi đứng lớp.
                   </p>
                 </div>
-                <div className="pt-4 flex items-center text-xs font-bold text-emerald-600 group-hover:translate-x-1 transition-transform">
-                  Quản lý lớp học <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </div>
+                <Link href="/studio" className="pt-4 flex items-center text-xs font-bold text-emerald-600 group-hover:translate-x-1 transition-transform">
+                  Mở Studio kịch bản <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Link>
               </div>
             </AnimateOnScroll>
 
@@ -169,15 +206,15 @@ export default function Home() {
                     <BarChart3 className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Cá nhân hóa lộ trình
+                    Gợi Ý Sư Phạm & Lưu Trữ
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Báo cáo tiến trình chi tiết, đề xuất bài tập phân hóa phù hợp với năng lực của từng học sinh.
+                    Đề xuất hoạt động sư phạm phù hợp ngữ cảnh lớp học, hỗ trợ lưu trữ ngân hàng kịch bản để tái sử dụng lâu dài.
                   </p>
                 </div>
-                <div className="pt-4 flex items-center text-xs font-bold text-purple-600 group-hover:translate-x-1 transition-transform">
-                  Xem báo cáo tiến trình <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </div>
+                <Link href="/guide" className="pt-4 flex items-center text-xs font-bold text-purple-600 group-hover:translate-x-1 transition-transform">
+                  Xem hướng dẫn chi tiết <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Link>
               </div>
             </AnimateOnScroll>
           </div>
@@ -214,8 +251,8 @@ export default function Home() {
                 )}
 
                 <Button asChild variant="outline" className="border-slate-300 text-slate-800 hover:bg-slate-100 font-bold">
-                  <Link href="#features" className="flex items-center gap-1.5">
-                    Khám phá bài giảng mẫu <ArrowRight className="w-4 h-4" />
+                  <Link href="/guide" className="flex items-center gap-1.5">
+                    Tài liệu hướng dẫn <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
               </div>
@@ -255,53 +292,6 @@ export default function Home() {
               </div>
             </div>
           </AnimateOnScroll>
-
-
-          {/* ── 4 BƯỚC CHÍNH MÔ TẢ LUỒNG CHẠY (DẠNG DẸP TĨNH / PHẲNG / KHÔNG ACTIVE STATE) ──────────── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
-            {[
-              {
-                step: 1,
-                title: "1. Chọn môn & Chủ đề",
-                subtitle: "Lựa chọn khối lớp & nội dung",
-                badgeColor: "bg-[var(--color-primary-500)] text-white",
-              },
-              {
-                step: 2,
-                title: "2. AI tạo kịch bản",
-                subtitle: "Tự động đề xuất bài giảng 15s",
-                badgeColor: "bg-[var(--color-secondary-500)] text-white",
-              },
-              {
-                step: 3,
-                title: "3. Tùy chỉnh & Xuất file",
-                subtitle: "Giáo án chuẩn Bộ GD&ĐT",
-                badgeColor: "bg-purple-600 text-white",
-              },
-              {
-                step: 4,
-                title: "4. Giảng dạy & Đánh giá",
-                subtitle: "Trình chiếu & tương tác realtime",
-                badgeColor: "bg-emerald-600 text-white",
-              },
-            ].map((item) => (
-              <AnimateOnScroll key={item.step}>
-                <div className="bg-slate-50 border border-slate-200/90 rounded-xl p-3 flex items-center gap-3 shadow-2xs hover-elastic">
-                  <span className={`w-7 h-7 rounded-lg font-header font-bold text-xs flex items-center justify-center shrink-0 shadow-xs ${item.badgeColor}`}>
-                    {item.step}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-header font-bold text-xs md:text-sm uppercase text-slate-800 truncate">
-                      {item.title}
-                    </h3>
-                    <p className="text-[11px] text-slate-500 truncate">
-                      {item.subtitle}
-                    </p>
-                  </div>
-                </div>
-              </AnimateOnScroll>
-            ))}
-          </div>
         </section>
 
 
@@ -335,7 +325,7 @@ export default function Home() {
                       Starter
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed font-body">
-                      Công cụ đồng hành soạn giảng. Trải nghiệm kịch bản AI thế hệ mới miễn phí hàng tháng.
+                      {starterPlan?.description || "Công cụ đồng hành soạn giảng. Trải nghiệm kịch bản AI thế hệ mới miễn phí hàng tháng."}
                     </p>
                   </div>
 
@@ -377,13 +367,13 @@ export default function Home() {
                       Pro Plan
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed font-body">
-                      Giải pháp toàn diện cho giáo viên chuyên nghiệp. Mở khóa toàn bộ sức mạnh AI kịch bản.
+                      {proPlan?.description || "Giải pháp toàn diện cho giáo viên chuyên nghiệp. Mở khóa toàn bộ sức mạnh AI kịch bản."}
                     </p>
                   </div>
 
                   <div className="space-y-4 pt-2">
                     <div className="flex items-baseline gap-1 font-header font-bold text-3xl md:text-4xl tracking-tight text-slate-900">
-                      199.000đ <span className="text-sm font-normal text-slate-500 font-body">/Tháng</span>
+                      {proPlan?.price ? `${proPlan.price.toLocaleString("vi-VN")}đ` : "199.000đ"} <span className="text-sm font-normal text-slate-500 font-body">/Tháng</span>
                     </div>
 
                     {isAuthenticated ? (
@@ -405,26 +395,30 @@ export default function Home() {
                 </div>
               </AnimateOnScroll>
 
-              {/* TOP WHITE CARD 3: TEAM PLAN */}
+              {/* TOP WHITE CARD 3: TEAM PLAN (CHƯA HỖ TRỢ) */}
               <AnimateOnScroll className="h-full">
-                <div className="bg-white rounded-3xl p-6 md:p-7 shadow-sm border border-slate-200/80 flex flex-col justify-between h-full space-y-4 relative transition-elastic hover-elastic">
+                <div className="bg-white rounded-3xl p-6 md:p-7 shadow-sm border border-slate-200/80 flex flex-col justify-between h-full space-y-4 relative transition-elastic hover-elastic opacity-85">
+                  <span className="absolute -top-3 right-6 px-3 py-0.5 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-xs">
+                    Chưa hỗ trợ
+                  </span>
+
                   <div className="space-y-2">
                     <h3 className="font-header font-bold text-2xl tracking-tight text-slate-900">
                       Team Plan
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed font-body">
-                      Giải pháp dành cho tổ bộ môn & nhà trường. Quản lý tập trung, chia sẻ tài nguyên bài giảng.
+                      {teamPlan?.description || "Giải pháp dành cho tổ bộ môn & nhà trường. Quản lý tập trung, chia sẻ tài nguyên bài giảng."}
                     </p>
                   </div>
 
                   <div className="space-y-4 pt-2">
-                    <div className="flex items-baseline gap-1 font-header font-bold text-3xl md:text-4xl tracking-tight text-slate-900">
-                      499.000đ <span className="text-sm font-normal text-slate-500 font-body">/Tháng</span>
+                    <div className="flex items-baseline gap-1 font-header font-bold text-3xl md:text-4xl tracking-tight text-slate-400">
+                      499.000đ <span className="text-sm font-normal text-slate-400 font-body">/Tháng</span>
                     </div>
 
-                    <Link href="/register" className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-3 px-4 rounded-full text-xs md:text-sm transition-all hover-elastic-button flex items-center justify-center gap-2">
-                      Đăng ký gói Team <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    <button disabled className="w-full bg-slate-100 text-slate-400 font-bold py-3 px-4 rounded-full text-xs md:text-sm cursor-not-allowed flex items-center justify-center gap-2">
+                      Chưa hỗ trợ
+                    </button>
                   </div>
                 </div>
               </AnimateOnScroll>
@@ -441,7 +435,7 @@ export default function Home() {
                 </span>
 
                 <ul className="space-y-3">
-                  {["(placeholder)", "(placeholder)", "(placeholder)", "(placeholder)", "(placeholder)"].map((feat, i) => (
+                  {starterFeatures.map((feat, i) => (
                     <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-600">
                       <span className="w-5 h-5 rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
                         <Check className="w-3 h-3 stroke-[3]" />
@@ -459,7 +453,7 @@ export default function Home() {
                 </span>
 
                 <ul className="space-y-3">
-                  {["(placeholder)", "(placeholder)", "(placeholder)", "(placeholder)", "(placeholder)"].map((feat, i) => (
+                  {proFeatures.map((feat, i) => (
                     <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-600">
                       <span className="w-5 h-5 rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
                         <Check className="w-3 h-3 stroke-[3]" />
@@ -476,16 +470,22 @@ export default function Home() {
                   BAO GỒM TẤT CẢ CỦA PRO
                 </span>
 
-                <ul className="space-y-3">
-                  {["(placeholder)", "(placeholder)", "(placeholder)", "(placeholder)", "(placeholder)"].map((feat, i) => (
-                    <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-600">
-                      <span className="w-5 h-5 rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
-                        <Check className="w-3 h-3 stroke-[3]" />
-                      </span>
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
+                {teamFeatures.length > 0 ? (
+                  <ul className="space-y-3">
+                    {teamFeatures.map((feat, i) => (
+                      <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-500">
+                        <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-400 border border-slate-200 flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </span>
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-slate-400 italic py-2">
+                    Tính năng đang được cập nhật...
+                  </p>
+                )}
               </div>
 
             </div>

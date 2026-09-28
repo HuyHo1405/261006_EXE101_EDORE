@@ -1,0 +1,433 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { 
+  BookOpen, 
+  GraduationCap, 
+  FileText, 
+  Edit3, 
+  Heart, 
+  ArrowLeft, 
+  ArrowRight, 
+  ImageIcon, 
+  Cpu, 
+  Sparkles, 
+  Sliders, 
+  Settings, 
+  CheckCircle2 
+} from "lucide-react";
+
+interface GuideClientProps {
+  markdownContent: string;
+}
+
+// Simple Markdown Renderer component
+function MarkdownRenderer({ content }: { content: string }) {
+  if (!content) return null;
+
+  const lines = content.split("\n");
+  const renderedElements: React.ReactNode[] = [];
+  let inCodeBlock = false;
+  let codeBuffer: string[] = [];
+  let listBuffer: React.ReactNode[] = [];
+  let listType: "ul" | "ol" | null = null;
+
+  const flushList = (keyPrefix: string) => {
+    if (listBuffer.length > 0 && listType) {
+      if (listType === "ul") {
+        renderedElements.push(
+          <ul key={`list-${keyPrefix}`} className="list-disc list-inside space-y-2 text-slate-700 text-xs sm:text-sm my-3 pl-2">
+            {listBuffer}
+          </ul>
+        );
+      } else {
+        renderedElements.push(
+          <ol key={`list-${keyPrefix}`} className="list-decimal list-inside space-y-2 text-slate-700 text-xs sm:text-sm my-3 pl-2">
+            {listBuffer}
+          </ol>
+        );
+      }
+      listBuffer = [];
+      listType = null;
+    }
+  };
+
+  const formatText = (text: string) => {
+    // Process **bold** and `code`
+    const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
+    return parts.map((part, idx) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return <strong key={idx} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith("`") && part.endsWith("`")) {
+        return <code key={idx} className="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded text-[#034ce4] font-semibold">{part.slice(1, -1)}</code>;
+      }
+      return part;
+    });
+  };
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+
+    // Code block handling ```
+    if (trimmed.startsWith("```")) {
+      if (inCodeBlock) {
+        // End code block
+        inCodeBlock = false;
+        renderedElements.push(
+          <div key={`code-${index}`} className="my-4 p-4 bg-[#1a1c1f] text-emerald-400 rounded-xl font-mono text-xs overflow-x-auto shadow-sm">
+            <pre>{codeBuffer.join("\n")}</pre>
+          </div>
+        );
+        codeBuffer = [];
+      } else {
+        flushList(`${index}`);
+        inCodeBlock = true;
+      }
+      return;
+    }
+
+    if (inCodeBlock) {
+      codeBuffer.push(line);
+      return;
+    }
+
+    // Empty line
+    if (!trimmed) {
+      flushList(`${index}`);
+      return;
+    }
+
+    // Horizontal rule
+    if (trimmed === "---") {
+      flushList(`${index}`);
+      renderedElements.push(<hr key={`hr-${index}`} className="my-6 border-slate-200" />);
+      return;
+    }
+
+    // Headings
+    if (trimmed.startsWith("### ")) {
+      flushList(`${index}`);
+      renderedElements.push(
+        <h3 key={`h3-${index}`} className="font-bold text-slate-900 text-base sm:text-lg mt-6 mb-3 flex items-center gap-2">
+          {formatText(trimmed.replace(/^###\s+/, ""))}
+        </h3>
+      );
+      return;
+    }
+
+    if (trimmed.startsWith("## ")) {
+      flushList(`${index}`);
+      renderedElements.push(
+        <h2 key={`h2-${index}`} className="font-header text-xl sm:text-2xl font-extrabold uppercase text-slate-900 mt-6 mb-3 pb-2 border-b border-slate-200">
+          {formatText(trimmed.replace(/^##\s+/, ""))}
+        </h2>
+      );
+      return;
+    }
+
+    // Image Placeholder Custom Syntax: [IMAGE: Title | Description | Dimensions]
+    const imageMatch = trimmed.match(/^\[IMAGE:\s*([^|]+)\s*\|\s*([^|]+)(?:\s*\|\s*([^|\]]+))?\s*\]$/);
+    if (imageMatch) {
+      flushList(`${index}`);
+      renderedElements.push(
+        <ImagePlaceholder
+          key={`img-${index}`}
+          title={imageMatch[1].trim()}
+          description={imageMatch[2].trim()}
+          dimensions={imageMatch[3] ? imageMatch[3].trim() : undefined}
+        />
+      );
+      return;
+    }
+
+    // Bullet List
+    const bulletMatch = trimmed.match(/^[*|-]\s+(.*)$/);
+    if (bulletMatch) {
+      if (listType !== "ul") flushList(`${index}`);
+      listType = "ul";
+      listBuffer.push(<li key={`li-${index}`}>{formatText(bulletMatch[1])}</li>);
+      return;
+    }
+
+    // Numbered List
+    const numberMatch = trimmed.match(/^(\d+)\.\s+(.*)$/);
+    if (numberMatch) {
+      if (listType !== "ol") flushList(`${index}`);
+      listType = "ol";
+      listBuffer.push(<li key={`li-${index}`}>{formatText(numberMatch[2])}</li>);
+      return;
+    }
+
+    // Normal Paragraph
+    flushList(`${index}`);
+    renderedElements.push(
+      <p key={`p-${index}`} className="text-slate-700 text-xs sm:text-sm sm:leading-relaxed my-2.5">
+        {formatText(trimmed)}
+      </p>
+    );
+  });
+
+  flushList("end");
+
+  return <div className="space-y-1">{renderedElements}</div>;
+}
+
+// Image Placeholder Component cho UI minh họa
+function ImagePlaceholder({ 
+  title, 
+  description, 
+  dimensions = "640x320" 
+}: { 
+  title: string; 
+  description: string; 
+  dimensions?: string; 
+}) {
+  return (
+    <div className="w-full my-6 bg-[#edf0f2] border-2 border-dashed border-[#034ce4]/40 rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center transition-all hover:border-[#034ce4]">
+      <div className="w-12 h-12 rounded-full bg-[#034ce4]/10 text-[#034ce4] flex items-center justify-center mb-3">
+        <ImageIcon className="w-6 h-6" />
+      </div>
+      <div className="font-mono text-xs font-bold uppercase tracking-wider text-[#034ce4] bg-white px-2.5 py-1 rounded-md border border-[#034ce4]/20 mb-2">
+        IMAGE PLACEHOLDER ({dimensions})
+      </div>
+      <h4 className="font-bold text-slate-900 text-sm sm:text-base mb-1">
+        {title}
+      </h4>
+      <p className="text-xs text-slate-600 max-w-md">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+// Helper to parse Markdown content into 4 sections
+function parseMarkdownSections(markdown: string) {
+  const sections: Record<string, string> = {
+    overview: "",
+    course: "",
+    "create-script": "",
+    "edit-script": "",
+  };
+
+  const rawSections = markdown.split(/^##\s+/m);
+  
+  rawSections.forEach((sectionStr) => {
+    const trimmed = sectionStr.trim();
+    if (!trimmed) return;
+
+    if (trimmed.startsWith("1.") || trimmed.toLowerCase().includes("overview") || trimmed.toLowerCase().includes("tổng quan")) {
+      sections.overview = "## " + trimmed;
+    } else if (trimmed.startsWith("2.") || trimmed.toLowerCase().includes("course") || trimmed.toLowerCase().includes("cấu hình")) {
+      sections.course = "## " + trimmed;
+    } else if (trimmed.startsWith("3.") || trimmed.toLowerCase().includes("sinh kịch bản") || trimmed.toLowerCase().includes("tạo script")) {
+      sections["create-script"] = "## " + trimmed;
+    } else if (trimmed.startsWith("4.") || trimmed.toLowerCase().includes("chỉnh sửa kịch bản") || trimmed.toLowerCase().includes("edit script")) {
+      sections["edit-script"] = "## " + trimmed;
+    }
+  });
+
+  return sections;
+}
+
+export function GuideClient({ markdownContent }: GuideClientProps) {
+  const [activeTab, setActiveTab] = useState<"overview" | "course" | "create-script" | "edit-script">("overview");
+
+  const parsedSections = parseMarkdownSections(markdownContent);
+
+  const tabs: Array<{ id: "overview" | "course" | "create-script" | "edit-script"; label: string }> = [
+    { id: "overview", label: "1. Overview (Tổng quan)" },
+    { id: "course", label: "2. Course & Class Config" },
+    { id: "create-script", label: "3. Tạo Script (Kịch bản)" },
+    { id: "edit-script", label: "4. Edit Script (Trợ lý bài học)" },
+  ];
+
+  const currentTabIdx = tabs.findIndex((t) => t.id === activeTab);
+
+  const goToNextTab = () => {
+    if (currentTabIdx < tabs.length - 1) {
+      setActiveTab(tabs[currentTabIdx + 1].id);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const goToPrevTab = () => {
+    if (currentTabIdx > 0) {
+      setActiveTab(tabs[currentTabIdx - 1].id);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#fafafa] text-[#1a1c1f] font-sans pt-6 pb-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        
+        {/* TOP HERO BANNER */}
+        <div className="banner banner--hero mb-8 shadow-sm">
+          <div className="banner-inner">
+            <div className="banner-label flex items-center gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-white" /> EDORE MANUAL INSTRUCTION / LƯỒNG DỰ ÁN
+            </div>
+            <h1>Hướng Dẫn Vận Hành & Sử Dụng</h1>
+            <p className="sub">
+              Khám phá quy trình chuẩn bị bài giảng thông minh cùng Trí tuệ Nhân tạo — Tự động, trực quan và chuẩn hóa sư phạm.
+            </p>
+            <div className="cta-group">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#034ce4] font-bold text-xs sm:text-sm hover:bg-slate-50 transition-all shadow-sm hover-elastic-button"
+              >
+                Vào Dashboard <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          <div className="illustration">
+            <ProductDemoIllustration />
+          </div>
+        </div>
+
+        {/* MAIN CONTENT GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* SIDEBAR NAVIGATION */}
+          <aside className="lg:col-span-3 space-y-2">
+            <div className="bg-white border border-[#d9d9d9] rounded-xl p-3 shadow-xs sticky top-24">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 py-2 font-mono">
+                Danh mục bài viết
+              </div>
+              
+              <nav className="space-y-1">
+                {tabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full flex items-center px-3 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-left ${
+                        isActive
+                          ? "bg-[#034ce4] text-white shadow-xs"
+                          : "text-slate-700 hover:bg-[#edf0f2]"
+                      }`}
+                    >
+                      <span className="truncate">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              <div className="mt-4 pt-3 border-t border-[#d9d9d9] text-[11px] text-slate-500 font-mono px-3">
+                Nguồn dữ liệu: <span className="text-[#034ce4] font-bold">doc.md</span>
+              </div>
+            </div>
+          </aside>
+
+          {/* MAIN TAB CONTENT PANEL */}
+          <main className="lg:col-span-9">
+            <div className="bg-white border border-[#d9d9d9] rounded-xl p-6 sm:p-8 shadow-xs flex flex-col justify-between min-h-[600px]">
+              
+              <div className="animate-in fade-in duration-200">
+                {/* SECTION MARKDOWN CONTENT */}
+                <MarkdownRenderer content={parsedSections[activeTab] || parsedSections.overview} />
+              </div>
+
+              {/* BOTTOM NAVIGATION */}
+              <div className="mt-10 pt-6 border-t border-[#d9d9d9] flex items-center justify-between gap-4">
+                <button
+                  onClick={goToPrevTab}
+                  disabled={currentTabIdx === 0}
+                  className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm border transition-all ${
+                    currentTabIdx === 0
+                      ? "opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200"
+                      : "bg-white text-slate-700 border-[#d9d9d9] hover:bg-[#edf0f2] active:scale-95 cursor-pointer"
+                  }`}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>
+                    {currentTabIdx > 0 ? `Quay lại: ${tabs[currentTabIdx - 1].label}` : "Đang ở Mục đầu"}
+                  </span>
+                </button>
+
+                <button
+                  onClick={currentTabIdx === tabs.length - 1 ? () => setActiveTab("overview") : goToNextTab}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#034ce4] text-white font-bold text-xs sm:text-sm hover:bg-[#023bb3] active:scale-95 transition-all shadow-xs cursor-pointer"
+                >
+                  <span>
+                    {currentTabIdx < tabs.length - 1 
+                      ? `Bước tiếp theo: ${tabs[currentTabIdx + 1].label}` 
+                      : "Về lại Mục 1 (Overview)"}
+                  </span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+
+            </div>
+          </main>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Inline SVG Illustration Component (undraw_product-demo_9d4i.svg)
+function ProductDemoIllustration() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="800"
+      height="640.774"
+      viewBox="0 0 800 640.774"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      role="img"
+    >
+      <g transform="translate(-559.438 -244.174)">
+        <g transform="translate(957.555 401.194)">
+          <path d="M700.362,759.986c-2.075-4.721-4.043-10.151-1.967-14.872a12.64,12.64,0,0,1,6.541-6.148,31.48,31.48,0,0,1,8.853-2.184,123.544,123.544,0,0,1,28.781-.393c.7,5.528-.777,11.135-2.046,16.476-1.151,4.918-1.81,5.646-6.885,5.9C730.353,758.943,701.14,761.727,700.362,759.986Z" transform="translate(-605.715 -320.747)" fill="#ed9da0"/>
+          <ellipse cx="140.658" cy="39.345" rx="140.658" ry="39.345" transform="translate(41.58 328.699)" fill="#090814"/>
+          <path d="M813.51,475.516a43.762,43.762,0,0,1-22.564,20.5,56.636,56.636,0,0,1-17.863,3.4c-6.679.3-13.5-.128-19.771-2.41-8.42-3.049-15.413-9.285-20.656-16.554s-8.853-15.571-11.99-23.941c-1.652-4.357-3.226-9-2.449-13.6,5.066-1.151,10.613-2.843,13.23-7.338,2.233-3.856,1.613-8.479.325-12.885-.364-1.249-.787-2.489-1.21-3.679-.984-2.852-4.377-8.272-2.016-10.712,1.5-1.544,7.81-2.331,9.984-3.335,6.7-3.089,12.876-7.554,20.233-9.02,6.364-1.269,12.935-.079,19.289,1.239a6.344,6.344,0,0,1,2.38.856,5.725,5.725,0,0,1,1.77,2.656c1.81,4.407,2.872,9.276,4.328,13.869,1.515,4.81,3.462,9.325,7.112,12.738,2.843,2.666,6.462,4.338,10,5.961l8.715,3.993a11.46,11.46,0,0,1,4.121,2.666,10.437,10.437,0,0,1,1.967,5.351,49.987,49.987,0,0,1-4.938,30.246Z" transform="translate(-606.051 -315.173)" fill="#ed9da0"/>
+          <ellipse cx="47.861" cy="47.861" rx="47.861" ry="47.861" transform="translate(102.979 22.03)" fill="#ed9da0"/>
+          <path d="M890.735,528.715l-3.718-22.525c-1.879-11.3-3.816-22.82-9.069-33-3.453-6.669-51.817-32.971-56.44-35.863s-10.377-4.918-15.492-3.069c-.826,8.8-1.7,17.8-5.44,25.82A38.637,38.637,0,0,1,742.287,474.6c-8.764-6.6-14.38-16.781-17-27.433-.639-2.6-1.367-5.577-3.757-6.767-2.587-1.3-5.7.275-7.869,2.184-3.984,3.531-7.151,8.587-12.325,9.777-1.869.433-37.328,16.692-39.335,19.515s-2.951,6.315-3.935,9.7c10.751,23.941,20.587,47.912,31.338,71.853a6.129,6.129,0,0,1,.777,2.951,7.19,7.19,0,0,1-1.338,2.951c-5.272,8.469-5.105,19.122-4.525,29.076s1.289,20.469-3.157,29.391c-1.21,2.449-7.6,30.433-6.03,36.394h222.3c-4.239-11.656-2.626-35.046-1.741-47.42.62-8.656-.984-17.3-1.672-25.958C892.575,563.132,893.657,546.361,890.735,528.715Z" transform="translate(-605.069 -315.798)" fill="#f28c0f"/>
+          <path d="M903.227,650.846c3.275-1.249,6.885-.8,10.4-.325,11.3,1.544,22.771,3.128,33.246,7.643,4.918,2.1,9.6,4.918,12.925,9.059,2.951,3.728,4.672,8.292,6.3,12.787l3.777,10.318c1.436,3.934,2.892,7.948,3.3,12.128,1.18,12.384-7.289,24.059-17.941,30.492s-23.194,8.725-35.41,11.125-24.482,5.056-36.65,7.869a147.529,147.529,0,0,1-17.243,3.393c-13.023,1.475-26.636-.7-39.01,3.61-4.918,1.721-9.748,4.279-14.853,5.469a92.4,92.4,0,0,1-10.259,1.652l-23.42,2.675a127.786,127.786,0,0,1-14.361,1.1c-10.23,0-20.292-2.42-30.227-4.839a7.644,7.644,0,0,1-2.951-1.19c-1.574-1.239-1.918-3.433-2.144-5.42q-1.5-13.19-2.636-26.41c-.236-2.862-.413-5.961,1.151-8.371,1.967-2.951,5.8-3.875,9.305-4.446a242.848,242.848,0,0,1,44.932-3.118c5.715-5.715,15.138-5.744,22.623-8.853a67.278,67.278,0,0,0,7.977-4.338,104.264,104.264,0,0,1,43.781-13.84,40.765,40.765,0,0,0,8.961-1.279c5.794-1.8,11.076-6.7,17.026-5.5.738-2.036,1.249-4.761,2.951-6.158.846-.718,1.889-1.2,2.666-1.967,1.643-1.662,1.79-4.279,1.544-6.6s-.8-4.7-.2-6.964a9.63,9.63,0,0,1,1.092-2.43C892.84,652.951,897.3,650.355,903.227,650.846Z" transform="translate(-606.18 -319.344)" fill="#090814"/>
+          <path d="M707.883,765.734c-6.089,7.053-11.449,9.571-20.981,9.344q-8.794-.207-17.567-.915A98.572,98.572,0,0,0,657.3,773.6c-12.138.472-23.853,6.03-35.961,5.056a25.487,25.487,0,0,1-5.282-.984,15.375,15.375,0,0,1-7.131-4.338c-2.321-2.626-3.433-6.108-4.072-9.551-3.236-17.646,5.636-36.866,21.168-45.847a15.521,15.521,0,0,1,6.728-2.39,15.946,15.946,0,0,1,6.807,1.5l.148.059a51.475,51.475,0,0,1,16.859,11.253,9.5,9.5,0,0,0,2.577,2.075,8.853,8.853,0,0,0,3.039.571l12.925.816a30.627,30.627,0,0,1,6.492.9,51.594,51.594,0,0,1,6.826,2.951c6.954,3.108,14.666,3.934,22.181,5.134a3.314,3.314,0,0,1,1.967.787,3.078,3.078,0,0,1,.61,1.279,25.092,25.092,0,0,1-5.292,22.869Z" transform="translate(-604.187 -320.417)" fill="#323144"/>
+          <path d="M894.237,741.969c7.23-.2,15.344-.561,20.656,4.308,5.066,4.6,5.734,12.2,6.069,19.033l.384,7.938c.118,2.42.216,4.918-.757,7.161-1.731,3.935-6.482,5.833-10.82,5.607s-8.321-2.125-12.285-3.836a172.816,172.816,0,0,0-33.443-10.535q.561-8.233,1.869-16.387c.6-3.767.7-10.072,3.216-13.2,2.666-3.3,6.138-1.515,9.757-.9a78.332,78.332,0,0,0,15.354.816Z" transform="translate(-608.443 -320.819)" fill="#ed9da0"/>
+          <path d="M699.179,660.558c0,.984-1.544,0-1.682-1.052-1.082-7.958-7.4-14.518-14.754-17.705s-15.738-3.354-23.705-2.6c-12.049,1.141-25.525,5.754-29.981,17.017-1.043,2.636-1.515,5.489-2.794,8.017-1.416,2.774-3.728,4.987-5.262,7.682-2.646,4.662-2.754,10.377-1.8,15.649,2.567,14.066,12.187,26.1,23.843,34.427s25.279,13.308,38.863,17.794A673.958,673.958,0,0,0,792.072,766.1c6.059.915,12.177,1.761,17.981,3.708,5.194,1.741,10.053,4.348,15.128,6.394,11.8,4.741,24.5,6.433,37.082,8.1,2.144.275,4.6.472,6.187-.984,2.046-1.9,1.367-5.2.787-7.928a42.64,42.64,0,0,1,5.007-30.236c2.1-3.541,4.839-7.171,4.446-11.272-.472-4.78-5.233-8.164-9.974-8.931s-9.561.364-14.322.984a7.858,7.858,0,0,1-4.918-.482,9.725,9.725,0,0,1-1.908-1.692,21.571,21.571,0,0,0-25.122-3.512c-1.761.984-4.426-1.21-6.256-2.036l-20.666-9.374c-23.764-10.751-47.647-21.551-72.788-28.358a15.287,15.287,0,0,1-5.607-2.331c-1.249-.984-2.144-2.321-3.3-3.413-2.508-2.371-6-3.315-9.01-5S698.471,663.932,699.179,660.558Z" transform="translate(-604.424 -319.16)" fill="#090814"/>
+          <path d="M1022.8,790.67c-3.3,6.128-9.718,9.944-16.6,11.518a32.945,32.945,0,0,1-5.253.748c-8.705.541-17.3-1.869-25.692-4.249l-11.39-3.226a35.953,35.953,0,0,0-6-1.338,41.167,41.167,0,0,0-8.3.285c-13.462,1.252-27.406-5.672-40.7-8.125-1.112-.12-1.643-12.561,0-15.836s2.734-32.941,6.148-32.489,6.757,1.416,10.19,1.682c10.092.807,20.41-4.4,30.1-1.466,2.134.649,4.151,1.682,6.315,2.252a21,21,0,0,0,12.62-1.092c1.416-.531,2.8-1.171,4.18-1.8a33.661,33.661,0,0,1,8.41-3.039c9.453-1.623,18.217,4.918,25.348,11.3a35.839,35.839,0,0,1,6.443,6.984,35.062,35.062,0,0,1,3.935,10.161C1025.146,772.06,1027.3,782.31,1022.8,790.67Z" transform="translate(-623.524 -319.259)" fill="#323144"/>
+          <path d="M695.688,573.836c-1.19,19.535-15.522,35.676-20.981,54.463-1.357,4.7-2.174,9.58-4.121,14.056-3.934,9-12.03,15.531-20.656,20.135a31.021,31.021,0,0,1-10.171,3.7,19.5,19.5,0,0,1-19.584-10.417c-2.253-4.574-2.567-9.836-3.935-14.754-1.525-5.675-4.377-10.908-6.236-16.485-3.423-10.259-3.354-21.492-.984-32.036a98.358,98.358,0,0,1,10.554-26.125c.689-1.21,1.387-2.41,2.1-3.6a81.83,81.83,0,0,1,6.816-9.836c5.9-7.112,13.485-12.581,20.99-17.971a4.917,4.917,0,0,1,1.967-.984h.118a4.751,4.751,0,0,1,2.43.57,192.355,192.355,0,0,1,29.853,16.171c3.384,2.252,8.725,4.771,10.5,8.607S695.944,569.666,695.688,573.836Z" transform="translate(-604.238 -317.443)" fill="#ed9da0"/>
+          <path d="M657.137,483.005a10.18,10.18,0,0,0-2.184,3.492,165.107,165.107,0,0,0-13.869,56.676,5.666,5.666,0,0,1-.639,2.744A12.023,12.023,0,0,1,639,547.482a5.43,5.43,0,0,0,.925,7.869c1.623-3.059,5.508-4.052,8.961-4.318,16.535-1.308,32.686,6.384,49.269,5.8-1.17-4.043-2.852-7.928-3.807-12.02-4.22-18.167,6.3-37.948-.148-55.447-1.289-3.5-3.443-6.944-6.836-8.479a18.211,18.211,0,0,0-4.377-1.161c-4.19-.757-12.531-3.993-16.584-2.7-1.5.482-2.085,1.889-3.325,2.734C661.238,480.979,658.74,481.4,657.137,483.005Z" transform="translate(-604.736 -316.505)" fill="#f28c0f"/>
+          <path d="M661.693,646.6a27.752,27.752,0,0,1-23.671,14.272,18.039,18.039,0,0,1-7.575-1.446c-6.051-2.774-9.469-9.639-10.737-16.387s-.871-13.712-1.771-20.528c-.72-5.43-2.254-10.7-3.049-16.122-1.951-13.407,1.894-26.646,4.63-39.994.663-1.21,1.335-2.41,2.026-3.6a81.972,81.972,0,0,1,6.562-9.836c5.681-7.112,12.981-12.58,20.206-17.971h-7.575a1.257,1.257,0,0,1,1.286-.147,1.344,1.344,0,0,1,.768,1.081c.748,6.885,10.094,13.771,12.129,20.459,1.259,4.111,2.774,8.144,3.787,12.335a102.32,102.32,0,0,1,1.818,10.82q2.017,15.276,4.015,30.492C666.219,622.41,667.659,635.8,661.693,646.6Z" transform="translate(-604.353 -317.455)" opacity={0.046}/>
+          <path d="M650.45,515.4l9.492-29.774c1.416-4.456,2.852-8.98,3.02-13.663s-1.062-9.59-4.338-12.935c-2.656-2.7-6.334-4.1-9.482-6.216-7.869-5.3-11.8-14.587-15.905-23.135s-7.308-16.142-16.259-19.309c-2.066-.728-4.918-.787-5.843,1.19a4.181,4.181,0,0,0-.148,2.577,20.689,20.689,0,0,0,4.761,10.457c4.751,6.148,8.725,13.672,7.584,21.364-1.357,9.108-9.541,16.171-10.525,25.328-.433,4.033.6,8.076.59,12.138,0,2.518-.413,5.085.148,7.544a50.823,50.823,0,0,0,2.075,5.587,32.636,32.636,0,0,1,1.358,9.059l2.075,38.715c1.121,20.941-10.239,41.312-7.112,61.968.826,5.42,2.42,10.692,3.167,16.122.984,6.817.521,13.771,1.839,20.528s4.918,13.613,11.154,16.387a19.377,19.377,0,0,0,7.869,1.446,29.007,29.007,0,0,0,24.59-14.272c6.2-10.82,4.7-24.187,3.01-36.522L659.4,579.5a98.841,98.841,0,0,0-1.888-10.82c-1.043-4.19-2.616-8.223-3.935-12.335C649.359,542.9,646.2,528.761,650.45,515.4Z" transform="translate(-604.296 -315.41)" fill="#ed9da0"/>
+          <rect width="219.347" height="139.674" rx="7.97" transform="translate(87.318 202.304)" fill="#3f3d56"/>
+          <rect width="219.347" height="139.674" rx="7.97" transform="translate(87.318 202.304)" opacity={0.2}/>
+          <circle cx="5.902" cy="5.902" r="5.902" transform="translate(190.598 266.24)" fill="#fff"/>
+          <path d="M77.031,67.5l-7.9-1.975S63.205,31.949,49.379,35.9,0,43.8,0,28,33.938,2.8,53.329.347s53.329,7.9,51.354,37.528c-1,14.962-8,42.355-8,42.355L84.866,94.68l4.067-15.923Z" transform="translate(111.826 0) rotate(10)" fill="#090814"/>
+        </g>
+        <g transform="translate(559.438 244.174)">
+          <path d="M924.474,232.384H572.648a6.263,6.263,0,0,0-6.2,6.309V477.724a6.26,6.26,0,0,0,6.2,6.3H924.474a6.26,6.26,0,0,0,6.2-6.3V238.693a6.263,6.263,0,0,0-6.2-6.309Z" transform="translate(-566.446 -232.384)" fill="#090814"/>
+          <path d="M913.514,232.384H572.458a6.025,6.025,0,0,0-6.014,6.024V466.663a6.023,6.023,0,0,0,6.014,6.014H913.514a6.023,6.023,0,0,0,6.014-6.014V238.409a6.025,6.025,0,0,0-6.011-6.024Z" transform="translate(-565.656 -230.942)" fill="#fff"/>
+          <g transform="translate(26.753 8.958)">
+            <circle cx="5.012" cy="5.012" r="5.012" transform="translate(0 0)" fill="#3f3d56"/>
+            <circle cx="5.012" cy="5.012" r="5.012" transform="translate(17.312 0)" fill="#3f3d56"/>
+            <circle cx="5.012" cy="5.012" r="5.012" transform="translate(34.625 0)" fill="#3f3d56"/>
+          </g>
+          <path d="M499.776,739.161H200.193c-.434,0-.786-.2-.786-.456s.352-.456.786-.456H499.776c.434,0,.786.2.786.456S500.21,739.161,499.776,739.161Z" transform="translate(-172.653 -713.802)" fill="#cacaca"/>
+          <rect width="49" height="164" rx="4" transform="translate(26 49.155)" fill="#f28c0f"/>
+          <path d="M2.715,0h9.051a2.715,2.715,0,0,1,2.715,2.715v1.81a2.715,2.715,0,0,1-2.715,2.715H2.715A2.715,2.715,0,0,1,0,4.526V2.715A2.715,2.715,0,0,1,2.715,0Z" transform="translate(42.341 56.782)" fill="#fff"/>
+          <path d="M1.81,0H34.395a1.81,1.81,0,0,1,1.81,1.81V5.431a1.81,1.81,0,0,1-1.81,1.81H1.81A1.81,1.81,0,0,1,0,5.431V1.81A1.81,1.81,0,0,1,1.81,0Z" transform="translate(31.479 198.434)" fill="#fff"/>
+          <path d="M1.81,0H34.395a1.81,1.81,0,0,1,1.81,1.81V5.431a1.81,1.81,0,0,1-1.81,1.81H1.81A1.81,1.81,0,0,1,0,5.431V1.81A1.81,1.81,0,0,1,1.81,0Z" transform="translate(88.956 49.994)" fill="#e6e6e6"/>
+          <rect width="71" height="41" rx="8" transform="translate(89 66.155)" fill="#f28c0f"/>
+          <rect width="36" height="7" rx="3.5" transform="translate(32 71.155)" fill="#fff"/>
+          <rect width="239" height="31" rx="15.5" transform="translate(89 174.155)" fill="#f2f2f2"/>
+          <path d="M1.81,0H34.395a1.81,1.81,0,0,1,1.81,1.81V5.431a1.81,1.81,0,0,1-1.81,1.81H1.81A1.81,1.81,0,0,1,0,5.431V1.81A1.81,1.81,0,0,1,1.81,0Z" transform="translate(291.703 49.994)" fill="#e6e6e6"/>
+          <rect width="36" height="7" rx="3.5" transform="translate(32 82.155)" fill="#fff" opacity={0.149}/>
+          <rect width="36" height="7" rx="3.5" transform="translate(32 93.155)" fill="#fff" opacity={0.149}/>
+          <rect width="36" height="6" rx="3" transform="translate(32 104.155)" fill="#fff" opacity={0.149}/>
+          <rect width="73" height="41" rx="8" transform="translate(255 66.155)" fill="#f28c0f"/>
+          <rect width="72" height="41" rx="8" transform="translate(172 66.155)" fill="#f28c0f"/>
+          <rect width="239" height="31" rx="15.5" transform="translate(89 122.155)" fill="#f2f2f2"/>
+        </g>
+      </g>
+    </svg>
+  );
+}

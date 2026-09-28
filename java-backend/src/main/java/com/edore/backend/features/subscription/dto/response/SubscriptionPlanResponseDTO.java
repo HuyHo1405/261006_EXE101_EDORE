@@ -3,6 +3,7 @@ package com.edore.backend.features.subscription.dto.response;
 import lombok.Builder;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Builder
 public record SubscriptionPlanResponseDTO(
@@ -11,5 +12,8 @@ public record SubscriptionPlanResponseDTO(
         String description,
         BigDecimal price,
         Integer durationDays,
-        Boolean isActive
+        Integer maxCourses,
+        Integer maxStudentsPerClass,
+        Boolean isActive,
+        List<String> features
 ) {}

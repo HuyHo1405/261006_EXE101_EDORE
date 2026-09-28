@@ -29,10 +29,21 @@ function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const courseIdParam = searchParams.get("courseId") || searchParams.get("course") || "";
+  const categoryIdParam = searchParams.get("categoryId") || searchParams.get("category") || "";
+  const actionParam = searchParams.get("action");
 
   // Navigation & Filter States
   const [activeTab, setActiveTab] = useState<"courses" | "scripts" | "classConfigs">("courses");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(() => {
+    return categoryIdParam ? Number(categoryIdParam) : null;
+  });
+
+  React.useEffect(() => {
+    if (categoryIdParam) {
+      setSelectedCategoryId(Number(categoryIdParam));
+    }
+  }, [categoryIdParam]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const [sortBy, setSortBy] = useState<"updatedAt" | "title">("updatedAt");
@@ -41,10 +52,18 @@ function DashboardContent() {
   // Drill-down State (null = Course view; non-null = Script view inside course)
   const [selectedCourse, setSelectedCourse] = useState<CourseCardViewModel | null>(null);
 
-  // Modal State
-  const [isCreateCourseOpen, setIsCreateCourseOpen] = useState(false);
+  // Modal State (lazy initialized with actionParam if navigating with ?action=create-course)
+  const [isCreateCourseOpen, setIsCreateCourseOpen] = useState<boolean>(() => actionParam === "create-course");
   const [courseToEdit, setCourseToEdit] = useState<CourseResponseDTO | null>(null);
   const [editInitialStage, setEditInitialStage] = useState<1 | 2 | 3>(1);
+
+  React.useEffect(() => {
+    if (actionParam === "create-course") {
+      setCourseToEdit(null);
+      setEditInitialStage(1);
+      setIsCreateCourseOpen(true);
+    }
+  }, [actionParam]);
 
   // Queries
   const { data: categories = [] } = useCategories();
@@ -305,6 +324,9 @@ function DashboardContent() {
             onClose={() => {
               setIsCreateCourseOpen(false);
               setCourseToEdit(null);
+              if (actionParam === "create-course") {
+                router.replace("/dashboard");
+              }
             }}
           />
         </div>

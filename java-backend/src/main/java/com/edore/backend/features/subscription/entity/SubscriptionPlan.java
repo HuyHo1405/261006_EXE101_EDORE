@@ -44,4 +44,10 @@ public class SubscriptionPlan extends BaseAuditEntity {
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private Boolean isActive = true;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "subscription_plan_features", joinColumns = @JoinColumn(name = "plan_id"))
+    @Column(name = "feature", length = 500)
+    @Builder.Default
+    private java.util.List<String> features = new java.util.ArrayList<>();
 }

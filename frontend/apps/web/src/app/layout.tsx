@@ -28,9 +28,34 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Edore — Nền tảng học tập",
+  title: "Edore — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy",
   description:
-    "Edore là nền tảng ed-tech giúp giáo viên soạn bài giảng và học sinh quản lý lịch học hiệu quả.",
+    "Edore là nền tảng ed-tech giúp giáo viên tự động phân tích tài liệu và biên soạn kịch bản bài giảng thông minh.",
+  icons: {
+    icon: "/edore_logo.png",
+    shortcut: "/edore_logo.png",
+    apple: "/edore_logo.png",
+  },
+  openGraph: {
+    title: "Edore — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy",
+    description:
+      "Edore là nền tảng ed-tech giúp giáo viên tự động phân tích tài liệu và biên soạn kịch bản bài giảng thông minh.",
+    images: [
+      {
+        url: "/edore_logo.png",
+        width: 512,
+        height: 512,
+        alt: "Edore Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Edore — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy",
+    description:
+      "Edore là nền tảng ed-tech giúp giáo viên tự động phân tích tài liệu và biên soạn kịch bản bài giảng thông minh.",
+    images: ["/edore_logo.png"],
+  },
 };
 
 import { ToastContainer } from "@/components/ui/toast";
@@ -42,6 +67,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" className={`${sairaExtraCondensed.variable} ${mulish.variable} ${ibmPlexMono.variable}`}>
+      <head>
+
+        <link rel="apple-touch-icon" href="/edore_logo.png" />
+      </head>
       <body className="flex flex-col min-h-screen">
         <QueryProvider>
           <ToastContainer />
