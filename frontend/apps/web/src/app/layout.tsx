@@ -5,6 +5,7 @@ import "@edore/tokens/build/css/tokens.css";
 import "./globals.css";
 import { LayoutShell } from "@/components/layout/LayoutShell";
 import { QueryProvider } from "@/lib/providers/query-provider";
+import NextTopLoader from 'nextjs-toploader';
 
 const sairaExtraCondensed = Saira_Extra_Condensed({
   subsets: ["latin", "vietnamese"],
@@ -72,6 +73,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/edore_logo.png" />
       </head>
       <body className="flex flex-col min-h-screen">
+        <NextTopLoader color="#034ce4" showSpinner={false} shadow="0 0 10px #034ce4,0 0 5px #034ce4" height={3} />
         <QueryProvider>
           <ToastContainer />
           <LayoutShell>{children}</LayoutShell>

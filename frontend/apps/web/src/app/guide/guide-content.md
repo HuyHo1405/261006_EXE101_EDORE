@@ -1,16 +1,25 @@
-## 1. Overview (Tổng quan Hệ thống EDORE)
+## 1. Tổng Quan Hệ Thống EDORE
 
-Chào mừng bạn đến với **EDORE** - Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy Thông minh. EDORE được thiết kế để giải phóng sức lao động của giáo viên khỏi việc soạn giáo án truyền thống, thay vào đó là một quy trình tự động, trực quan và mạnh mẽ.
+Chào mừng bạn đến với **EDORE** — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy Thông minh. EDORE được thiết kế để giải phóng sức lao động của giáo viên khỏi việc soạn giáo án truyền thống, thay vào đó là một quy trình tự động, trực quan và mạnh mẽ.
 
-Với EDORE, giáo viên sẽ đi qua một luồng duy nhất: **Khởi tạo khóa học & cấu hình lớp học** -> **Tải lên tài liệu & chọn khung kịch bản** -> **AI tự động sinh kịch bản** -> **Tinh chỉnh kịch bản trên giao diện Studio trực quan**.
+Với EDORE, giáo viên sẽ đi qua một luồng duy nhất:
 
-[IMAGE: Hình 1.1: Sơ đồ Kiến trúc EDORE | Luồng đi từ Tạo khóa học -> Chọn khung & Tải tài liệu -> AI Sinh kịch bản -> Studio Tinh chỉnh | /images/guide/fig1.1.png]
-
-Hệ thống của chúng tôi hoàn toàn dựa trên việc **phân tích tài liệu có sẵn** (PDF, Word, Slide hoặc văn bản nhập trực tiếp) để trích xuất tri thức, tuyệt đối không yêu cầu giáo viên phải ngồi gõ từng dòng nội dung trực tiếp. Điều này đảm bảo tính nhất quán, nhanh chóng và tận dụng tối đa sức mạnh của AI.
+* 🏫 **Khởi tạo khóa học & cấu hình lớp học** — Thiết lập không gian giảng dạy với đầy đủ thông tin về môn học, khối lớp và bối cảnh phòng học thực tế.
+* 📄 **Tải lên tài liệu & chọn khung kịch bản** — Giáo viên cung cấp tài liệu bài giảng có sẵn (PDF, DOCX, TXT...) và chọn cấu trúc kịch bản phù hợp với tiết học.
+* 🤖 **AI tự động sinh kịch bản** — Hệ thống phân tích tài liệu và xây dựng toàn bộ kịch bản giảng dạy hoàn chỉnh, bao gồm các bước thực hiện, thời lượng và vật tư cần chuẩn bị.
+* ✏️ **Tinh chỉnh kịch bản trên giao diện Studio** — Giáo viên xem lại, chỉnh sửa trực tiếp và lưu kịch bản theo ý muốn.
 
 ---
 
-## 2. Course & Class Config (Cấu hình Khóa học & Lớp học)
+Hệ thống hoàn toàn dựa trên việc **phân tích tài liệu có sẵn** để trích xuất tri thức, tuyệt đối không yêu cầu giáo viên phải ngồi gõ từng dòng nội dung trực tiếp. Điều này đảm bảo tính nhất quán, nhanh chóng và tận dụng tối đa sức mạnh của AI.
+
+> 💡 **Lưu ý:** Để bắt đầu, hãy chuyển sang **Mục 2** để tìm hiểu cách tạo và cấu hình khóa học đầu tiên của bạn.
+
+---
+
+
+
+## 2. Cấu Hình Khóa Học & Lớp Học
 
 Bước đầu tiên để bắt đầu là thiết lập không gian giảng dạy. Một kịch bản bài giảng tốt không chỉ phụ thuộc vào nội dung, mà còn phụ thuộc vào ngữ cảnh của lớp học vật lý.
 
@@ -64,7 +73,7 @@ Nếu sau này giáo viên có nhu cầu cập nhật hoặc chỉnh sửa lại
 
 ---
 
-## 3. Tạo Script (Khung Kịch Bản Sư Phạm & Xử Lý AI)
+## 3. Tạo Kịch Bản (Khung Kịch Bản Sư Phạm & Xử Lý AI)
 
 Đây là "trái tim" của EDORE, nơi Trí tuệ Nhân tạo kết hợp cùng các phương pháp luận sư phạm hiện đại để tự động xây dựng kịch bản giảng dạy.
 
@@ -109,7 +118,7 @@ Sau khi AI hoàn tất quá trình xử lý, hệ thống sẽ tự động chuy
 
 ---
 
-## 4. Edit Script (Studio Tinh Chỉnh Kịch Bản Giảng Dạy)
+## 4. Chỉnh Sửa Kịch Bản (Studio Tinh Chỉnh Kịch Bản Giảng Dạy)
 
 Sau khi AI hoàn tất, kịch bản được đưa vào giao diện **Studio trực quan**. Đây là công cụ đắc lực dành cho giáo viên để **biên soạn, sắp xếp, theo dõi thời gian và nhảy bước** trong quá trình đứng lớp.
 

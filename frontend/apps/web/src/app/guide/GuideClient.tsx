@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { 
   BookOpen, 
@@ -15,7 +15,8 @@ import {
   Sparkles, 
   Sliders, 
   Settings, 
-  CheckCircle2 
+  CheckCircle2,
+  Download
 } from "lucide-react";
 
 interface GuideClientProps {
@@ -211,14 +212,9 @@ function ImagePlaceholder({
     return (
       <div className="w-full my-6 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
         <img src={imageSrc} alt={title} className="w-full h-auto object-cover max-h-[520px]" />
-        <div className="p-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-          <div>
-            <h4 className="font-bold text-slate-900 text-xs sm:text-sm">{title}</h4>
-            <p className="text-[11px] text-slate-500">{description}</p>
-          </div>
-          <span className="text-[10px] font-mono bg-slate-200/60 text-slate-600 px-2 py-0.5 rounded font-semibold shrink-0 ml-2">
-            LIVE IMAGE
-          </span>
+        <div className="p-3.5 bg-slate-50 border-t border-slate-100">
+          <h4 className="font-bold text-slate-900 text-xs sm:text-sm">{title}</h4>
+          <p className="text-[11px] text-slate-500">{description}</p>
         </div>
       </div>
     );
@@ -230,7 +226,7 @@ function ImagePlaceholder({
         <ImageIcon className="w-6 h-6" />
       </div>
       <div className="font-mono text-xs font-bold uppercase tracking-wider text-[#034ce4] bg-white px-2.5 py-1 rounded-md border border-[#034ce4]/20 mb-2">
-        IMAGE PLACEHOLDER ({dimensions})
+        Hình minh họa ({dimensions})
       </div>
       <h4 className="font-bold text-slate-900 text-sm sm:text-base mb-1">
         {title}
@@ -242,7 +238,97 @@ function ImagePlaceholder({
   );
 }
 
+// Tab loading skeleton
+function TabSkeleton() {
+  return (
+    <div className="animate-pulse space-y-4 w-full">
+      {/* Section heading */}
+      <div className="h-7 bg-slate-200 rounded-lg w-2/5 mb-6" />
+      {/* Paragraph lines */}
+      <div className="space-y-2.5">
+        <div className="h-3.5 bg-slate-100 rounded w-full" />
+        <div className="h-3.5 bg-slate-100 rounded w-[95%]" />
+        <div className="h-3.5 bg-slate-100 rounded w-[88%]" />
+      </div>
+      {/* Sub-heading */}
+      <div className="h-5 bg-slate-200 rounded w-1/3 mt-6" />
+      {/* Image placeholder */}
+      <div className="h-48 bg-slate-100 rounded-xl w-full" />
+      {/* More paragraph lines */}
+      <div className="space-y-2.5 mt-2">
+        <div className="h-3.5 bg-slate-100 rounded w-full" />
+        <div className="h-3.5 bg-slate-100 rounded w-[80%]" />
+      </div>
+      {/* Sub-heading 2 */}
+      <div className="h-5 bg-slate-200 rounded w-2/5 mt-4" />
+      <div className="space-y-2.5">
+        <div className="h-3.5 bg-slate-100 rounded w-[92%]" />
+        <div className="h-3.5 bg-slate-100 rounded w-[75%]" />
+        <div className="h-3.5 bg-slate-100 rounded w-[60%]" />
+      </div>
+    </div>
+  );
+}
+
+// Convert Markdown string → HTML string (dùng cho export PDF)
+function markdownToHtml(markdown: string): string {
+  const lines = markdown.split("\n");
+  let html = "";
+  let inCode = false;
+  let inList = false;
+  let listTag = "";
+
+  const closeList = () => {
+    if (inList) { html += `</${listTag}>`; inList = false; listTag = ""; }
+  };
+
+  const fmt = (t: string) =>
+    t
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/`(.*?)`/g, "<code>$1</code>");
+
+  lines.forEach((line) => {
+    const t = line.trim();
+    if (t.startsWith("```")) { closeList(); inCode = !inCode; html += inCode ? "<pre><code>" : "</code></pre>"; return; }
+    if (inCode) { html += line + "\n"; return; }
+    if (!t) { closeList(); return; }
+    if (t === "---") { closeList(); html += "<hr>"; return; }
+    if (t.startsWith("### ")) { closeList(); html += `<h3>${fmt(t.slice(4))}</h3>`; return; }
+    if (t.startsWith("## "))  { closeList(); html += `<h2>${fmt(t.slice(3))}</h2>`; return; }
+    if (t.startsWith("# "))   { closeList(); html += `<h1>${fmt(t.slice(2))}</h1>`; return; }
+    if (t.startsWith("> "))   { closeList(); html += `<blockquote>${fmt(t.slice(2))}</blockquote>`; return; }
+    // Custom image: [IMAGE: title | desc | /path]
+    const imgM = t.match(/^\[IMAGE:\s*([^|]+)\|([^|]+)(?:\|([^\]]+))?\]$/);
+    if (imgM) {
+      const src = imgM[3]?.trim();
+      if (src && (src.startsWith("/") || src.match(/\.(png|jpg|svg)$/))) {
+        html += `<figure><img src="${src}" alt="${imgM[1].trim()}"><figcaption>${imgM[1].trim()} — ${imgM[2].trim()}</figcaption></figure>`;
+      }
+      return;
+    }
+    // Standard markdown image
+    const mdImg = t.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (mdImg) { html += `<figure><img src="${mdImg[2]}" alt="${mdImg[1]}"><figcaption>${mdImg[1]}</figcaption></figure>`; return; }
+    // Lists
+    const bul = t.match(/^[*\-]\s+(.*)/);
+    if (bul) {
+      if (listTag !== "ul") { closeList(); html += "<ul>"; inList = true; listTag = "ul"; }
+      html += `<li>${fmt(bul[1])}</li>`; return;
+    }
+    const num = t.match(/^\d+\.\s+(.*)/);
+    if (num) {
+      if (listTag !== "ol") { closeList(); html += "<ol>"; inList = true; listTag = "ol"; }
+      html += `<li>${fmt(num[1])}</li>`; return;
+    }
+    closeList();
+    html += `<p>${fmt(t)}</p>`;
+  });
+  closeList();
+  return html;
+}
+
 // Helper to parse Markdown content into 4 sections
+// Splits on top-level ## headings and assigns by ordinal position (## 1. → overview, ## 2. → course, etc.)
 function parseMarkdownSections(markdown: string) {
   const sections: Record<string, string> = {
     overview: "",
@@ -251,20 +337,21 @@ function parseMarkdownSections(markdown: string) {
     "edit-script": "",
   };
 
-  const rawSections = markdown.split(/^##\s+/m);
-  
-  rawSections.forEach((sectionStr) => {
-    const trimmed = sectionStr.trim();
+  const sectionKeys: Array<keyof typeof sections> = ["overview", "course", "create-script", "edit-script"];
+
+  // Split on lines that start with "## " (top-level section headings only)
+  const rawParts = markdown.split(/^(?=##\s)/m);
+
+  let sectionIndex = 0;
+
+  rawParts.forEach((part) => {
+    const trimmed = part.trim();
     if (!trimmed) return;
 
-    if (trimmed.startsWith("1.") || trimmed.toLowerCase().includes("overview") || trimmed.toLowerCase().includes("tổng quan")) {
-      sections.overview = "## " + trimmed;
-    } else if (trimmed.startsWith("2.") || trimmed.toLowerCase().includes("course") || trimmed.toLowerCase().includes("cấu hình")) {
-      sections.course = "## " + trimmed;
-    } else if (trimmed.startsWith("3.") || trimmed.toLowerCase().includes("sinh kịch bản") || trimmed.toLowerCase().includes("tạo script")) {
-      sections["create-script"] = "## " + trimmed;
-    } else if (trimmed.startsWith("4.") || trimmed.toLowerCase().includes("chỉnh sửa kịch bản") || trimmed.toLowerCase().includes("edit script")) {
-      sections["edit-script"] = "## " + trimmed;
+    // Only process top-level ## headings (not ###, ####, etc.)
+    if (/^##\s/.test(trimmed) && sectionIndex < sectionKeys.length) {
+      sections[sectionKeys[sectionIndex]] = trimmed;
+      sectionIndex++;
     }
   });
 
@@ -273,29 +360,120 @@ function parseMarkdownSections(markdown: string) {
 
 export function GuideClient({ markdownContent }: GuideClientProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "course" | "create-script" | "edit-script">("overview");
+  const [isLoading, setIsLoading] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const parsedSections = parseMarkdownSections(markdownContent);
 
+  // --- Export PDF ---
+  const handleExportPDF = () => {
+    const sectionOrder: Array<keyof typeof parsedSections> = ["overview", "course", "create-script", "edit-script"];
+    const allHtml = sectionOrder.map((k) => markdownToHtml(parsedSections[k] || "")).join("<div class='page-break'></div>");
+    const exportDate = new Date().toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+    const htmlContent = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Hướng dẫn sử dụng EDORE</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.7; color: #1a1c1f; background: #fff; padding: 0; }
+  .cover { padding: 60px 48px 40px; border-bottom: 3px solid #034ce4; margin-bottom: 32px; }
+  .cover-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #034ce4; margin-bottom: 12px; }
+  .cover h1 { font-size: 28px; font-weight: 800; color: #1a1c1f; margin-bottom: 8px; }
+  .cover .sub { color: #6b7280; font-size: 13px; }
+  .cover .meta { margin-top: 16px; font-size: 11px; color: #9ca3af; }
+  .content { padding: 0 48px 48px; }
+  h1 { font-size: 22px; font-weight: 800; color: #1a1c1f; margin: 32px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb; }
+  h2 { font-size: 18px; font-weight: 800; color: #1a1c1f; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1.5px solid #e5e7eb; text-transform: uppercase; letter-spacing: 0.02em; }
+  h3 { font-size: 14px; font-weight: 700; color: #1a1c1f; margin: 20px 0 8px; }
+  p { margin: 8px 0; color: #374151; }
+  strong { font-weight: 700; color: #111827; }
+  code { font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 1px 5px; border-radius: 4px; color: #034ce4; }
+  pre { background: #1a1c1f; color: #34d399; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; font-size: 11px; }
+  pre code { background: none; color: inherit; padding: 0; }
+  ul, ol { margin: 8px 0 8px 20px; }
+  li { margin: 4px 0; color: #374151; }
+  blockquote { border-left: 3px solid #034ce4; padding: 8px 16px; margin: 12px 0; background: #eff6ff; border-radius: 0 6px 6px 0; color: #1e40af; font-size: 12px; }
+  hr { border: none; border-top: 1.5px solid #e5e7eb; margin: 24px 0; }
+  figure { margin: 16px 0; }
+  figure img { max-width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; }
+  figcaption { font-size: 11px; color: #6b7280; margin-top: 6px; font-style: italic; text-align: center; }
+  .page-break { page-break-before: always; height: 1px; }
+  @media print {
+    body { padding: 0; }
+    .page-break { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="cover-label">📘 Tài liệu hướng dẫn chính thức</div>
+  <h1>Hướng Dẫn Vận Hành &amp; Sử Dụng EDORE</h1>
+  <p class="sub">Nền tảng hỗ trợ giáo viên chuẩn bị kịch bản giảng dạy thông minh với AI.</p>
+  <p class="meta">Xuất ngày: ${exportDate} &nbsp;·&nbsp; edore.id.vn</p>
+</div>
+<div class="content">${allHtml}</div>
+</body>
+</html>`;
+
+    // Dùng hidden iframe — print dialog mở trên trang hiện tại, không redirect
+    const iframe = document.createElement("iframe");
+    iframe.style.cssText = "position:fixed;top:0;left:0;width:0;height:0;border:0;opacity:0;pointer-events:none;";
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!iframeDoc) { document.body.removeChild(iframe); return; }
+
+    iframeDoc.open();
+    iframeDoc.write(htmlContent);
+    iframeDoc.close();
+
+    iframe.onload = () => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      // Dọn dẹp iframe sau khi print dialog đóng
+      setTimeout(() => {
+        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+      }, 2000);
+    };
+  };
+
+  const switchTab = useCallback((tab: "overview" | "course" | "create-script" | "edit-script") => {
+    if (tab === activeTab) return;
+    // 1. Bật loader ngay lập tức
+    setIsLoading(true);
+    // 2. Trong lúc loader chạy, scroll ngầm đến đầu khung nội dung (instant)
+    setTimeout(() => {
+      contentRef.current?.scrollIntoView({ behavior: "instant" as ScrollBehavior, block: "start" });
+    }, 0);
+    // 3. Sau 350ms → show content mới
+    setTimeout(() => {
+      setActiveTab(tab);
+      setIsLoading(false);
+    }, 350);
+  }, [activeTab]);
+
   const tabs: Array<{ id: "overview" | "course" | "create-script" | "edit-script"; label: string }> = [
-    { id: "overview", label: "1. Overview (Tổng quan)" },
-    { id: "course", label: "2. Course & Class Config" },
-    { id: "create-script", label: "3. Tạo Script (Kịch bản)" },
-    { id: "edit-script", label: "4. Edit Script (Trợ lý bài học)" },
+    { id: "overview", label: "1. Tổng quan" },
+    { id: "course", label: "2. Cấu hình Khóa học" },
+    { id: "create-script", label: "3. Tạo Kịch bản" },
+    { id: "edit-script", label: "4. Chỉnh sửa Kịch bản" },
   ];
 
   const currentTabIdx = tabs.findIndex((t) => t.id === activeTab);
 
   const goToNextTab = () => {
     if (currentTabIdx < tabs.length - 1) {
-      setActiveTab(tabs[currentTabIdx + 1].id);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      switchTab(tabs[currentTabIdx + 1].id);
     }
   };
 
   const goToPrevTab = () => {
     if (currentTabIdx > 0) {
-      setActiveTab(tabs[currentTabIdx - 1].id);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      switchTab(tabs[currentTabIdx - 1].id);
     }
   };
 
@@ -307,7 +485,7 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
         <div className="banner banner--hero mb-8 shadow-sm">
           <div className="banner-inner">
             <div className="banner-label flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-white" /> EDORE MANUAL INSTRUCTION / LƯỒNG DỰ ÁN
+              <BookOpen className="w-3.5 h-3.5 text-white" /> HƯỚNG DẪN SỬ DỤNG EDORE
             </div>
             <h1>Hướng Dẫn Vận Hành & Sử Dụng</h1>
             <p className="sub">
@@ -320,6 +498,12 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
               >
                 Vào Dashboard <ArrowRight className="w-4 h-4" />
               </Link>
+              <button
+                onClick={handleExportPDF}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/20 border border-white/40 text-white font-bold text-xs sm:text-sm hover:bg-white/30 transition-all shadow-sm"
+              >
+                <Download className="w-4 h-4" /> Xuất PDF
+              </button>
             </div>
           </div>
 
@@ -344,7 +528,7 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => switchTab(tab.id)}
                       className={`w-full flex items-center px-3 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-left ${
                         isActive
                           ? "bg-[#034ce4] text-white shadow-xs"
@@ -356,29 +540,29 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
                   );
                 })}
               </nav>
-
-              <div className="mt-4 pt-3 border-t border-[#d9d9d9] text-[11px] text-slate-500 font-mono px-3">
-                Nguồn dữ liệu: <span className="text-[#034ce4] font-bold">doc.md</span>
-              </div>
             </div>
           </aside>
 
           {/* MAIN TAB CONTENT PANEL */}
-          <main className="lg:col-span-9">
+          <main ref={contentRef} className="lg:col-span-9 scroll-mt-28">
             <div className="bg-white border border-[#d9d9d9] rounded-xl p-6 sm:p-8 shadow-xs flex flex-col justify-between min-h-[600px]">
               
-              <div className="animate-in fade-in duration-200">
-                {/* SECTION MARKDOWN CONTENT */}
-                <MarkdownRenderer content={parsedSections[activeTab] || parsedSections.overview} />
-              </div>
+              {isLoading ? (
+                <TabSkeleton />
+              ) : (
+                <div className="animate-in fade-in duration-200">
+                  {/* SECTION MARKDOWN CONTENT */}
+                  <MarkdownRenderer content={parsedSections[activeTab] || parsedSections.overview} />
+                </div>
+              )}
 
               {/* BOTTOM NAVIGATION */}
               <div className="mt-10 pt-6 border-t border-[#d9d9d9] flex items-center justify-between gap-4">
                 <button
                   onClick={goToPrevTab}
-                  disabled={currentTabIdx === 0}
+                  disabled={currentTabIdx === 0 || isLoading}
                   className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm border transition-all ${
-                    currentTabIdx === 0
+                    currentTabIdx === 0 || isLoading
                       ? "opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200"
                       : "bg-white text-slate-700 border-[#d9d9d9] hover:bg-[#edf0f2] active:scale-95 cursor-pointer"
                   }`}
@@ -390,8 +574,9 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
                 </button>
 
                 <button
-                  onClick={currentTabIdx === tabs.length - 1 ? () => setActiveTab("overview") : goToNextTab}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#034ce4] text-white font-bold text-xs sm:text-sm hover:bg-[#023bb3] active:scale-95 transition-all shadow-xs cursor-pointer"
+                  disabled={isLoading}
+                  onClick={currentTabIdx === tabs.length - 1 ? () => switchTab("overview") : goToNextTab}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#034ce4] text-white font-bold text-xs sm:text-sm hover:bg-[#023bb3] active:scale-95 transition-all shadow-xs cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <span>
                     {currentTabIdx < tabs.length - 1 
