@@ -127,16 +127,37 @@ function MarkdownRenderer({ content }: { content: string }) {
       return;
     }
 
-    // Image Placeholder Custom Syntax: [IMAGE: Title | Description | Dimensions]
+    // Standard Markdown Image Syntax: ![Alt](/path/to/img.png)
+    const mdImageMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (mdImageMatch) {
+      flushList(`${index}`);
+      const alt = mdImageMatch[1].trim();
+      const src = mdImageMatch[2].trim();
+      renderedElements.push(
+        <div key={`img-md-${index}`} className="my-6 rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
+          <img src={src} alt={alt || "Hình ảnh minh họa"} className="w-full h-auto object-cover max-h-[500px]" />
+          {alt && <p className="text-center text-xs text-slate-500 py-2 bg-slate-100/60 italic">{alt}</p>}
+        </div>
+      );
+      return;
+    }
+
+    // Image Placeholder Custom Syntax: [IMAGE: Title | Description | Dimensions or Path]
     const imageMatch = trimmed.match(/^\[IMAGE:\s*([^|]+)\s*\|\s*([^|]+)(?:\s*\|\s*([^|\]]+))?\s*\]$/);
     if (imageMatch) {
       flushList(`${index}`);
+      const title = imageMatch[1].trim();
+      const description = imageMatch[2].trim();
+      const thirdParam = imageMatch[3] ? imageMatch[3].trim() : undefined;
+      const isPath = thirdParam && (thirdParam.startsWith("/") || thirdParam.endsWith(".png") || thirdParam.endsWith(".jpg") || thirdParam.endsWith(".svg"));
+
       renderedElements.push(
         <ImagePlaceholder
           key={`img-${index}`}
-          title={imageMatch[1].trim()}
-          description={imageMatch[2].trim()}
-          dimensions={imageMatch[3] ? imageMatch[3].trim() : undefined}
+          title={title}
+          description={description}
+          dimensions={!isPath ? thirdParam : undefined}
+          imageSrc={isPath ? thirdParam : undefined}
         />
       );
       return;
@@ -178,12 +199,31 @@ function MarkdownRenderer({ content }: { content: string }) {
 function ImagePlaceholder({ 
   title, 
   description, 
-  dimensions = "640x320" 
+  dimensions = "640x320",
+  imageSrc
 }: { 
   title: string; 
   description: string; 
   dimensions?: string; 
+  imageSrc?: string;
 }) {
+  if (imageSrc) {
+    return (
+      <div className="w-full my-6 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+        <img src={imageSrc} alt={title} className="w-full h-auto object-cover max-h-[520px]" />
+        <div className="p-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+          <div>
+            <h4 className="font-bold text-slate-900 text-xs sm:text-sm">{title}</h4>
+            <p className="text-[11px] text-slate-500">{description}</p>
+          </div>
+          <span className="text-[10px] font-mono bg-slate-200/60 text-slate-600 px-2 py-0.5 rounded font-semibold shrink-0 ml-2">
+            LIVE IMAGE
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full my-6 bg-[#edf0f2] border-2 border-dashed border-[#034ce4]/40 rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center transition-all hover:border-[#034ce4]">
       <div className="w-12 h-12 rounded-full bg-[#034ce4]/10 text-[#034ce4] flex items-center justify-center mb-3">
