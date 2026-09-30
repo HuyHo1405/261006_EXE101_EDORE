@@ -8,6 +8,7 @@ import com.edore.backend.features.ai.dto.response.AiJobStatus;
 import com.edore.backend.features.ai.service.AiJobService;
 import com.edore.backend.features.ai.service.FileExtractService;
 import com.edore.backend.core.exception.ApiException;
+import com.edore.backend.features.auth.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -16,10 +17,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
+import java.util.concurrent.RejectedExecutionException;
 
 @Slf4j
 @RestController
@@ -32,6 +36,7 @@ public class AiController {
     private final AiPipelineService aiPipelineService;
     private final AiJobService aiJobService;
     private final FileExtractService fileExtractService;
+    private final UserRepository userRepository;
 
     @Operation( summary = "1. Generate lesson script from file",
                 description = """
@@ -79,12 +84,24 @@ public class AiController {
                 file.getSize() / 1024,
                 templateId, courseId, effectiveTitle, enableFactCheck);
 
+        // Resolve authenticated userId
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = userRepository.findByUsername(auth.getName())
+                .map(u -> u.getId())
+                .orElse(null);
+
+        // Guard: 1 active job per user (skip for null userId — shouldn't happen in secured endpoint)
+        if (userId != null && !aiJobService.tryAcquireUserSlot(userId)) {
+            throw new ApiException(AiResponseCode.USER_HAS_ACTIVE_JOB);
+        }
+
         // Validate inputs early before expensive file processing and async job creation
         aiPipelineService.validateGenerationParams(templateId, courseId);
 
         // Extract file text synchronously
         String rawText = fileExtractService.extract(file);
         if (rawText == null || rawText.isBlank()) {
+            if (userId != null) aiJobService.releaseUserSlot(userId);
             throw new ApiException(AiResponseCode.EMPTY_EXTRACTED_TEXT);
         }
 
@@ -97,8 +114,15 @@ public class AiController {
                 .build();
         aiJobService.createJob(jobStatus);
 
-        // Start async task
-        aiPipelineService.generateScriptAsync(jobId, rawText, templateId, courseId, effectiveTitle, learningOutcome, enableFactCheck);
+        // Start async task — catch RejectedExecutionException when generation pool is saturated
+        try {
+            aiPipelineService.generateScriptAsync(jobId, rawText, templateId, courseId, effectiveTitle, learningOutcome, enableFactCheck, userId);
+        } catch (RejectedExecutionException e) {
+            log.warn("[AiController] Generation pool saturated, rejecting jobId={}", jobId);
+            aiJobService.deleteJob(jobId);
+            if (userId != null) aiJobService.releaseUserSlot(userId);
+            throw new ApiException(AiResponseCode.SYSTEM_BUSY);
+        }
 
         return ResponseEntity.accepted().body(ApiResponse.of(AiResponseCode.JOB_ACCEPTED, jobStatus));
     }

@@ -10,4 +10,7 @@ import java.util.UUID;
 public interface SubscriptionRepository extends JpaRepository<Subscription, UUID> {
 
     boolean existsByUserIdAndStatusAndEndDateAfter(UUID userId, SubscriptionStatus status, Instant now);
+
+    java.util.Optional<Subscription> findTopByUserIdAndStatusAndEndDateAfterOrderByEndDateDesc(
+            UUID userId, SubscriptionStatus status, Instant now);
 }

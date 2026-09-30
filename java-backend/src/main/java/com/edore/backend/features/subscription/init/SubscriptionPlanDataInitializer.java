@@ -35,7 +35,7 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
                 "Hỗ trợ qua Email"
         );
         upsertPlan(existingPlans, "starter", "Starter", "Công cụ đồng hành soạn giảng. Trải nghiệm kịch bản AI thế hệ mới miễn phí hàng tháng.",
-                BigDecimal.ZERO, 30, 3, 30, true, starterFeatures);
+                BigDecimal.ZERO, 30, 3, 5, 30, true, starterFeatures);
 
         // 2. Pro Plan
         List<String> proFeatures = List.of(
@@ -46,18 +46,18 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
                 "Lưu trữ ngân hàng kịch bản tái sử dụng"
         );
         upsertPlan(existingPlans, "pro", "Pro Plan", "Giải pháp toàn diện cho giáo viên chuyên nghiệp. Mở khóa toàn bộ sức mạnh AI kịch bản.",
-                new BigDecimal("199000"), 30, 999, 200, true, proFeatures);
+                new BigDecimal("199000"), 30, 999, 30, 200, true, proFeatures);
 
         // 3. Team Plan
         upsertPlan(existingPlans, "team", "Team Plan", "Giải pháp dành cho tổ bộ môn & nhà trường. Quản lý tập trung, chia sẻ tài nguyên bài giảng.",
-                new BigDecimal("499000"), 30, 9999, 500, false, List.of());
+                new BigDecimal("499000"), 30, 9999, 50, 500, false, List.of());
 
         log.info("[Initializer] Subscription plans and features synced successfully.");
     }
 
     private void upsertPlan(List<SubscriptionPlan> existingPlans, String keyword, String name, String description,
-                            BigDecimal price, int durationDays, int maxCourses, int maxStudents,
-                            boolean isActive, List<String> features) {
+                            BigDecimal price, int durationDays, int maxCourses, int maxScriptsPerCourse,
+                            int maxStudents, boolean isActive, List<String> features) {
         List<SubscriptionPlan> matched = existingPlans.stream()
                 .filter(p -> p.getName() != null && p.getName().toLowerCase().contains(keyword.toLowerCase()))
                 .toList();
@@ -69,6 +69,7 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
                     .price(price)
                     .durationDays(durationDays)
                     .maxCourses(maxCourses)
+                    .maxScriptsPerCourse(maxScriptsPerCourse)
                     .maxStudentsPerClass(maxStudents)
                     .isActive(isActive)
                     .features(features != null ? new ArrayList<>(features) : new ArrayList<>())
@@ -81,6 +82,7 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
                 plan.setPrice(price);
                 plan.setDurationDays(durationDays);
                 plan.setMaxCourses(maxCourses);
+                plan.setMaxScriptsPerCourse(maxScriptsPerCourse);
                 plan.setMaxStudentsPerClass(maxStudents);
                 plan.setIsActive(isActive);
 

@@ -22,6 +22,11 @@ import com.edore.backend.features.auth.repository.RoleRepository;
 import com.edore.backend.features.auth.repository.UserRepository;
 import com.edore.backend.features.auth.security.CustomUserDetail;
 import com.edore.backend.features.auth.service.AuthenService;
+import com.edore.backend.features.subscription.entity.Subscription;
+import com.edore.backend.features.subscription.entity.SubscriptionPlan;
+import com.edore.backend.features.subscription.model.SubscriptionStatus;
+import com.edore.backend.features.subscription.repository.SubscriptionPlanRepository;
+import com.edore.backend.features.subscription.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -34,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -55,6 +61,8 @@ public class AuthenServiceImpl implements AuthenService {
     private final TokenBlacklistService tokenBlacklistService;
     private final AuthEnumRegistry authEnumRegistry;
     private final StringRedisTemplate redisTemplate;
+    private final SubscriptionPlanRepository subscriptionPlanRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     @Override
     @Transactional
@@ -217,6 +225,7 @@ public class AuthenServiceImpl implements AuthenService {
                     .orElseThrow(() -> new ApiException(AuthResponseCode.USER_NOT_FOUND));
             user.setIsActive(true);
             userRepository.save(user);
+            seedStarterSubscription(user);
         } else if (request.type() == OtpType.RESET_PASSWORD) {
             resetToken = UUID.randomUUID().toString();
             redisTemplate.opsForValue().set("reset_token:" + request.email(), resetToken, 15, TimeUnit.MINUTES);
@@ -337,4 +346,42 @@ public class AuthenServiceImpl implements AuthenService {
     public List<EnumResponseDTO> getEnums() {
         return authEnumRegistry.getAuthEnums();
     }
+
+    /**
+     * Auto-seeds a free 30-day Starter subscription for a newly activated user.
+     * Silently no-ops if no Starter plan exists or if the user already has one.
+     */
+    private void seedStarterSubscription(User user) {
+        try {
+            boolean alreadyHasSub = subscriptionRepository
+                    .existsByUserIdAndStatusAndEndDateAfter(user.getId(),
+                            SubscriptionStatus.ACTIVE, Instant.now());
+            if (alreadyHasSub) return;
+
+            List<SubscriptionPlan> plans = subscriptionPlanRepository.findAll();
+            SubscriptionPlan starterPlan = plans.stream()
+                    .filter(p -> p.getName() != null && p.getName().toLowerCase().contains("starter"))
+                    .findFirst()
+                    .orElse(null);
+
+            if (starterPlan == null) {
+                log.warn("[Auth] No Starter plan found — skipping subscription seed for userId={}", user.getId());
+                return;
+            }
+
+            Subscription sub = Subscription.builder()
+                    .user(user)
+                    .subscriptionPlan(starterPlan)
+                    .status(SubscriptionStatus.ACTIVE)
+                    .startDate(Instant.now())
+                    .endDate(Instant.now().plus(30, ChronoUnit.DAYS))
+                    .build();
+            subscriptionRepository.save(sub);
+            log.info("[Auth] Seeded Starter subscription for userId={}", user.getId());
+        } catch (Exception e) {
+            // Non-fatal: registration should still succeed even if subscription seed fails
+            log.error("[Auth] Failed to seed Starter subscription for userId={}: {}", user.getId(), e.getMessage(), e);
+        }
+    }
 }
+

@@ -20,8 +20,10 @@ public class AiJobServiceImpl implements AiJobService {
 
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String JOB_KEY_PREFIX = "ai:job:";
-    private static final Duration JOB_TTL = Duration.ofHours(2);
+    private static final String JOB_KEY_PREFIX    = "ai:job:";
+    private static final String ACTIVE_KEY_PREFIX = "ai:active:";
+    private static final Duration JOB_TTL         = Duration.ofHours(2);
+    private static final Duration ACTIVE_TTL      = Duration.ofMinutes(10);
 
     @Override
     public void createJob(AiJobStatus jobStatus) {
@@ -56,5 +58,23 @@ public class AiJobServiceImpl implements AiJobService {
         } catch (JsonProcessingException e) {
             log.error("[AiJobService] Failed to serialize job status for {}", jobStatus.getJobId(), e);
         }
+    }
+
+    @Override
+    public void deleteJob(String jobId) {
+        redisTemplate.delete(JOB_KEY_PREFIX + jobId);
+        log.debug("[AiJobService] Deleted job key for jobId={}", jobId);
+    }
+
+    @Override
+    public boolean tryAcquireUserSlot(java.util.UUID userId) {
+        String key = ACTIVE_KEY_PREFIX + userId;
+        Boolean ok = redisTemplate.opsForValue().setIfAbsent(key, "1", ACTIVE_TTL);
+        return Boolean.TRUE.equals(ok);
+    }
+
+    @Override
+    public void releaseUserSlot(java.util.UUID userId) {
+        redisTemplate.delete(ACTIVE_KEY_PREFIX + userId);
     }
 }

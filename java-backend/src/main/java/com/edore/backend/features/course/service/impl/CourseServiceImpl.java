@@ -25,6 +25,7 @@ import com.edore.backend.features.course.repository.CourseRepository;
 import com.edore.backend.features.course.repository.CourseSpecification;
 import com.edore.backend.features.course.service.CourseService;
 import com.edore.backend.features.script.repository.ScriptRepository;
+import com.edore.backend.features.subscription.service.SubscriptionService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ public class CourseServiceImpl implements CourseService {
     private final ClassConfigService classConfigService;
     private final CourseEnumRegistry courseEnumRegistry;
     private final ScriptRepository scriptRepository;
+    private final SubscriptionService subscriptionService;
 
 
     // ── Mapping & Helpers ──────────────────────────────────────────────────────
@@ -144,6 +146,9 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public CourseDetailResponseDTO create(UUID userId, CourseRequestDTO request) {
+        // Check subscription quota before doing any work
+        subscriptionService.assertCourseCreationAllowed(userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(CourseResponseCode.NOT_FOUND));
 

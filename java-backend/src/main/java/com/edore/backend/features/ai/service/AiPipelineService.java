@@ -35,7 +35,8 @@ public interface AiPipelineService {
             UUID courseId,
             String scriptTitle,
             String learningOutcome,
-            Boolean enableFactCheck
+            Boolean enableFactCheck,
+            UUID userId
     );
 
     void validateGenerationParams(Long templateId, UUID courseId);

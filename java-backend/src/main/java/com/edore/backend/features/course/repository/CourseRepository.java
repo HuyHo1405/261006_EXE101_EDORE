@@ -11,5 +11,6 @@ import java.util.UUID;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, UUID>, JpaSpecificationExecutor<Course> {
     List<Course> findByUserId(UUID userId);
+    long countByUserId(UUID userId);
 }
 

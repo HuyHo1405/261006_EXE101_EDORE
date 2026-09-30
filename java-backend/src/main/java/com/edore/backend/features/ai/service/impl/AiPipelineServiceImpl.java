@@ -13,6 +13,7 @@ import com.edore.backend.features.ai.helper.AiResponseParser;
 import com.edore.backend.features.ai.service.*;
 import com.edore.backend.features.auth.entity.User;
 import com.edore.backend.features.auth.repository.UserRepository;
+import com.edore.backend.features.subscription.service.SubscriptionService;
 import com.edore.backend.features.classroom.entity.ClassConfig;
 import com.edore.backend.features.course.entity.Course;
 import com.edore.backend.features.course.repository.CourseRepository;
@@ -77,6 +78,7 @@ public class AiPipelineServiceImpl implements AiPipelineService {
     private final NodeTypeRepository          nodeTypeRepository;
     private final UserRepository              userRepository;
     private final UserSettingsRepository      userSettingsRepository;
+    private final SubscriptionService         subscriptionService;
 
     @Override
     @Transactional
@@ -111,12 +113,20 @@ public class AiPipelineServiceImpl implements AiPipelineService {
             log.warn("[Pipeline] Template {} has no node types", templateId);
             throw new ApiException(AiResponseCode.TEMPLATE_NOT_FOUND);
         }
+
+        // Check subscription script quota synchronously so user gets immediate error
+        org.springframework.security.core.Authentication auth =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            userRepository.findByUsername(auth.getName()).ifPresent(user ->
+                    subscriptionService.assertScriptCreationAllowed(courseId, user.getId()));
+        }
     }
 
     @Override
     @Transactional
-    @org.springframework.scheduling.annotation.Async
-    public void generateScriptAsync(String jobId, String rawText, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck) {
+    @org.springframework.scheduling.annotation.Async(com.edore.backend.core.config.AsyncVerificationConfig.GENERATION_EXECUTOR)
+    public void generateScriptAsync(String jobId, String rawText, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck, UUID userId) {
         AiJobStatus status = aiJobService.getJobStatus(jobId);
         try {
             status.setStatus("PROCESSING");
@@ -136,6 +146,11 @@ public class AiPipelineServiceImpl implements AiPipelineService {
             status.setStatus("FAILED");
             status.setErrorMessage(e.getMessage());
             aiJobService.updateJobStatus(status);
+        } finally {
+            // Always release the per-user Redis slot so the user can submit a new job
+            if (userId != null) {
+                aiJobService.releaseUserSlot(userId);
+            }
         }
     }
 

@@ -18,6 +18,8 @@ public enum AiResponseCode implements ResponseCode {
     EMPTY_EXTRACTED_TEXT(2206, "Không trích xuất được nội dung từ file.", HttpStatus.BAD_REQUEST, "ai.empty_extracted_text"),
     JOB_NOT_FOUND(2207, "Không tìm thấy tiến trình AI.", HttpStatus.NOT_FOUND, "ai.job_not_found"),
     JOB_ACCEPTED(1201, "Yêu cầu đã được tiếp nhận và đang xử lý.", HttpStatus.ACCEPTED, "ai.job_accepted"),
+    SYSTEM_BUSY(2208, "Hệ thống đang xử lý quá nhiều yêu cầu, vui lòng thử lại sau.", HttpStatus.SERVICE_UNAVAILABLE, "ai.system_busy"),
+    USER_HAS_ACTIVE_JOB(2209, "Bạn đang có một yêu cầu AI đang xử lý, vui lòng đợi kết quả hoặc thử lại sau.", HttpStatus.CONFLICT, "ai.user_has_active_job"),
 
     // ── Server / external errors ──────────────────────────────────────────────
     FILE_EXTRACT_ERROR(3200, "Lỗi khi trích xuất nội dung file.", HttpStatus.INTERNAL_SERVER_ERROR, "ai.file_extract_error"),

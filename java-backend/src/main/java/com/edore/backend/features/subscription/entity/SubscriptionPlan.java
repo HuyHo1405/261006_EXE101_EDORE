@@ -38,6 +38,9 @@ public class SubscriptionPlan extends BaseAuditEntity {
     @Column(name = "max_courses")
     private Integer maxCourses;
 
+    @Column(name = "max_scripts_per_course")
+    private Integer maxScriptsPerCourse;
+
     @Column(name = "max_students_per_class")
     private Integer maxStudentsPerClass;
 

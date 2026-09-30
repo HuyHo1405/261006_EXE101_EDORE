@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Dedicated thread pool for the async fact-check verification pipeline (Phase 2).
@@ -25,6 +26,7 @@ import java.util.concurrent.Executor;
 public class AsyncVerificationConfig {
 
     public static final String VERIFICATION_EXECUTOR = "verificationExecutor";
+    public static final String GENERATION_EXECUTOR   = "generationExecutor";
 
     @Bean(name = VERIFICATION_EXECUTOR)
     public Executor verificationExecutor() {
@@ -35,6 +37,32 @@ public class AsyncVerificationConfig {
         exec.setThreadNamePrefix("verify-");
         exec.setWaitForTasksToCompleteOnShutdown(true);   // graceful shutdown
         exec.setAwaitTerminationSeconds(60);
+        exec.initialize();
+        return exec;
+    }
+
+    /**
+     * Dedicated bounded pool for Phase 1 AI generation jobs.
+     *
+     * <p>Pool sizing rationale:
+     * <ul>
+     *   <li>Core = 2: matches the LLM semaphore permit count</li>
+     *   <li>Max  = 4: short burst headroom</li>
+     *   <li>Queue = 20: explicit backpressure — beyond this the caller gets 503 immediately
+     *       rather than waiting indefinitely</li>
+     * </ul>
+     * AbortPolicy is intentional: fail-fast is better than silent queuing that masks overload.
+     */
+    @Bean(name = GENERATION_EXECUTOR)
+    public Executor generationExecutor() {
+        ThreadPoolTaskExecutor exec = new ThreadPoolTaskExecutor();
+        exec.setCorePoolSize(2);
+        exec.setMaxPoolSize(4);
+        exec.setQueueCapacity(20);
+        exec.setThreadNamePrefix("gen-");
+        exec.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+        exec.setWaitForTasksToCompleteOnShutdown(true);
+        exec.setAwaitTerminationSeconds(120);
         exec.initialize();
         return exec;
     }

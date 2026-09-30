@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 /**
  * HTTP client for Beeknoee LLM Platform (OpenAI-compatible API).
@@ -65,7 +66,11 @@ public class LlmApiClient {
                 url, model, messages.size(), maxTokens);
 
         try {
-            semaphore.acquire();
+            boolean acquired = semaphore.tryAcquire(llmProperties.timeoutSeconds(), TimeUnit.SECONDS);
+            if (!acquired) {
+                log.warn("[LlmApiClient] Semaphore acquire timed out after {}s — system busy", llmProperties.timeoutSeconds());
+                throw new ApiException(com.edore.backend.features.ai.code.AiResponseCode.SYSTEM_BUSY);
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new ApiException(CommonResponseCode.EXTERNAL_SERVICE_ERROR);
@@ -74,8 +79,14 @@ public class LlmApiClient {
         try {
             for (int attempt = 1; attempt <= 3; attempt++) {
             try {
+                org.springframework.http.client.SimpleClientHttpRequestFactory factory =
+                    new org.springframework.http.client.SimpleClientHttpRequestFactory();
+                factory.setConnectTimeout((int) Duration.ofSeconds(10).toMillis());
+                factory.setReadTimeout((int) Duration.ofSeconds(llmProperties.timeoutSeconds()).toMillis());
+
                 RestClient client = RestClient.builder()
                         .baseUrl(llmProperties.baseUrl())
+                        .requestFactory(factory)
                         .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + llmProperties.apiKey())
                         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .build();
