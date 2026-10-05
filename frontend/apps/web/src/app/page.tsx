@@ -1,4 +1,4 @@
-"use client";
+anax "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -8,7 +8,8 @@ import { CreativeFlowIllustration } from "@/components/illustrations/CreativeFlo
 import { JoinIllustration } from "@/components/illustrations/JoinIllustration";
 import { ArticlesIllustration } from "@/components/illustrations/ArticlesIllustration";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
-import { subscriptionService, SubscriptionPlanDTO } from "@/features/subscription/api/subscriptionService";
+import { subscriptionService } from "@/features/subscription/api/subscriptionService";
+import { SubscriptionPlanDTO } from "@edore/types";
 import {
   Sparkles,
   BookOpen,
@@ -52,15 +53,15 @@ export default function Home() {
   return (
     /* ── BASE PRIMARY BLUE BACKGROUND CANVAS (MÀU XANH PRIMARY BASE #034ce4) ────── */
     <div className="w-full bg-[var(--color-primary-500)] min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body">
-      
+
       {/* ── WHITE CONTAINER CARD VỚI BO GÓC BÊN TRONG (OVERFLOW VISIBLE CHO HÌNH VỜN QUA KHUNG) ───── */}
       <div className="max-w-[1400px] mx-auto bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl p-2.5 sm:p-3 md:p-4 space-y-8 md:space-y-12 relative">
-        
+
         {/* ── SECTION 1: HERO (DOT-GRID MONO-PRIMARY + ILLUSTRATION OVERLAY) ─────── */}
         <section className="banner banner--hero shadow-md">
           <div className="banner-inner">
             <h2>Ý tưởng thành hành động</h2>
-            
+
             <p className="sub">
               Biến quy trình soạn kịch bản giảng dạy rời rạc thành một luồng làm việc liền mạch, thông minh cho cả đội ngũ giáo viên và học sinh.
             </p>
@@ -212,7 +213,7 @@ export default function Home() {
 
         {/* ── SECTION 3: HOW IT WORKS (CÁCH HOẠT ĐỘNG + VIDEO PLACEHOLDER + 4 BƯỚC DẠNG DẸP TĨNH) ── */}
         <section id="how-to-use" className="space-y-10 pt-4 scroll-mt-20 md:scroll-mt-24">
-          
+
           {/* Layout Header 2 Cột chuẩn như hình mẫu đính kèm */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-end">
             {/* Cột Trái: Tiêu đề */}
@@ -227,7 +228,7 @@ export default function Home() {
               <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-body">
                 Xem kịch bản giảng dạy tự động, quản lý lớp học và cá nhân hóa lộ trình cho từng học sinh được thực thi trực quan như thế nào trên nền tảng Edore.
               </p>
-              
+
               <div className="flex items-center gap-3 flex-wrap">
                 {isAuthenticated ? (
                   <Button asChild className="bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-bold shadow-md hover-elastic-button">
@@ -252,7 +253,7 @@ export default function Home() {
           {/* ── VIDEO PLAYER CONTAINER PLACEHOLDER ────────────────────────────── */}
           <AnimateOnScroll>
             <div className="relative w-full min-h-[380px] md:min-h-[480px] bg-gradient-to-br from-[var(--color-primary-900)] via-[var(--color-primary-800)] to-slate-900 rounded-2xl md:rounded-3xl border border-blue-900/40 shadow-2xl overflow-hidden flex flex-col items-center justify-center p-6 text-center group">
-              
+
               {/* Lớp trang trí UI mockups đằng sau */}
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-400 via-transparent to-transparent pointer-events-none" />
               <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[11px] font-mono text-slate-200 border border-white/10">
@@ -269,7 +270,7 @@ export default function Home() {
                 >
                   <PlayCircle className="w-10 h-10 md:w-12 md:h-12 fill-[var(--color-primary-600)] stroke-white" />
                 </button>
-                
+
                 <div className="space-y-1">
                   <span className="text-sm md:text-base font-bold text-white tracking-wide block">
                     Xem Video Hướng Dẫn Soạn Kịch Bản 1-Click
@@ -286,7 +287,7 @@ export default function Home() {
 
         {/* ── SECTION 4: PRICING (BẢNG GIÁ DỊCH VỤ VỚI CỘT TÍNH NĂNG CHI TIẾT BÊN DƯỚI) ────────────────────────── */}
         <section id="pricing" className="space-y-8 pt-4 scroll-mt-20 md:scroll-mt-24">
-          
+
           {/* Header ở giữa */}
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <h2 className="font-header font-bold text-3xl md:text-5xl tracking-tight text-slate-900">
@@ -296,10 +297,10 @@ export default function Home() {
 
           {/* Wrapper nền xám nhạt bo góc lớn */}
           <div className="bg-slate-50/80 border border-slate-200/80 rounded-3xl p-4 sm:p-6 md:p-8 space-y-6">
-            
+
             {/* 1. HÀNG 3 THẺ TRẮNG Ở TRÊN (STARTER, PRO PLAN, TEAM PLAN) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch max-w-6xl mx-auto">
-              
+
               {/* TOP WHITE CARD 1: STARTER */}
               <AnimateOnScroll className="h-full">
                 <div className="bg-white rounded-3xl p-6 md:p-7 shadow-sm border border-slate-200/80 flex flex-col justify-between h-full space-y-4 relative transition-elastic hover-elastic">
@@ -416,7 +417,7 @@ export default function Home() {
 
             {/* 2. HÀNG BẢNG TÍNH NĂNG CHI TIẾT Ở DƯỚI (MỖI CỘT NẰM NGAY DƯỚI THẺ TRẮNG TƯƠNG ỨNG) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-start max-w-6xl mx-auto pt-2">
-              
+
               {/* TÍNH NĂNG CỘT 1: STARTER */}
               <div className="px-2 space-y-4">
                 <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase block">
@@ -430,7 +431,7 @@ export default function Home() {
                   </div>
                 ) : starterFeatures.length > 0 ? (
                   <ul className="space-y-3">
-                    {starterFeatures.map((feat, i) => (
+                    {starterFeatures.map((feat: string, i: number) => (
                       <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-600">
                         <span className="w-5 h-5 rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
                           <Check className="w-3 h-3 stroke-[3]" />
@@ -459,7 +460,7 @@ export default function Home() {
                   </div>
                 ) : proFeatures.length > 0 ? (
                   <ul className="space-y-3">
-                    {proFeatures.map((feat, i) => (
+                    {proFeatures.map((feat: string, i: number) => (
                       <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-600">
                         <span className="w-5 h-5 rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
                           <Check className="w-3 h-3 stroke-[3]" />
@@ -483,7 +484,7 @@ export default function Home() {
 
                 {teamFeatures.length > 0 ? (
                   <ul className="space-y-3">
-                    {teamFeatures.map((feat, i) => (
+                    {teamFeatures.map((feat: string, i: number) => (
                       <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-500">
                         <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-400 border border-slate-200 flex items-center justify-center shrink-0">
                           <Check className="w-3 h-3 stroke-[3]" />
@@ -506,7 +507,7 @@ export default function Home() {
 
         {/* ── SECTION 5: REGISTER CTA BANNER (TEXT CĂN GIỮA + 2 SVG OVERLAY KÍCH THƯỚC LỚN HƠN NẰM SÁT ĐÁY) ── */}
         <section className="banner banner--hero shadow-md relative overflow-hidden rounded-2xl md:rounded-3xl p-6 sm:p-10 md:p-12 min-h-[340px] md:min-h-[380px] flex items-center justify-center">
-          
+
           {/* SVG Overlay Trái: JoinIllustration */}
           <AnimateOnScroll className="absolute left-2 sm:left-4 md:left-6 lg:left-8 bottom-0 w-40 sm:w-56 md:w-72 lg:w-80 max-w-[320px] z-1 pointer-events-none hidden sm:block">
             <JoinIllustration className="w-full h-auto drop-shadow-xl" />

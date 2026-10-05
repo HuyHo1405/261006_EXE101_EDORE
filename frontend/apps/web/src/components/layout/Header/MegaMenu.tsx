@@ -40,10 +40,10 @@ export interface MegaMenuProps {
 }
 
 const accountLinks = [
-  { id: "dashboard-lib", label: "Dashboard Thư viện", href: "/dashboard" },
-  { id: "pricing-plan", label: "Bảng giá dịch vụ", href: "/pricing" },
-  { id: "all-lessons", label: "Tất cả bài giảng", href: "/dashboard" },
-  { id: "new-script", label: "Soạn kịch bản mới", href: "/studio" },
+  { id: "dashboard-overview", label: "Tổng quan", href: "/dashboard" },
+  { id: "pricing-plan", label: "Bảng giá dịch vụ", href: "/#pricing" },
+  { id: "account-info", label: "Thông tin tài khoản", href: "/dashboard/profile" },
+  { id: "transaction-history", label: "Lịch sử giao dịch", href: "/dashboard/profile?tab=transactions" },
 ];
 
 export function MegaMenu({

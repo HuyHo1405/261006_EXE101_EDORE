@@ -278,8 +278,12 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
                     onMouseEnter={cancelCloseUserDropdown}
                     onMouseLeave={scheduleCloseUserDropdown}
                   >
-                    <div className="px-3 py-2.5 border-b border-[var(--color-neutral-100)] mb-1.5">
-                      <p className="text-sm font-bold text-[var(--color-neutral-900)] truncate">
+                    <Link
+                      href="/dashboard/profile"
+                      onClick={closeUserDropdown}
+                      className="block px-3 py-2.5 border-b border-[var(--color-neutral-100)] mb-1.5 hover:bg-slate-50 transition-colors group"
+                    >
+                      <p className="text-sm font-bold text-[var(--color-neutral-900)] truncate group-hover:text-[var(--color-primary-600)] transition-colors">
                         {user.name}
                       </p>
                       {user.email && (
@@ -290,7 +294,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
                       <span className="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)]">
                         {user.plan === "pro" ? "Gói PRO" : "Gói Miễn phí"}
                       </span>
-                    </div>
+                    </Link>
 
                     <Link
                       href="/dashboard"

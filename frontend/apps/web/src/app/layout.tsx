@@ -9,21 +9,20 @@ import NextTopLoader from 'nextjs-toploader';
 
 const sairaExtraCondensed = Saira_Extra_Condensed({
   subsets: ["latin", "vietnamese"],
-  weight: ["700", "800"],
+  weight: "700",
   variable: "--font-saira",
   display: "swap",
 });
 
 const mulish = Mulish({
   subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500", "600", "700", "800"],
   variable: "--font-mulish",
   display: "swap",
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: "400",
   variable: "--font-ibm-plex-mono",
   display: "swap",
 });
