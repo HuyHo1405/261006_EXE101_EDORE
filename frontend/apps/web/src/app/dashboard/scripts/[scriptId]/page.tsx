@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useMemo, Suspense } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { AuthGuard } from '@/features/auth/components/AuthGuard'
 import { DashboardAside } from '@/features/course/components/DashboardAside'
 import TimelineEditor from '@/features/playground/components/TimelineEditor'
 import { useMyCourses, useScriptDetail, useCourseDetail, useScriptNodes, useUpdateScriptMutation } from '@/features/course/queries/courseQueries'
 import type { TimelineStep } from '@/lib/services/pipelineService'
+import { normalizeLessonMeta, mergeLessonMetaWithNodes } from '@/features/playground/types/lessonMeta'
+import { MOCK_STEPS_LICHSU, MOCK_LESSON_META_LICHSU } from '@/features/playground/data/mockLessonLichSu'
 import { toast } from '@/components/ui/toast'
 import type { ScriptNodeResponseDTO } from '@edore/types'
 
@@ -52,6 +54,9 @@ function mapNodeDtoToTimelineStep(node: ScriptNodeResponseDTO, index: number): T
     warningContext: (settings.warning_context as string) || '',
     appliedActivity: node.activityTitle || (settings.applied_activity as string) || node.appliedActivityCode || '',
     nodePayload: settings.node_payload ?? settings.nodePayload ?? null,
+    teachingMethod: Array.isArray(settings.teaching_methods)
+      ? settings.teaching_methods.map(String).join(', ')
+      : ((settings.teaching_method as string) || (settings.teachingMethod as string) || undefined),
     _raw: node as unknown as Record<string, unknown>,
   }
 }
@@ -116,9 +121,12 @@ function ScriptEditContent() {
     }
   }, [realNodes])
 
-  // Remove fallback from localStorage - pure API mode
   useEffect(() => {
-    if (!scriptId || scriptId === 'demo') {
+    if (scriptId === 'demo') {
+      setTimelineSteps(MOCK_STEPS_LICHSU)
+      setScriptTitle('Kịch bản dạy học: Bài 1 - Lịch sử là gì?')
+      setIsLoaded(true)
+    } else if (!scriptId) {
       setIsLoaded(true)
     }
   }, [scriptId])
@@ -128,6 +136,20 @@ function ScriptEditContent() {
   const handleStepsChange = (newSteps: TimelineStep[]) => {
     setTimelineSteps(newSteps)
   }
+
+  // Thông tin tổng quan bài học: ưu tiên dữ liệu cấp script (do hệ thống gắn từ file nội bộ),
+  // fallback gộp từ các node.
+  const lessonMeta = useMemo(() => {
+    if (scriptId === 'demo') return MOCK_LESSON_META_LICHSU
+    const base = normalizeLessonMeta(realScript as unknown as Record<string, any> | undefined)
+    return mergeLessonMetaWithNodes(
+      base,
+      timelineSteps.map(s => ({
+        teachingMethod: s.teachingMethod,
+        materials: Array.isArray(s.pedagogNote) ? s.pedagogNote : String(s.pedagogNote || '').split(/,|\n/),
+      })),
+    )
+  }, [scriptId, realScript, timelineSteps])
 
   const handleRestart = () => {
     const activeCourseId = courseIdParam || courseId
@@ -164,6 +186,7 @@ function ScriptEditContent() {
                 courseId={effectiveCourseId || undefined}
                 courseTitle={courseTitle}
                 scriptTitle={scriptTitle}
+                lessonMeta={lessonMeta}
               />
             ) : (
               <div className="flex-1 flex items-center justify-center p-12">

@@ -95,6 +95,8 @@ export interface ScriptResponseDTO {
   status: string;
   createdAt: string;
   updatedAt: string | null;
+  /** Thông tin bài học (learning outcomes, tiêu đề, phương pháp, phương tiện) – tùy chọn */
+  lessonMeta?: Record<string, any>;
 }
 
 export interface ScriptCreatePayload {

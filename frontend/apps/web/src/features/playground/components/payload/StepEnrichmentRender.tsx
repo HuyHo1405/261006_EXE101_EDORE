@@ -5,7 +5,7 @@ import {
 import type { EnrichedContent } from '../../utils/stepEnrichment'
 
 // ─── Auto Resizing Textarea Helper (Full Height, No Scrollbar) ───────────────
-function AutoResizeTextarea({
+export function AutoResizeTextarea({
   value,
   onChange,
   placeholder,

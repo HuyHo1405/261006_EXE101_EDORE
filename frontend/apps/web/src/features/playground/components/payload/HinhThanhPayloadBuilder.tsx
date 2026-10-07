@@ -63,11 +63,10 @@ export function HinhThanhPayloadBuilder({
             return (
               <div
                 key={idx}
-                className={`border-2 rounded-[var(--radius-xl)] overflow-hidden transition-all duration-200 bg-white ${
-                  isExpanded
+                className={`border-2 rounded-[var(--radius-xl)] overflow-hidden transition-all duration-200 bg-white ${isExpanded
                     ? 'border-indigo-500 ring-2 ring-indigo-100 shadow-sm'
                     : 'border-slate-200 hover:border-indigo-300'
-                }`}
+                  }`}
               >
                 {/* Accordion Header */}
                 <div

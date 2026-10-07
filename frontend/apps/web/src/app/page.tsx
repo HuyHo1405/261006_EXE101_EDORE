@@ -1,4 +1,4 @@
-anax "use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -16,8 +16,6 @@ import {
   Users,
   BarChart3,
   ArrowRight,
-  Crown,
-  HelpCircle,
   PlayCircle,
   Check,
   CornerDownRight,

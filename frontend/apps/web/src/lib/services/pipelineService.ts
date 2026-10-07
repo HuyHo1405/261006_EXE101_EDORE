@@ -152,6 +152,7 @@ export interface TimelineStep {
   warningContext: string
   appliedActivity: string
   nodePayload?: any
+  teachingMethod?: string
   isLoading?: boolean
   _raw?: Record<string, unknown>
 }
