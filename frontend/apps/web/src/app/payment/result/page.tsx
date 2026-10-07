@@ -26,7 +26,7 @@ function PaymentResultContent() {
       setOrder({
         id: "mock-order-id-12345",
         userId: "user-abc",
-        subscriptionPlanId: "plan-pro",
+        subscriptionPlanId: 2,
         subscriptionPlanName: "GÓI PRO (1 THÁNG)",
         amount: 149000,
         status: "CANCELLED",
