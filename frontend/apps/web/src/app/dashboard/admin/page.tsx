@@ -216,7 +216,7 @@ export default function AdminDashboardPage() {
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} tickFormatter={(value) => `${value / 1000000}M`} />
                   <RechartsTooltip 
                     cursor={{ fill: '#f3f4f6' }}
-                    formatter={(value: number) => [formatCurrency(value), "Doanh thu"]}
+                    formatter={(value) => [formatCurrency(Number(value ?? 0)), "Doanh thu"]}
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   />
                   <Bar dataKey="revenue" fill="var(--color-primary-500,#034ce4)" radius={[4, 4, 0, 0]} barSize={32} />
@@ -246,7 +246,7 @@ export default function AdminDashboardPage() {
                     ))}
                   </Pie>
                   <RechartsTooltip 
-                    formatter={(value: number) => [`${value} người dùng`, "Số lượng"]}
+                    formatter={(value) => [`${Number(value ?? 0)} người dùng`, "Số lượng"]}
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   />
                 </PieChart>
