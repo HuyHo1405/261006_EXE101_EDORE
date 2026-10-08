@@ -1,4 +1,4 @@
-anax "use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/icons";
 
 export default function Home() {
-  const { user, isAuthenticated, togglePlan } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
   const [plans, setPlans] = useState<SubscriptionPlanDTO[]>([]);
   const [isLoadingPlans, setIsLoadingPlans] = useState(true);
 
@@ -330,8 +330,8 @@ export default function Home() {
                           Đang sử dụng gói này
                         </button>
                       ) : (
-                        <button onClick={togglePlan} className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-3 px-4 rounded-full text-xs md:text-sm transition-all hover-elastic-button cursor-pointer">
-                          Chuyển về Starter
+                        <button disabled className="w-full bg-slate-100 text-slate-500 font-bold py-3 px-4 rounded-full text-xs md:text-sm cursor-not-allowed">
+                          Đang sử dụng gói Pro
                         </button>
                       )
                     ) : (
@@ -372,9 +372,9 @@ export default function Home() {
                           Đang sử dụng gói PRO
                         </button>
                       ) : (
-                        <button onClick={togglePlan} className="w-full bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-bold py-3 px-4 rounded-full text-xs md:text-sm shadow-md hover-elastic-button cursor-pointer">
+                        <Link href="/dashboard/profile?tab=subscription" className="w-full bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-bold py-3 px-4 rounded-full text-xs md:text-sm shadow-md hover-elastic-button flex items-center justify-center gap-2">
                           Nâng cấp Pro Plan
-                        </button>
+                        </Link>
                       )
                     ) : (
                       <Link href="/register" className="w-full bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-bold py-3 px-4 rounded-full text-xs md:text-sm shadow-md hover-elastic-button flex items-center justify-center gap-2">

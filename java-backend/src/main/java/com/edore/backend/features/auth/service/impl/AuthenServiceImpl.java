@@ -123,11 +123,27 @@ public class AuthenServiceImpl implements AuthenService {
         if (!request.password().equals(request.confirmPassword())) {
             throw new ApiException(AuthResponseCode.PASSWORD_MISMATCH);
         }
-        if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new ApiException(AuthResponseCode.EMAIL_ALREADY_EXISTS);
+
+        Optional<User> existingEmailOpt = userRepository.findByEmail(request.email());
+        if (existingEmailOpt.isPresent()) {
+            User existing = existingEmailOpt.get();
+            if (Boolean.TRUE.equals(existing.getIsActive())) {
+                throw new ApiException(AuthResponseCode.EMAIL_ALREADY_EXISTS);
+            }
+            // User exists but inactive (unverified). Update info and allow re-register
+            existing.setPassword(passwordEncoder.encode(request.password()));
+            existing.setPhone(request.phone());
+            userRepository.save(existing);
+            sendOtp(new SendOtpRequestDTO(request.email(), OtpType.REGISTER));
+            return;
         }
-        if (userRepository.findByPhone(request.phone()).isPresent()) {
-            throw new ApiException(AuthResponseCode.PHONE_ALREADY_EXISTS);
+
+        Optional<User> existingPhoneOpt = userRepository.findByPhone(request.phone());
+        if (existingPhoneOpt.isPresent()) {
+            User existingPhone = existingPhoneOpt.get();
+            if (Boolean.TRUE.equals(existingPhone.getIsActive())) {
+                throw new ApiException(AuthResponseCode.PHONE_ALREADY_EXISTS);
+            }
         }
 
         Role defaultRole = roleRepository.findByName(RoleName.ROLE_USER)
@@ -137,7 +153,7 @@ public class AuthenServiceImpl implements AuthenService {
         roles.add(defaultRole);
 
         User user = User.builder()
-                .username(request.fullName())
+                .username(request.email().split("@")[0])
                 .email(request.email())
                 .phone(request.phone())
                 .password(passwordEncoder.encode(request.password()))
@@ -155,6 +171,14 @@ public class AuthenServiceImpl implements AuthenService {
     public void sendOtp(SendOtpRequestDTO request) {
         if (request == null || request.type() == null) {
             throw new ApiException(CommonResponseCode.VALIDATION_FAILED, "Loại OTP không được để trống (REGISTER / RESET_PASSWORD).");
+        }
+
+        if (request.type() == OtpType.RESET_PASSWORD) {
+            User user = userRepository.findByEmail(request.email())
+                    .orElseThrow(() -> new ApiException(AuthResponseCode.USER_NOT_FOUND));
+            if (!Boolean.TRUE.equals(user.getIsActive())) {
+                throw new ApiException(AuthResponseCode.USER_NOT_ACTIVE);
+            }
         }
 
         // Rate limit: Cooldown 60 seconds between OTP requests
@@ -384,4 +408,5 @@ public class AuthenServiceImpl implements AuthenService {
         }
     }
 }
+
 

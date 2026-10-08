@@ -52,10 +52,11 @@ export interface PaymentResponseDTO {
 }
 
 export interface CreatePaymentLinkResponseDTO {
-  checkoutUrl: string;
-  orderCode: number;
+  paymentLinkUrl: string;
+  qrCodeUrl: string;
   amount: number;
-  provider: string;
+  orderCode: string;
+  expiredAt?: string;
 }
 
 export interface UserProfileResponse {

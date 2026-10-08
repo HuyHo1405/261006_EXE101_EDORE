@@ -84,7 +84,6 @@ export interface LoginResponseDTO {
 }
 
 export interface RegisterRequestDTO {
-  fullName: string;
   email: string;
   phone: string;
   password: string;
@@ -126,3 +125,4 @@ export interface ChangePasswordRequestDTO {
 export interface TokenRefreshRequestDTO {
   refreshToken: string;
 }
+

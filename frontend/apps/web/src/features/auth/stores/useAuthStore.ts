@@ -20,8 +20,8 @@ export interface AuthState {
   setHasHydrated: (state: boolean) => void;
   setAuth: (data: LoginResponseDTO) => void;
   setAccessToken: (token: string) => void;
+  updatePlan: (plan: "free" | "pro") => void;
   logout: () => void;
-  togglePlan: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -42,7 +42,7 @@ export const useAuthStore = create<AuthState>()(
             name: data.username || data.email.split("@")[0],
             email: data.email,
             roles: data.roles || ["ROLE_USER"],
-            plan: "pro", // Mặc định tài khoản demo pro
+            plan: "free", // Plan mặc định; sẽ được cập nhật từ API subscription sau khi login
           },
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
@@ -52,6 +52,11 @@ export const useAuthStore = create<AuthState>()(
       setAccessToken: (token: string) =>
         set({ accessToken: token }),
 
+      updatePlan: (plan: "free" | "pro") =>
+        set((state) => ({
+          user: state.user ? { ...state.user, plan } : null,
+        })),
+
       logout: () =>
         set({
           user: null,
@@ -59,13 +64,6 @@ export const useAuthStore = create<AuthState>()(
           refreshToken: null,
           isAuthenticated: false,
         }),
-
-      togglePlan: () =>
-        set((state) => ({
-          user: state.user
-            ? { ...state.user, plan: state.user.plan === "pro" ? "free" : "pro" }
-            : null,
-        })),
     }),
     {
       name: "edore-auth-storage",
@@ -76,3 +74,4 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
+
