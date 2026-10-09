@@ -87,10 +87,10 @@ public class CourseDataInitializer implements CommandLineRunner {
 
             classConfigRepository.save(classConfig);
 
-            // ── 2. Resolve categories: HISTORY + GRADE_6 ───────────────────────────
+            // ── 2. Resolve categories: LS + 6 ───────────────────────────
             Set<Category> categories = new HashSet<>();
-            categoryRepository.findByCode("HISTORY").ifPresent(categories::add);
-            categoryRepository.findByCode("GRADE_6").ifPresent(categories::add);
+            categoryRepository.findByCode("LS").ifPresent(categories::add);
+            categoryRepository.findByCode("6").ifPresent(categories::add);
 
             // ── 3. Course linked to ClassConfig + categories ──────────────────────
             course = Course.builder()

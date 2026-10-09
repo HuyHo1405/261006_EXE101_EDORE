@@ -34,21 +34,18 @@ public class CategoryDataInitializer implements CommandLineRunner {
 
         List<Category> categories = List.of(
                 // ── SUBJECT ───────────────────────────────────────────────
-                category(CategoryType.SUBJECT, "MATH",        "Toán học",    "Môn Toán học phổ thông"),
-                category(CategoryType.SUBJECT, "PHYSICS",     "Vật lý",      "Môn Vật lý phổ thông"),
-                category(CategoryType.SUBJECT, "CHEMISTRY",   "Hóa học",     "Môn Hóa học phổ thông"),
-                category(CategoryType.SUBJECT, "BIOLOGY",     "Sinh học",    "Môn Sinh học phổ thông"),
-                category(CategoryType.SUBJECT, "LITERATURE",  "Ngữ văn",     "Môn Ngữ văn phổ thông"),
-                category(CategoryType.SUBJECT, "ENGLISH",     "Tiếng Anh",   "Môn Tiếng Anh phổ thông"),
-                category(CategoryType.SUBJECT, "HISTORY",     "Lịch sử",     "Môn Lịch sử phổ thông"),
-                category(CategoryType.SUBJECT, "GEOGRAPHY",   "Địa lý",      "Môn Địa lý phổ thông"),
-                category(CategoryType.SUBJECT, "INFORMATICS", "Tin học",     "Môn Tin học phổ thông"),
+                category(CategoryType.SUBJECT, "LS", "Lịch sử", "Môn Lịch sử phổ thông"),
+
+                // ── TEXTBOOK ──────────────────────────────────────────────
+                category(CategoryType.TEXTBOOK, "CTST", "Chân trời sáng tạo", "Bộ sách Chân trời sáng tạo"),
+                category(CategoryType.TEXTBOOK, "CD", "Cánh diều", "Bộ sách Cánh diều"),
+                category(CategoryType.TEXTBOOK, "KNTT", "Kết nối tri thức", "Bộ sách Kết nối tri thức"),
 
                 // ── GRADE ────────────────────────────────────────────────
-                category(CategoryType.GRADE, "GRADE_6",  "Lớp 6",  "Khối lớp 6 trung học cơ sở"),
-                category(CategoryType.GRADE, "GRADE_10", "Lớp 10", "Khối lớp 10 trung học phổ thông"),
-                category(CategoryType.GRADE, "GRADE_11", "Lớp 11", "Khối lớp 11 trung học phổ thông"),
-                category(CategoryType.GRADE, "GRADE_12", "Lớp 12", "Khối lớp 12 trung học phổ thông"),
+                category(CategoryType.GRADE, "6", "Lớp 6", "Khối lớp 6 trung học cơ sở"),
+                category(CategoryType.GRADE, "7", "Lớp 7", "Khối lớp 7 trung học cơ sở"),
+                category(CategoryType.GRADE, "8", "Lớp 8", "Khối lớp 8 trung học cơ sở"),
+                category(CategoryType.GRADE, "9", "Lớp 9", "Khối lớp 9 trung học cơ sở"),
 
                 // ── PURPOSE ──────────────────────────────────────────────
                 category(CategoryType.PURPOSE, "EXAM_PREP",      "Ôn thi",    "Tài liệu ôn tập và luyện thi"),

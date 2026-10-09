@@ -1,8 +1,6 @@
 package com.edore.backend.features.ai.service;
 
 import com.edore.backend.features.ai.dto.response.ScriptResultDto;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.UUID;
 
 /**
@@ -11,26 +9,18 @@ import java.util.UUID;
  */
 public interface AiPipelineService {
 
-    ScriptResultDto generateScript(
-            MultipartFile file,
-            Long templateId,
-            UUID courseId,
-            String scriptTitle,
-            String learningOutcome
-    );
 
-    ScriptResultDto generateScript(
-            MultipartFile file,
+    ScriptResultDto generateScriptFromLesson(
+            String lessonId,
             Long templateId,
             UUID courseId,
             String scriptTitle,
-            String learningOutcome,
             Boolean enableFactCheck
     );
 
     void generateScriptAsync(
             String jobId,
-            String rawText,
+            String lessonId,
             Long templateId,
             UUID courseId,
             String scriptTitle,

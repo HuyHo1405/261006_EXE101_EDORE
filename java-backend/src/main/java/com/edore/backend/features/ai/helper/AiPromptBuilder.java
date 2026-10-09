@@ -45,19 +45,6 @@ public class AiPromptBuilder {
 
         String schema = """
                 {
-                  "lesson_meta": {
-                    "learning_outcomes": ["string — Điểm qua 3-5 yêu cầu cần đạt của bài học"],
-                    "content_summary": "string — Tóm tắt ngắn gọn nội dung bài học",
-                    "teaching_methods": ["string — Liệt kê tên các phương pháp áp dụng (VD: Dạy học trực quan, Khám phá...)"],
-                    "method_details": [
-                      {
-                        "name": "string",
-                        "type": "string",
-                        "description": "string",
-                        "steps": ["string"]
-                      }
-                    ]
-                  },
                   "nodes": [
                     {
                       "node_type": "string — Bắt buộc phải là một trong: %s",
@@ -97,12 +84,12 @@ public class AiPromptBuilder {
 
                 CRITICAL RULES:
                 1. title: BẮT BUỘC SIÊU NGẮN CHỈ TỪ 1 ĐẾN 3 TỪ (≤ 20 ký tự). Dùng làm nhãn Stepper Navigation trên UI.
-                2. applied_activity: BẮT BUỘC giữ nguyên 100%% tên phương pháp gốc từ gợi ý (Ngoại trừ HINH_THANH_KIEN_THUC được phép linh hoạt ghi "Dạy học trực quan & Khám phá" để tránh bị gò bó).
+                2. applied_activity: BẮT BUỘC giữ nguyên 100%% tên phương pháp gốc từ gợi ý. Tuy nhiên, RIÊNG HINH_THANH_KIEN_THUC BẮT BUỘC trả về null cho cả `applied_activity` và `applied_activity_code` vì nút này dạy học linh hoạt không gò bó.
                 3. interaction_flow: Khi chọn phương pháp từ gợi ý DB (is_custom_activity = false), BẮT BUỘC bám theo khung các bước 'step_template' của phương pháp đó.
                 4. materials_needed: BẮT BUỘC bao gồm đồ dùng mặc định ('default_materials') của phương pháp, NHƯNG phải lọc bỏ các thiết bị hạ tầng cơ bản (như máy chiếu, bảng phấn, màn hình TV).
                 5. is_custom_activity: Trả về false khi chọn phương pháp từ gợi ý DB, trả về true nếu tự thiết kế phương pháp hoàn toàn mới.
                 6. node_type trong mỗi object PHẢI KHỚP CHÍNH XÁC theo template — không tự sửa hay dịch tên node.
-                7. Chỉ trả về một JSON object duy nhất, trong đó có `lesson_meta` và mảng `nodes`. Mảng `nodes` BẮT BUỘC sinh đủ số lượng nodes như yêu cầu.
+                7. Chỉ trả về một JSON object duy nhất, trong đó CÓ ĐÚNG MỘT KHÓA `nodes`. Mảng `nodes` BẮT BUỘC sinh đủ số lượng nodes như yêu cầu. KHÔNG TRẢ VỀ `lesson_meta`.
                 8. node_payload PHẢI đúng 100%% cấu trúc field đã quy định cho enumType của node đó — không thêm/bớt field, không dùng shape của node khác.
                 9. Với HINH_THANH_KIEN_THUC: BẮT BUỘC chia tài liệu gốc thành nhiều knowledge_units theo từng đề mục/ý chính (I, II, III... hoặc heading trong file input), KHÔNG gộp toàn bộ tài liệu vào 1 unit trừ khi tài liệu thực sự chỉ có 1 ý.
                 10. Với LUYEN_TAP: exercises phải là đề bài cụ thể trích/dựa theo phần "Luyện tập" của tài liệu gốc nếu có, answer phải là đáp án xác định, không mô tả hoạt động.
@@ -111,13 +98,23 @@ public class AiPromptBuilder {
                 13. KHOI_DONG: BẮT BUỘC map `activity_type` dựa trên `pedagogical_approach` của HINH_THANH_KIEN_THUC theo bảng: INDUCTIVE -> QUESTION_BASED, DEDUCTIVE -> VISUAL_TEASER, PROBLEM_BASED -> PROBLEM_SITUATION.
                 14. HINH_THANH_KIEN_THUC: BẮT BUỘC các phần tử trong mảng knowledge_units không được trùng lặp visual_example.item, visual_example.title, hay core_content giữa các unit. Trước khi sinh unit thứ N, liệt kê lại (trong đầu) các hiện vật/thao tác đã dùng ở unit 1..N-1 và BẮT BUỘC chọn hiện vật và thao tác hoàn toàn khác. NẾU 2 UNIT CÓ THAO TÁC HOẶC HIỆN VẬT GIỐNG NHAU, ĐÓ LÀ LỖI NGHIÊM TRỌNG!
                 15. ĐẢM BẢO JSON HỢP LỆ: TUYỆT ĐỐI KHÔNG xuống dòng thực sự (bấm Enter) bên trong nội dung của các chuỗi (string) trong JSON. Phải sử dụng ký tự escape `\\n` nếu muốn xuống dòng (ví dụ trong `core_content`). Nếu vi phạm, chuỗi JSON sẽ bị lỗi cú pháp!
+                16. HINH_THANH_KIEN_THUC: BẮT BUỘC chọn `pedagogical_approach` theo cây quyết định sau:
+                    - Nếu nội dung là khái niệm/định nghĩa trừu tượng, sự kiện lịch sử tuần tự cần giải thích trước -> DEDUCTIVE
+                    - Nếu nội dung có nhiều hiện tượng/ví dụ cụ thể để HS tự rút ra quy luật -> INDUCTIVE
+                    - Nếu nội dung chứa mâu thuẫn/tình huống/vấn đề cần giải quyết -> PROBLEM_BASED
+                17. HINH_THANH_KIEN_THUC: Nếu danh sách ảnh có sẵn, BẮT BUỘC mỗi knowledge_unit phải chọn ít nhất 1 ảnh phù hợp nhất (lấy ID đưa vào `used_image_ids`), trừ khi tuyệt đối không có ảnh nào liên quan.
                 """.formatted(nodes.size(), expectedStructure, groundingGuidance, schema, perNodeSchemas);
     }
 
     public String buildUserContent(List<NodeType> nodes, Map<String, String> contextPerNode,
                                    ClassConfig cfg, String learningOutcome, String keyFacts,
-                                   Course course) {
+                                   Course course, String availableImagesJson, String chapterContext) {
         StringBuilder sb = new StringBuilder();
+
+        if (availableImagesJson != null && !availableImagesJson.isBlank()) {
+            sb.append("DANH SÁCH ẢNH/TƯ LIỆU CÓ SẴN (Vui lòng sử dụng các ID này đưa vào `used_image_ids`):\n");
+            sb.append(availableImagesJson).append("\n\n");
+        }
 
         // Subject & Grade context from course categories
         if (course != null && course.getCategories() != null && !course.getCategories().isEmpty()) {
@@ -137,6 +134,12 @@ public class AiPromptBuilder {
                     .forEach(c -> sb.append("- Mục đích: ").append(c.getName()).append("\n"));
             sb.append("\n");
         }
+
+        if (chapterContext != null && !chapterContext.isBlank()) {
+            sb.append("THÔNG TIN CHƯƠNG (CHAPTER CỦA BÀI HỌC):\n");
+            sb.append(chapterContext).append("\n\n");
+        }
+
 
         // Classroom context block
         sb.append("THÔNG TIN LỚP HỌC:\n");

@@ -36,7 +36,7 @@ public class AiResponseParser {
         try {
             Map<String, Object> root = objectMapper.readValue(cleaned, new TypeReference<>() {});
             List<Map<String, Object>> rawList = (List<Map<String, Object>>) root.get("nodes");
-            Map<String, Object> lessonMeta = (Map<String, Object>) root.get("lesson_meta");
+            Map<String, Object> lessonMeta = root.containsKey("lesson_meta") ? (Map<String, Object>) root.get("lesson_meta") : new java.util.HashMap<>();
 
             if (rawList == null || rawList.size() != nodes.size()) {
                 log.error("[AiResponseParser] AI returned {} nodes, expected {}", rawList == null ? 0 : rawList.size(), nodes.size());
@@ -178,3 +178,4 @@ public class AiResponseParser {
         return null;
     }
 }
+

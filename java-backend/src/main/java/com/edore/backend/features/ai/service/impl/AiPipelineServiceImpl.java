@@ -11,6 +11,9 @@ import com.edore.backend.features.ai.dto.response.AiJobStatus;
 import com.edore.backend.features.ai.helper.AiPromptBuilder;
 import com.edore.backend.features.ai.helper.AiResponseParser;
 import com.edore.backend.features.ai.service.*;
+import com.edore.backend.features.lesson.service.LessonService;
+import com.edore.backend.features.lesson.dto.response.LessonForAIResponse;
+import com.edore.backend.features.lesson.dto.response.LessonMetadataResponse;
 import com.edore.backend.features.auth.entity.User;
 import com.edore.backend.features.auth.repository.UserRepository;
 import com.edore.backend.features.subscription.service.SubscriptionService;
@@ -35,7 +38,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,7 +62,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AiPipelineServiceImpl implements AiPipelineService {
 
-    private final FileExtractService          fileExtractService;
     private final ChunkingService             chunkingService;
     private final LlmApiClient                llmApiClient;
     private final ScriptPersistService        scriptPersistService;
@@ -79,23 +80,97 @@ public class AiPipelineServiceImpl implements AiPipelineService {
     private final UserRepository              userRepository;
     private final UserSettingsRepository      userSettingsRepository;
     private final SubscriptionService         subscriptionService;
+    private final LessonService               lessonService;
+    private final com.edore.backend.features.lesson.repository.ChapterRepository chapterRepository;
 
     @Override
     @Transactional
-    public ScriptResultDto generateScript(MultipartFile file, Long templateId, UUID courseId, String scriptTitle, String learningOutcome) {
-        return generateScript(file, templateId, courseId, scriptTitle, learningOutcome, null);
-    }
+    public ScriptResultDto generateScriptFromLesson(String lessonId, Long templateId, UUID courseId, String scriptTitle, Boolean enableFactCheck) {
+        long pipelineStart = System.currentTimeMillis();
 
-    @Override
-    @Transactional
-    public ScriptResultDto generateScript(MultipartFile file, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck) {
-        long t1 = System.currentTimeMillis();
-        String rawText = fileExtractService.extract(file);
-        if (rawText == null || rawText.isBlank()) {
-            throw new ApiException(AiResponseCode.EMPTY_EXTRACTED_TEXT);
+        // 1. Resolve template + course + classConfig
+        Template template = templateRepository.findById(templateId)
+                .orElseThrow(() -> new ApiException(AiResponseCode.TEMPLATE_NOT_FOUND));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ApiException(AiResponseCode.COURSE_NOT_FOUND));
+        ClassConfig classConfig = course.getClassConfig();
+        if (classConfig == null) {
+            throw new ApiException(AiResponseCode.CLASS_CONFIG_NOT_FOUND);
         }
-        long extractMs = System.currentTimeMillis() - t1;
-        return generateScriptInternal(rawText, extractMs, templateId, courseId, scriptTitle, learningOutcome, enableFactCheck, null);
+        List<NodeType> nodes = template.getNodeTypes();
+
+        // 2. Fetch Lesson Data
+        LessonForAIResponse lessonAiRes = lessonService.getLessonForAI(lessonId);
+        LessonMetadataResponse lessonMetaRes = lessonService.getLessonMetadata(lessonId);
+        String rawText = lessonAiRes.getRawContent();
+
+        // 3. Chunk
+        long t2 = System.currentTimeMillis();
+        List<String> chunks = chunkingService.chunk(rawText);
+        long chunkMs = System.currentTimeMillis() - t2;
+        String keyFacts = chunkingService.extractKeyFacts(rawText);
+
+        // 4. Context per node
+        List<String> nodeCodes = nodes.stream().map(NodeType::getCode).toList();
+        boolean isLargeFile = rawText.length() > llmProperties.largeFileThreshold();
+        Map<String, String> contextPerNode = isLargeFile
+                ? chunkingService.getContextPerNode(chunks, nodeCodes)
+                : nodeCodes.stream().collect(Collectors.toMap(code -> code, code -> rawText));
+
+        // 5. Build prompt
+        String chapterContext = "";
+        if (lessonMetaRes.getChapterId() != null && !lessonMetaRes.getChapterId().isBlank()) {
+            chapterContext = chapterRepository.findById(lessonMetaRes.getChapterId())
+                .map(ch -> "- Tiêu đề chương: " + ch.getTitle() + "\n- Mô tả chương: " + ch.getDescription())
+                .orElse("");
+        }
+
+        String systemPrompt = aiPromptBuilder.buildSystemPrompt(nodes, classConfig, lessonMetaRes.getLearningObjectives(), com.edore.backend.features.vector.dto.GroundingLevel.STRONG);
+        String userContent  = aiPromptBuilder.buildUserContent(nodes, contextPerNode, classConfig, lessonMetaRes.getLearningObjectives(), keyFacts, course, lessonMetaRes.getImages(), chapterContext);
+
+        List<LlmMessage> messages = List.of(
+                LlmMessage.system(systemPrompt),
+                LlmMessage.user(userContent)
+        );
+
+        // 6. Call LLM & Parse
+        long t3 = System.currentTimeMillis();
+        com.edore.backend.features.ai.dto.response.AiParsedResult parsedResult = callAndParseWithRetry(messages, nodes);
+        List<ScriptNodeResultDto> nodeResults = parsedResult.nodes();
+        long aiMs = System.currentTimeMillis() - t3;
+
+        // Populate lessonMeta manually from LessonMetadataResponse
+        Map<String, Object> finalLessonMeta = new java.util.HashMap<>();
+        finalLessonMeta.put("learning_outcomes", List.of(lessonMetaRes.getLearningObjectives()));
+        finalLessonMeta.put("content_summary", lessonMetaRes.getTitle());
+        
+        if (lessonMetaRes.getChapterId() != null && !lessonMetaRes.getChapterId().isBlank()) {
+            chapterRepository.findById(lessonMetaRes.getChapterId()).ifPresent(ch -> {
+                finalLessonMeta.put("chapter_title", ch.getTitle());
+                finalLessonMeta.put("chapter_description", ch.getDescription());
+            });
+        }
+
+        // 7. Persist
+        SaveScriptResult saved = scriptPersistService.saveScript(courseId, template, nodes, nodeResults, finalLessonMeta, scriptTitle);
+        Script script = saved.script();
+
+        long totalMs = System.currentTimeMillis() - pipelineStart;
+
+        triggerAsyncVerificationIfEnabled(script.getId(), saved.savedNodes(), contextPerNode, rawText, enableFactCheck);
+
+        return new ScriptResultDto(
+                script.getId(),
+                script.getTitle(),
+                templateId,
+                nodeResults,
+                com.edore.backend.features.vector.dto.GroundingLevel.STRONG,
+                1.0f,
+                new ScriptResultDto.PipelineStats(
+                        rawText.length(), chunks.size(), nodeResults.size(),
+                        0, chunkMs, 0, aiMs, totalMs
+                )
+        );
     }
 
     @Override
@@ -126,15 +201,15 @@ public class AiPipelineServiceImpl implements AiPipelineService {
     @Override
     @Transactional
     @org.springframework.scheduling.annotation.Async(com.edore.backend.core.config.AsyncVerificationConfig.GENERATION_EXECUTOR)
-    public void generateScriptAsync(String jobId, String rawText, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck, UUID userId) {
+    public void generateScriptAsync(String jobId, String lessonId, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck, UUID userId) {
         AiJobStatus status = aiJobService.getJobStatus(jobId);
         try {
             status.setStatus("PROCESSING");
             status.setProgress(10);
             aiJobService.updateJobStatus(status);
 
-            // Run the internal logic
-            ScriptResultDto result = generateScriptInternal(rawText, 0, templateId, courseId, scriptTitle, learningOutcome, enableFactCheck, status);
+            // Run the internal logic using lessonId
+            ScriptResultDto result = generateScriptInternal(lessonId, 0L, templateId, courseId, scriptTitle, learningOutcome, enableFactCheck, status);
 
             status.setStatus("COMPLETED");
             status.setProgress(100);
@@ -154,10 +229,10 @@ public class AiPipelineServiceImpl implements AiPipelineService {
         }
     }
 
-    private ScriptResultDto generateScriptInternal(String rawText, long extractMs, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck, AiJobStatus jobStatus) {
+    private ScriptResultDto generateScriptInternal(String lessonId, long extractMs, Long templateId, UUID courseId, String scriptTitle, String learningOutcome, Boolean enableFactCheck, AiJobStatus jobStatus) {
         long pipelineStart = System.currentTimeMillis();
 
-        // ── 1. Resolve template + course + classConfig ─────────────────────────
+        // â”€â”€ 1. Resolve template + course + classConfig â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         Template template = templateRepository.findById(templateId)
                 .orElseThrow(() -> new ApiException(AiResponseCode.TEMPLATE_NOT_FOUND));
 
@@ -176,7 +251,11 @@ public class AiPipelineServiceImpl implements AiPipelineService {
             throw new ApiException(AiResponseCode.TEMPLATE_NOT_FOUND);
         }
 
-        // ── 2. Check raw text ────────────────────────────────────────────────────
+        // â”€â”€ 2. Fetch Lesson Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        LessonForAIResponse lessonAiRes = lessonService.getLessonForAI(lessonId);
+        LessonMetadataResponse lessonMetaRes = lessonService.getLessonMetadata(lessonId);
+        String rawText = lessonAiRes.getRawContent();
+
         if (rawText == null || rawText.isBlank()) {
             throw new ApiException(AiResponseCode.EMPTY_EXTRACTED_TEXT);
         }
@@ -187,7 +266,7 @@ public class AiPipelineServiceImpl implements AiPipelineService {
             aiJobService.updateJobStatus(jobStatus);
         }
 
-        // ── 3. Chunk ───────────────────────────────────────────────────────────
+        // â”€â”€ 3. Chunk â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         long t2 = System.currentTimeMillis();
         List<String> chunks = chunkingService.chunk(rawText);
         long chunkMs = System.currentTimeMillis() - t2;
@@ -198,7 +277,7 @@ public class AiPipelineServiceImpl implements AiPipelineService {
             aiJobService.updateJobStatus(jobStatus);
         }
 
-        // ── 3.5 Input Grounding Check (Qdrant Vector) ──────────────────────────
+        // â”€â”€ 3.5 Input Grounding Check (Qdrant Vector) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         long tQdrant = System.currentTimeMillis();
         ReferenceMatchResult groundingResult = vectorMatchService.findSimilarReferences(
                 rawText,
@@ -210,7 +289,7 @@ public class AiPipelineServiceImpl implements AiPipelineService {
         log.info("[Pipeline] Grounding level={} topScore={} qdrantMs={}ms",
                 groundingResult.level(), groundingResult.topScore(), qdrantMs);
 
-        // ── 4. Context per node ────────────────────────────────────────────────
+        // â”€â”€ 4. Context per node â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         List<String> nodeCodes = nodes.stream().map(NodeType::getCode).toList();
         boolean isLargeFile = rawText.length() > llmProperties.largeFileThreshold();
 
@@ -223,16 +302,23 @@ public class AiPipelineServiceImpl implements AiPipelineService {
             aiJobService.updateJobStatus(jobStatus);
         }
 
-        // ── 5. Build prompt via AiPromptBuilder ────────────────────────────────
+        // â”€â”€ 5. Build prompt via AiPromptBuilder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        String chapterContext = "";
+        if (lessonMetaRes.getChapterId() != null && !lessonMetaRes.getChapterId().isBlank()) {
+            chapterContext = chapterRepository.findById(lessonMetaRes.getChapterId())
+                .map(ch -> "- Tiêu đề chương: " + ch.getTitle() + "\n- Mô tả chương: " + ch.getDescription())
+                .orElse("");
+        }
+        
         String systemPrompt = aiPromptBuilder.buildSystemPrompt(nodes, classConfig, learningOutcome, groundingResult.level());
-        String userContent  = aiPromptBuilder.buildUserContent(nodes, contextPerNode, classConfig, learningOutcome, keyFacts, course);
+        String userContent  = aiPromptBuilder.buildUserContent(nodes, contextPerNode, classConfig, learningOutcome, keyFacts, course, lessonAiRes.getImages(), chapterContext);
 
         List<LlmMessage> messages = List.of(
                 LlmMessage.system(systemPrompt),
                 LlmMessage.user(userContent)
         );
 
-        // ── 6. Call LLM with Retry & Parse via AiResponseParser ────────────────
+        // â”€â”€ 6. Call LLM with Retry & Parse via AiResponseParser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         long t3 = System.currentTimeMillis();
         com.edore.backend.features.ai.dto.response.AiParsedResult parsedResult = callAndParseWithRetry(messages, nodes);
         List<ScriptNodeResultDto> nodeResults = parsedResult.nodes();
@@ -243,14 +329,34 @@ public class AiPipelineServiceImpl implements AiPipelineService {
             aiJobService.updateJobStatus(jobStatus);
         }
 
-        // ── 7. Persist (Phase 1 complete) ─────────────────────────────────────
-        SaveScriptResult saved = scriptPersistService.saveScript(courseId, template, nodes, nodeResults, parsedResult.lessonMeta(), scriptTitle);
+        // Populate lessonMeta manually from LessonMetadataResponse
+        Map<String, Object> finalLessonMeta = new java.util.HashMap<>();
+        
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            List<String> outcomes = mapper.readValue(lessonMetaRes.getLearningObjectives(), new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+            finalLessonMeta.put("learning_outcomes", outcomes);
+        } catch (Exception e) {
+            finalLessonMeta.put("learning_outcomes", List.of(lessonMetaRes.getLearningObjectives()));
+        }
+        
+        finalLessonMeta.put("content_summary", "Bài " + lessonMetaRes.getOrderInChapter() + ": " + lessonMetaRes.getTitle());
+        
+        if (lessonMetaRes.getChapterId() != null && !lessonMetaRes.getChapterId().isBlank()) {
+            chapterRepository.findById(lessonMetaRes.getChapterId()).ifPresent(ch -> {
+                finalLessonMeta.put("chapter_title", "CHƯƠNG " + ch.getOrder() + ": " + ch.getTitle());
+                finalLessonMeta.put("chapter_description", ch.getDescription());
+            });
+        }
+
+        // â”€â”€ 7. Persist (Phase 1 complete) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        SaveScriptResult saved = scriptPersistService.saveScript(courseId, template, nodes, nodeResults, finalLessonMeta, scriptTitle);
         Script script          = saved.script();
 
         long totalMs = System.currentTimeMillis() - pipelineStart;
-        log.info("[Pipeline] DONE Phase1 — scriptId={} total={}ms", script.getId(), totalMs);
+        log.info("[Pipeline] DONE Phase1 â€” scriptId={} total={}ms", script.getId(), totalMs);
 
-        // ── 8. Trigger async verification (Phase 2) — request override or user settings ─
+        // â”€â”€ 8. Trigger async verification (Phase 2) â€” request override or user settings â”€
         triggerAsyncVerificationIfEnabled(script.getId(), saved.savedNodes(), contextPerNode, rawText, enableFactCheck);
 
         return new ScriptResultDto(
@@ -262,12 +368,12 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                 groundingResult.topScore(),
                 new ScriptResultDto.PipelineStats(
                         rawText.length(), chunks.size(), nodeResults.size(),
-                        extractMs, chunkMs, qdrantMs, aiMs, totalMs
+                        0, chunkMs, qdrantMs, aiMs, totalMs
                 )
         );
     }
 
-    // ── Private helpers ───────────────────────────────────────────────────────
+    // â”€â”€ Private helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private void triggerAsyncVerificationIfEnabled(UUID scriptId,
                                                     List<ScriptNode> savedNodes,
@@ -323,3 +429,5 @@ public class AiPipelineServiceImpl implements AiPipelineService {
         throw new ApiException(AiResponseCode.JSON_PARSE_ERROR);
     }
 }
+
+

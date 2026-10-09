@@ -6,7 +6,8 @@ import com.edore.backend.features.ai.dto.response.ScriptResultDto;
 import com.edore.backend.features.ai.service.AiPipelineService;
 import com.edore.backend.features.ai.dto.response.AiJobStatus;
 import com.edore.backend.features.ai.service.AiJobService;
-import com.edore.backend.features.ai.service.FileExtractService;
+import com.edore.backend.features.lesson.dto.response.LessonForAIResponse;
+import com.edore.backend.features.lesson.service.LessonService;
 import com.edore.backend.core.exception.ApiException;
 import com.edore.backend.features.auth.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
@@ -35,17 +35,17 @@ public class AiController {
 
     private final AiPipelineService aiPipelineService;
     private final AiJobService aiJobService;
-    private final FileExtractService fileExtractService;
+    private final LessonService lessonService;
     private final UserRepository userRepository;
 
-    @Operation( summary = "1. Generate lesson script from file",
+    @Operation( summary = "1. Generate lesson script from internal lesson",
                 description = """
-                    Upload a lesson content file (PDF, DOCX, TXT, MD ≤ 150KB),
+                    Provide a lessonId to fetch its content,
                     select a template and course (classroom configuration is automatically fetched from the 1-1 course setup),
                     then let AI generate and persist a full pedagogical script.
                     
                     **Pipeline steps:**
-                    1. Extract text from file
+                    1. Fetch internal lesson content & images
                     2. Semantic chunk + TF-IDF context retrieval per node
                     3. Score activities from DB by classroom context (from course.classConfig)
                     4. Build prompt → call Beeknoee LLM API
@@ -53,11 +53,11 @@ public class AiController {
                     6. Save Script + ScriptNodes to database
                     """,
                 security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PostMapping(value = "/pedagogy", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/pedagogy")
     public ResponseEntity<ApiResponse<AiJobStatus>> generateScript(
 
-            @Parameter(description = "Lesson content file (PDF/DOCX/TXT/MD, max 150KB)", required = true)
-            @RequestParam("file") MultipartFile file,
+            @Parameter(description = "Internal Lesson ID (e.g. ls6_ctst_bai08)", required = true)
+            @RequestParam("lessonId") String lessonId,
 
             @Parameter(description = "Template ID (1 = 3-node, 2 = 4-node)", required = true)
             @RequestParam("templateId") Long templateId,
@@ -79,10 +79,8 @@ public class AiController {
     ) {
         String effectiveTitle = (scriptTitle != null && !scriptTitle.isBlank()) ? scriptTitle : title;
 
-        log.info("[AiController] generateScript: file='{}' size={}KB templateId={} courseId={} title='{}' enableFactCheck={}",
-                file.getOriginalFilename(),
-                file.getSize() / 1024,
-                templateId, courseId, effectiveTitle, enableFactCheck);
+        log.info("[AiController] generateScript: lessonId='{}' templateId={} courseId={} title='{}' enableFactCheck={}",
+                lessonId, templateId, courseId, effectiveTitle, enableFactCheck);
 
         // Resolve authenticated userId
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -98,8 +96,16 @@ public class AiController {
         // Validate inputs early before expensive file processing and async job creation
         aiPipelineService.validateGenerationParams(templateId, courseId);
 
-        // Extract file text synchronously
-        String rawText = fileExtractService.extract(file);
+        // Fetch lesson content synchronously
+        LessonForAIResponse lessonData;
+        try {
+            lessonData = lessonService.getLessonForAI(lessonId);
+        } catch (Exception e) {
+            if (userId != null) aiJobService.releaseUserSlot(userId);
+            throw new ApiException(AiResponseCode.EMPTY_EXTRACTED_TEXT, "Failed to fetch lesson: " + e.getMessage());
+        }
+        
+        String rawText = lessonData.getRawContent();
         if (rawText == null || rawText.isBlank()) {
             if (userId != null) aiJobService.releaseUserSlot(userId);
             throw new ApiException(AiResponseCode.EMPTY_EXTRACTED_TEXT);
@@ -116,7 +122,7 @@ public class AiController {
 
         // Start async task — catch RejectedExecutionException when generation pool is saturated
         try {
-            aiPipelineService.generateScriptAsync(jobId, rawText, templateId, courseId, effectiveTitle, learningOutcome, enableFactCheck, userId);
+            aiPipelineService.generateScriptAsync(jobId, lessonId, templateId, courseId, effectiveTitle, learningOutcome, enableFactCheck, userId);
         } catch (RejectedExecutionException e) {
             log.warn("[AiController] Generation pool saturated, rejecting jobId={}", jobId);
             aiJobService.deleteJob(jobId);
