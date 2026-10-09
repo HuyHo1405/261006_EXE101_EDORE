@@ -201,6 +201,62 @@ function NewScriptContent() {
               {stage === 'input' && (
                 <ContentInput
                   onFileSelected={handleFileSelected}
+                  onManualSubmit={(topic) => {
+                    if (!courseIdParam) {
+                      toast.error('Vui lòng chọn khóa học trước khi sinh kịch bản AI.')
+                      return
+                    }
+                    setStage('processing')
+                    resetPipelineState()
+                    const fd = new FormData()
+                    fd.append('topic', topic)
+                    fd.append('templateId', classroomCtx.template_id === 'extended-4-node' || classroomCtx.template_id === '2' ? '2' : '1')
+                    fd.append('courseId', courseIdParam)
+                    fd.append('scriptTitle', topic)
+                    fd.append('title', topic)
+                    if (classroomCtx.learning_outcome) fd.append('learningOutcome', String(classroomCtx.learning_outcome))
+                    toast.info('Đang truy xuất SGK và sinh giáo án...')
+                    generateAiMutation.mutate(fd, {
+                      onSuccess: (data) => {
+                        const jobId = data?.jobId
+                        const scriptId = data?.scriptId || data?.id
+                        if (jobId) {
+                          toast.success('Đã tiếp nhận, đang xử lý...')
+                          if (pollingRef.current) clearInterval(pollingRef.current)
+                          pollingRef.current = setInterval(async () => {
+                            try {
+                              const statusData = await courseService.getAiJobStatus(jobId)
+                              if (statusData.status === 'COMPLETED') {
+                                clearInterval(pollingRef.current!)
+                                setProgress(100)
+                                toast.success('Sinh giáo án từ SGK thành công!')
+                                const finalScriptId = statusData.scriptId || statusData.result?.scriptId || statusData.result?.id
+                                if (finalScriptId) router.push(`/dashboard/scripts/${finalScriptId}?courseId=${courseIdParam}`)
+                                else router.push(`/dashboard?courseId=${courseIdParam}`)
+                              } else if (statusData.status === 'FAILED') {
+                                clearInterval(pollingRef.current!)
+                                setHasError(true)
+                                const msg = statusData.errorMessage || 'AI gặp lỗi.'
+                                setErrorMessage(msg)
+                                toast.error(msg)
+                              } else {
+                                setProgress(statusData.progress || 0)
+                              }
+                            } catch (err) { console.warn('Lỗi polling:', err) }
+                          }, 3000)
+                        } else if (scriptId) {
+                          toast.success('Sinh giáo án thành công!')
+                          router.push(`/dashboard/scripts/${scriptId}?courseId=${courseIdParam}`)
+                        }
+                      },
+                      onError: (err: any) => {
+                        setHasError(true)
+                        const msg = err?.message || 'Có lỗi xảy ra.'
+                        setErrorMessage(msg)
+                        toast.error(msg)
+                      },
+                    })
+                  }}
                   classroomCtx={classroomCtx}
                   onConfigChange={handleConfigChange}
                   onOpenConfig={() => setIsConfigOpen(true)}

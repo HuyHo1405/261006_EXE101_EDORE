@@ -46,17 +46,17 @@ public class AiPromptBuilder {
         String schema = """
                 {
                   "node_type": "string — Bắt buộc phải là một trong: %s",
-                  "title": "string — TIÊU ĐỀ SIÊU NGẮN (chỉ từ 1 đến 3 từ, tối đa ≤ 20 ký tự, ví dụ: 'Khởi động', 'Tìm hiểu Phục hưng', 'Luyện tập', 'Vận dụng')",
-                  "node_intent": "string — Mục tiêu sư phạm của node",
+                  "title": "string — TIÊU ĐỀ SIÊU NGẮN (chỉ từ 1 đến 3 từ, ví dụ: 'Khởi động', 'Khám phá', 'Luyện tập', 'Vận dụng')",
+                  "node_intent": "string — Mục tiêu sư phạm (VD: Hook tạo hứng thú, Hình thành kiến thức mới, Củng cố thực hành...)",
                   "mapped_knowledge": ["string"],
-                  "node_content": ["string — Nội dung kiến thức tổng quan của node, dạng Markdown, giữ nguyên 100%% số liệu từ file input"],
-                  "applied_activity": "string — GIỮ NGUYÊN 100%% tên phương pháp gốc từ danh sách gợi ý (Ví dụ: 'Thảo luận đôi (Think - Pair - Share)')",
-                  "applied_activity_code": "string — Mã activity_code tương ứng từ gợi ý (Ví dụ: 'THINK_PAIR_SHARE')",
-                  "is_custom_activity": "boolean — false nếu dùng phương pháp từ gợi ý DB, true nếu buộc phải tự tạo mới",
-                  "interaction_flow": ["string — Quy trình tương tác GV-HS bám theo step_template của activity đã chọn"],
-                  "node_payload": "object — BẮT BUỘC đúng shape tương ứng theo enumType của node này, xem chi tiết bên dưới",
-                  "estimated_time_minutes": "number — Thời gian ước tính (phút)",
-                  "materials_needed": ["string — Gồm đồ dùng mặc định của hoạt động cộng thêm học liệu bài học cụ thể"]
+                  "node_content": ["string — Nội dung kiến thức tổng quan của node, dạng Markdown, dựa trên SGK gốc (Grounding)"],
+                  "applied_activity": "string — GIỮ NGUYÊN 100%% tên phương pháp gốc từ danh sách gợi ý",
+                  "applied_activity_code": "string — Mã activity_code tương ứng",
+                  "is_custom_activity": "boolean — false nếu dùng phương pháp DB, true nếu tự tạo",
+                  "interaction_flow": ["string — Quy trình tương tác GV-HS"],
+                  "node_payload": "object — BẮT BUỘC đúng shape tương ứng theo enumType của node này",
+                  "estimated_time_minutes": "number — Thời gian ước tính (phút, VD: Khởi động 5p, Khám phá 15p, Luyện tập 10p...)",
+                  "materials_needed": ["string — Gồm đồ dùng giảng dạy cần thiết"]
                 }""".formatted(nodeTypesStr);
 
         String groundingGuidance = switch (groundingLevel) {
@@ -78,18 +78,15 @@ public class AiPromptBuilder {
                 SCHEMA node_payload THEO TỪNG NODE (BẮT BUỘC TUÂN THỦ ĐÚNG SHAPE, KHÔNG TỰ Ý ĐỔI CẤU TRÚC):
                 %s
 
-                CRITICAL RULES:
-                1. title: BẮT BUỘC SIÊU NGẮN CHỈ TỪ 1 ĐẾN 3 TỪ (≤ 20 ký tự). Dùng làm nhãn Stepper Navigation trên UI.
-                2. applied_activity: BẮT BUỘC giữ nguyên 100%% tên phương pháp gốc từ gợi ý (Ví dụ: 'Thảo luận đôi (Think - Pair - Share)').
-                3. interaction_flow: Khi chọn phương pháp từ gợi ý DB (is_custom_activity = false), BẮT BUỘC bám theo khung các bước 'step_template' của phương pháp đó.
-                4. materials_needed: BẮT BUỘC bao gồm các đồ dùng mặc định ('default_materials') của phương pháp đã chọn.
-                5. is_custom_activity: Trả về false khi chọn phương pháp từ gợi ý DB, trả về true nếu tự thiết kế phương pháp hoàn toàn mới.
-                6. node_type trong mỗi object PHẢI KHỚP CHÍNH XÁC theo template — không tự sửa hay dịch tên node.
-                7. Chỉ trả về một JSON array duy nhất.
-                8. node_payload PHẢI đúng 100%% cấu trúc field đã quy định cho enumType của node đó — không thêm/bớt field, không dùng shape của node khác.
-                9. Với HINH_THANH_KIEN_THUC: BẮT BUỘC chia tài liệu gốc thành nhiều knowledge_units theo từng đề mục/ý chính (I, II, III... hoặc heading trong file input), KHÔNG gộp toàn bộ tài liệu vào 1 unit trừ khi tài liệu thực sự chỉ có 1 ý.
-                10. Với LUYEN_TAP: exercises phải là đề bài cụ thể trích/dựa theo phần "Luyện tập" của tài liệu gốc nếu có, answer phải là đáp án xác định, không mô tả hoạt động.
-                11. Với VAN_DUNG: scenario phải là tình huống MỚI hoặc bài tập mở rộng, không lặp lại nguyên văn ví dụ đã dạy ở knowledge_units.
+                CRITICAL RULES (ĐẶC THÙ SƯ PHẠM GDPT 2018):
+                1. title: BẮT BUỘC SIÊU NGẮN CHỈ TỪ 1 ĐẾN 3 TỪ (VD: Khởi động, Khám phá, Luyện tập, Vận dụng, Đánh giá).
+                2. interaction_flow: Luôn phân định rõ "Hoạt động của Giáo viên" và "Hoạt động của Học sinh".
+                3. ĐỐI VỚI MÔN LỊCH SỬ / ĐỊA LÍ: BẮT BUỘC chèn thêm CÂU HỎI PHẢN BIỆN (Critical thinking) vào phần 'node_content' hoặc 'exercises' (Ví dụ: "Em có đồng ý với nhận định X không? Tại sao?", "Hãy so sánh...", "Liên hệ thực tế...").
+                4. Nếu tạo phiếu học tập (worksheet_payload), phải có câu hỏi phân hóa từ Dễ đến Khó.
+                5. node_payload PHẢI đúng 100%% cấu trúc field đã quy định cho enumType của node đó.
+                6. Với node LUYEN_TAP: Không chỉ nhắc lại lý thuyết, phải có bài tập tình huống hoặc câu hỏi tư duy.
+                7. Với node VAN_DUNG: Yêu cầu học sinh liên hệ kiến thức Lịch sử/Địa lí vừa học vào thực tiễn cuộc sống hiện nay.
+                8. CHỈ trả về JSON array, không markdown gạch ngang, không text thừa.
                 """.formatted(nodes.size(), expectedStructure, groundingGuidance, schema, perNodeSchemas);
     }
 

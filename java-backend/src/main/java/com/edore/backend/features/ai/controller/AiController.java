@@ -56,8 +56,11 @@ public class AiController {
     @PostMapping(value = "/pedagogy", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<AiJobStatus>> generateScript(
 
-            @Parameter(description = "Lesson content file (PDF/DOCX/TXT/MD, max 150KB)", required = true)
-            @RequestParam("file") MultipartFile file,
+            @Parameter(description = "Lesson content file (Optional if topic is provided)", required = false)
+            @RequestParam(value = "file", required = false) MultipartFile file,
+
+            @Parameter(description = "Topic to generate from curriculum if no file is provided", required = false)
+            @RequestParam(value = "topic", required = false) String topic,
 
             @Parameter(description = "Template ID (1 = 3-node, 2 = 4-node)", required = true)
             @RequestParam("templateId") Long templateId,
@@ -98,8 +101,14 @@ public class AiController {
         // Validate inputs early before expensive file processing and async job creation
         aiPipelineService.validateGenerationParams(templateId, courseId);
 
-        // Extract file text synchronously
-        String rawText = fileExtractService.extract(file);
+        // Extract file text synchronously or use topic
+        String rawText = "";
+        if (file != null && !file.isEmpty()) {
+            rawText = fileExtractService.extract(file);
+        } else if (topic != null && !topic.isBlank()) {
+            rawText = topic; // AI Pipeline will use this to query Vector DB for SGK content
+        }
+
         if (rawText == null || rawText.isBlank()) {
             if (userId != null) aiJobService.releaseUserSlot(userId);
             throw new ApiException(AiResponseCode.EMPTY_EXTRACTED_TEXT);
