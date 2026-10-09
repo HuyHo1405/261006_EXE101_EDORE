@@ -234,7 +234,8 @@ public class AiPipelineServiceImpl implements AiPipelineService {
 
         // ── 6. Call LLM with Retry & Parse via AiResponseParser ────────────────
         long t3 = System.currentTimeMillis();
-        List<ScriptNodeResultDto> nodeResults = callAndParseWithRetry(messages, nodes);
+        com.edore.backend.features.ai.dto.response.AiParsedResult parsedResult = callAndParseWithRetry(messages, nodes);
+        List<ScriptNodeResultDto> nodeResults = parsedResult.nodes();
         long aiMs = System.currentTimeMillis() - t3;
 
         if (jobStatus != null) {
@@ -243,7 +244,7 @@ public class AiPipelineServiceImpl implements AiPipelineService {
         }
 
         // ── 7. Persist (Phase 1 complete) ─────────────────────────────────────
-        SaveScriptResult saved = scriptPersistService.saveScript(courseId, template, nodes, nodeResults, scriptTitle);
+        SaveScriptResult saved = scriptPersistService.saveScript(courseId, template, nodes, nodeResults, parsedResult.lessonMeta(), scriptTitle);
         Script script          = saved.script();
 
         long totalMs = System.currentTimeMillis() - pipelineStart;
@@ -306,7 +307,7 @@ public class AiPipelineServiceImpl implements AiPipelineService {
         }
     }
 
-    private List<ScriptNodeResultDto> callAndParseWithRetry(List<LlmMessage> messages, List<NodeType> nodes) {
+    private com.edore.backend.features.ai.dto.response.AiParsedResult callAndParseWithRetry(List<LlmMessage> messages, List<NodeType> nodes) {
         for (int attempt = 1; attempt <= 2; attempt++) {
             try {
                 String rawContent = llmApiClient.chat(messages, llmProperties.temperature(), llmProperties.maxTokens());

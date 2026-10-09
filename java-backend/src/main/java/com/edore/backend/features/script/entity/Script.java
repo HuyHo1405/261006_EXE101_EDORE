@@ -37,4 +37,8 @@ public class Script extends BaseAuditEntity {
 
     @Column(name = "status", length = 50)
     private String status;
+
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
+    @Column(name = "lesson_meta", columnDefinition = "jsonb")
+    private java.util.Map<String, Object> lessonMeta;
 }

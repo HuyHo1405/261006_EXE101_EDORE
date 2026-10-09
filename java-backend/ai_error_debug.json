@@ -1,0 +1,258 @@
+{
+  "lesson_meta": {
+    "learning_outcomes": [
+      "Giới thiệu được sơ lược quá trình tiến hoá từ Vượn người thành người trên Trái Đất (Vượn người, Người tối cổ, Người tinh khôn).",
+      "Xác định được các dấu tích của Người tối cổ ở khu vực Đông Nam Á qua tư liệu lịch sử và lược đồ.",
+      "Kể tên và xác định được các địa điểm phát hiện dấu tích của Người tối cổ trên đất nước Việt Nam."
+    ],
+    "content_summary": "Bài học trang bị cho học sinh hiểu biết về các chặng đường tiến hoá từ Vượn người thành Người tối cổ và Người tinh khôn, cùng các bằng chứng khảo cổ học quan trọng chứng minh Đông Nam Á và Việt Nam là một trong những cái nôi xuất hiện con người từ rất sớm.",
+    "teaching_methods": [
+      "Dạy học trực quan & Khám phá",
+      "Động não tự do (Brainstorming)",
+      "Thảo luận đôi (Think - Pair - Share)",
+      "Phân tích tình huống thực tiễn (Case Study)"
+    ],
+    "method_details": [
+      {
+        "name": "Dạy học trực quan & Khám phá",
+        "type": "Phương pháp trực quan kết hợp phát vấn",
+        "description": "Khai thác tranh ảnh phục dựng, hiện vật khảo cổ học và lược đồ để học sinh tự rút ra đặc điểm tiến hoá và địa bàn phân bố của người nguyên thuỷ.",
+        "steps": [
+          "Giới thiệu tư liệu hình ảnh/hiện vật khảo cổ",
+          "Dẫn dắt câu hỏi gợi mở quan sát",
+          "Phân tích so sánh dữ liệu lịch sử",
+          "Chuẩn hoá kiến thức cốt lõi"
+        ]
+      },
+      {
+        "name": "Động não tự do (Brainstorming)",
+        "type": "Kích hoạt tư duy mở đầu",
+        "description": "Huy động tối đa hiểu biết ban đầu của học sinh về nguồn gốc loài người mà không phán xét đúng sai ngay lập tức.",
+        "steps": [
+          "Nêu vấn đề & Quy tắc không phán xét",
+          "Thu thập ý tưởng liên tục",
+          "Phân nhóm & Gộp ý tưởng",
+          "Đánh giá & Rút ra kết luận"
+        ]
+      },
+      {
+        "name": "Thảo luận đôi (Think - Pair - Share)",
+        "type": "Hợp tác nhóm đôi",
+        "description": "Tạo cơ hội cho học sinh rèn luyện tư duy độc lập trước khi trao đổi chéo với bạn cùng bàn để hoàn thiện câu trả lời.",
+        "steps": [
+          "Suy nghĩ cá nhân (Think)",
+          "Trao đổi cặp đôi (Pair)",
+          "Chia sẻ trước lớp (Share)",
+          "Kết luận & Chuẩn hóa kiến thức"
+        ]
+      },
+      {
+        "name": "Phân tích tình huống thực tiễn (Case Study)",
+        "type": "Dạy học giải quyết vấn đề",
+        "description": "Học sinh vận dụng kiến thức sinh học và lịch sử nguồn gốc loài người để giải thích hiện tượng đa dạng chủng tộc hiện nay.",
+        "steps": [
+          "Tiếp nhận hồ sơ tình huống",
+          "Phân tích & Nhận diện vấn đề",
+          "Đề xuất giải pháp & Lập luận",
+          "Trình bày & Phản biện giữa các nhóm"
+        ]
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "node_type": "Hình thành kiến thức",
+      "title": "Tiến hoá loài người",
+      "node_intent": "Giúp học sinh nắm rõ các mốc thời gian, đặc điểm giải phẫu và các địa bàn xuất hiện dấu tích Người tối cổ trên thế giới, Đông Nam Á và Việt Nam.",
+      "mapped_knowledge": [
+        "Quá trình tiến hoá: Vượn người (6-5 triệu năm) -> Người tối cổ (khoảng 4 triệu năm) -> Người tinh khôn (khoảng 150 000 năm)",
+        "Sự phát triển thể tích não qua các giai đoạn: 400 cm³ -> 850 - 1100 cm³ -> 1450 cm³",
+        "Dấu tích Người tối cổ ở Đông Nam Á (đảo Gia-va) và Việt Nam (núi Đọ, Quan Yên, Xuân Lộc, An Khê, hang Thẩm Khuyên, Thẩm Hai)"
+      ],
+      "node_content": [
+        "### 1. Quá trình tiến hoá từ Vượn người thành người\n- Cách mạng tiến hoá trải qua 3 chặng đường chính: Vượn người -> Người tối cổ -> Người tinh khôn.\n- Sự biến đổi căn bản về tư thế đứng thẳng, đi bằng hai chân, đôi tay lao động và sự phát triển vượt bậc của hộp sọ.\n\n### 2. Dấu tích của Người tối cổ ở Đông Nam Á và Việt Nam\n- Đông Nam Á là nơi có dấu tích con người xuất hiện từ rất sớm với hoá thạch Người vượn Gia-va.\n- Đất nước Việt Nam ghi nhận nhiều địa điểm khảo cổ trải dài khắp Bắc - Trung - Nam, minh chứng cho sự tồn tại và phát triển liên tục của loài người."
+      ],
+      "applied_activity": "Dạy học trực quan & Khám phá",
+      "applied_activity_code": "VISUAL_DISCOVERY",
+      "is_custom_activity": true,
+      "interaction_flow": [
+        "Bước 1: Giáo viên giới thiệu từng tư liệu trực quan đặc thù theo từng đơn vị kiến thức.",
+        "Bước 2: Học sinh quan sát, so sánh và trả lời câu hỏi dẫn dắt theo định hướng của giáo viên.",
+        "Bước 3: Giáo viên gỡ rối các điểm học sinh dễ nhầm lẫn, chuẩn hoá số liệu lịch sử.",
+        "Bước 4: Học sinh ghi chép hệ thống mốc thời gian và địa bàn phân bố vào vở."
+      ],
+      "node_payload": {
+        "pedagogical_approach": "INDUCTIVE",
+        "knowledge_units": [
+          {
+            "unit_title": "Quá trình tiến hoá từ Vượn người thành người",
+            "visual_example": {
+              "title": "Sơ đồ giải phẫu và thể tích não Người nguyên thuỷ (Hình 3.3)",
+              "item": "Bản đối chiếu hình thái sọ não và tư thế đứng qua 3 giai đoạn tiến hoá",
+              "description": "Giáo viên trình chiếu hình 3.3, phóng to hộp sọ và số đo thể tích não của 3 chặng, dùng con trỏ chỉ rõ sự khác biệt giữa trán vát - cằm nhô của Người tối cổ với trán thẳng đứng của Người tinh khôn."
+            },
+            "teacher_explanation": "Các em lưu ý, quá trình tiến hoá từ Vượn người thành người không diễn ra một sớm một chiều mà kéo dài hàng triệu năm. Điểm phân biệt then chốt giữa Vượn người và Người tối cổ là dáng đứng thẳng, đôi tay được giải phóng để biết ghè đẽo đá tạo ra công cụ. Đến Người tinh khôn (khoảng 150 000 năm trước), cấu tạo cơ thể đã cơ bản hoàn thiện giống người ngày nay với thể tích não đạt 1450 cm³.",
+            "core_content": "Cách đây khoảng từ 6 triệu đến 5 triệu năm, ở chặng đầu của quá trình tiến hoá, có một loài vượn khá giống người đã xuất hiện, được gọi là Vượn người. Thể tích não của loài này chỉ khoảng 400 cm³.\n\nTrải qua quá trình tiến hoá, khoảng 4 triệu năm trước, một nhánh Vượn người đã thoát khỏi đời sống leo trèo, có khả năng đứng thẳng trên mặt đất, đi bằng hai chân, thể tích não lớn hơn (khoảng 850 - 1100 cm³), biết ghè đẽo đá làm công cụ lao động. Đó là Người tối cổ.\n\nNgười tối cổ sinh sống thành nhiều nhóm, tồn tại trong những môi trường sống khác nhau. Từ nơi xuất hiện ban đầu là châu Phi, sau đó họ dần vượt qua những cây cầu băng giá, có mặt ở hầu hết các châu lục. Nổi bật là nhóm 'Người đứng thẳng' với di cốt và công cụ lao động được tìm thấy ở nhiều nơi trên thế giới, trong đó có khu vực Đông Nam Á.\n\nKhoảng 150 000 năm trước, Người tinh khôn, còn được gọi là Người hiện đại đã xuất hiện. Người tinh khôn có bộ não lớn hơn Người tối cổ (khoảng 1450 cm³) và cấu tạo cơ thể cơ bản giống người ngày nay. Sự xuất hiện của Người tinh khôn đánh dấu quá trình chuyển biến từ Vượn người thành người đã hoàn thành.",
+            "content_navigation": {
+              "guiding_tip": "Nếu học sinh nhầm lẫn giữa Người tối cổ và Người tinh khôn, hãy nhắc học sinh nhìn vào số đo thể tích não và dáng đứng thẳng hoàn toàn cùng sự hoàn thiện của bàn tay khéo léo.",
+              "questions": [
+                "Em hãy nêu quá trình tiến hoá từ Vượn người thành người trên Trái Đất?",
+                "Những đặc điểm nào cho thấy sự tiến hoá của Người tối cổ so với Vượn người?",
+                "Quan sát hình 3.3, em thấy Người tinh khôn khác Người tối cổ ở những điểm then chốt nào?"
+              ]
+            }
+          ],
+          {
+            "unit_title": "Dấu tích của Người tối cổ ở Đông Nam Á và Việt Nam",
+            "visual_example": {
+              "title": "Mẫu vật Công cụ đá thô sơ An Khê và Rìu đá cổ (Hình 3.4)",
+              "item": "Hình chụp công cụ đá thô sơ ghè hai mặt tìm thấy tại An Khê (Gia Lai)",
+              "description": "Giáo viên chuyền tay cho học sinh một hòn đá cuội đã ghè cạnh sắc mô phỏng hiện vật khảo cổ, sau đó yêu cầu học sinh dùng thử thao tác chặt đập thô sơ để cảm nhận phương thức chế tác của Người tối cổ."
+            },
+            "teacher_explanation": "Khu vực Đông Nam Á và đặc biệt là Việt Nam có vị trí địa lý cùng khí hậu nhiệt đới rất thuận lợi cho người nguyên thuỷ sinh sống. Các di tích công cụ ghè đẽo tại An Khê có niên đại cách ngày nay khoảng 800 000 năm và răng người hoá thạch tại Lạng Sơn cách ngày nay khoảng 400 000 năm là những bằng chứng đanh thép khẳng định Việt Nam là một trong những địa bàn cư trú sớm nhất của loài người.",
+            "core_content": "Người tối cổ xuất hiện khá sớm ở Đông Nam Á. Hoá thạch đầu tiên của họ được các nhà khoa học tìm thấy trên đảo Gia-va (Java, In-đô-nê-xi-a).\n\nNhiều công cụ đá ghè đẽo thô sơ dùng để đập, chặt của Người tối cổ cũng được tìm thấy ở nhiều nơi trên đất nước Việt Nam như núi Đọ, Quan Yên (Thanh Hoá), Xuân Lộc (Đồng Nai), An Khê (Gia Lai),...\n\nĐặc biệt tại các hang Thẩm Khuyên, Thẩm Hai (Lạng Sơn), các nhà khoa học còn phát hiện được những chiếc răng hoá thạch của Người tối cổ cách ngày nay khoảng 400 000 năm.",
+            "content_navigation": {
+              "guiding_tip": "Nếu học sinh không nhớ hết các địa danh, hãy hướng dẫn học sinh liên kết theo vùng địa lý: Bắc Bộ có Lạng Sơn, Thanh Hoá; Tây Nguyên có Gia Lai; Nam Bộ có Đồng Nai.",
+              "questions": [
+                "Bằng chứng khoa học nào cho thấy Người tối cổ đã xuất hiện ở Đông Nam Á từ rất sớm?",
+                "Hãy kể tên các địa điểm tìm thấy dấu tích của Người tối cổ trên đất nước Việt Nam?",
+                "Nhận xét về phạm vi phân bố dấu tích Người tối cổ trên lãnh thổ nước ta?"
+              ]
+            }
+          }
+        ],
+        "synthesis": "Loài người đã trải qua chặng đường tiến hoá hàng triệu năm từ Vượn người (6-5 triệu năm trước) thành Người tối cổ (khoảng 4 triệu năm trước) và hoàn thiện thành Người tinh khôn (khoảng 150 000 năm trước). Vùng đất Đông Nam Á và Việt Nam vinh dự là một trong những cái nôi ghi nhận dấu tích sinh sống của Người tối cổ từ rất sớm."
+      },
+      "estimated_time_minutes": 22,
+      "materials_needed": [
+        "Hình ảnh minh hoạ 3.3 (Sơ đồ tiến hoá người nguyên thuỷ)",
+        "Hình ảnh minh hoạ 3.4 (Công cụ đá thô sơ An Khê)",
+        "Lược đồ khảo cổ 3.5 (Dấu tích Người tối cổ ở Đông Nam Á)"
+      ]
+    },
+    {
+      "node_type": "Khởi động",
+      "title": "Khởi động",
+      "node_intent": "Kích thích hứng thú tìm hiểu về nguồn cội con người, kết nối tò mò cá nhân với bài học lịch sử.",
+      "mapped_knowledge": [
+        "Khái niệm nguồn gốc loài người",
+        "Sự tò mò về quá trình con người xuất hiện trên Trái Đất"
+      ],
+      "node_content": [
+        "Hoạt động mở đầu đặt câu hỏi suy ngẫm về nguồn gốc sinh học của con người, phá vỡ lối mòn suy nghĩ thần thoại để tiếp cận góc nhìn khoa học lịch sử."
+      ],
+      "applied_activity": "Động não tự do (Brainstorming)",
+      "applied_activity_code": "BRAINSTORMING",
+      "is_custom_activity": false,
+      "interaction_flow": [
+        "1. Nêu vấn đề & Quy tắc không phán xét: Giáo viên đưa ra câu hỏi 'Theo em, tổ tiên loài người xuất hiện từ đâu và cách đây bao lâu?' và khuyến khích học sinh phát biểu tự do.",
+        "2. Thu thập ý tưởng liên tục: Học sinh xung phong nêu ý kiến ngắn gọn trong 1 phút, giáo viên ghi nhanh các cụm từ chính lên bảng (Vượn, khỉ, đất nặn, hàng triệu năm...).",
+        "3. Phân nhóm & Gộp ý tưởng: Cả lớp quan sát các ý tưởng trên bảng và chia thành 2 luồng: thần thoại dân gian và khoa học tiến hoá.",
+        "4. Đánh giá & Rút ra kết luận: Giáo viên khen ngợi tinh thần chia sẻ và dẫn dắt vào bài mới."
+      ],
+      "node_payload": {
+        "activity_type": "QUESTION_BASED",
+        "activity_type_label": "Khởi động qua câu hỏi gợi mở",
+        "activity_name": "Truy tìm nguồn cội",
+        "visual_action": "Giáo viên đặt câu hỏi gợi mở bất ngờ: 'Đã bao giờ các em tự hỏi: Con người chúng ta xuất hiện trên Trái Đất như thế nào và tổ tiên xa xưa nhất của chúng ta có hình dáng ra sao chưa?'",
+        "quick_connection": "Học sinh hào hứng đồng thanh đưa ra các phỏng đoán nhanh như 'từ loài vượn', 'từ thời đồ đá', 'hàng triệu năm trước' trong vòng 1 phút. (Lưu ý: Không mổ xẻ phân tích sâu các ý kiến lúc này).",
+        "conclusion": "Thầy/Cô rất ấn tượng với trí tưởng tượng phong phú và hiểu biết ban đầu rất nhạy bén của các em về lịch sử tự nhiên!",
+        "bridge_question": "Vậy các nhà khảo cổ học đã tìm thấy những bằng chứng khoa học xác thực nào về quá trình tiến hoá này? Chúng ta cùng bước vào Bài 3 để giải mã bí ẩn nguồn gốc loài người!"
+      },
+      "estimated_time_minutes": 5,
+      "materials_needed": [
+        "Bảng ghi nhận ý tưởng",
+        "Giấy Sticky note màu"
+      ]
+    },
+    {
+      "node_type": "Luyện tập",
+      "title": "Luyện tập",
+      "node_intent": "Củng cố các mốc tiến hoá và hệ thống hoá các di chỉ khảo cổ của Người tối cổ tại Đông Nam Á và Việt Nam.",
+      "mapped_knowledge": [
+        "Dấu tích hoá thạch Người tối cổ tại đảo Gia-va (In-đô-nê-xi-a)",
+        "Các di chỉ Người tối cổ tại Việt Nam: Núi Đọ, Quan Yên, Xuân Lộc, An Khê, Thẩm Khuyên, Thẩm Hai",
+        "Đặc điểm phân biệt Vượn người - Người tối cổ - Người tinh khôn"
+      ],
+      "node_content": [
+        "Học sinh hoàn thành bảng biểu thống kê các di tích Người tối cổ và trả lời câu hỏi tự luận để củng cố các dẫn chứng lịch sử đã học."
+      ],
+      "applied_activity": "Thảo luận đôi (Think - Pair - Share)",
+      "applied_activity_code": "THINK_PAIR_SHARE",
+      "is_custom_activity": false,
+      "interaction_flow": [
+        "1. Suy nghĩ cá nhân (Think): Học sinh tự đọc 2 câu hỏi luyện tập và hoàn thành bảng thống kê ra nháp trong 3 phút.",
+        "2. Trao đổi cặp đôi (Pair): Từng cặp đôi xoay sang nhau so sánh đáp án về địa danh, niên đại di chỉ khảo cổ.",
+        "3. Chia sẻ trước lớp (Share): Giáo viên chỉ định ngẫu nhiên 2 cặp đại diện báo cáo kết quả bảng thống kê.",
+        "4. Kết luận & Chuẩn hóa kiến thức: Giáo viên nhận xét, đối chiếu đáp án chuẩn trên slide."
+      ],
+      "node_payload": {
+        "exercises": [
+          {
+            "question": "Bằng chứng khoa học nào chứng tỏ Đông Nam Á là nơi có con người xuất hiện từ sớm?",
+            "level": "thong_hieu",
+            "answer": "Bằng chứng khoa học gồm: Hoá thạch của Người tối cổ được tìm thấy đầu tiên trên đảo Gia-va (In-đô-nê-xi-a); nhiều công cụ đá ghè đẽo thô sơ được phát hiện ở An Khê (Gia Lai - niên đại khoảng 800 000 năm), núi Đọ, Quan Yên (Thanh Hoá), Xuân Lộc (Đồng Nai); và các hoá thạch răng Người tối cổ cách ngày nay khoảng 400 000 năm tại hang Thẩm Khuyên, Thẩm Hai (Lạng Sơn - Việt Nam).",
+            "format": "Tự luận ngắn"
+          },
+          {
+            "question": "Lập bảng thống kê các di tích của Người tối cổ ở Đông Nam Á và Việt Nam theo các cột: Tên quốc gia, Tên địa điểm, Dấu tích tìm thấy.",
+            "level": "nhan_biet",
+            "answer": "1. In-đô-nê-xi-a: Địa điểm đảo Gia-va (Java) - Dấu tích: Hoá thạch Người tối cổ.\n2. Việt Nam:\n- An Khê (Gia Lai): Công cụ đá thô sơ ghè đẽo (cách ngày nay khoảng 800 000 năm).\n- Thẩm Khuyên, Thẩm Hai (Lạng Sơn): Hoá thạch răng Người tối cổ (cách ngày nay khoảng 400 000 năm).\n- Núi Đọ, Quan Yên (Thanh Hoá): Công cụ đá ghè đẽo thô sơ.\n- Xuân Lộc (Đồng Nai): Công cụ đá ghè đẽo thô sơ.",
+            "format": "Điền bảng thống kê"
+          }
+        ]
+      },
+      "estimated_time_minutes": 10,
+      "materials_needed": [
+        "Phiếu thảo luận cặp đôi bài tập luyện tập",
+        "Bút viết"
+      ]
+    },
+    {
+      "node_type": "Vận dụng",
+      "title": "Vận dụng",
+      "node_intent": "Vận dụng kiến thức bài học để giải thích vấn đề chủng tộc hiện đại và giáo dục tinh thần đoàn kết, bình đẳng giữa các màu da trên thế giới.",
+      "mapped_knowledge": [
+        "Nguồn gốc chung của Người tinh khôn (Homo sapiens)",
+        "Tác động của khí hậu, môi trường địa lý đến sự biến đổi màu da bên ngoài"
+      ],
+      "node_content": [
+        "Tình huống thực tế về màu da khác nhau của con người ở các châu lục và giải mã khoa học lịch sử về nguồn gốc thống nhất của toàn nhân loại."
+      ],
+      "applied_activity": "Phân tích tình huống thực tiễn (Case Study)",
+      "applied_activity_code": "CASE_STUDY",
+      "is_custom_activity": false,
+      "interaction_flow": [
+        "1. Tiếp nhận hồ sơ tình huống: Giáo viên nêu câu hỏi tình huống thực tế: Phần lớn người châu Phi có làn da đen, người châu Á da vàng, người châu Âu da trắng - liệu họ có chung nguồn gốc?",
+        "2. Phân tích & Nhận diện vấn đề: Các nhóm thảo luận nguyên nhân sinh học, địa lý và lịch sử di cư của Người tinh khôn.",
+        "3. Đề xuất giải pháp & Lập luận: Nhóm thống nhất lập luận khẳng định nguồn gốc thống nhất và lý giải vì sao màu da biến đổi theo ánh nắng/thời tiết.",
+        "4. Trình bày & Phản biện giữa các nhóm: Đại diện nhóm phát biểu, các nhóm khác phản biện; giáo viên chốt thông điệp nhân văn về sự bình đẳng nhân loại."
+      ],
+      "node_payload": {
+        "scenario": "Trong một diễn đàn giao lưu quốc tế thiếu nhi, một bạn học sinh thắc mắc: 'Phần lớn người châu Phi có làn da đen, người châu Á có làn da vàng, còn người châu Âu lại có làn da trắng. Vậy liệu các chủng tộc người trên thế giới ngày nay có chung một nguồn gốc hay không?'",
+        "task_requirement": "Dựa vào kiến thức về quá trình tiến hoá của loài người và sự xuất hiện của Người tinh khôn, em hãy viết một đoạn giải thích khoa học ngắn (khoảng 5-7 câu) để trả lời thắc mắc của bạn học sinh đó.",
+        "expected_output_form": "Đoạn văn ngắn trình bày trên giấy nhớ hoặc vở học tập",
+        "rubric": [
+          {
+            "criterion": "Tính chính xác khoa học",
+            "description": "Khẳng định tất cả các chủng tộc người hiện đại đều có chung nguồn gốc từ Người tinh khôn (Homo sapiens), cấu tạo cơ thể và trí tuệ đều như nhau."
+          },
+          {
+            "criterion": "Khả năng giải thích thích nghi môi trường",
+            "description": "Chỉ ra được sự khác biệt về màu da, màu tóc là do quá trình di cư, phân tán và thích nghi lâu dài với điều kiện ánh sáng mặt trời, khí hậu địa phương."
+          },
+          {
+            "criterion": "Thông điệp nhân văn",
+            "description": "Nêu được thông điệp bình đẳng chủng tộc, phản đối nạn phân biệt đối xử dựa trên màu da."
+          }
+        ],
+        "scaffolding_hint": "Hãy nhớ lại mốc khoảng 150 000 năm trước khi Người tinh khôn xuất hiện ở châu Phi rồi phân tán đi khắp các châu lục. Sống ở vùng xích đạo nắng gắt cần nhiều sắc tố đen để bảo vệ da, còn xứ lạnh ôn đới ít nắng khiến làn da chuyển sang sắc trắng."
+      },
+      "estimated_time_minutes": 8,
+      "materials_needed": [
+        "Bộ hồ sơ tình huống Case Study về màu da các chủng tộc",
+        "Phiếu ghi phản hồi của nhóm"
+      ]
+    }
+  ]
+}

@@ -11,7 +11,7 @@ export { MaterialList }
 // ─── Entry ────────────────────────────────────────────────────────────────────
 export function NodeBody({
   nodeTypeCode, nodeType, payload, onPayloadChange, steps, renderNote, teachingMethod, onTeachingMethodChange,
-  appliedActivity, intent, onGoToNextNode, nextStepTitle, teachingTools, pedagogNote, hinhThanhApproach,
+  appliedActivity, intent, onGoToNextNode, nextStepTitle, teachingTools, pedagogNote, hinhThanhApproach, activeUnitIdx
 }: {
   nodeTypeCode?: string
   nodeType?: string
@@ -28,6 +28,7 @@ export function NodeBody({
   teachingTools?: any[]
   pedagogNote?: any
   hinhThanhApproach?: string
+  activeUnitIdx?: number
 }) {
   const kind = normalizeNodeType(nodeTypeCode) || normalizeNodeType(nodeType)
   const key = kind && ['KHOI_DONG', 'HINH_THANH_KIEN_THUC', 'LUYEN_TAP', 'VAN_DUNG'].includes(kind)
@@ -57,6 +58,7 @@ export function NodeBody({
   if (key === 'HINH_THANH_KIEN_THUC' && hasPayload) {
     return (
       <HinhThanhView
+        activeUnitIdx={activeUnitIdx}
         payload={payload}
         onChange={onPayloadChange}
         steps={steps}

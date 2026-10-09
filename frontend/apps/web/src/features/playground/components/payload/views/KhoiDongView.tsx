@@ -46,7 +46,7 @@ export function KhoiDongView({
   const p = payload || {}
   const [openNote, setOpenNote] = useState(false)
 
-  const gameName = p.game_name || 'Trò chơi phản xạ: "Xưa hay Nay? (Tìm đồ vật thời ông bà)"'
+  const activityName = p.activity_name || p.game_name || 'Trò chơi phản xạ: "Xưa hay Nay? (Tìm đồ vật thời ông bà)"'
   const visualAction =
     p.visual_action ||
     '• Giáo viên chiếu lướt nhanh 4 cặp hình ảnh đồ vật quen thuộc: Quạt nan vs Máy lạnh, Bếp củi vs Bếp từ, Đèn dầu vs Đèn điện.\n• Học sinh quan sát nhanh trong 5 giây mỗi hình và đồng thanh hô "Xưa" hay "Nay"!'
@@ -65,8 +65,11 @@ export function KhoiDongView({
   }
 
   const mappedTools = (() => {
-    if (Array.isArray(pedagogNote) && pedagogNote.length > 0) {
-      return parseTeachingTools(pedagogNote)
+    if (pedagogNote) {
+      const arr = Array.isArray(pedagogNote) ? pedagogNote : String(pedagogNote).split(',').map(s => s.trim()).filter(Boolean)
+      if (arr.length > 0) {
+        return parseTeachingTools(arr)
+      }
     }
     if (Array.isArray(teachingTools) && teachingTools.length > 0) {
       const parsed = parseTeachingTools(teachingTools)
@@ -154,9 +157,9 @@ export function KhoiDongView({
                     Tên trò chơi / Thử thách:
                   </div>
                   <input
-                    value={gameName}
-                    onChange={e => updateField('game_name', e.target.value)}
-                    placeholder="Nhập tên trò chơi..."
+                    value={activityName}
+                    onChange={e => updateField('activity_name', e.target.value)}
+                    placeholder="Nhập tên hoạt động..."
                     className="w-full text-xs sm:text-sm font-bold text-slate-900 bg-white border border-slate-300 rounded-lg px-3 py-1.5 outline-none shadow-2xs"
                   />
                 </div>

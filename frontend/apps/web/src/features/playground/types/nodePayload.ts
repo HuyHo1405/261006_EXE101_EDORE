@@ -4,19 +4,44 @@ export interface KhoiDongHook {
 }
 
 export interface KhoiDongPayload {
+  // --- Legacy Schema ---
   hook?: KhoiDongHook
   expected_responses?: string[]
   transition_line?: string
+  
+  // --- New Schema ---
+  activity_type?: string
+  activity_type_label?: string
+  activity_name?: string
+  visual_action?: string
+  quick_connection?: string
+  conclusion?: string
+  bridge_question?: string
+}
+
+export interface VisualExample {
+  title?: string
+  item?: string
+  description?: string
+}
+
+export interface ContentNavigation {
+  guiding_tip?: string
+  questions?: string[]
 }
 
 export interface KnowledgeUnit {
   unit_title?: string
   core_content?: string
-  teacher_delivery?: string
-  checkpoint_question?: string
+  teacher_delivery?: string // Legacy
+  teacher_explanation?: string
+  visual_example?: VisualExample
+  checkpoint_question?: string // Legacy
+  content_navigation?: ContentNavigation
 }
 
 export interface HinhThanhKienThucPayload {
+  pedagogical_approach?: string
   knowledge_units?: KnowledgeUnit[]
   synthesis?: string
 }

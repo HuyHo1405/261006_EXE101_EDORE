@@ -25,5 +25,6 @@ public interface ScriptPersistService {
      */
     SaveScriptResult saveScript(UUID courseId, Template template,
                                 List<NodeType> nodes, List<ScriptNodeResultDto> nodeResults,
+                                java.util.Map<String, Object> lessonMeta,
                                 String scriptTitle);
 }

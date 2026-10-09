@@ -41,9 +41,9 @@ public class ActivityDataInitializer implements CommandLineRunner {
         Set<NodeTypeEnum> tongket   = new HashSet<>(Set.of(NodeTypeEnum.VAN_DUNG));
 
         // Combined sets
-        Set<NodeTypeEnum> kd_ht_lt_vd_tk = new HashSet<>(Set.of(NodeTypeEnum.KHOI_DONG, NodeTypeEnum.HINH_THANH_KIEN_THUC, NodeTypeEnum.LUYEN_TAP, NodeTypeEnum.VAN_DUNG));
+        Set<NodeTypeEnum> kd_ht_lt_vd_tk = new HashSet<>(Set.of(NodeTypeEnum.KHOI_DONG, NodeTypeEnum.LUYEN_TAP, NodeTypeEnum.VAN_DUNG));
         Set<NodeTypeEnum> lt_vd          = new HashSet<>(Set.of(NodeTypeEnum.LUYEN_TAP, NodeTypeEnum.VAN_DUNG));
-        Set<NodeTypeEnum> ht_lt          = new HashSet<>(Set.of(NodeTypeEnum.HINH_THANH_KIEN_THUC, NodeTypeEnum.LUYEN_TAP));
+        Set<NodeTypeEnum> ht_lt          = new HashSet<>(Set.of(NodeTypeEnum.LUYEN_TAP));
         Set<NodeTypeEnum> kd_vd          = new HashSet<>(Set.of(NodeTypeEnum.KHOI_DONG, NodeTypeEnum.VAN_DUNG));
         Set<NodeTypeEnum> kd_lt          = new HashSet<>(Set.of(NodeTypeEnum.KHOI_DONG, NodeTypeEnum.LUYEN_TAP));
         Set<NodeTypeEnum> tk_only        = tongket;

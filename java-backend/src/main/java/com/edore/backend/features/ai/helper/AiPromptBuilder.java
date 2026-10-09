@@ -45,18 +45,35 @@ public class AiPromptBuilder {
 
         String schema = """
                 {
-                  "node_type": "string — Bắt buộc phải là một trong: %s",
-                  "title": "string — TIÊU ĐỀ SIÊU NGẮN (chỉ từ 1 đến 3 từ, tối đa ≤ 20 ký tự, ví dụ: 'Khởi động', 'Tìm hiểu Phục hưng', 'Luyện tập', 'Vận dụng')",
-                  "node_intent": "string — Mục tiêu sư phạm của node",
-                  "mapped_knowledge": ["string"],
-                  "node_content": ["string — Nội dung kiến thức tổng quan của node, dạng Markdown, giữ nguyên 100%% số liệu từ file input"],
-                  "applied_activity": "string — GIỮ NGUYÊN 100%% tên phương pháp gốc từ danh sách gợi ý (Ví dụ: 'Thảo luận đôi (Think - Pair - Share)')",
-                  "applied_activity_code": "string — Mã activity_code tương ứng từ gợi ý (Ví dụ: 'THINK_PAIR_SHARE')",
-                  "is_custom_activity": "boolean — false nếu dùng phương pháp từ gợi ý DB, true nếu buộc phải tự tạo mới",
-                  "interaction_flow": ["string — Quy trình tương tác GV-HS bám theo step_template của activity đã chọn"],
-                  "node_payload": "object — BẮT BUỘC đúng shape tương ứng theo enumType của node này, xem chi tiết bên dưới",
-                  "estimated_time_minutes": "number — Thời gian ước tính (phút)",
-                  "materials_needed": ["string — Gồm đồ dùng mặc định của hoạt động cộng thêm học liệu bài học cụ thể"]
+                  "lesson_meta": {
+                    "learning_outcomes": ["string — Điểm qua 3-5 yêu cầu cần đạt của bài học"],
+                    "content_summary": "string — Tóm tắt ngắn gọn nội dung bài học",
+                    "teaching_methods": ["string — Liệt kê tên các phương pháp áp dụng (VD: Dạy học trực quan, Khám phá...)"],
+                    "method_details": [
+                      {
+                        "name": "string",
+                        "type": "string",
+                        "description": "string",
+                        "steps": ["string"]
+                      }
+                    ]
+                  },
+                  "nodes": [
+                    {
+                      "node_type": "string — Bắt buộc phải là một trong: %s",
+                      "title": "string — TIÊU ĐỀ SIÊU NGẮN (chỉ từ 1 đến 3 từ, tối đa ≤ 20 ký tự, ví dụ: 'Khởi động', 'Tìm hiểu Phục hưng', 'Luyện tập', 'Vận dụng')",
+                      "node_intent": "string — Mục tiêu sư phạm của node",
+                      "mapped_knowledge": ["string"],
+                      "node_content": ["string — Nội dung kiến thức tổng quan của node, dạng Markdown, giữ nguyên 100%% số liệu từ file input"],
+                      "applied_activity": "string — GIỮ NGUYÊN 100%% tên phương pháp gốc từ danh sách gợi ý (Ví dụ: 'Thảo luận đôi (Think - Pair - Share)')",
+                      "applied_activity_code": "string — Mã activity_code tương ứng từ gợi ý (Ví dụ: 'THINK_PAIR_SHARE')",
+                      "is_custom_activity": "boolean — false nếu dùng phương pháp từ gợi ý DB, true nếu buộc phải tự tạo mới",
+                      "interaction_flow": ["string — Quy trình tương tác GV-HS bám theo step_template của activity đã chọn"],
+                      "node_payload": "object — BẮT BUỘC đúng shape tương ứng theo enumType của node này, xem chi tiết bên dưới",
+                      "estimated_time_minutes": "number — Thời gian ước tính (phút)",
+                      "materials_needed": ["string — Chỉ liệt kê học liệu ĐẶC THÙ (Flashcards, Sticky note, Hình ảnh cụ thể...). TUYỆT ĐỐI KHÔNG liệt kê thiết bị cơ bản của lớp học (Máy chiếu, TV, Bảng phấn, Bút dạ)"]
+                    }
+                  ]
                 }""".formatted(nodeTypesStr);
 
         String groundingGuidance = switch (groundingLevel) {
@@ -80,16 +97,20 @@ public class AiPromptBuilder {
 
                 CRITICAL RULES:
                 1. title: BẮT BUỘC SIÊU NGẮN CHỈ TỪ 1 ĐẾN 3 TỪ (≤ 20 ký tự). Dùng làm nhãn Stepper Navigation trên UI.
-                2. applied_activity: BẮT BUỘC giữ nguyên 100%% tên phương pháp gốc từ gợi ý (Ví dụ: 'Thảo luận đôi (Think - Pair - Share)').
+                2. applied_activity: BẮT BUỘC giữ nguyên 100%% tên phương pháp gốc từ gợi ý (Ngoại trừ HINH_THANH_KIEN_THUC được phép linh hoạt ghi "Dạy học trực quan & Khám phá" để tránh bị gò bó).
                 3. interaction_flow: Khi chọn phương pháp từ gợi ý DB (is_custom_activity = false), BẮT BUỘC bám theo khung các bước 'step_template' của phương pháp đó.
-                4. materials_needed: BẮT BUỘC bao gồm các đồ dùng mặc định ('default_materials') của phương pháp đã chọn.
+                4. materials_needed: BẮT BUỘC bao gồm đồ dùng mặc định ('default_materials') của phương pháp, NHƯNG phải lọc bỏ các thiết bị hạ tầng cơ bản (như máy chiếu, bảng phấn, màn hình TV).
                 5. is_custom_activity: Trả về false khi chọn phương pháp từ gợi ý DB, trả về true nếu tự thiết kế phương pháp hoàn toàn mới.
                 6. node_type trong mỗi object PHẢI KHỚP CHÍNH XÁC theo template — không tự sửa hay dịch tên node.
-                7. Chỉ trả về một JSON array duy nhất.
+                7. Chỉ trả về một JSON object duy nhất, trong đó có `lesson_meta` và mảng `nodes`. Mảng `nodes` BẮT BUỘC sinh đủ số lượng nodes như yêu cầu.
                 8. node_payload PHẢI đúng 100%% cấu trúc field đã quy định cho enumType của node đó — không thêm/bớt field, không dùng shape của node khác.
                 9. Với HINH_THANH_KIEN_THUC: BẮT BUỘC chia tài liệu gốc thành nhiều knowledge_units theo từng đề mục/ý chính (I, II, III... hoặc heading trong file input), KHÔNG gộp toàn bộ tài liệu vào 1 unit trừ khi tài liệu thực sự chỉ có 1 ý.
                 10. Với LUYEN_TAP: exercises phải là đề bài cụ thể trích/dựa theo phần "Luyện tập" của tài liệu gốc nếu có, answer phải là đáp án xác định, không mô tả hoạt động.
                 11. Với VAN_DUNG: scenario phải là tình huống MỚI hoặc bài tập mở rộng, không lặp lại nguyên văn ví dụ đã dạy ở knowledge_units.
+                12. MẢNG JSON BẮT BUỘC PHẢI SINH 'Hình thành kiến thức' TRƯỚC 'Khởi động' (dù cấu trúc học là Khởi động trước).
+                13. KHOI_DONG: BẮT BUỘC map `activity_type` dựa trên `pedagogical_approach` của HINH_THANH_KIEN_THUC theo bảng: INDUCTIVE -> QUESTION_BASED, DEDUCTIVE -> VISUAL_TEASER, PROBLEM_BASED -> PROBLEM_SITUATION.
+                14. HINH_THANH_KIEN_THUC: BẮT BUỘC các phần tử trong mảng knowledge_units không được trùng lặp visual_example.item, visual_example.title, hay core_content giữa các unit. Trước khi sinh unit thứ N, liệt kê lại (trong đầu) các hiện vật/thao tác đã dùng ở unit 1..N-1 và BẮT BUỘC chọn hiện vật và thao tác hoàn toàn khác. NẾU 2 UNIT CÓ THAO TÁC HOẶC HIỆN VẬT GIỐNG NHAU, ĐÓ LÀ LỖI NGHIÊM TRỌNG!
+                15. ĐẢM BẢO JSON HỢP LỆ: TUYỆT ĐỐI KHÔNG xuống dòng thực sự (bấm Enter) bên trong nội dung của các chuỗi (string) trong JSON. Phải sử dụng ký tự escape `\\n` nếu muốn xuống dòng (ví dụ trong `core_content`). Nếu vi phạm, chuỗi JSON sẽ bị lỗi cú pháp!
                 """.formatted(nodes.size(), expectedStructure, groundingGuidance, schema, perNodeSchemas);
     }
 

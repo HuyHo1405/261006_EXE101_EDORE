@@ -96,14 +96,20 @@ export function normalizeLessonMeta(raw: Record<string, any> | null | undefined)
 /** Gộp phương pháp / vật tư từ các node nếu meta cấp bài chưa có. */
 export function mergeLessonMetaWithNodes(
   meta: LessonMeta,
-  nodes: { teachingMethod?: string; materials?: string[] }[],
+  nodes: { teachingMethod?: string; materials?: string[]; knowledge?: string[]; methodDetail?: TeachingMethodDetail }[],
 ): LessonMeta {
   const uniq = (a: string[]) => Array.from(new Set(a.map(s => s.trim()).filter(Boolean)))
   return {
     ...meta,
+    learningOutcomes: meta.learningOutcomes.length
+      ? meta.learningOutcomes
+      : uniq(nodes.flatMap(n => n.knowledge ?? [])),
     teachingMethods: meta.teachingMethods.length
       ? meta.teachingMethods
       : uniq(nodes.flatMap(n => (n.teachingMethod ? String(n.teachingMethod).split(/[;,\n]/) : []))),
+    methodDetails: (meta.methodDetails && meta.methodDetails.length > 0)
+      ? meta.methodDetails
+      : (nodes.map(n => n.methodDetail).filter(Boolean) as TeachingMethodDetail[]),
     teachingTools: meta.teachingTools.length
       ? meta.teachingTools
       : uniq(nodes.flatMap(n => n.materials ?? [])),

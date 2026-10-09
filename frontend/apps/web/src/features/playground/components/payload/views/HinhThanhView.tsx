@@ -30,6 +30,7 @@ export function HinhThanhView({
   pedagogNote,
   onGoToNextNode,
   nextStepTitle,
+  activeUnitIdx,
 }: {
   payload: any
   onChange: (p: any) => void
@@ -42,10 +43,11 @@ export function HinhThanhView({
   pedagogNote?: any
   onGoToNextNode?: () => void
   nextStepTitle?: string
+  activeUnitIdx?: number
 }) {
   const p = payload || {}
   const units: any[] = Array.isArray(p.knowledge_units) ? p.knowledge_units : []
-  const [activeUnit, setActiveUnit] = useState<number>(0)
+  const [activeUnit, setActiveUnit] = useState<number>(activeUnitIdx || 0)
   const [showFollowUps, setShowFollowUps] = useState<boolean>(false)
   const [openNote, setOpenNote] = useState<boolean>(false)
 
@@ -68,8 +70,11 @@ export function HinhThanhView({
 
   // Lấy danh sách dụng cụ thiết bị trực quan
   const mappedTools = (() => {
-    if (Array.isArray(pedagogNote) && pedagogNote.length > 0) {
-      return parseTeachingTools(pedagogNote)
+    if (pedagogNote) {
+      const arr = Array.isArray(pedagogNote) ? pedagogNote : String(pedagogNote).split(',').map(s => s.trim()).filter(Boolean)
+      if (arr.length > 0) {
+        return parseTeachingTools(arr)
+      }
     }
     if (Array.isArray(teachingTools) && teachingTools.length > 0) {
       return parseTeachingTools(teachingTools)
@@ -166,27 +171,6 @@ export function HinhThanhView({
                 <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
                   THAO TÁC CỦA GIÁO VIÊN (TRỰC QUAN HÓA &amp; NGỮ LIỆU)
                 </div>
-
-                {/* Dòng dụng cụ / học liệu chuẩn bị */}
-                {mappedTools.length > 0 && (
-                  <div id="materials-section" className="flex items-center gap-2 flex-wrap transition-all duration-300">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                      <Package className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                      <span>Dụng cụ &amp; Tư liệu:</span>
-                    </span>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {mappedTools.map((tool, idx) => (
-                        <span
-                          key={idx}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-200/80 text-slate-800 border border-slate-300 shadow-2xs"
-                          title={tool.purpose || tool.name}
-                        >
-                          {tool.name}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Tên tư liệu ảnh / hiện vật đối chiếu */}
                 <div className="space-y-1">

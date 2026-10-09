@@ -359,6 +359,7 @@ export default function TimelineEditor({
                   </div>
                 ) : (
                   <NodeBody
+                    activeUnitIdx={activeUnitIdx}
                     nodeTypeCode={cur.nodeTypeCode}
                     nodeType={cur.type}
                     payload={cur.nodePayload}

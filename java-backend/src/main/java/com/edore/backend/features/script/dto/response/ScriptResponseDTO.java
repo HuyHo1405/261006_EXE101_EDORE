@@ -10,5 +10,6 @@ public record ScriptResponseDTO(
         String title,
         String status,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        java.util.Map<String, Object> lessonMeta
 ) {}

@@ -37,6 +37,7 @@ public class ScriptPersistServiceImpl implements ScriptPersistService {
     @Transactional
     public SaveScriptResult saveScript(UUID courseId, Template template,
                                        List<NodeType> nodes, List<ScriptNodeResultDto> nodeResults,
+                                       java.util.Map<String, Object> lessonMeta,
                                        String scriptTitle) {
         // ── 1. Resolve Course ────────────────────────────────────────────────
         Course course = courseRepository.findById(courseId)
@@ -58,6 +59,7 @@ public class ScriptPersistServiceImpl implements ScriptPersistService {
                 .template(template)
                 .title(title)
                 .status("DRAFT")
+                .lessonMeta(lessonMeta)
                 .build();
         script = scriptRepository.save(script);
         log.info("[Persist] Script saved: id={} title='{}'", script.getId(), title);

@@ -43,7 +43,8 @@ public class ScriptServiceImpl implements ScriptService {
                 script.getTitle(),
                 script.getStatus() != null ? script.getStatus() : "DRAFT",
                 script.getCreatedAt(),
-                script.getUpdatedAt()
+                script.getUpdatedAt(),
+                script.getLessonMeta()
         );
     }
 

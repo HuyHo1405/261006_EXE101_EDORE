@@ -2,6 +2,7 @@ package com.edore.backend.features.ai.helper;
 
 import com.edore.backend.core.exception.ApiException;
 import com.edore.backend.features.ai.code.AiResponseCode;
+import com.edore.backend.features.ai.dto.response.AiParsedResult;
 import com.edore.backend.features.ai.dto.response.ScriptNodeResultDto;
 import com.edore.backend.features.script.entity.NodeType;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -26,19 +27,35 @@ public class AiResponseParser {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d+");
 
-    public List<ScriptNodeResultDto> parseAiResponse(String rawContent, List<NodeType> nodes) {
+    public AiParsedResult parseAiResponse(String rawContent, List<NodeType> nodes) {
         String cleaned = rawContent
                 .replaceAll("(?s)```json\\s*", "")
                 .replaceAll("```", "")
                 .strip();
 
         try {
-            List<Map<String, Object>> rawList = objectMapper.readValue(cleaned, new TypeReference<>() {});
+            Map<String, Object> root = objectMapper.readValue(cleaned, new TypeReference<>() {});
+            List<Map<String, Object>> rawList = (List<Map<String, Object>>) root.get("nodes");
+            Map<String, Object> lessonMeta = (Map<String, Object>) root.get("lesson_meta");
 
-            if (rawList.size() != nodes.size()) {
-                log.error("[AiResponseParser] AI returned {} nodes, expected {}", rawList.size(), nodes.size());
+            if (rawList == null || rawList.size() != nodes.size()) {
+                log.error("[AiResponseParser] AI returned {} nodes, expected {}", rawList == null ? 0 : rawList.size(), nodes.size());
                 throw new ApiException(AiResponseCode.NODE_COUNT_MISMATCH);
             }
+
+            // SORT rawList to match the order of 'nodes' based on 'node_type' string
+            List<Map<String, Object>> sortedList = new ArrayList<>();
+            for (NodeType nt : nodes) {
+                Map<String, Object> found = rawList.stream()
+                        .filter(m -> m.get("node_type") != null && m.get("node_type").toString().equals(nt.getName()))
+                        .findFirst()
+                        .orElseThrow(() -> {
+                            log.error("Missing node type in AI response: {}", nt.getName());
+                            return new ApiException(AiResponseCode.JSON_PARSE_ERROR);
+                        });
+                sortedList.add(found);
+            }
+            rawList = sortedList;
 
             List<ScriptNodeResultDto> results = new ArrayList<>();
             for (int i = 0; i < rawList.size(); i++) {
@@ -73,12 +90,16 @@ public class AiResponseParser {
                         null  // verification — populated by Phase 2 async, null on initial generation
                 ));
             }
-            return results;
+
+            return new AiParsedResult(lessonMeta, results);
 
         } catch (ApiException e) {
             throw e;
         } catch (Exception e) {
             log.error("[AiResponseParser] JSON parse failed: {}\nRaw content: {}", e.getMessage(), cleaned);
+            try {
+                java.nio.file.Files.writeString(java.nio.file.Paths.get("ai_error_debug.json"), cleaned);
+            } catch(Exception ex) {}
             throw new ApiException(AiResponseCode.JSON_PARSE_ERROR);
         }
     }

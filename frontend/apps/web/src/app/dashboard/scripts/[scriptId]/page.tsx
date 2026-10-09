@@ -52,11 +52,12 @@ function mapNodeDtoToTimelineStep(node: ScriptNodeResponseDTO, index: number): T
     originalContent,
     pedagogNote: Array.isArray(pedagogNote) ? pedagogNote.join(', ') : String(pedagogNote),
     warningContext: (settings.warning_context as string) || '',
-    appliedActivity: node.activityTitle || (settings.applied_activity as string) || node.appliedActivityCode || '',
+    appliedActivity: node.activityTitle || (settings.applied_activity as string) || node.appliedActivityCode || (node as any).appliedActivity || '',
     nodePayload: settings.node_payload ?? settings.nodePayload ?? null,
     teachingMethod: Array.isArray(settings.teaching_methods)
       ? settings.teaching_methods.map(String).join(', ')
-      : ((settings.teaching_method as string) || (settings.teachingMethod as string) || undefined),
+      : ((settings.teaching_method as string) || (settings.teachingMethod as string) || (node as any).appliedActivity || undefined),
+    mappedKnowledge: Array.isArray((node as any).mappedKnowledge) ? (node as any).mappedKnowledge : (Array.isArray(settings.mapped_knowledge) ? settings.mapped_knowledge : []),
     _raw: node as unknown as Record<string, unknown>,
   }
 }
@@ -145,11 +146,19 @@ function ScriptEditContent() {
     return mergeLessonMetaWithNodes(
       base,
       timelineSteps.map(s => ({
-        teachingMethod: s.teachingMethod,
+        teachingMethod: s.teachingMethod || s.appliedActivity,
         materials: Array.isArray(s.pedagogNote) ? s.pedagogNote : String(s.pedagogNote || '').split(/,|\n/),
+        knowledge: (s as any).mappedKnowledge || [],
+        methodDetail: {
+          name: s.appliedActivity || s.teachingMethod || s.title || 'Hoạt động',
+          description: s.intent || '',
+          steps: Array.isArray(s.details) ? s.details : [],
+        }
       })),
     )
   }, [scriptId, realScript, timelineSteps])
+
+  const effectiveContentSummary = contentSummary || timelineSteps.map(s => s.intent).filter(Boolean).join(' ');
 
   const handleRestart = () => {
     const activeCourseId = courseIdParam || courseId
@@ -181,7 +190,7 @@ function ScriptEditContent() {
               <TimelineEditor
                 steps={timelineSteps}
                 onStepsChange={handleStepsChange}
-                contentSummary={contentSummary}
+                contentSummary={effectiveContentSummary}
                 onRestart={handleRestart}
                 courseId={effectiveCourseId || undefined}
                 courseTitle={courseTitle}

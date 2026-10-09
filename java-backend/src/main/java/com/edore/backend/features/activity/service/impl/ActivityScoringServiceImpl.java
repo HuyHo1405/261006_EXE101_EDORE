@@ -29,6 +29,9 @@ public class ActivityScoringServiceImpl implements ActivityScoringService {
 
     @Override
     public List<Activity> getTopActivityEntities(NodeType nodeType, ClassConfig classConfig, String nodeIntent, int limit) {
+        if (nodeType != null && com.edore.backend.features.script.model.NodeTypeEnum.HINH_THANH_KIEN_THUC.equals(nodeType.getId())) {
+            return List.of();
+        }
 
         List<Activity> all = activityRepository.findAll();
         String space = classConfig.getSpace() != null ? classConfig.getSpace().name() : "";
