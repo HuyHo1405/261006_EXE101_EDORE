@@ -11,6 +11,8 @@ import type {
   ScriptNodeResponseDTO,
   ScriptResponseDTO,
   ScriptUpdatePayload,
+  LessonSummaryDTO,
+  LessonFilterParams,
 } from "@edore/types";
 
 type ApiClientFn = <T = void>(endpoint: string, options?: RequestInit) => Promise<ApiResponse<T>>;
@@ -101,14 +103,62 @@ export function createCourseService(client: ApiClientFn = apiClient) {
       await client(`/api/v1/scripts/${scriptId}`, { method: "DELETE" });
     },
 
-    async generateScriptWithAi(formData: FormData): Promise<any> {
+    async getLessons(params?: LessonFilterParams): Promise<PageResponseDTO<LessonSummaryDTO>> {
+      const queryParams = new URLSearchParams();
+      if (params?.keyword) queryParams.set("keyword", params.keyword);
+      if (params?.gradeCode) queryParams.set("gradeCode", params.gradeCode);
+      if (params?.subjectCode) queryParams.set("subjectCode", params.subjectCode);
+      if (params?.textbookCode) queryParams.set("textbookCode", params.textbookCode);
+      if (params?.chapterId) queryParams.set("chapterId", params.chapterId);
+      if (params?.orderInChapter !== undefined) queryParams.set("orderInChapter", String(params.orderInChapter));
+      if (params?.page !== undefined) queryParams.set("page", String(params.page));
+      if (params?.size !== undefined) queryParams.set("size", String(params.size));
+      if (params?.sortBy) queryParams.set("sortBy", params.sortBy);
+      if (params?.sortDirection) queryParams.set("sortDirection", params.sortDirection);
+
+      const queryStr = queryParams.toString();
+      const endpoint = `/api/v1/lessons${queryStr ? `?${queryStr}` : ""}`;
+      const res = await client<PageResponseDTO<LessonSummaryDTO>>(endpoint, { method: "GET" });
+      return res.result!;
+    },
+
+    async generateScriptWithAi(payload: {
+      lessonId: string;
+      courseId: string;
+      templateId?: number | string;
+      scriptTitle?: string;
+      learningOutcome?: string;
+      enableFactCheck?: boolean;
+    } | FormData): Promise<any> {
       const { useAuthStore } = await import("@/features/auth/stores/useAuthStore");
       const token = useAuthStore.getState().accessToken;
+
+      let body: BodyInit;
+      if (payload instanceof FormData) {
+        body = payload;
+      } else {
+        const fd = new FormData();
+        fd.append("lessonId", payload.lessonId);
+        fd.append("courseId", payload.courseId);
+        fd.append("templateId", String(payload.templateId === "extended-4-node" || String(payload.templateId) === "2" ? 2 : 1));
+        if (payload.scriptTitle) {
+          fd.append("scriptTitle", payload.scriptTitle);
+          fd.append("title", payload.scriptTitle);
+        }
+        if (payload.learningOutcome) {
+          fd.append("learningOutcome", payload.learningOutcome);
+        }
+        if (payload.enableFactCheck !== undefined) {
+          fd.append("enableFactCheck", String(payload.enableFactCheck));
+        }
+        body = fd;
+      }
+
       // Dùng relative URL → đi qua vercel.json rewrite → tới https://api.edore.id.vn
       const res = await fetch(`/api/v1/ai/pedagogy`, {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: formData,
+        body: body,
       });
       if (!res.ok) {
         const text = await res.text().catch(() => "");

@@ -151,3 +151,31 @@ export interface ScriptCardViewModel {
   updatedText: string;
   raw: ScriptResponseDTO;
 }
+
+// ── Lesson DTOs ────────────────────────────────────────────────────────────
+
+export interface LessonSummaryDTO {
+  id: string;
+  code: string;
+  title: string;
+  orderInChapter?: number;
+  gradeCode?: string;
+  subjectCode?: string;
+  textbookCode?: string;
+  chapterId?: string;
+  chapterTitle?: string;
+}
+
+export interface LessonFilterParams {
+  keyword?: string;
+  gradeCode?: string;
+  subjectCode?: string;
+  textbookCode?: string;
+  chapterId?: string;
+  orderInChapter?: number;
+  page?: number;
+  size?: number;
+  sortBy?: string;
+  sortDirection?: "ASC" | "DESC";
+}
+

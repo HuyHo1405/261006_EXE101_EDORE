@@ -11,7 +11,7 @@ export { MaterialList }
 // ─── Entry ────────────────────────────────────────────────────────────────────
 export function NodeBody({
   nodeTypeCode, nodeType, payload, onPayloadChange, steps, renderNote, teachingMethod, onTeachingMethodChange,
-  appliedActivity, intent, onGoToNextNode, nextStepTitle, teachingTools, pedagogNote, hinhThanhApproach, activeUnitIdx
+  appliedActivity, intent, onIntentChange, onGoToNextNode, nextStepTitle, teachingTools, images, pedagogNote, hinhThanhApproach, activeUnitIdx
 }: {
   nodeTypeCode?: string
   nodeType?: string
@@ -24,8 +24,10 @@ export function NodeBody({
   appliedActivity?: string
   intent?: string
   onGoToNextNode?: () => void
+  onIntentChange?: (v: string) => void
   nextStepTitle?: string
   teachingTools?: any[]
+  images?: any[]
   pedagogNote?: any
   hinhThanhApproach?: string
   activeUnitIdx?: number
@@ -46,9 +48,11 @@ export function NodeBody({
         renderNote={renderNote}
         appliedActivity={appliedActivity}
         intent={intent}
+        onIntentChange={onIntentChange}
         onGoToNextNode={onGoToNextNode}
         nextStepTitle={nextStepTitle}
         teachingTools={teachingTools}
+        images={images}
         pedagogNote={pedagogNote}
         hinhThanhApproach={hinhThanhApproach}
       />
@@ -67,6 +71,7 @@ export function NodeBody({
         onTeachingMethodChange={onTeachingMethodChange}
         appliedActivity={appliedActivity}
         teachingTools={teachingTools}
+        images={images}
         pedagogNote={pedagogNote}
         onGoToNextNode={onGoToNextNode}
         nextStepTitle={nextStepTitle}

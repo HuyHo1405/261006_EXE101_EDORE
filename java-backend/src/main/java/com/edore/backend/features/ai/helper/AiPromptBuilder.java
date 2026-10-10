@@ -83,6 +83,9 @@ public class AiPromptBuilder {
                 %s
 
                 CRITICAL RULES:
+                NGUYÊN TẮC PHỤ THUỘC GIỮA CÁC FIELD (DEPENDENCY CONSISTENCY):
+                Nhiều field trong schema không độc lập — field này ĐẶT RA yêu cầu, field kia BẮT BUỘC phải trả lời đúng cấu trúc của yêu cầu đó. Trước khi sinh nội dung, LUÔN xác định rõ field nào là "câu hỏi/khung" và field nào là "câu trả lời", rồi đối chiếu để đảm bảo khớp nhau. TUYỆT ĐỐI KHÔNG viết 2 field này như thể chúng độc lập với nhau.
+
                 1. title: BẮT BUỘC SIÊU NGẮN CHỈ TỪ 1 ĐẾN 3 TỪ (≤ 20 ký tự). Dùng làm nhãn Stepper Navigation trên UI.
                 2. applied_activity: BẮT BUỘC giữ nguyên 100%% tên phương pháp gốc từ gợi ý. Tuy nhiên, RIÊNG HINH_THANH_KIEN_THUC BẮT BUỘC trả về null cho cả `applied_activity` và `applied_activity_code` vì nút này dạy học linh hoạt không gò bó.
                 3. interaction_flow: Khi chọn phương pháp từ gợi ý DB (is_custom_activity = false), BẮT BUỘC bám theo khung các bước 'step_template' của phương pháp đó.
@@ -95,7 +98,7 @@ public class AiPromptBuilder {
                 10. Với LUYEN_TAP: exercises phải là đề bài cụ thể trích/dựa theo phần "Luyện tập" của tài liệu gốc nếu có, answer phải là đáp án xác định, không mô tả hoạt động.
                 11. Với VAN_DUNG: scenario phải là tình huống MỚI hoặc bài tập mở rộng, không lặp lại nguyên văn ví dụ đã dạy ở knowledge_units.
                 12. MẢNG JSON BẮT BUỘC PHẢI SINH 'Hình thành kiến thức' TRƯỚC 'Khởi động' (dù cấu trúc học là Khởi động trước).
-                13. KHOI_DONG: BẮT BUỘC map `activity_type` dựa trên `pedagogical_approach` của HINH_THANH_KIEN_THUC theo bảng: INDUCTIVE -> QUESTION_BASED, DEDUCTIVE -> VISUAL_TEASER, PROBLEM_BASED -> PROBLEM_SITUATION.
+                13. KHOI_DONG: BẮT BUỘC map `activity_type` dựa trên `pedagogical_approach` của HINH_THANH_KIEN_THUC theo bảng: INDUCTIVE -> QUESTION_BASED, DEDUCTIVE -> VISUAL_TEASER, PROBLEM_BASED -> PROBLEM_SITUATION. ĐỒNG THỜI, BẮT BUỘC phải thiết kế câu dẫn dắt (hook) tạo bối cảnh hấp dẫn ngay từ đầu, KHÔNG nhảy bổ vào yêu cầu học sinh nhận diện/trả lời khi chưa được cung cấp ngữ cảnh. Hoạt động Khởi động là để khơi gợi tò mò, KHÔNG được biến thành bài kiểm tra kiến thức mới mà học sinh chưa học.
                 14. HINH_THANH_KIEN_THUC: BẮT BUỘC các phần tử trong mảng knowledge_units không được trùng lặp visual_example.item, visual_example.title, hay core_content giữa các unit. Trước khi sinh unit thứ N, liệt kê lại (trong đầu) các hiện vật/thao tác đã dùng ở unit 1..N-1 và BẮT BUỘC chọn hiện vật và thao tác hoàn toàn khác. NẾU 2 UNIT CÓ THAO TÁC HOẶC HIỆN VẬT GIỐNG NHAU, ĐÓ LÀ LỖI NGHIÊM TRỌNG!
                 15. ĐẢM BẢO JSON HỢP LỆ: TUYỆT ĐỐI KHÔNG xuống dòng thực sự (bấm Enter) bên trong nội dung của các chuỗi (string) trong JSON. Phải sử dụng ký tự escape `\\n` nếu muốn xuống dòng (ví dụ trong `core_content`). Nếu vi phạm, chuỗi JSON sẽ bị lỗi cú pháp!
                 16. HINH_THANH_KIEN_THUC: BẮT BUỘC chọn `pedagogical_approach` theo cây quyết định sau:
@@ -103,6 +106,11 @@ public class AiPromptBuilder {
                     - Nếu nội dung có nhiều hiện tượng/ví dụ cụ thể để HS tự rút ra quy luật -> INDUCTIVE
                     - Nếu nội dung chứa mâu thuẫn/tình huống/vấn đề cần giải quyết -> PROBLEM_BASED
                 17. HINH_THANH_KIEN_THUC: Nếu danh sách ảnh có sẵn, BẮT BUỘC mỗi knowledge_unit phải chọn ít nhất 1 ảnh phù hợp nhất (lấy ID đưa vào `used_image_ids`), trừ khi tuyệt đối không có ảnh nào liên quan.
+                18. HINH_THANH_KIEN_THUC: `teacher_explanation` NAY LÀ MỘT MẢNG CÁC ĐỐI TƯỢNG {label, content}. BẮT BUỘC phải chia nhỏ lời giải thích của giáo viên theo các khía cạnh logic. ĐỐI VỚI MÔN LỊCH SỬ, BẮT BUỘC sử dụng các nhãn (label) chuẩn mực như: "Nguyên nhân", "Diễn biến", "Kết quả/Ý nghĩa", "Tính chất/Đặc điểm" (nếu bài học có chứa nội dung tương ứng). Các môn khác có thể dùng "Khái niệm", "Đặc điểm", "Phân loại", "Ví dụ thực tế" để bám sát nội dung. KHÔNG viết thành một đoạn văn dài dòng.
+                19. KHOI_DONG: `quick_connection` PHẢI là câu trả lời/phản xạ SUY RA TRỰC TIẾP từ chính nội dung đã mô tả ở `visual_action` — không được là một thông tin mới không liên quan đến thứ vừa xem.
+                20. KHOI_DONG: `bridge_question` BẮT BUỘC phải dẫn thẳng đến đúng chủ đề cốt lõi sẽ được dạy trong `node_content` của HINH_THANH_KIEN_THUC tương ứng — không đặt câu hỏi chung chung.
+                21. LUYEN_TAP: Trước khi gán "level", BẮT BUỘC đối chiếu lại độ khó thực tế của "question". `nhan_biet`: chỉ nêu lại sự kiện có sẵn; `thong_hieu`: giải thích vì sao; `van_dung_thap`: áp dụng ngữ cảnh; `van_dung_cao`: tổng hợp/đánh giá. Đồng thời `exercises` PHẢI bao phủ đủ các ý trong `mapped_knowledge`.
+                22. VAN_DUNG: Nếu `task_requirement` chứa nhiều phần/câu hỏi con, `rubric` BẮT BUỘC có số tiêu chí tương ứng map 1-1. `scaffolding_hint` CHỈ được trỏ đến nội dung THỰC SỰ có trong `knowledge_units` đã sinh ở HINH_THANH_KIEN_THUC, TUYỆT ĐỐI không hallucination.
                 """.formatted(nodes.size(), expectedStructure, groundingGuidance, schema, perNodeSchemas);
     }
 

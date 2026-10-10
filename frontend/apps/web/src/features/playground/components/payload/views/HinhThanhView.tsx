@@ -44,6 +44,7 @@ export function HinhThanhView({
   onGoToNextNode?: () => void
   nextStepTitle?: string
   activeUnitIdx?: number
+  images?: any[]
 }) {
   const p = payload || {}
   const units: any[] = Array.isArray(p.knowledge_units) ? p.knowledge_units : []
@@ -172,19 +173,6 @@ export function HinhThanhView({
                   THAO TÁC CỦA GIÁO VIÊN (TRỰC QUAN HÓA &amp; NGỮ LIỆU)
                 </div>
 
-                {/* Tên tư liệu ảnh / hiện vật đối chiếu */}
-                <div className="space-y-1">
-                  <div className="text-[11px] font-bold text-slate-600">
-                    Ngữ liệu / Hiện vật đối chiếu:
-                  </div>
-                  <input
-                    value={visualItem}
-                    onChange={e => updateUnitVisual(activeUnit, { item: e.target.value })}
-                    placeholder="Tên tư liệu ảnh, hiện vật thật hoặc ví dụ đối chiếu cụ thể..."
-                    className="w-full text-xs sm:text-sm font-bold text-slate-900 bg-white border border-slate-300 rounded-lg px-3 py-1.5 outline-none shadow-2xs"
-                  />
-                </div>
-
                 {/* Mô tả cách trình chiếu / quan sát */}
                 <div className="space-y-1">
                   <div className="text-[11px] font-bold text-slate-600">
@@ -293,38 +281,45 @@ export function HinhThanhView({
                 id="hinhthanh-step-3"
                 className="rounded-xl border border-slate-300 bg-slate-100/90 p-4 sm:p-4.5 text-xs sm:text-sm text-slate-950 leading-relaxed shadow-2xs space-y-3 transition-all duration-300"
               >
-                {/* 1. Lời giáo viên giảng giải cặn kẽ */}
+                {/* 1. Lời giáo viên giảng giải cặn kẽ (hỗ trợ cả dạng chuỗi và dạng mảng cấu trúc [{label, content}]) */}
                 <div>
                   <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 mb-1.5">
                     GIÁO VIÊN GIẢNG GIẢI CẶN KẼ (PHÂN TÍCH RÕ BẢN CHẤT, THÁO GỠ ĐIỂM DỄ NHẦM)
                   </div>
-                  <AutoResizeTextarea
-                    value={explanation}
-                    minRows={2}
-                    placeholder="Nội dung giáo viên giải thích chi tiết, gỡ rối điểm học sinh dễ nhầm lẫn..."
-                    onChange={v => updateUnit(activeUnit, { teacher_explanation: v, teacher_delivery: v })}
-                    className="w-full font-medium text-xs sm:text-sm text-slate-900 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 leading-relaxed resize-none font-medium"
-                  />
+                  {Array.isArray(curUnit.teacher_explanation) ? (
+                    <div className="space-y-2.5">
+                      {(curUnit.teacher_explanation as Array<{ label: string; content: string }>).map((item, idx) => (
+                        <div key={idx} className="rounded-lg bg-white/90 border border-slate-200/90 p-2.5 space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[10px] font-bold uppercase tracking-wider">
+                              {item.label}
+                            </span>
+                          </div>
+                          <AutoResizeTextarea
+                            value={item.content || ''}
+                            minRows={1}
+                            placeholder={`Nội dung ${item.label}...`}
+                            onChange={v => {
+                              const newArr = [...(curUnit.teacher_explanation as any[])]
+                              newArr[idx] = { ...newArr[idx], content: v }
+                              updateUnit(activeUnit, { teacher_explanation: newArr })
+                            }}
+                            className="w-full font-medium text-xs sm:text-sm text-slate-900 bg-transparent border-0 p-0 outline-none leading-relaxed resize-none"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <AutoResizeTextarea
+                      value={typeof explanation === 'string' ? explanation : ''}
+                      minRows={2}
+                      placeholder="Nội dung giáo viên giải thích chi tiết, gỡ rối điểm học sinh dễ nhầm lẫn..."
+                      onChange={v => updateUnit(activeUnit, { teacher_explanation: v, teacher_delivery: v })}
+                      className="w-full font-medium text-xs sm:text-sm text-slate-900 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 leading-relaxed resize-none font-medium"
+                    />
+                  )}
                 </div>
 
-                {/* 2. Mũi tên -> Chuẩn hóa kiến thức cốt lõi ghi vở */}
-                <div className="pt-3 border-t border-slate-200/90 flex items-start gap-2.5">
-                  <div className="w-5.5 h-5.5 rounded-md bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5 text-emerald-700 shadow-2xs">
-                    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
-                  </div>
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800">
-                      KIẾN THỨC CỐT LÕI (HỌC SINH GHI NHỚ &amp; VÀO VỞ)
-                    </div>
-                    <AutoResizeTextarea
-                      value={curUnit.core_content || ''}
-                      minRows={2}
-                      placeholder="Nội dung chuẩn hóa để học sinh chép vào vở ghi..."
-                      onChange={v => updateUnit(activeUnit, { core_content: v })}
-                      className="w-full font-bold text-xs sm:text-sm text-slate-900 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 leading-relaxed resize-none"
-                    />
-                  </div>
-                </div>
 
                 {/* 3. Nút chuyển tiếp mượt mà */}
                 <div className="pt-3 border-t border-slate-200/90 flex items-center justify-between flex-wrap gap-2">
@@ -358,7 +353,7 @@ export function HinhThanhView({
                         className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs sm:text-sm shadow-2xs hover:shadow-xs transition-all cursor-pointer select-none"
                         title="Bấm để chuyển ngay sang phần Luyện tập"
                       >
-                        <span>{nextStepTitle ? `Vào: ${nextStepTitle}` : 'Vào: Luyện tập củng cố'}</span>
+                        <span>{nextStepTitle ? `${nextStepTitle}` : 'Luyện tập củng cố'}</span>
                         <ArrowRight className="w-4 h-4 text-emerald-100 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </>
@@ -385,7 +380,7 @@ export function HinhThanhView({
       </div>
 
       {/* ─── KHỐI CHỐT KIẾN THỨC TOÀN BÀI (SYNTHESIS) ─── */}
-      {p.synthesis !== undefined && (
+      {p.synthesis !== undefined && activeUnit === units.length - 1 && (
         <div className="rounded-2xl border border-slate-300 bg-slate-100/80 p-4 sm:p-5 shadow-2xs space-y-2.5">
           <SectionLabel tone="slate" icon={<Flag className="w-4 h-4 text-slate-700" />}>
             Chốt kiến thức toàn bài (Đúc kết sau khi hoàn thành các phần)

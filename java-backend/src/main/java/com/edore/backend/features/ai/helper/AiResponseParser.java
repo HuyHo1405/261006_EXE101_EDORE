@@ -5,6 +5,7 @@ import com.edore.backend.features.ai.code.AiResponseCode;
 import com.edore.backend.features.ai.dto.response.AiParsedResult;
 import com.edore.backend.features.ai.dto.response.ScriptNodeResultDto;
 import com.edore.backend.features.script.entity.NodeType;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,8 @@ import java.util.regex.Pattern;
 @Component
 public class AiResponseParser {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
     private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d+");
 
     public AiParsedResult parseAiResponse(String rawContent, List<NodeType> nodes) {

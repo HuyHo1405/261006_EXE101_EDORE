@@ -24,6 +24,9 @@ interface DashboardAsideProps {
   onSelectCourse?: (course: CourseResponseDTO) => void;
   onCreateCourse?: () => void;
   onCreateScriptForCourse?: (courseId: string) => void;
+  isDrawerOnly?: boolean;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 export function DashboardAside({
@@ -36,10 +39,18 @@ export function DashboardAside({
   onSelectCourse,
   onCreateCourse,
   onCreateScriptForCourse,
+  isDrawerOnly,
+  isOpen,
+  onClose,
 }: DashboardAsideProps) {
   const router = useRouter();
   // State to control full Aside overlay drawer visibility
-  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [internalOverlayOpen, setInternalOverlayOpen] = useState(false);
+  const isOverlayOpen = isOpen !== undefined ? isOpen : internalOverlayOpen;
+  const setIsOverlayOpen = (val: boolean) => {
+    if (onClose && !val) onClose();
+    setInternalOverlayOpen(val);
+  };
 
   // State to collapse/expand tree sections inside the full Aside
   const [isCoursesExpanded, setIsCoursesExpanded] = useState(true);
@@ -82,56 +93,11 @@ export function DashboardAside({
     }
   };
 
-  return (
-    <aside className="relative w-16 shrink-0 bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl px-2.5 py-3 sm:py-4 md:py-6 flex flex-col items-center justify-between self-stretch min-h-[580px] font-sans z-30">
-      {/* ── COMPACT SIDEBAR ICONS (DEFAULT MINIMIZED STATE - 0% LAYOUT REFLOW) ── */}
-      <div className="w-full flex flex-col items-center space-y-4">
-        {/* Maximize / Expand Toggle Button with Hover Transform & Scale Bouncing */}
-        <button
-          type="button"
-          onClick={() => setIsOverlayOpen(true)}
-          title="Mở toàn bộ Aside Overlay"
-          className="h-11 w-11 flex items-center justify-center rounded-2xl bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/30 hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer mb-1 group shrink-0"
-        >
-          <PanelLeftOpen className="h-5 w-5 transform group-hover:rotate-12 transition-transform duration-300" />
-        </button>
-
-        <div className="w-8 h-[1px] bg-slate-200/80 my-1" />
-
-        {/* Courses Icon Button */}
-        <button
-          type="button"
-          onClick={() => {
-            onTabChange("courses");
-            setIsCoursesExpanded(true);
-            setIsOverlayOpen(true);
-          }}
-          title="Khóa học của tôi (Mở Aside)"
-          className={`p-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-105 active:scale-95 ${
-            activeTab === "courses"
-              ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
-              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-          }`}
-        >
-          <FolderOpen className="h-5 w-5" />
-        </button>
-      </div>
-
-      {/* Bottom helper icon with hover slide animation */}
-      <div className="pt-4 border-t border-slate-100 w-full flex justify-center">
-        <button
-          type="button"
-          onClick={() => setIsOverlayOpen(true)}
-          title="Mở rộng Sidebar"
-          className="text-slate-400 hover:text-slate-900 p-2 cursor-pointer transform hover:translate-x-1 transition-all duration-200"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      </div>
-
+  const drawerContent = (
+    <>
       {/* ── SMOOTH BACKDROP OVERLAY (GPU-ACCELERATED FADE) ── */}
       <div
-        className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] transition-opacity duration-300 ease-in-out ${
+        className={`fixed inset-0 z-[100] bg-black/30 backdrop-blur-[2px] transition-opacity duration-300 ease-in-out ${
           isOverlayOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setIsOverlayOpen(false)}
@@ -139,9 +105,9 @@ export function DashboardAside({
 
       {/* ── FULL ASIDE OVERLAY DRAWER (GPU-ACCELERATED FULL HORIZONTAL SLIDE DRAWER) ── */}
       <div
-        className={`absolute top-0 left-0 z-50 w-68 h-full bg-white border border-slate-200/80 shadow-2xl rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 flex flex-col justify-between transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1) transform font-sans ${
+        className={`fixed top-0 left-0 z-[110] w-68 h-full bg-white border-r border-slate-200/80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.3)] p-3 sm:p-4 md:p-6 flex flex-col justify-between transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1) transform font-sans ${
           isOverlayOpen
-            ? "translate-x-0 opacity-100 pointer-events-auto shadow-slate-900/15"
+            ? "translate-x-0 opacity-100 pointer-events-auto"
             : "-translate-x-full opacity-0 pointer-events-none"
         }`}
       >
@@ -372,6 +338,61 @@ export function DashboardAside({
           </button>
         </div>
       </div>
+    </>
+  );
+
+  if (isDrawerOnly) {
+    return drawerContent;
+  }
+
+  return (
+    <aside className="relative w-16 shrink-0 bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl px-2.5 py-3 sm:py-4 md:py-6 flex flex-col items-center justify-between self-stretch min-h-[580px] font-sans z-30">
+      {/* ── COMPACT SIDEBAR ICONS (DEFAULT MINIMIZED STATE - 0% LAYOUT REFLOW) ── */}
+      <div className="w-full flex flex-col items-center space-y-4">
+        {/* Maximize / Expand Toggle Button with Hover Transform & Scale Bouncing */}
+        <button
+          type="button"
+          onClick={() => setIsOverlayOpen(true)}
+          title="Mở toàn bộ Aside Overlay"
+          className="h-11 w-11 flex items-center justify-center rounded-2xl bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/30 hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer mb-1 group shrink-0"
+        >
+          <PanelLeftOpen className="h-5 w-5 transform group-hover:rotate-12 transition-transform duration-300" />
+        </button>
+
+        <div className="w-8 h-[1px] bg-slate-200/80 my-1" />
+
+        {/* Courses Icon Button */}
+        <button
+          type="button"
+          onClick={() => {
+            onTabChange("courses");
+            setIsCoursesExpanded(true);
+            setIsOverlayOpen(true);
+          }}
+          title="Khóa học của tôi (Mở Aside)"
+          className={`p-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-105 active:scale-95 ${
+            activeTab === "courses"
+              ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
+              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+          }`}
+        >
+          <FolderOpen className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Bottom helper icon with hover slide animation */}
+      <div className="pt-4 border-t border-slate-100 w-full flex justify-center">
+        <button
+          type="button"
+          onClick={() => setIsOverlayOpen(true)}
+          title="Mở rộng Sidebar"
+          className="text-slate-400 hover:text-slate-900 p-2 cursor-pointer transform hover:translate-x-1 transition-all duration-200"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+
+      {drawerContent}
     </aside>
   );
 }

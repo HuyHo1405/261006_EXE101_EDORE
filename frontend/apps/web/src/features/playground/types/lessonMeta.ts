@@ -39,6 +39,8 @@ export interface LessonMeta {
   methodDetails?: TeachingMethodDetail[]
   /** Phương tiện / công cụ cần chuẩn bị kèm mục đích */
   teachingTools: (string | TeachingToolItem)[]
+  /** Danh sách ảnh của bài học */
+  images?: any[]
 }
 
 export const EMPTY_LESSON_META: LessonMeta = {
@@ -90,6 +92,7 @@ export function normalizeLessonMeta(raw: Record<string, any> | null | undefined)
     teachingMethods: toStringArray(pick(src, 'teachingMethods', 'teaching_methods')),
     methodDetails: (pick(src, 'methodDetails', 'method_details', 'teachingMethodDetails', 'teaching_method_details') as TeachingMethodDetail[] | undefined),
     teachingTools: toToolArray(pick(src, 'teachingTools', 'teaching_tools', 'materials_needed')),
+    images: pick(src, 'images') as any[] | undefined,
   }
 }
 

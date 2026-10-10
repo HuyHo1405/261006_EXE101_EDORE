@@ -7,8 +7,9 @@ import {
   Eye, EyeOff, Award, Target, ClipboardList, Pencil, ListChecks,
   Monitor, Ruler, FileText, Package, PackageCheck, Presentation,
   Compass, Sparkles, Check, ArrowDown, Quote, Wand2, ArrowRight,
-  Image as ImageIcon, BookOpen, Gamepad2, Zap, Play,
+  Image as ImageIcon, BookOpen, Gamepad2, Zap, Play, X, Loader2,
 } from 'lucide-react'
+import { createPortal } from 'react-dom'
 import { AutoResizeTextarea } from '../StepEnrichmentRender'
 import { classifyMaterial, splitStepText } from '../../../utils/stepText'
 import type { MaterialKind, ParsedMaterial } from '../../../utils/stepText'
@@ -167,5 +168,106 @@ export function StepList({
         })}
       </ol>
     </div>
+  )
+}
+
+// ─── Image Gallery ─────────────────────────────────────────────────────────────
+export function ImageGallery({
+  usedImageIds,
+  images,
+  layout = 'grid'
+}: {
+  usedImageIds?: string[]
+  images?: any[]
+  layout?: 'grid' | 'stack'
+}) {
+  const [selectedImage, setSelectedImage] = useState<any | null>(null)
+  const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
+
+  if (!usedImageIds || !usedImageIds.length) return null
+
+  // Tìm các ảnh có id trong usedImageIds
+  const displayImages = usedImageIds.map(id => {
+    return images?.find(img => img.id === id) || { id, title: 'Ảnh không xác định', url: '' }
+  })
+
+  const gridClass = layout === 'stack' ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3'
+
+  return (
+    <>
+      <div className={`grid ${gridClass} gap-3 mt-3`}>
+        {displayImages.map((img, idx) => (
+          <div 
+            key={idx} 
+            onClick={() => { if (img.url) setSelectedImage(img) }}
+            className="relative group rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video flex flex-col items-center justify-center cursor-pointer shadow-xs hover:shadow-md transition-shadow"
+          >
+            {img.url ? (
+              <>
+                {loadingMap[img.id] !== false && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-100 animate-pulse">
+                    <Loader2 className="w-6 h-6 text-slate-300 animate-spin" />
+                  </div>
+                )}
+                <img 
+                  src={img.url} 
+                  alt={img.title || img.name || 'Ảnh trực quan'} 
+                  onLoad={() => setLoadingMap(prev => ({ ...prev, [img.id]: false }))}
+                  className={`w-full h-full object-contain bg-white transition-all duration-300 ${loadingMap[img.id] !== false ? 'opacity-0 scale-95' : 'opacity-100 scale-100 group-hover:scale-105'}`} 
+                />
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-2 text-slate-400">
+                <ImageIcon className="w-6 h-6 mb-1 opacity-50" />
+                <span className="text-[10px] font-mono text-center break-all px-2 line-clamp-2">{img.id}</span>
+              </div>
+            )}
+            {img.title && (
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2 pt-8">
+                <p className="text-white text-[11px] font-bold truncate drop-shadow-sm">{img.title}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Lightbox / Modal */}
+      {selectedImage && typeof document !== 'undefined' && createPortal(
+        <div 
+          className="fixed inset-0 z-[99999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors cursor-pointer z-50"
+            onClick={(e) => {
+              e.stopPropagation()
+              setSelectedImage(null)
+            }}
+          >
+            <X className="w-6 h-6" />
+          </button>
+          
+          <div 
+            className="relative max-w-5xl w-full max-h-[85vh] flex flex-col items-center justify-center z-40"
+            onClick={e => e.stopPropagation()}
+          >
+            <img 
+              src={selectedImage.url} 
+              alt={selectedImage.title || 'Phóng to'} 
+              className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl ring-1 ring-white/10 select-none" 
+            />
+            {selectedImage.title && (
+              <div className="mt-4 text-center">
+                <h3 className="text-white font-header font-bold text-lg">{selectedImage.title}</h3>
+                {selectedImage.caption && selectedImage.caption !== selectedImage.title && (
+                  <p className="text-slate-300 text-sm mt-1">{selectedImage.caption}</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
   )
 }

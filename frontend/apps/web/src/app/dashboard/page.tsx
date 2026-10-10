@@ -37,6 +37,7 @@ function DashboardContent() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(() => {
     return categoryIdParam ? Number(categoryIdParam) : null;
   });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   React.useEffect(() => {
     if (categoryIdParam) {
@@ -231,6 +232,9 @@ function DashboardContent() {
             }}
             onCreateCourse={handleOpenCreateCourse}
             onCreateScriptForCourse={handleCreateScriptForCourse}
+            isDrawerOnly={true}
+            isOpen={isMenuOpen}
+            onClose={() => setIsMenuOpen(false)}
           />
 
           {/* CONTAINER 2: MAIN SECTION */}
@@ -242,6 +246,7 @@ function DashboardContent() {
                 currentCourse={activeSelectedCourse}
                 onBackToCourses={handleBackToCourses}
                 totalCount={coursePage?.totalElements || 0}
+                onOpenMenu={() => setIsMenuOpen(true)}
               />
 
               {/* 2. MAIN CONTENT WRAPPER (ACTION ROW SITS RIGHT ON TOP OF GRAY CONTAINER) */}

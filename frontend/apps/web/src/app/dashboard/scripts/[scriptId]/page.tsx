@@ -76,6 +76,7 @@ function ScriptEditContent() {
   const [scriptTitle, setScriptTitle] = useState('')
   const [courseId, setCourseId] = useState<string | null>(courseIdParam || null)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   // Query real script detail & nodes from API
   const { data: realScript, isError: isErrorScript } = useScriptDetail(scriptId !== 'demo' ? scriptId : '')
@@ -174,7 +175,6 @@ function ScriptEditContent() {
     <AuthGuard>
       <div className="w-full bg-[var(--color-primary-500)] min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-stretch gap-4 md:gap-6 min-h-[580px]">
-          {/* Aside Navigation with real backend courses */}
           <DashboardAside
             activeTab="scripts"
             onTabChange={() => router.push('/dashboard')}
@@ -182,8 +182,10 @@ function ScriptEditContent() {
             onSelectCategory={() => {}}
             courses={coursePage?.content || []}
             selectedCourseId={effectiveCourseId}
+            isDrawerOnly={true}
+            isOpen={isMenuOpen}
+            onClose={() => setIsMenuOpen(false)}
           />
-
           {/* Main Content Area: Timeline Editor */}
           <main className="flex-1 min-w-0 w-full bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 flex flex-col self-stretch min-h-[580px]">
             {isLoaded ? (
@@ -196,6 +198,7 @@ function ScriptEditContent() {
                 courseTitle={courseTitle}
                 scriptTitle={scriptTitle}
                 lessonMeta={lessonMeta}
+                onOpenMenu={() => setIsMenuOpen(true)}
               />
             ) : (
               <div className="flex-1 flex items-center justify-center p-12">

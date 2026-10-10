@@ -26,6 +26,7 @@ export interface TimelineEditorProps {
   courseTitle?: string
   scriptTitle?: string
   lessonMeta?: LessonMeta
+  onOpenMenu?: () => void
 }
 
 export default function TimelineEditor({
@@ -37,10 +38,12 @@ export default function TimelineEditor({
   courseTitle = '',
   scriptTitle = '',
   lessonMeta = EMPTY_LESSON_META,
+  onOpenMenu,
 }: TimelineEditorProps) {
   const [activeIdx, setActiveIdx] = useState(-1)
   const [activeUnitIdx, setActiveUnitIdx] = useState<number | null>(0)
   const [focusedSectionId, setFocusedSectionId] = useState<string | null>(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   const focusAndScrollTo = (elementId: string, highlightId?: string) => {
     setFocusedSectionId(highlightId || elementId)
@@ -212,7 +215,7 @@ export default function TimelineEditor({
       ? (/^\d+$/.test(lessonMeta.lessonNumber.trim()) ? `Bài ${lessonMeta.lessonNumber}` : lessonMeta.lessonNumber)
       : '',
     lessonMeta?.lessonTitle,
-  ].filter(Boolean).join(': ') || scriptTitle || 'Bài học'
+  ].filter(Boolean).join(': ') || contentSummary || scriptTitle || 'Bài học'
 
   const totalDuration = steps.reduce(
     (acc, s) => acc + (parseInt((s.duration || '10').replace(/[^0-9]/g, '')) || 10),
@@ -246,6 +249,9 @@ export default function TimelineEditor({
             : (cur.title || `Phần ${activeIdx + 1}`)
         }
         badgeLabel={activeIdx === -1 ? "Kịch bản bài giảng" : (cur.type || "Chi tiết phần dạy")}
+        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        isSidebarOpen={isSidebarOpen}
+        onOpenMenu={onOpenMenu}
       />
 
       {/* ─── Main Content Grid ─── */}
@@ -267,7 +273,7 @@ export default function TimelineEditor({
           </div>
         ) : isNavigating && activeIdx !== -1 ? (
           <>
-            <main className="col-span-12 lg:col-span-8 border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-sm p-6 space-y-5 min-h-[600px]">
+            <main className={`col-span-12 ${isSidebarOpen ? 'lg:col-span-8' : ''} border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-sm p-6 space-y-5 min-h-[600px] transition-all`}>
               <div className="flex gap-2">
                 <div className="h-6 w-32 bg-slate-200 rounded-full animate-pulse" />
                 <div className="h-6 w-16 bg-slate-200 rounded-full animate-pulse" />
@@ -287,14 +293,16 @@ export default function TimelineEditor({
               </div>
             </main>
             
-            <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4">
-              <div className="bg-slate-100 border border-slate-200 p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3 min-h-[600px]">
-                <div className="h-12 bg-slate-200 rounded-lg animate-pulse" />
-                <div className="h-48 bg-white border border-slate-200 rounded-lg animate-pulse" />
-                <div className="h-24 bg-white border border-slate-200 rounded-lg animate-pulse" />
-                <div className="h-48 bg-white border border-slate-200 rounded-lg animate-pulse" />
-              </div>
-            </aside>
+            {isSidebarOpen && (
+              <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4">
+                <div className="bg-slate-100 border border-slate-200 p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3 min-h-[600px]">
+                  <div className="h-12 bg-slate-200 rounded-lg animate-pulse" />
+                  <div className="h-48 bg-white border border-slate-200 rounded-lg animate-pulse" />
+                  <div className="h-24 bg-white border border-slate-200 rounded-lg animate-pulse" />
+                  <div className="h-48 bg-white border border-slate-200 rounded-lg animate-pulse" />
+                </div>
+              </aside>
+            )}
           </>
         ) : activeIdx === -1 ? (
           <TimelineOverviewView
@@ -312,7 +320,7 @@ export default function TimelineEditor({
           />
         ) : (
           <>
-            <main className="col-span-12 lg:col-span-8 border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-sm p-6 space-y-5">
+            <main className={`col-span-12 ${isSidebarOpen ? 'lg:col-span-8' : ''} border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-sm p-6 space-y-5 transition-all`}>
               {/* Top Chips Bar */}
               <div className="flex flex-wrap gap-2 items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -381,8 +389,10 @@ export default function TimelineEditor({
                         setActiveIdx(activeIdx + 1)
                       }
                     }}
+                    onIntentChange={(v) => updateStep({ intent: v })}
                     nextStepTitle={activeIdx === 0 ? lessonHeading : (activeIdx < steps.length - 1 ? steps[activeIdx + 1]?.title : undefined)}
                     teachingTools={lessonMeta?.teachingTools}
+                    images={lessonMeta?.images}
                     pedagogNote={cur.pedagogNote}
                     hinhThanhApproach={steps.find(s => s.type === 'Hình thành kiến thức' || s.nodeTypeCode === '4-node_hinh_thanh')?.nodePayload?.pedagogical_approach || 'INDUCTIVE'}
                   />
@@ -413,18 +423,29 @@ export default function TimelineEditor({
             </main>
 
             {/* Right Sidebar */}
-            <TimelineDetailSidebar
-              currentStep={cur}
-              activeIdx={activeIdx}
-              totalSteps={steps.length}
-              activeUnitIdx={activeUnitIdx}
-              focusedSectionId={focusedSectionId}
-              onNavigateToHinhThanh={handleNavigateToHinhThanh}
-              onNavigateToNode={handleNavigateToNode}
-              onFocusAndScrollTo={focusAndScrollTo}
-              parsedMaterials={parsedMaterials}
-              subSteps={subSteps}
-            />
+            {isSidebarOpen && (
+              <TimelineDetailSidebar
+                currentStep={cur}
+                activeIdx={activeIdx}
+                totalSteps={steps.length}
+                activeUnitIdx={activeUnitIdx}
+                focusedSectionId={focusedSectionId}
+                onNavigateToHinhThanh={handleNavigateToHinhThanh}
+                onNavigateToNode={handleNavigateToNode}
+                onFocusAndScrollTo={focusAndScrollTo}
+                parsedMaterials={parsedMaterials}
+                subSteps={subSteps}
+                steps={(cur.details || []).map(String).filter(s => s.trim())}
+                renderNote={(idx) => (
+                  <InlineEditor
+                    value={(cur.customStepNotes && cur.customStepNotes[idx]) || ''}
+                    onChange={(md) => updateStepNote(idx, md)}
+                    placeholder="Ghi chú thêm hoặc tùy chỉnh hướng dẫn cho bước này..."
+                  />
+                )}
+                images={lessonMeta?.images}
+              />
+            )}
           </>
         )}
       </div>

@@ -1,5 +1,5 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { CourseCreatePayload, CourseFilterParams, ScriptCreatePayload, ScriptResponseDTO, ScriptUpdatePayload } from "@edore/types";
+import type { CourseCreatePayload, CourseFilterParams, ScriptCreatePayload, ScriptResponseDTO, ScriptUpdatePayload, LessonFilterParams } from "@edore/types";
 import { courseService, CourseService } from "../api/courseService";
 import { toast } from "@/components/ui/toast";
 
@@ -14,6 +14,7 @@ export const courseKeys = {
   scriptDetail: (scriptId: string) => [...courseKeys.all, "scriptDetail", scriptId] as const,
   scriptNodes: (scriptId: string) => [...courseKeys.all, "scriptNodes", scriptId] as const,
   categories: (type?: string) => ["categories", type ?? "all"] as const,
+  lessons: (params?: LessonFilterParams) => ["lessons", params ?? {}] as const,
 };
 
 // ── Query Options Factory ───────────────────────────────────────────────────
@@ -59,6 +60,12 @@ export function createCourseQueryOptions(service: CourseService = courseService)
         queryFn: () => service.getCategories(type),
         staleTime: 1000 * 60 * 10, // Categories don't change often
       }),
+
+    lessons: (params?: LessonFilterParams) =>
+      queryOptions({
+        queryKey: courseKeys.lessons(params),
+        queryFn: () => service.getLessons(params),
+      }),
   };
 }
 
@@ -88,6 +95,10 @@ export function useScriptNodes(scriptId: string) {
 
 export function useCategories(type?: string) {
   return useQuery(courseQueryOptions.categories(type));
+}
+
+export function useLessons(params?: LessonFilterParams) {
+  return useQuery(courseQueryOptions.lessons(params));
 }
 
 // ── Mutations ──────────────────────────────────────────────────────────────
@@ -189,7 +200,8 @@ export function useDeleteScriptMutation(courseId: string) {
 export function useGenerateScriptWithAiMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (formData: FormData) => courseService.generateScriptWithAi(formData),
+    mutationFn: (payload: Parameters<typeof courseService.generateScriptWithAi>[0]) =>
+      courseService.generateScriptWithAi(payload),
     onSuccess: (data) => {
       if (data?.courseId) {
         queryClient.invalidateQueries({ queryKey: courseKeys.scripts(data.courseId) });

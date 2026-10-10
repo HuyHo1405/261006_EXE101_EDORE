@@ -142,13 +142,23 @@ public class AiPipelineServiceImpl implements AiPipelineService {
         // Populate lessonMeta manually from LessonMetadataResponse
         Map<String, Object> finalLessonMeta = new java.util.HashMap<>();
         finalLessonMeta.put("learning_outcomes", List.of(lessonMetaRes.getLearningObjectives()));
-        finalLessonMeta.put("content_summary", lessonMetaRes.getTitle());
+        finalLessonMeta.put("lesson_title", lessonMetaRes.getTitle());
         
         if (lessonMetaRes.getChapterId() != null && !lessonMetaRes.getChapterId().isBlank()) {
             chapterRepository.findById(lessonMetaRes.getChapterId()).ifPresent(ch -> {
                 finalLessonMeta.put("chapter_title", ch.getTitle());
                 finalLessonMeta.put("chapter_description", ch.getDescription());
             });
+        }
+        
+        if (lessonMetaRes.getImages() != null && !lessonMetaRes.getImages().isBlank()) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                java.util.List<java.util.Map<String, Object>> imageList = mapper.readValue(lessonMetaRes.getImages(), new com.fasterxml.jackson.core.type.TypeReference<java.util.List<java.util.Map<String, Object>>>() {});
+                finalLessonMeta.put("images", imageList);
+            } catch (Exception e) {
+                // If it fails to parse, we can ignore or just put the string
+            }
         }
 
         // 7. Persist
@@ -340,7 +350,7 @@ public class AiPipelineServiceImpl implements AiPipelineService {
             finalLessonMeta.put("learning_outcomes", List.of(lessonMetaRes.getLearningObjectives()));
         }
         
-        finalLessonMeta.put("content_summary", "Bài " + lessonMetaRes.getOrderInChapter() + ": " + lessonMetaRes.getTitle());
+        finalLessonMeta.put("lesson_title", "Bài " + lessonMetaRes.getOrderInChapter() + ": " + lessonMetaRes.getTitle());
         
         if (lessonMetaRes.getChapterId() != null && !lessonMetaRes.getChapterId().isBlank()) {
             chapterRepository.findById(lessonMetaRes.getChapterId()).ifPresent(ch -> {
@@ -348,8 +358,18 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                 finalLessonMeta.put("chapter_description", ch.getDescription());
             });
         }
+        
+        if (lessonMetaRes.getImages() != null && !lessonMetaRes.getImages().isBlank()) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                java.util.List<java.util.Map<String, Object>> imageList = mapper.readValue(lessonMetaRes.getImages(), new com.fasterxml.jackson.core.type.TypeReference<java.util.List<java.util.Map<String, Object>>>() {});
+                finalLessonMeta.put("images", imageList);
+            } catch (Exception e) {
+                // If it fails to parse, we can ignore or just put the string
+            }
+        }
 
-        // â”€â”€ 7. Persist (Phase 1 complete) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // 7. Persist (Phase 1 complete)
         SaveScriptResult saved = scriptPersistService.saveScript(courseId, template, nodes, nodeResults, finalLessonMeta, scriptTitle);
         Script script          = saved.script();
 
@@ -386,8 +406,20 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                 log.info("[Pipeline] Fact-check verification SKIPPED (toggle OFF) for scriptId={}", scriptId);
                 return;
             }
-            log.info("[Pipeline] Triggering async Phase 2 verification for scriptId={} nodes={}", scriptId, savedNodes.size());
-            scriptVerificationService.verifyScriptAsync(scriptId, savedNodes, contextPerNode, rawText);
+            log.info("[Pipeline] Registering async Phase 2 verification for scriptId={} nodes={} after commit", scriptId, savedNodes.size());
+            
+            if (org.springframework.transaction.support.TransactionSynchronizationManager.isSynchronizationActive()) {
+                org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                    new org.springframework.transaction.support.TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            scriptVerificationService.verifyScriptAsync(scriptId, savedNodes, contextPerNode, rawText);
+                        }
+                    }
+                );
+            } else {
+                scriptVerificationService.verifyScriptAsync(scriptId, savedNodes, contextPerNode, rawText);
+            }
         } catch (Exception e) {
             // Phase 2 failure must never break the Phase 1 response
             log.error("[Pipeline] Failed to trigger async verification for scriptId={}: {}", scriptId, e.getMessage(), e);

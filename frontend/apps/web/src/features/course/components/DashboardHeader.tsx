@@ -41,10 +41,12 @@ export function DashboardHeader({
   currentCourse,
   onBackToCourses,
   totalCount = 0,
+  onOpenMenu,
 }: {
   currentCourse: CourseCardViewModel | null;
   onBackToCourses: () => void;
   totalCount?: number;
+  onOpenMenu?: () => void;
 }) {
   return (
     <div className="w-full font-sans space-y-3">
@@ -53,6 +55,7 @@ export function DashboardHeader({
         currentCourse={currentCourse}
         onBackToCourses={onBackToCourses}
         totalCount={totalCount}
+        onOpenMenu={onOpenMenu}
       />
 
       {/* ── 2. MAIN HEADER TEXT SECTION (BADGES -> TITLE -> SUBTITLE WITH ACCENT BAR) ── */}

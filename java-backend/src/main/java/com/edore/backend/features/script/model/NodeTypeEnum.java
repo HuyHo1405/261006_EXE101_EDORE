@@ -15,9 +15,9 @@ public enum NodeTypeEnum {
           "activity_type": "QUESTION_BASED | VISUAL_TEASER | PROBLEM_SITUATION",
           "activity_type_label": "string — tên hiển thị tiếng Việt",
           "activity_name": "string — Tên hoạt động khởi động ngắn gọn",
-          "visual_action": "string — BƯỚC 1: HÀNH ĐỘNG MỒI CỦA GV. (Nếu là VISUAL_TEASER thì GV chiếu hình ảnh. Nếu là QUESTION_BASED thì GV đặt câu hỏi gây sốc/gợi mở. Nếu là PROBLEM_SITUATION thì GV nêu tình huống. Mô tả thao tác nhanh gọn).",
+          "visual_action": "string — BƯỚC 1: NGỮ CẢNH & HÀNH ĐỘNG MỒI CỦA GV. BẮT BUỘC thiết kế lời dẫn dắt/ngữ cảnh (context) trước khi thao tác (VD: trước khi chiếu hình/đặt câu hỏi, GV nói gì để tạo bối cảnh?). Sau đó mới nêu hành động (chiếu ảnh, đặt câu hỏi, nêu tình huống).",
           "quick_connection": "string — BƯỚC 2: HỌC SINH PHẢN XẠ NHANH. (HS đồng thanh trả lời/gọi tên/đưa ý kiến trong 1 phút. Bắt buộc thêm lưu ý: Không mổ xẻ phân tích sâu).",
-          "conclusion": "string — BƯỚC 3: LỜI KHEN NGỢI & ĐÚC KẾT CẢM XÚC (Tạo hứng thú).",
+          "conclusion": "string — BƯỚC 3: KẾT LUẬN & ĐÚC KẾT. BẮT BUỘC phải móc nối lại với ngữ cảnh/tình huống đã nêu ở BƯỚC 1 để đúc kết thông tin một cách logic, kèm lời khen ngợi tạo hứng thú.",
           "bridge_question": "string — BƯỚC 4: Lời dẫn/Câu hỏi cầu nối mượt mà vào bài mới.",
           "used_image_ids": ["string — (Tùy chọn) Chọn đúng ID ảnh từ danh sách available_images nếu có ảnh minh hoạ phù hợp"]
         }"""
@@ -33,8 +33,13 @@ public enum NodeTypeEnum {
             {
               "unit_title": "string",
               "used_image_ids": ["string — CHỈ LẤY ID TỪ available_images. Tuyệt đối không tự bịa ID mới!"],
-              "visual_example": { "title": "string", "item": "string", "description": "string — BẮT BUỘC mô tả THAO TÁC CỦA GIÁO VIÊN VỚI ảnh/hiện vật." },
-              "teacher_explanation": "string — Lời giáo viên giảng giải cặn kẽ, phân tích rõ bản chất và gỡ rối điểm học sinh dễ nhầm lẫn",
+              "visual_example": { "title": "string", "item": "string", "description": "string — BẮT BUỘC mô tả NGỮ CẢNH dẫn dắt trước (nêu bối cảnh/gợi sự tò mò), sau đó mới mô tả THAO TÁC CỦA GIÁO VIÊN VỚI ảnh/hiện vật." },
+              "teacher_explanation": [
+                {
+                  "label": "string — Tên mục giải thích (VD: Nguyên nhân, Diễn biến, Kết quả/Ý nghĩa, Tính chất/Đặc điểm, Định nghĩa...)",
+                  "content": "string — Lời giáo viên giảng giải cặn kẽ, phân tích rõ bản chất cho mục này"
+                }
+              ],
               "core_content": "string — Markdown. BẮT BUỘC chia thành nhiều đoạn ngắn (mỗi đoạn 2-4 câu, cách nhau bằng escape sequence `\\n\\n` trong JSON, KHÔNG BẤM ENTER XUỐNG DÒNG THỰC SỰ). KHÔNG viết thành 1 khối văn liền mạch dù nội dung dài. Chia đoạn theo mốc thời gian/ý chính/giai đoạn khi có thể. Giữ nguyên 100% số liệu từ file input",
               "content_navigation": {
                 "guiding_tip": "string — Mẹo dẫn dắt nếu học sinh trả lời sai hoặc bế tắc",
@@ -42,7 +47,7 @@ public enum NodeTypeEnum {
               }
             }
           ],
-          "synthesis": "string — Chốt kiến thức toàn bài (Đúc kết sau khi hoàn thành các phần)"
+          "synthesis": "string — Chốt kiến thức toàn bài. BẮT BUỘC phải xâu chuỗi/móc nối lại với các ngữ cảnh/hiện vật đã nêu ở các đơn vị kiến thức trên để tổng hợp thành bức tranh toàn cảnh."
         }"""
     ),
 
