@@ -303,6 +303,19 @@ public class PaymentServiceImpl implements PaymentService {
         Instant now = Instant.now();
         Instant endDate = now.plusSeconds((long) plan.getDurationDays() * 24 * 60 * 60);
 
+        // Cancel previous active subscriptions to prevent multiple active plans
+        java.util.List<Subscription> activeSubs = subscriptionRepository.findAllByUserIdAndStatus(
+                order.getUser().getId(), SubscriptionStatus.ACTIVE);
+        
+        for (Subscription oldSub : activeSubs) {
+            oldSub.setStatus(SubscriptionStatus.CANCELLED);
+        }
+        if (!activeSubs.isEmpty()) {
+            subscriptionRepository.saveAll(activeSubs);
+            log.info("[Subscription] Cancelled {} previous active subscription(s) for user={}", 
+                    activeSubs.size(), order.getUser().getId());
+        }
+
         Subscription subscription = Subscription.builder()
                 .user(order.getUser())
                 .subscriptionPlan(plan)
@@ -312,7 +325,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
 
         subscriptionRepository.save(subscription);
-        log.info("[Subscription] Activated subscription for user={}, plan={}, until={}",
+        log.info("[Subscription] Activated new subscription for user={}, plan={}, until={}",
                 order.getUser().getId(), plan.getName(), endDate);
     }
 }
