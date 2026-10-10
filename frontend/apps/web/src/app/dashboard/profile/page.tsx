@@ -113,7 +113,10 @@ function UserProfileContent() {
   }, [authUser]);
 
   const handleUpgradeToPro = async () => {
-    const proPlan = plans.find((p) => p.name?.toLowerCase().includes("pro"));
+    const proPlan = plans.find((p) => 
+      p.name?.toLowerCase().includes("pro") || 
+      (p.maxCourses && p.maxCourses > 5)
+    );
     if (!proPlan) {
       alert("Không tìm thấy gói Pro. Vui lòng thử lại sau.");
       return;
@@ -181,6 +184,11 @@ function UserProfileContent() {
     return item.status === statusFilter;
   });
 
+  const isPro = Boolean(
+    subStatus?.planName?.toLowerCase().includes("pro") || 
+    (subStatus?.maxCourses && subStatus.maxCourses > 5)
+  );
+
   return (
     <div className="min-h-screen bg-[var(--color-neutral-50,#fafafa)] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -191,7 +199,7 @@ function UserProfileContent() {
             <div className="flex items-center gap-4">
               <UserAvatar
                 name={profile?.fullName || authUser?.name || "E"}
-                variant={subStatus?.planName?.toLowerCase().includes("pro") ? "pro" : "free"}
+                variant={isPro ? "pro" : "free"}
                 size={64}
                 className="shadow-sm border-2 border-white ring-2 ring-gray-50"
               />
@@ -409,7 +417,7 @@ function UserProfileContent() {
                     </div>
 
                     {/* Active Plan Card */}
-                    {subStatus?.planName?.toLowerCase().includes("pro") ? (
+                    {isPro ? (
                       <div
                         className="shadow-md overflow-hidden rounded-[var(--radius-lg,12px)] p-5 flex flex-col justify-center relative"
                         style={{
