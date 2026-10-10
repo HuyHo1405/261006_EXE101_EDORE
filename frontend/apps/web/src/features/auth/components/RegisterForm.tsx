@@ -73,7 +73,6 @@ export function RegisterForm() {
 
     try {
       await registerMutation.mutateAsync({
-        fullName: trimmedEmail.split("@")[0] || "User",
         email: trimmedEmail,
         phone: trimmedPhone,
         password,

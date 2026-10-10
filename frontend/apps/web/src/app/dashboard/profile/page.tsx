@@ -35,6 +35,7 @@ import {
   UserProfileResponse,
   UserSettingsResponse,
   SubscriptionStatusResponseDTO,
+  SubscriptionPlanDTO,
   OrderResponseDTO,
   PaymentResponseDTO,
   PageResponseDTO,
@@ -59,6 +60,8 @@ function UserProfileContent() {
   const [subStatus, setSubStatus] = useState<SubscriptionStatusResponseDTO | null>(null);
   const [ordersPage, setOrdersPage] = useState<PageResponseDTO<OrderResponseDTO> | null>(null);
   const [paymentsPage, setPaymentsPage] = useState<PageResponseDTO<PaymentResponseDTO> | null>(null);
+  const [plans, setPlans] = useState<SubscriptionPlanDTO[]>([]);
+  const [isCheckingOut, setIsCheckingOut] = useState<boolean>(false);
 
   // Loaders & Sub-states
   const [loading, setLoading] = useState<boolean>(true);
@@ -77,12 +80,13 @@ function UserProfileContent() {
     async function loadData() {
       try {
         setLoading(true);
-        const [profData, setDataSettings, statusData, myOrders, myPayments] = await Promise.all([
+        const [profData, setDataSettings, statusData, myOrders, myPayments, activePlans] = await Promise.all([
           userService.getOwnProfile().catch(() => null),
           userService.getUserSettings().catch(() => null),
           subscriptionService.getMySubscriptionStatus().catch(() => null),
           subscriptionService.getMyOrders(0, 20).catch(() => null),
           subscriptionService.getMyPayments(0, 20).catch(() => null),
+          subscriptionService.getActivePlans().catch(() => []),
         ]);
 
         if (profData) {
@@ -97,6 +101,7 @@ function UserProfileContent() {
         if (statusData) setSubStatus(statusData);
         if (myOrders) setOrdersPage(myOrders);
         if (myPayments) setPaymentsPage(myPayments);
+        if (activePlans) setPlans(activePlans);
       } catch (err: any) {
         console.error(err);
       } finally {
@@ -106,6 +111,28 @@ function UserProfileContent() {
 
     loadData();
   }, [authUser]);
+
+  const handleUpgradeToPro = async () => {
+    const proPlan = plans.find((p) => p.name?.toLowerCase().includes("pro"));
+    if (!proPlan) {
+      alert("Không tìm thấy gói Pro. Vui lòng thử lại sau.");
+      return;
+    }
+    try {
+      setIsCheckingOut(true);
+      const order = await subscriptionService.createOrder(proPlan.id);
+      const payment = await subscriptionService.checkoutOrder(order.id);
+      if (payment?.paymentLinkUrl) {
+        window.location.href = payment.paymentLinkUrl;
+      } else {
+        alert("Không lấy được link thanh toán. Vui lòng thử lại.");
+      }
+    } catch (err: any) {
+      alert(err?.message || "Đã xảy ra lỗi khi tạo đơn hàng.");
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -413,12 +440,20 @@ function UserProfileContent() {
                               {subStatus?.planDescription || "Gói cơ bản trải nghiệm tạo khóa học AI."}
                             </p>
                           </div>
-                          <Link 
-                            href="/dashboard#pricing" 
-                            className="px-3 py-1.5 text-xs font-bold bg-[var(--color-primary-50,#eff4ff)] text-[var(--color-primary-600,#0240c0)] rounded flex items-center gap-1 hover:bg-[var(--color-primary-100,#dbeafe)] transition-colors border border-[var(--color-primary-100,#dbeafe)]"
+                          <button 
+                            onClick={handleUpgradeToPro}
+                            disabled={isCheckingOut}
+                            className="px-3 py-1.5 text-xs font-bold bg-[var(--color-primary-50,#eff4ff)] text-[var(--color-primary-600,#0240c0)] rounded flex items-center gap-1 hover:bg-[var(--color-primary-100,#dbeafe)] transition-colors border border-[var(--color-primary-100,#dbeafe)] disabled:opacity-50 cursor-pointer"
                           >
-                            Nâng cấp
-                          </Link>
+                            {isCheckingOut ? (
+                              <>
+                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                Đang xử lý...
+                              </>
+                            ) : (
+                              "Nâng cấp"
+                            )}
+                          </button>
                         </div>
                         <div className="flex items-center gap-4 text-xs font-mono text-gray-500 border-t border-gray-100 pt-2.5">
                           <span>Bắt đầu: {formatDate(subStatus?.startDate)}</span>

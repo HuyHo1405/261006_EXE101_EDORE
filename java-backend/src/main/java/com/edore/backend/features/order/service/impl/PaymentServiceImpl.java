@@ -69,12 +69,14 @@ public class PaymentServiceImpl implements PaymentService {
             throw new ApiException(OrderResponseCode.ORDER_NOT_PAYABLE);
         }
 
-        // Block if already successfully paid
-        paymentRepository.findByOrderId(order.getId()).ifPresent(existing -> {
-            if (existing.getStatus() == PaymentStatus.SUCCESS) {
-                throw new ApiException(OrderResponseCode.ORDER_ALREADY_PAID);
-            }
+        // Find existing payment or create new
+        Payment payment = paymentRepository.findByOrderId(order.getId()).orElseGet(() -> {
+            return Payment.builder().order(order).build();
         });
+
+        if (payment.getStatus() == PaymentStatus.SUCCESS) {
+            throw new ApiException(OrderResponseCode.ORDER_ALREADY_PAID);
+        }
 
         long gatewayOrderCode = System.currentTimeMillis() % 1_000_000_000_000L;
         order.setGatewayOrderCode(gatewayOrderCode);
@@ -90,14 +92,11 @@ public class PaymentServiceImpl implements PaymentService {
                 provider.createPaymentLink(orderCode, order.getAmount(), description);
 
         // Persist Payment record
-        Payment payment = Payment.builder()
-                .order(order)
-                .provider(provider.getProviderName())
-                .transactionId(orderCode)
-                .amount(order.getAmount())
-                .status(PaymentStatus.PENDING)
-                .rawResponse(payosResponse.paymentLinkUrl())
-                .build();
+        payment.setProvider(provider.getProviderName());
+        payment.setTransactionId(orderCode);
+        payment.setAmount(order.getAmount());
+        payment.setStatus(PaymentStatus.PENDING);
+        payment.setRawResponse(payosResponse.paymentLinkUrl());
         paymentRepository.save(payment);
 
         log.info("[Payment] Payment record created for order {}, transactionId={}, provider={}",

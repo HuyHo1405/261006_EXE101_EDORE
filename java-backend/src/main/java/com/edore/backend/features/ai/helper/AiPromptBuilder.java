@@ -111,6 +111,8 @@ public class AiPromptBuilder {
                 20. KHOI_DONG: `bridge_question` BẮT BUỘC phải dẫn thẳng đến đúng chủ đề cốt lõi sẽ được dạy trong `node_content` của HINH_THANH_KIEN_THUC tương ứng — không đặt câu hỏi chung chung.
                 21. LUYEN_TAP: Trước khi gán "level", BẮT BUỘC đối chiếu lại độ khó thực tế của "question". `nhan_biet`: chỉ nêu lại sự kiện có sẵn; `thong_hieu`: giải thích vì sao; `van_dung_thap`: áp dụng ngữ cảnh; `van_dung_cao`: tổng hợp/đánh giá. Đồng thời `exercises` PHẢI bao phủ đủ các ý trong `mapped_knowledge`.
                 22. VAN_DUNG: Nếu `task_requirement` chứa nhiều phần/câu hỏi con, `rubric` BẮT BUỘC có số tiêu chí tương ứng map 1-1. `scaffolding_hint` CHỈ được trỏ đến nội dung THỰC SỰ có trong `knowledge_units` đã sinh ở HINH_THANH_KIEN_THUC, TUYỆT ĐỐI không hallucination.
+                23. ĐỐI VỚI MÔN LỊCH SỬ / ĐỊA LÍ: BẮT BUỘC chèn thêm CÂU HỎI PHẢN BIỆN (Critical thinking) vào phần 'node_content' hoặc 'exercises' (Ví dụ: "Em có đồng ý với nhận định X không? Tại sao?", "Hãy so sánh...", "Liên hệ thực tế...").
+                24. Với node VAN_DUNG: Yêu cầu học sinh liên hệ kiến thức Lịch sử/Địa lí vừa học vào thực tiễn cuộc sống hiện nay.
                 """.formatted(nodes.size(), expectedStructure, groundingGuidance, schema, perNodeSchemas);
     }
 

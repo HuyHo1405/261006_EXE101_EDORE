@@ -62,11 +62,14 @@ public class OrderServiceImpl implements OrderService {
 
         try {
             // ─── 2. Chặn Mua Trùng — Check xem user có Subscription ACTIVE còn hạn không ───
-            boolean hasActiveSub = subscriptionRepository.existsByUserIdAndStatusAndEndDateAfter(
+            Optional<com.edore.backend.features.subscription.entity.Subscription> activeSubOpt = subscriptionRepository.findTopByUserIdAndStatusAndEndDateAfterOrderByEndDateDesc(
                     userId, SubscriptionStatus.ACTIVE, Instant.now());
-            if (hasActiveSub) {
-                log.warn("[Order] User {} already has an ACTIVE subscription", userId);
-                throw new ApiException(OrderResponseCode.ACTIVE_SUBSCRIPTION_EXISTS);
+            
+            if (activeSubOpt.isPresent()) {
+                if (activeSubOpt.get().getSubscriptionPlan().getId().equals(request.subscriptionPlanId())) {
+                    log.warn("[Order] User {} already has an ACTIVE subscription for the same plan {}", userId, request.subscriptionPlanId());
+                    throw new ApiException(OrderResponseCode.ACTIVE_SUBSCRIPTION_EXISTS);
+                }
             }
 
             // ─── 3. Chặn Spam / Reuse Đơn PENDING ─────────────────────────────────────

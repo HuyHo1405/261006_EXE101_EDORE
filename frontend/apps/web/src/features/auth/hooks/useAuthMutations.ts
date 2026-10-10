@@ -8,15 +8,25 @@ import {
 import { authService } from "../api/authService";
 import { useAuthStore } from "../stores/useAuthStore";
 import { toast } from "@/components/ui/toast";
+import { subscriptionService } from "@/features/subscription/api/subscriptionService";
 
 export function useLoginMutation() {
   const setAuth = useAuthStore((state) => state.setAuth);
+  const updatePlan = useAuthStore((state) => state.updatePlan);
 
   return useMutation({
     mutationFn: (data: LoginRequestDTO) => authService.login(data),
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       if (res.result) {
         setAuth(res.result);
+        // Fetch real subscription status to update plan accurately
+        try {
+          const subStatus = await subscriptionService.getMySubscriptionStatus();
+          const isPro = subStatus?.planName?.toLowerCase().includes("pro") && subStatus?.status === "ACTIVE";
+          updatePlan(isPro ? "pro" : "free");
+        } catch {
+          // non-fatal: plan defaults to "free" if fetch fails
+        }
       }
       if (res.message) {
         toast.success(res.message);

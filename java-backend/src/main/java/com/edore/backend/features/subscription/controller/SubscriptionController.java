@@ -35,7 +35,7 @@ public class SubscriptionController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<SubscriptionStatusResponseDTO>> getMySubscription() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = userRepository.findByUsername(auth.getName())
+        UUID userId = userRepository.findByEmail(auth.getName())
                 .map(u -> u.getId())
                 .orElseThrow();
 
