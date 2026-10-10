@@ -98,7 +98,14 @@ function UserProfileContent() {
         }
 
         if (setDataSettings) setSettings(setDataSettings);
-        if (statusData) setSubStatus(statusData);
+        if (statusData) {
+          setSubStatus(statusData);
+          const isPro = (
+            statusData.planName?.toLowerCase().includes("pro") || 
+            (statusData.maxCourses && statusData.maxCourses > 5)
+          ) && statusData.status === "ACTIVE";
+          useAuthStore.getState().updatePlan(isPro ? "pro" : "free");
+        }
         if (myOrders) setOrdersPage(myOrders);
         if (myPayments) setPaymentsPage(myPayments);
         if (activePlans) setPlans(activePlans);

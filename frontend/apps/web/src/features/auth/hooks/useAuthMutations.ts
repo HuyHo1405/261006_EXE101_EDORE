@@ -22,7 +22,10 @@ export function useLoginMutation() {
         // Fetch real subscription status to update plan accurately
         try {
           const subStatus = await subscriptionService.getMySubscriptionStatus();
-          const isPro = subStatus?.planName?.toLowerCase().includes("pro") && subStatus?.status === "ACTIVE";
+          const isPro = (
+            subStatus?.planName?.toLowerCase().includes("pro") || 
+            (subStatus?.maxCourses && subStatus.maxCourses > 5)
+          ) && subStatus?.status === "ACTIVE";
           updatePlan(isPro ? "pro" : "free");
         } catch {
           // non-fatal: plan defaults to "free" if fetch fails

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Check, CheckCircle2, XCircle, Clock, AlertTriangle, ArrowRight, RefreshCw, ShieldCheck, Sparkles, LayoutDashboard, CreditCard } from "lucide-react";
 import { subscriptionService } from "@/features/subscription/api/subscriptionService";
 import { OrderResponseDTO } from "@edore/types";
+import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 
 function PaymentResultContent() {
   const searchParams = useSearchParams();
@@ -51,6 +52,15 @@ function PaymentResultContent() {
         if (isMounted) {
           setOrder(res);
           setLoading(false);
+          // Sync new plan state to Zustand header
+          try {
+            const subStatus = await subscriptionService.getMySubscriptionStatus();
+            const isPro = (
+              subStatus?.planName?.toLowerCase().includes("pro") || 
+              (subStatus?.maxCourses && subStatus.maxCourses > 5)
+            ) && subStatus?.status === "ACTIVE";
+            useAuthStore.getState().updatePlan(isPro ? "pro" : "free");
+          } catch {}
         }
       } catch (err: any) {
         if (isMounted) {
