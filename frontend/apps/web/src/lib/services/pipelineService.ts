@@ -153,6 +153,7 @@ export interface TimelineStep {
   appliedActivity: string
   nodePayload?: any
   teachingMethod?: string
+  mappedKnowledge?: string[]
   isLoading?: boolean
   _raw?: Record<string, unknown>
 }
