@@ -125,10 +125,14 @@ public class LessonServiceImpl implements LessonService {
     public PageResponseDTO<LessonSummaryResponse> searchLessons(LessonFilterRequestDTO filter) {
         Specification<LessonMetadata> spec = LessonSpecification.filter(filter);
 
-        Sort sort = Sort.by(
-                filter.isAscending() ? Sort.Direction.ASC : Sort.Direction.DESC,
-                filter.getValidSortBy()
-        );
+        Sort.Direction direction = filter.isAscending() ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort;
+        if ("gradeCode".equalsIgnoreCase(filter.getValidSortBy())) {
+            sort = Sort.by(direction, "gradeCode")
+                    .and(Sort.by(Sort.Direction.ASC, "orderInChapter"));
+        } else {
+            sort = Sort.by(direction, filter.getValidSortBy());
+        }
         Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize(), sort);
 
         Page<LessonMetadata> page = metadataRepository.findAll(spec, pageable);

@@ -27,7 +27,7 @@ public record LessonFilterRequestDTO(
         @Schema(description = "Số phần tử mỗi trang", defaultValue = "20")
         Integer size,
 
-        @Schema(description = "Trường sắp xếp (orderInChapter, title, createdAt)", defaultValue = "orderInChapter")
+        @Schema(description = "Trường sắp xếp (gradeCode, orderInChapter, title, createdAt)", defaultValue = "gradeCode")
         String sortBy,
 
         @Schema(description = "Thứ tự sắp xếp (ASC hoặc DESC)", defaultValue = "ASC")
@@ -46,10 +46,10 @@ public record LessonFilterRequestDTO(
     }
 
     public String getValidSortBy() {
-        if (sortBy == null || sortBy.isBlank()) return "orderInChapter";
+        if (sortBy == null || sortBy.isBlank()) return "gradeCode";
         return switch (sortBy) {
-            case "title", "createdAt", "orderInChapter" -> sortBy;
-            default -> "orderInChapter";
+            case "title", "createdAt", "orderInChapter", "gradeCode" -> sortBy;
+            default -> "gradeCode";
         };
     }
 }
