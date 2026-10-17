@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { ChevronRight, FolderOpen, BookOpen, FileText, Pencil, PanelLeftOpen, Compass } from "lucide-react";
-import type { CourseCardViewModel } from "@edore/types";
+import type { CourseCardViewModel, CourseResponseDTO } from "@edore/types";
 
 export interface BreadcrumbItem {
   label: string;
@@ -16,7 +16,7 @@ export interface BreadcrumbItem {
 export interface DashboardBreadcrumbProps {
   items?: BreadcrumbItem[];
   // Shortcut props for Dashboard page & Script pages
-  currentCourse?: CourseCardViewModel | null;
+  currentCourse?: CourseCardViewModel | CourseResponseDTO | null;
   onBackToCourses?: () => void;
   courseTitle?: string;
   courseHref?: string;
