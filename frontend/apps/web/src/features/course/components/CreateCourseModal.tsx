@@ -69,6 +69,7 @@ export function CreateCourseModal({
 
     for (const cat of categories) {
       if (!cat || !cat.type || map.has(cat.type)) continue;
+      if (cat.type === "TEXTBOOK" || cat.type === "SEMESTER") continue;
       map.set(cat.type, categories.filter((c) => c.type === cat.type));
     }
     return map;

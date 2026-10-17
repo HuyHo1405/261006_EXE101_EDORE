@@ -55,6 +55,12 @@ export class CategoryOptionBuilder {
     for (const cat of this.categories) {
       if (!cat) continue;
       const typeKey = cat.type || "OTHER";
+
+      // TEXTBOOK and SEMESTER belong exclusively to lessons/curriculum, not courses
+      if (typeKey === "TEXTBOOK" || typeKey === "SEMESTER") {
+        continue;
+      }
+
       if (!groupedMap.has(typeKey)) {
         groupedMap.set(typeKey, []);
       }
@@ -68,9 +74,9 @@ export class CategoryOptionBuilder {
 
     const resultGroups: CategoryFilterGroup[] = [];
 
-    // Order of category types
+    // Order of category types for courses
     const typeOrder = ["SUBJECT", "GRADE", "PURPOSE", "OTHER"];
-    const allTypes = Array.from(new Set([...typeOrder, ...groupedMap.keys()]));
+    const allTypes = typeOrder.filter((t) => groupedMap.has(t));
 
     for (const typeKey of allTypes) {
       const options = groupedMap.get(typeKey);
