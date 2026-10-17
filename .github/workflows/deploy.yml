@@ -70,5 +70,7 @@ jobs:
           script: |
             set -euo pipefail
             cd ${{ secrets.EC2_PATH }}
+            git fetch origin main
+            git reset --hard origin/main
             chmod +x scripts/ec2-deploy.sh
             ./scripts/ec2-deploy.sh

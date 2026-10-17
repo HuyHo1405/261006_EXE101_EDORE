@@ -4,7 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-git pull --ff-only
+git fetch origin main
+git reset --hard origin/main
 
 docker compose --profile edore-backend up -d --build postgres redis qdrant backend
 
