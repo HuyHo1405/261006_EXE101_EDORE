@@ -147,43 +147,43 @@ function SemesterDropdownItem({
 
                   {/* Danh sách bài trong chương */}
                   <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
-                  {chapter.lessons.map((lesson) => {
-                    const isSelected = previewLessonId === lesson.id;
-                    const rawTitle = lesson.title || "Bài học";
-                    const displayTitle = /^bài\s*\d+/i.test(rawTitle)
-                      ? rawTitle
-                      : lesson.orderInChapter
-                        ? `Bài ${lesson.orderInChapter}: ${rawTitle}`
-                        : rawTitle;
+                    {chapter.lessons.map((lesson) => {
+                      const isSelected = previewLessonId === lesson.id;
+                      const rawTitle = lesson.title || "Bài học";
+                      const displayTitle = /^bài\s*\d+/i.test(rawTitle)
+                        ? rawTitle
+                        : lesson.orderInChapter
+                          ? `Bài ${lesson.orderInChapter}: ${rawTitle}`
+                          : rawTitle;
 
-                    return (
-                      <li key={lesson.id}>
-                        <button
-                          type="button"
-                          onClick={() => onSelectLesson(lesson)}
-                          className={cn(
-                            "w-full text-left px-3 py-2 text-sm font-body rounded-xl transition-all duration-200 ease-out cursor-pointer flex items-center justify-between gap-2",
-                            isSelected
-                              ? isIndigo
-                                ? "bg-indigo-50 text-indigo-700 font-bold pl-4 shadow-2xs border border-indigo-200"
-                                : "bg-[var(--color-primary-50)] text-[var(--color-primary-700)] font-bold pl-4 shadow-2xs border border-[var(--color-primary-200)]"
-                              : isIndigo
-                                ? "text-slate-700 hover:bg-slate-50 hover:text-indigo-600 hover:pl-4"
-                                : "text-slate-700 hover:bg-slate-50 hover:text-[var(--color-primary-600)] hover:pl-4"
-                          )}
-                          title={lesson.title}
-                        >
-                          <span className="leading-snug flex-1">
-                            {displayTitle}
-                          </span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            );
-          })
+                      return (
+                        <li key={lesson.id}>
+                          <button
+                            type="button"
+                            onClick={() => onSelectLesson(lesson)}
+                            className={cn(
+                              "w-full text-left px-3 py-2 text-sm font-body rounded-xl transition-all duration-200 ease-out cursor-pointer flex items-center justify-between gap-2",
+                              isSelected
+                                ? isIndigo
+                                  ? "bg-indigo-50 text-indigo-700 font-bold pl-4 shadow-2xs border border-indigo-200"
+                                  : "bg-[var(--color-primary-50)] text-[var(--color-primary-700)] font-bold pl-4 shadow-2xs border border-[var(--color-primary-200)]"
+                                : isIndigo
+                                  ? "text-slate-700 hover:bg-slate-50 hover:text-indigo-600 hover:pl-4"
+                                  : "text-slate-700 hover:bg-slate-50 hover:text-[var(--color-primary-600)] hover:pl-4"
+                            )}
+                            title={lesson.title}
+                          >
+                            <span className="leading-snug flex-1">
+                              {displayTitle}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })
           )}
         </div>
       )}
@@ -389,8 +389,8 @@ export function LessonGrid({
       if (!chapterMap.has(chapterKey)) {
         const sem: 1 | 2 =
           lesson.semesterCode === "1" ? 1
-          : lesson.semesterCode === "2" ? 2
-          : getSemesterForChapter(lesson.gradeCode || activeGrade, chapterKey);
+            : lesson.semesterCode === "2" ? 2
+              : getSemesterForChapter(lesson.gradeCode || activeGrade, chapterKey);
         const matchNum = chapterKey.match(/chương\s*(\d+)/i);
         const orderNum = lesson.chapterOrder || (matchNum ? parseInt(matchNum[1], 10) : 1);
 
@@ -556,20 +556,6 @@ export function LessonGrid({
             );
           })}
         </div>
-
-        {/* Search input (if onSearchChange is provided) */}
-        {onSearchChange && (
-          <div className="relative shrink-0 w-full sm:w-60 md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Tìm theo tên bài học..."
-              className="w-full h-8.5 sm:h-9 pl-8.5 pr-3 text-xs bg-slate-50 hover:bg-white focus:bg-white border border-slate-200/90 rounded-xl outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-400)] transition-all font-medium text-slate-800 placeholder:text-slate-400"
-            />
-          </div>
-        )}
       </div>
 
       {/* ── 2. MAIN 2-COLUMN VIEW CONTAINER ── */}
