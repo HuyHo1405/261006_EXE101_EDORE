@@ -1,164 +1,180 @@
-## 1. Tổng Quan Hệ Thống EDORE
+## 1. Tổng quan về hệ thống EDORE
 
-Chào mừng bạn đến với **EDORE** — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy Thông minh. EDORE được thiết kế để giải phóng sức lao động của giáo viên khỏi việc soạn giáo án truyền thống, thay vào đó là một quy trình tự động, trực quan và mạnh mẽ.
+Chào mừng thầy cô đến với **EDORE** — Nền tảng hỗ trợ giáo viên chuẩn bị kịch bản giảng dạy thông minh. EDORE được xây dựng nhằm san sẻ thời gian và công sức soạn giáo án truyền thống của thầy cô, mang lại một quy trình chuẩn bị bài giảng nhẹ nhàng, trực quan và hiệu quả.
 
-Với EDORE, giáo viên sẽ đi qua một luồng duy nhất:
+Với EDORE, thầy cô trải nghiệm một quy trình liền mạch:
 
-* 🏫 **Khởi tạo khóa học & cấu hình lớp học** — Thiết lập không gian giảng dạy với đầy đủ thông tin về môn học, khối lớp và bối cảnh phòng học thực tế.
-* 📄 **Tải lên tài liệu & chọn khung kịch bản** — Giáo viên cung cấp tài liệu bài giảng có sẵn (PDF, DOCX, TXT...) và chọn cấu trúc kịch bản phù hợp với tiết học.
-* 🤖 **AI tự động sinh kịch bản** — Hệ thống phân tích tài liệu và xây dựng toàn bộ kịch bản giảng dạy hoàn chỉnh, bao gồm các bước thực hiện, thời lượng và vật tư cần chuẩn bị.
-* ✏️ **Tinh chỉnh kịch bản trên giao diện Studio** — Giáo viên xem lại, chỉnh sửa trực tiếp và lưu kịch bản theo ý muốn.
-
----
-
-Hệ thống hoàn toàn dựa trên việc **phân tích tài liệu có sẵn** để trích xuất tri thức, tuyệt đối không yêu cầu giáo viên phải ngồi gõ từng dòng nội dung trực tiếp. Điều này đảm bảo tính nhất quán, nhanh chóng và tận dụng tối đa sức mạnh của AI.
-
-> 💡 **Lưu ý:** Để bắt đầu, hãy chuyển sang **Mục 2** để tìm hiểu cách tạo và cấu hình khóa học đầu tiên của bạn.
+* **Khởi tạo khóa học và lớp học** — Thiết lập không gian giảng dạy với đầy đủ thông tin về môn học, khối lớp và bối cảnh phòng học thực tế.
+* **Chọn bài học từ Thư viện sách giáo khoa và thiết lập yêu cầu** — Thầy cô chọn bài học từ kho chương trình chuẩn theo Khối lớp và Học kỳ, xem trước mục tiêu và thiết lập yêu cầu sư phạm mong muốn.
+* **Trí tuệ nhân tạo (AI) tự động tạo kịch bản** — Hệ thống phân tích tri thức bài học và xây dựng trọn vẹn kịch bản giảng dạy, bao gồm các bước thực hiện, phân bổ thời lượng, phương pháp và phương tiện cần chuẩn bị.
+* **Tinh chỉnh kịch bản trong không gian soạn bài trực quan** — Thầy cô xem lại trên thanh dòng thời gian, kiểm tra danh sách đồ dùng và điều chỉnh trực tiếp từng bước hoạt động.
 
 ---
 
+Hệ thống tích hợp sẵn **Thư viện bài học chuẩn sách giáo khoa** được sắp xếp khoa học theo Khối lớp, Học kỳ, Chương và từng Bài học. Thầy cô không cần phải gõ lại từng dòng nội dung, mà có thể tận dụng ngay khả năng phân tích sư phạm của AI để xây dựng các hoạt động học tập phong phú, sinh động và bám sát chương trình.
 
+> **Lưu ý:** Để bắt đầu, mời thầy cô chuyển sang **Mục 2** để tìm hiểu cách tạo và thiết lập khóa học đầu tiên.
 
-## 2. Cấu Hình Khóa Học & Lớp Học
+---
 
-Bước đầu tiên để bắt đầu là thiết lập không gian giảng dạy. Một kịch bản bài giảng tốt không chỉ phụ thuộc vào nội dung, mà còn phụ thuộc vào ngữ cảnh của lớp học vật lý.
+## 2. Thiết lập khóa học và lớp học
 
-Trong EDORE, quy trình khởi tạo khóa học được thiết kế dạng **Modal 3 Bước** trực quan và mạch lạc:
+Bước đầu tiên là chuẩn bị không gian lớp học. Một bài giảng thành công không chỉ dựa vào kiến thức sách vở, mà còn cần phù hợp với bối cảnh thực tế của từng phòng học.
 
-### 1. Bước 1: Phân loại danh mục khóa học
-Giáo viên bắt đầu bằng việc chọn danh mục cho khóa học (Môn học, Khối lớp, Mục đích giảng dạy) để hệ thống khoanh vùng tri thức sư phạm phù hợp.
+Trong EDORE, việc tạo khóa học diễn ra nhanh chóng qua quy trình 3 bước rõ ràng:
+
+### 1. Bước 1: Phân loại môn học và khối lớp
+Thầy cô bắt đầu bằng việc chọn danh mục cho khóa học (Môn học, Khối lớp, Mục đích giảng dạy) để hệ thống nhận diện đúng chương trình phù hợp.
 
 [IMAGE: Giao diện tạo khóa học - Chọn danh mục | Chọn các thẻ Môn học, Khối lớp và Mục đích giảng dạy cho khóa học | /images/fig1_1.png]
 
 ### 2. Chuyển sang Bước 2: Thông tin khóa học
-Sau khi đã chọn xong các danh mục phù hợp, giáo viên nhấn vào nút **"Sang bước 2: Thông tin khóa học"** ở góc dưới bên phải.
+Sau khi đã chọn xong các danh mục phù hợp, thầy cô nhấn nút **"Sang bước 2: Thông tin khóa học"** ở góc dưới bên phải.
 
 [IMAGE: Chuyển sang Bước 2 | Nhấn nút chuyển tiếp để chuyển sang khai báo tên và mô tả khóa học | /images/fig1_2.png]
 
-### 3. Bước 2: Khai báo thông tin khóa học
-Tại giao diện Thông tin khóa học, giáo viên điền **Tên khóa học** (VD: *"Toán 10 - Đại số & Giải tích"*) và đoạn **Mô tả ngắn** tổng quan về môn học.
+### 3. Bước 2: Điền thông tin khóa học
+Tại đây, thầy cô nhập **Tên khóa học** (ví dụ: *"Toán 10 - Đại số và Giải tích"*) cùng một đoạn **Mô tả ngắn** giới thiệu về môn học.
 
-[IMAGE: Giao diện Thông tin khóa học | Điền đầy đủ Tên khóa học bắt buộc và Mô tả chi tiết | /images/fig1_3.png]
+[IMAGE: Giao diện Thông tin khóa học | Điền đầy đủ Tên khóa học và Mô tả chi tiết | /images/fig1_3.png]
 
-### 4. Chuyển sang Bước 3: Cấu hình phòng học
-Khi đã điền đủ thông tin tên và mô tả, giáo viên nhấn vào nút **"Sang bước 3: Cấu hình phòng học"**.
+### 4. Chuyển sang Bước 3: Thiết lập phòng học
+Khi đã điền đủ thông tin cơ bản, thầy cô nhấn nút **"Sang bước 3: Cấu hình phòng học"**.
 
-[IMAGE: Chuyển sang Bước 3 | Nhấn nút chuyển tiếp để sang phần cấu hình phòng học vật lý | /images/fig1_4.png]
+[IMAGE: Chuyển sang Bước 3 | Nhấn nút chuyển tiếp để sang phần thiết lập phòng học thực tế | /images/fig1_4.png]
 
-### 5. Bước 3: Chọn mẫu cấu hình phòng học
-Giao diện cấu hình phòng học hiển thị danh sách các mẫu cấu hình có sẵn (Mặc định, Phòng lab, Hội trường...) cũng như các cấu hình giáo viên đã lưu trước đó.
+### 5. Bước 3: Chọn mẫu phòng học
+Hệ thống cung cấp sẵn các mẫu phòng học phổ biến (Lớp học chuẩn, Phòng thực hành, Hội trường...) hoặc các mẫu thầy cô đã lưu trước đó.
 
-[IMAGE: Chọn mẫu cấu hình | Lựa chọn giữa cấu hình mặc định hoặc các mẫu cấu hình giáo viên từng lưu | /images/fig1_5.png]
+[IMAGE: Chọn mẫu phòng học | Lựa chọn giữa cấu hình chuẩn hoặc các mẫu phòng học thầy cô từng lưu | /images/fig1_5.png]
 
-### 6. Xem chi tiết thông số cấu hình đã chọn
-Khi bấm chọn một loại cấu hình, các tham số chi tiết (Thời lượng, Sĩ số, Không gian, Bố trí bàn ghế) sẽ tự động được điền và hiển thị ở cột bên phải.
+### 6. Xem chi tiết thông số phòng học
+Khi chọn một mẫu, các thông số chi tiết (Thời lượng tiết học, Sĩ số học sinh, Không gian lớp, Bố trí bàn ghế) sẽ tự động hiển thị ở cột bên phải.
 
-[IMAGE: Hiển thị thông số cấu hình | Các thông số chi tiết của mẫu cấu hình tự động điền ở cột bên phải | /images/fig1_6.png]
+[IMAGE: Hiển thị thông số phòng học | Các thông số chi tiết của phòng học tự động hiển thị ở cột bên phải | /images/fig1_6.png]
 
-### 7. Tùy chỉnh tham số cấu hình theo thực tế
-Ngoài ra, giáo viên cũng có thể tự điều chỉnh các tham số theo đúng nhu cầu thực tế. 
-> 💡 **Lưu ý quan trọng:** Cấu hình này sẽ được hệ thống sử dụng để cung cấp ngữ cảnh trực tiếp cho AI, nên hãy chọn đúng với bối cảnh thực tế của lớp học để tránh AI hiểu sai hoặc đưa ra gợi ý không phù hợp.
+### 7. Tùy chỉnh thông số theo thực tế
+Thầy cô hoàn toàn có thể điều chỉnh lại các con số này cho đúng với tình hình lớp học của mình.
+> **Lưu ý quan trọng:** Các thông số này sẽ là bối cảnh thực tế giúp AI gợi ý những hoạt động và trò chơi vừa vặn với thời gian và không gian của lớp.
 
-[IMAGE: Tùy chỉnh cấu hình phòng học | Điều chỉnh Thời lượng, Sĩ số, Bố trí bàn ghế theo đúng bối cảnh thực tế | /images/fig1_7.png]
+[IMAGE: Tùy chỉnh phòng học | Điều chỉnh thời lượng, sĩ số và cách sắp xếp bàn ghế theo đúng thực tế | /images/fig1_7.png]
 
 ### 8. Khóa học hiển thị trên trang quản lý
-Sau khi nhấn *"Hoàn tất & Tạo khóa học"*, khóa học mới sẽ được khởi tạo thành công và xuất hiện trực tiếp trên trang quản lý Dashboard.
+Sau khi nhấn *"Hoàn tất & Tạo khóa học"*, khóa học mới sẽ sẵn sàng và xuất hiện ngay trên trang quản lý của thầy cô.
 
-[IMAGE: Trang quản lý khóa học | Khóa học vừa tạo hiển thị trực quan dưới dạng thẻ trên Dashboard | /images/fig1_8.png]
+[IMAGE: Trang quản lý khóa học | Khóa học vừa tạo hiển thị trực quan dưới dạng thẻ trên trang quản lý | /images/fig1_8.png]
 
-### 9. Chỉnh sửa thông tin & cấu hình khóa học sau khi tạo
-Nếu sau này giáo viên có nhu cầu cập nhật hoặc chỉnh sửa lại bất kỳ thông tin nào của khóa học (Tên, Mô tả, Cấu hình phòng), hãy bấm vào **Nút 3 chấm (Menu tùy chọn)** trên thẻ khóa học để mở lại modal chỉnh sửa.
+### 9. Chỉnh sửa thông tin khóa học khi cần
+Bất kỳ lúc nào thầy cô muốn cập nhật lại tên, mô tả hay thay đổi sĩ số, chỉ cần bấm vào **Nút ba chấm (Tùy chọn)** trên thẻ khóa học để chỉnh sửa lại.
 
-[IMAGE: Chỉnh sửa khóa học | Bấm menu 3 chấm trên thẻ khóa học để chỉnh sửa thông tin & cấu hình bất kỳ lúc nào | /images/fig1_9.png]
-
----
-
-## 3. Tạo Kịch Bản (Khung Kịch Bản Sư Phạm & Xử Lý AI)
-
-Đây là "trái tim" của EDORE, nơi Trí tuệ Nhân tạo kết hợp cùng các phương pháp luận sư phạm hiện đại để tự động xây dựng kịch bản giảng dạy.
-
-### 1. Bắt đầu tạo kịch bản từ Khóa học
-Tại giao diện chi tiết của một Khóa học trên Dashboard, để khởi tạo một kịch bản bài giảng mới cho khóa học này, giáo viên bấm vào nút **"Tạo kịch bản"**.
-
-[IMAGE: Giao diện chi tiết khóa học | Bấm vào nút Tạo kịch bản để bắt đầu soạn kịch bản mới cho khóa học | /images/fig2_1.png]
-
-### 2. Giao diện tải tài liệu & Chọn tệp tin
-Hệ thống chuyển đến giao diện Tạo kịch bản mới. Tại đây, giáo viên bấm vào nút **"Chọn tệp tin"** để tải file tài liệu bài học có sẵn (PDF, DOCX, TXT...).
-
-[IMAGE: Giao diện tạo kịch bản | Bấm nút Chọn tệp tin để tải file tài liệu bài học | /images/fig2_2.png]
-
-### 3. Chọn file nội dung bài giảng từ máy tính
-Hộp thoại duyệt file của hệ thống mở ra, giáo viên chọn file tài liệu giảng dạy cần AI phân tích.
-
-[IMAGE: Hộp thoại chọn tệp tin | Duyệt và chọn file bài giảng PDF/Word từ máy tính | /images/fig2_3.png]
-
-### 4. Hiển thị tiến trình tải file lên hệ thống
-Sau khi chọn file thành công, giao diện sẽ hiển thị tên file tài liệu tham chiếu kèm thanh tiến trình tải lên 100%.
-
-[IMAGE: Tiến trình tải file | Hiển thị thông tin file đã tải lên thành công 100% | /images/fig2_4.png]
-
-### 5. Thiết lập thông số kịch bản & Chọn Khung bài học
-Giáo viên điền các thông số cơ bản cho kịch bản: **Tên kịch bản**, **Mục tiêu sư phạm**, và **lựa chọn Khung bài học (Template)**:
-* 🏫 **Khung 3 phần (`standard-3-node`):** Tiết học 45 - 90 phút (*Khởi động -> Lý thuyết -> Thực hành & Tổng kết*).
-* 🧠 **Khung 4 phần (`extended-4-node`):** Tiết học chuyên sâu 90 phút+ (*Khởi động -> Lý thuyết -> Thực hành mở rộng -> Dự án/Ứng dụng*).
-
-Sau khi điền đủ thông tin, bấm nút **"Phân tích & Xây dựng kịch bản"**.
-
-[IMAGE: Thiết lập thông số kịch bản | Nhập Tên kịch bản, Mục tiêu bài học, Chọn Khung kịch bản và bấm Phân tích | /images/fig2_5.png]
-
-### 6. AI Phân tích ngầm (Async Processing)
-Hệ thống tiếp nhận thông tin và đưa tác vụ vào hàng đợi xử lý bất đồng bộ (`Async Job Queue`). Màn hình hiển thị thanh tiến trình (% Progress bar) thể hiện các giai đoạn AI bóc tách nội dung và phân bổ thời gian.
-
-[IMAGE: Tiến trình xử lý AI | Màn hình chờ AI xử lý bất đồng bộ kèm thanh tiến trình phần trăm | /images/fig2_6.png]
-
-### 7. Hoàn tất & Tự động sinh Kịch bản bài giảng
-Sau khi AI hoàn tất quá trình xử lý, hệ thống sẽ tự động chuyển trực tiếp sang giao diện Studio Kịch bản với đầy đủ các phần dạy học, thời lượng phân bổ và vật tư cần chuẩn bị.
-
-[IMAGE: Kịch bản được tạo thành công | Giao diện Studio Kịch bản trực quan vừa được AI tự động khởi tạo | /images/fig2_7.png]
+[IMAGE: Chỉnh sửa khóa học | Bấm nút ba chấm trên thẻ khóa học để cập nhật thông tin bất cứ lúc nào | /images/fig1_9.png]
 
 ---
 
-## 4. Chỉnh Sửa Kịch Bản (Studio Tinh Chỉnh Kịch Bản Giảng Dạy)
+## 3. Tạo kịch bản bài giảng
 
-Sau khi AI hoàn tất, kịch bản được đưa vào giao diện **Studio trực quan**. Đây là công cụ đắc lực dành cho giáo viên để **biên soạn, sắp xếp, theo dõi thời gian và nhảy bước** trong quá trình đứng lớp.
+Đây là phần trọng tâm của EDORE, nơi trí tuệ nhân tạo đồng hành cùng thầy cô để gợi ý kịch bản giảng dạy khoa học, hấp dẫn dựa trên chương trình chuẩn.
 
-Giao diện Studio được thiết kế chuẩn mực với các khu vực chức năng đồng bộ:
+### 1. Tạo bài học từ Khóa học
+Tại màn hình chi tiết của một Khóa học, thầy cô chỉ cần bấm nút **"Tạo kịch bản"** (hoặc **"Tạo bài học"**) để bắt đầu chuẩn bị một bài giảng mới.
 
-### 1. Navigation Aside - Thanh truy cập nhanh bên trái
-Phần cột bên trái ngoài cùng (Aside Navigation) giúp giáo viên có thể di chuyển và truy cập nhanh vào các kịch bản hoặc khóa học khác.
+[IMAGE: Tạo bài học | Bấm vào nút Tạo kịch bản từ giao diện khóa học để bắt đầu | /images/fig2_1.png]
 
-[IMAGE: Cột Navigation Aside bên trái | Thanh công cụ truy cập nhanh bên ngoài cùng của Studio | /images/fig3_1.png]
+### 2. Vào Thư viện bài học và chọn khối lớp
+Hệ thống mở ra Thư viện bài học chuẩn sách giáo khoa. Thầy cô chọn khối lớp tương ứng (Lớp 6, Lớp 7, Lớp 8, Lớp 9...) ở thanh trên cùng để xem danh mục bài học của khối đó.
 
-### 2. Mở rộng danh sách Khóa học & Kịch bản
-Khi giáo viên di chuột hoặc bấm vào Navigation Aside, cột điều hướng sẽ mở ra danh sách đầy đủ các Khóa học và Kịch bản liên quan để chuyển đổi nhanh chóng.
+[IMAGE: Vào thư viện bài học | Giao diện tập trung để giáo viên chọn khối lớp học phù hợp | /images/fig2_2.png]
 
-[IMAGE: Danh sách Khóa học & Kịch bản mở rộng | Mở rộng danh sách khóa học và kịch bản để chuyển đổi bài học nhanh | /images/fig3_2.png]
+### 3. Xem mục lục bài học theo học kỳ và chuyển đổi nhanh
+Bên dưới phần chọn lớp, danh sách bài học được chia rõ ràng theo từng học kỳ. Thầy cô có thể bấm nút chuyển nhanh giữa **Học kỳ I** và **Học kỳ II**.
 
-### 3. Cây điều hướng thư mục (Breadcrumb)
-Ở góc trên cùng của Studio hiển thị thanh điều hướng cây thư mục (`Dashboard > [Tên Khóa học] > [Tên Kịch bản / Phần dạy]`). Giáo viên bấm vào từng phần để di chuyển nhanh về khóa học hoặc kịch bản tương ứng.
+[IMAGE: Mục lục bài theo học kỳ | Mục lục phân chia theo học kỳ kèm nút chuyển đổi nhanh giữa Học kỳ I và Học kỳ II | /images/fig2_3.png]
 
-[IMAGE: Thanh điều hướng Breadcrumb | Cây thư mục phân cấp rõ ràng ở trên cùng Studio | /images/fig3_3.png]
+### 4. Mục lục xếp theo Chương - Bài và chọn bài để xem trước
+Các bài học được sắp xếp ngăn nắp theo cấu trúc **Chương > Từng bài học**. Thầy cô có thể nhấp vào bất kỳ bài nào để xem trước nội dung tóm tắt.
 
-### 4. Full-width Sticky Bottom Dock Bar - Thanh Timeline thời lượng
-Ở đáy màn hình là thanh Timeline ghim cố định. Thanh này giúp giáo viên theo dõi sơ đồ phân bổ thời gian thực tế cho từng phần (`10'`, `20'`), xem tổng thời lượng và click chuyển nhanh giữa góc nhìn *Tổng quan (Overview)* và từng *Phần bài dạy*.
+[IMAGE: Danh mục phân cấp Chương và Bài | Danh sách bài được tự động sắp xếp theo Chương và Bài kèm tính năng xem trước | /images/fig2_4.png]
 
-[IMAGE: Thanh Timeline thời lượng ở dưới cùng | Dock thời gian ghim đáy màn hình hiển thị thời lượng phân bổ từng phần | /images/fig3_4.png]
+### 5. Xem yêu cầu cần đạt và xác nhận chọn bài
+Ngay cạnh danh mục bài học, bảng bên phải sẽ hiển thị chi tiết các **Yêu cầu cần đạt** của bài học (kiến thức trọng tâm, kỹ năng và phẩm chất cần hình thành cho học sinh). Thầy cô nhấn nút **"Xác nhận chọn bài"** để tiến hành tạo kịch bản.
 
-### 5. Cột thông tin Tổng quan & Nút Bắt đầu
-Tại màn hình Tổng quan của kịch bản, cột bên phải hiển thị thông tin tổng quan (tổng số phần, tổng thời gian) và nút **"Bắt đầu xem & chỉnh sửa"** để đi qua phần nội dung đầu tiên của kịch bản.
+[IMAGE: Xem Yêu cầu cần đạt và Xác nhận | Cột bên cạnh hiển thị mục tiêu cần đạt của bài và nút bấm xác nhận chọn bài | /images/fig2_5.png]
 
-[IMAGE: Màn hình Tổng quan kịch bản | Cột thông tin tổng quan và nút Bắt đầu ở bên phải | /images/fig3_5.png]
+### 6. Cửa sổ thiết lập kịch bản xuất hiện
+Sau khi xác nhận chọn bài, cửa sổ thiết lập kịch bản sẽ mở ra, gắn liền với tên bài học và khối lớp mà thầy cô vừa chọn.
 
-### 6. Cột bên phải: Hoạt động gợi ý, Vật tư & Thứ tự bước
-Khi chuyển vào phần nội dung chi tiết, cột bên phải hiển thị:
-* 💡 **Hoạt động sư phạm gợi ý:** Hình thức dạy học được AI đề xuất (Thảo luận nhóm, Slide...).
-* 🛠️ **Vật tư & Thiết bị cần chuẩn bị:** Danh sách dụng cụ, phiếu học tập, thiết bị giảng dạy.
-* 🔢 **Điều hướng thứ tự các bước (B1, B2, B3...):** Giáo viên bấm vào bất kỳ bước nào để mở và tự động cuộn đến phần nội dung tương ứng ở khung giữa.
+[IMAGE: Cửa sổ thiết lập kịch bản | Bảng cấu hình kịch bản sư phạm xuất hiện gắn liền với bài học vừa được chọn | /images/fig2_6.png]
 
-[IMAGE: Cột thông tin chi tiết bên phải | Hoạt động gợi ý, Vật tư cần chuẩn bị và Thứ tự các bước B1, B2... | /images/fig3_6.png]
+### 7. Lựa chọn yêu cầu cho kịch bản mong muốn
+Tại bảng thiết lập, thầy cô chọn các tiêu chí theo ý muốn của mình:
+* **Thời lượng và Sĩ số:** Điều chỉnh thời gian dạy (45 phút, 90 phút...) và số lượng học sinh của lớp.
+* **Mẫu khung bài dạy:** Chọn khung bài học phù hợp (Khung 3 phần chuẩn: Khởi động - Kiến thức mới - Luyện tập; hoặc Khung 4 phần chuyên sâu có thêm Hoạt động vận dụng/dự án).
+* **Mục tiêu và phương pháp mong muốn:** Bổ sung các dặn dò riêng cho AI (ví dụ: tăng cường thảo luận nhóm, ứng dụng công nghệ thông tin, tạo trò chơi khởi động...).
 
-### 7. Khung chỉnh sửa nội dung ở giữa & Tự động lưu trữ
-Ở khung nội dung trung tâm, giáo viên có thể trực tiếp định dạng, chỉnh sửa lời thoại bài giảng hoặc bổ sung ghi chú sư phạm (Notion-style Editor). Sau khi chỉnh sửa, hệ thống sẽ **tự động lưu trữ ngay lập tức**.
+Sau khi chọn xong, thầy cô nhấn nút **"Tạo kịch bản với AI"**.
 
-[IMAGE: Khung chỉnh sửa nội dung bài giảng ở giữa | Trình soạn thảo trực tiếp hỗ trợ ghi chú & tự động lưu trữ | /images/fig3_7.png]
+[IMAGE: Điền yêu cầu kịch bản | Thiết lập các thông số thời lượng, sĩ số, khung bài học và mục tiêu mong muốn | /images/fig2_7.png]
+
+### 8. Hệ thống tiếp nhận và xử lý tự động
+Hệ thống tiếp nhận yêu cầu và AI bắt đầu phân tích tri thức bài học, phân bổ thời gian hợp lý cho từng phần. Thầy cô có thể theo dõi thanh tiến trình hiển thị trên màn hình.
+
+[IMAGE: Hệ thống tiếp nhận và xử lý | Màn hình tiến trình hệ thống tiếp nhận và AI xử lý kịch bản tự động | /images/fig2_8.png]
+
+### 9. AI tạo kịch bản thành công
+Khi xử lý xong, hệ thống thông báo tạo kịch bản thành công và đưa thầy cô trực tiếp vào không gian soạn bài để xem trọn vẹn kịch bản bài dạy.
+
+[IMAGE: AI tạo kịch bản thành công | Kịch bản bài giảng được khởi tạo thành công với cấu trúc sư phạm hoàn chỉnh | /images/fig2_9.png]
+
+---
+
+## 4. Chỉnh sửa và hoàn thiện kịch bản
+
+Sau khi AI hoàn thành, kịch bản được mở trong **không gian soạn bài trực quan**. Đây là nơi thầy cô có thể **nắm bắt phương pháp giảng dạy, kiểm tra đồ dùng cần chuẩn bị và theo dõi các bước đứng lớp** một cách thuận tiện nhất.
+
+Không gian soạn bài được sắp xếp khoa học với các khu vực hỗ trợ:
+
+### 1. Thanh menu bên trái giúp chuyển bài nhanh
+Ở cạnh trái màn hình có thanh điều hướng thu gọn. Thầy cô chỉ cần bấm vào để mở menu chuyển đổi nhanh sang các bài học khác trong cùng khóa hoặc chuyển sang khóa học khác mà không cần quay về trang chủ.
+
+[IMAGE: Thanh menu bên trái | Thanh điều hướng bên trái thu gọn hỗ trợ mở menu chuyển bài nhanh | /images/fig3_1.png]
+
+### 2. Danh sách bài học và khóa học mở rộng
+Khi mở rộng menu bên trái, toàn bộ danh mục bài học và khóa học sẽ hiện ra, giúp thầy cô đổi bài giảng ngay tức thì chỉ với một cú nhấp chuột.
+
+[IMAGE: Danh sách bài học và khóa học mở rộng | Danh sách bài học và khóa học hiển thị đầy đủ giúp chuyển đổi tức thì | /images/fig3_2.png]
+
+### 3. Đường dẫn phân cấp tiện lợi
+Ở thanh trên cùng có sẵn dòng đường dẫn phân cấp (*Khóa học > Bài học > Kịch bản*). Thầy cô luôn biết mình đang ở đâu và có thể nhấp chuột để quay lại trang quản lý bài học bất kỳ lúc nào.
+
+[IMAGE: Đường dẫn phân cấp tiện lợi | Thanh chỉ dẫn giúp thầy cô quay về nhanh trang quản lý bài học hoặc khóa học | /images/fig3_3.png]
+
+### 4. Thanh dòng thời gian ở đáy màn hình
+Dưới đáy màn hình là thanh dòng thời gian cố định. Thanh này thể hiện thời lượng của từng phần bài dạy, giúp thầy cô dễ dàng chuyển qua lại giữa **Phần tổng quan** và **các phần nội dung** (Khởi động, Khám phá kiến thức, Luyện tập, Vận dụng).
+
+[IMAGE: Thanh dòng thời gian ở đáy màn hình | Thanh điều hướng ở đáy giúp xem thời lượng và chuyển nhanh giữa các phần bài dạy | /images/fig3_4.png]
+
+### 5. Phần tổng quan: Mục Yêu cầu cần đạt
+Tại màn hình Tổng quan, mục **Yêu cầu cần đạt** tổng hợp rõ ràng những mốc kiến thức và kỹ năng cần rèn luyện cho học sinh trong suốt tiết học, giúp thầy cô luôn bám sát trọng tâm.
+
+[IMAGE: Tổng quan - Yêu cầu cần đạt | Bảng mục tiêu giúp thầy cô nắm chắc các mốc kiến thức trọng tâm cần truyền đạt | /images/fig3_5.png]
+
+### 6. Phần tổng quan: Phương pháp giảng dạy gợi ý
+Cũng tại phần Tổng quan, AI đề xuất các **phương pháp giảng dạy tích cực** và cách dẫn dắt phù hợp, giúp thầy cô có thêm ý tưởng tạo không khí hào hứng ngay từ khi mở đầu bài học.
+
+[IMAGE: Tổng quan - Phương pháp giảng dạy gợi ý | AI gợi ý phương pháp sư phạm và cách dẫn dắt khi bắt đầu bài học | /images/fig3_6.png]
+
+### 7. Phần tổng quan: Phương tiện và thiết bị dạy học
+Mục **Phương tiện và thiết bị** liệt kê đầy đủ các đồ dùng, tranh ảnh, phiếu học tập cần dùng cho các hoạt động trong lớp theo đề xuất của AI.
+
+[IMAGE: Tổng quan - Phương tiện dạy học | Danh sách đồ dùng, học cụ và thiết bị do AI đề xuất chuẩn bị cho buổi học | /images/fig3_7.png]
+
+### 8. Đánh dấu danh sách kiểm tra đồ dùng đã chuẩn bị
+Thầy cô có thể nhấp chọn trực tiếp vào từng món đồ dùng trong danh sách kiểm tra để đánh dấu những thứ mình đã chuẩn bị xong, rất thuận tiện trước giờ lên lớp.
+
+[IMAGE: Danh sách kiểm tra phương tiện | Tích chọn trực tiếp các đồ dùng đã chuẩn bị để thuận tiện theo dõi trước giờ dạy | /images/fig3_8.png]
+
+### 9. Chi tiết từng bước bài dạy và Hình ảnh từ sách giáo khoa
+Khi xem chi tiết từng phần bài dạy, màn hình hiển thị tuần tự từng bước hoạt động (Bước 1, Bước 2... gồm lời gợi ý của giáo viên và hoạt động của học sinh). Đặc biệt, hệ thống đính kèm sẵn các **hình ảnh tư liệu trích xuất từ sách giáo khoa** ngay tại từng bước để thầy cô dễ dàng tham khảo và trình chiếu trên lớp.
+
+[IMAGE: Chi tiết từng bước và Tư liệu sách giáo khoa | Từng bước hoạt động kèm hình ảnh minh họa từ sách giáo khoa rõ ràng, trực quan | /images/fig3_9.png]
 
