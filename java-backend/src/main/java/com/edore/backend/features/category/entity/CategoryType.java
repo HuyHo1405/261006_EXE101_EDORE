@@ -17,5 +17,6 @@ public enum CategoryType {
     GRADE,
     PURPOSE,
     TEXTBOOK,
+    SEMESTER,
     OTHER
 }

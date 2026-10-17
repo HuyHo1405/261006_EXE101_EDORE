@@ -38,4 +38,8 @@ public class LessonSummaryResponse {
 
     @Schema(description = "Tên chương", example = "CHÂU ÂU VÀ BẮC MỸ TỪ NỬA SAU THẾ KỈ XVI ĐẾN THẾ KỈ XVIII")
     private String chapterTitle;
+
+    @Schema(description = "Mã học kỳ của chương (category SEMESTER)", example = "1")
+    private String semesterCode;
+
 }

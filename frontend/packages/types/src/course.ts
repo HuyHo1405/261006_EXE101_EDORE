@@ -19,7 +19,7 @@ export interface CategorySummary {
 
 export interface CategoryResponseDTO {
   id: number;
-  type: "SUBJECT" | "GRADE" | "PURPOSE" | "OTHER";
+  type: "SUBJECT" | "GRADE" | "PURPOSE" | "TEXTBOOK" | "SEMESTER" | "OTHER";
   code: string;
   name: string;
   description?: string;
@@ -164,6 +164,7 @@ export interface LessonSummaryDTO {
   textbookCode?: string;
   chapterId?: string;
   chapterTitle?: string;
+  semesterCode?: string;
 }
 
 export interface LessonFilterParams {

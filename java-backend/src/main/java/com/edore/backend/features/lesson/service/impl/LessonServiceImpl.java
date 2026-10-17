@@ -141,6 +141,10 @@ public class LessonServiceImpl implements LessonService {
                 .filter(c -> c.getId() != null && c.getTitle() != null)
                 .collect(Collectors.toMap(Chapter::getId, Chapter::getTitle, (a, b) -> a));
 
+        Map<String, String> chapterSemesterMap = chapterRepository.findAll().stream()
+                .filter(c -> c.getId() != null && c.getSemesterCode() != null)
+                .collect(Collectors.toMap(Chapter::getId, Chapter::getSemesterCode, (a, b) -> a));
+
         Page<LessonSummaryResponse> dtoPage = page.map(m -> LessonSummaryResponse.builder()
                 .id(m.getId())
                 .code(m.getCode())
@@ -151,6 +155,7 @@ public class LessonServiceImpl implements LessonService {
                 .textbookCode(m.getTextbookCode())
                 .chapterId(m.getChapterId())
                 .chapterTitle(m.getChapterId() != null ? chapterTitleMap.get(m.getChapterId()) : null)
+                .semesterCode(m.getChapterId() != null ? chapterSemesterMap.get(m.getChapterId()) : null)
                 .build());
 
         return PageResponseDTO.of(dtoPage, filter.getValidSortBy(), filter.isAscending() ? "ASC" : "DESC");

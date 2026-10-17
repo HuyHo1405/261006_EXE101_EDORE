@@ -7,7 +7,6 @@ import { DashboardAside } from '@/features/course/components/DashboardAside'
 import ProcessingLoader from '@/features/playground/components/ProcessingLoader'
 import ClassroomConfigModal from '@/features/playground/components/ClassroomConfigModal'
 import { LessonGrid } from '@/features/course/components/LessonGrid'
-import { LessonToolbar } from '@/features/course/components/LessonToolbar'
 import { LessonStartModal } from '@/features/course/components/LessonStartModal'
 import { useStageTransition } from '@/lib/hooks/useStageTransition'
 import {
@@ -20,6 +19,8 @@ import type { ClassroomCtx } from '@/features/playground/components/ClassroomCon
 import type { LessonSummaryDTO } from '@edore/types'
 import { toast } from '@/components/ui/toast'
 import { ArrowLeft, Users, Sparkles, BookOpen, ChevronRight } from 'lucide-react'
+
+import { STANDARD_LESSONS } from '@/features/course/data/standardLessons'
 
 const DEFAULT_CTX: ClassroomCtx = {
   duration: 45,
@@ -66,9 +67,22 @@ function NewScriptContent() {
     textbookCode: selectedTextbook || undefined,
     sortBy: sortBy,
     sortDirection: 'ASC',
-    page: pageNumber,
-    size: 8,
+    page: 0,
+    size: 100,
   })
+
+  // All lessons combined with standard curriculum lessons as reliable fallback
+  const allLessons = useMemo(() => {
+    const apiLessons = lessonPage?.content || []
+    if (apiLessons.length > 0) {
+      const existingCodes = new Set(apiLessons.map((l) => l.code || l.id))
+      const extra = STANDARD_LESSONS.filter(
+        (l) => !existingCodes.has(l.code) && !existingCodes.has(l.id)
+      )
+      return [...apiLessons, ...extra]
+    }
+    return STANDARD_LESSONS
+  }, [lessonPage?.content])
 
   // ── Pipeline & Polling state ──────────────────────────────────────────────────
   const [hasError, setHasError] = useState(false)
@@ -191,7 +205,7 @@ function NewScriptContent() {
     resetPipelineState()
   }
 
-  const totalLessons = lessonPage?.totalElements || 0
+  const totalLessons = allLessons.length
   const totalPages = lessonPage?.totalPages || 1
 
   return (
@@ -278,38 +292,28 @@ function NewScriptContent() {
                     </button>
                   </div>
 
-                  {/* 3. GRAY CONTAINER (TOOLBAR & 8-SLOT MATRIX GRID) */}
+                  {/* 3. MAIN CONTAINER (GRADE TABS & 2-COLUMN CURRICULUM VIEW) */}
                   <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-4 sm:p-5 rounded-2xl md:rounded-3xl shadow-sm flex flex-col flex-1 justify-between space-y-4">
-                    {/* Toolbar */}
-                    <LessonToolbar
-                      searchTerm={searchTerm}
-                      onSearchChange={(val) => {
-                        setSearchTerm(val)
-                        setPageNumber(0)
-                      }}
-                      selectedGrade={selectedGrade}
-                      onSelectGrade={(grade) => {
-                        setSelectedGrade(grade)
-                        setPageNumber(0)
-                      }}
-                      selectedTextbook={selectedTextbook}
-                      onSelectTextbook={(tb) => {
-                        setSelectedTextbook(tb)
-                        setPageNumber(0)
-                      }}
-                      sortBy={sortBy}
-                      onSortByChange={(s) => setSortBy(s)}
-                    />
-
-                    {/* Matrix Grid */}
                     <div className="flex-1">
                       <LessonGrid
-                        lessons={lessonPage?.content || []}
+                        lessons={allLessons}
                         isLoading={isLoadingLessons}
                         onSelectLesson={handleSelectLesson}
-                        pageNumber={pageNumber}
-                        totalPages={totalPages}
-                        onPageChange={setPageNumber}
+                        selectedGrade={selectedGrade}
+                        onSelectGrade={(grade) => {
+                          setSelectedGrade(grade)
+                          setPageNumber(0)
+                        }}
+                        selectedTextbook={selectedTextbook}
+                        onSelectTextbook={(tb) => {
+                          setSelectedTextbook(tb)
+                          setPageNumber(0)
+                        }}
+                        searchTerm={searchTerm}
+                        onSearchChange={(val) => {
+                          setSearchTerm(val)
+                          setPageNumber(0)
+                        }}
                       />
                     </div>
                   </div>
