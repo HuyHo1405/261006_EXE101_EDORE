@@ -54,7 +54,7 @@ function NewScriptContent() {
 
   // ── Search & Filter State for Lessons ──────────────────────────────────────────
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedGrade, setSelectedGrade] = useState('')
+  const [selectedGrade, setSelectedGrade] = useState('6')
   const [selectedTextbook, setSelectedTextbook] = useState('')
   const [sortBy, setSortBy] = useState('gradeCode')
   const [pageNumber, setPageNumber] = useState(0)

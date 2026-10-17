@@ -325,24 +325,45 @@ export function LessonGrid({
 
       const mapChapters = (chapters?: CurriculumSemesterDTO["chapters"]) => {
         if (!chapters) return [];
-        return chapters.map((ch) => ({
-          title: ch.title,
-          order: ch.order,
-          lessons: ch.lessons.map((l) => ({
-            id: l.id,
-            code: l.code,
-            title: l.title,
-            orderInChapter: l.orderInChapter,
-            gradeCode: l.gradeCode,
-            subjectCode: l.subjectCode,
-            textbookCode: l.textbookCode,
-            chapterTitle: ch.order && !/^chương\s*\d+/i.test(ch.title)
-              ? `Chương ${ch.order}: ${ch.title}`
-              : ch.title,
-            chapterId: ch.id,
-            chapterOrder: ch.order,
-          }) as LessonSummaryDTO),
-        }));
+        return chapters
+          .map((ch) => {
+            const filteredLessons = ch.lessons.filter((l) => {
+              if (activeGrade && l.gradeCode) {
+                const cleanGrade = l.gradeCode.replace(/\D+/g, "");
+                const targetGrade = activeGrade.replace(/\D+/g, "");
+                if (cleanGrade && targetGrade && cleanGrade !== targetGrade) {
+                  return false;
+                }
+              }
+              if (selectedTextbook && l.textbookCode) {
+                if (l.textbookCode.toLowerCase() !== selectedTextbook.toLowerCase()) {
+                  return false;
+                }
+              }
+              return true;
+            });
+
+            return {
+              title: ch.title,
+              order: ch.order,
+              lessons: filteredLessons.map((l) => ({
+                id: l.id,
+                code: l.code,
+                title: l.title,
+                orderInChapter: l.orderInChapter,
+                gradeCode: l.gradeCode,
+                subjectCode: l.subjectCode,
+                textbookCode: l.textbookCode,
+                chapterTitle: ch.order && !/^chương\s*\d+/i.test(ch.title)
+                  ? `Chương ${ch.order}: ${ch.title}`
+                  : ch.title,
+                chapterId: ch.id,
+                chapterOrder: ch.order,
+                learningObjectives: l.learningObjectives,
+              }) as LessonSummaryDTO),
+            };
+          })
+          .filter((ch) => ch.lessons.length > 0);
       };
 
       return {
