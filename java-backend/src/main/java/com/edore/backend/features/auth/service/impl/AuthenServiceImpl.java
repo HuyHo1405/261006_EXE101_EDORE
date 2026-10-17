@@ -133,6 +133,7 @@ public class AuthenServiceImpl implements AuthenService {
             // User exists but inactive (unverified). Update info and allow re-register
             existing.setPassword(passwordEncoder.encode(request.password()));
             existing.setPhone(request.phone());
+            existing.setUsername(request.email().split("@")[0]);
             userRepository.save(existing);
             sendOtp(new SendOtpRequestDTO(request.email(), OtpType.REGISTER));
             return;

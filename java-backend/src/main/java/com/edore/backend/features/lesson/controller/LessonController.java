@@ -7,6 +7,7 @@ import com.edore.backend.core.response.CommonResponseCode;
 import com.edore.backend.features.lesson.code.LessonResponseCode;
 import com.edore.backend.features.lesson.dto.request.LessonCreateRequest;
 import com.edore.backend.features.lesson.dto.request.LessonFilterRequestDTO;
+import com.edore.backend.features.lesson.dto.response.CurriculumSemesterResponse;
 import com.edore.backend.features.lesson.dto.response.ImageUploadResponse;
 import com.edore.backend.features.lesson.dto.response.LessonForAIResponse;
 import com.edore.backend.features.lesson.dto.response.LessonMetadataResponse;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/lessons")
@@ -47,6 +49,13 @@ public class LessonController {
     public ResponseEntity<ApiResponse<PageResponseDTO<LessonSummaryResponse>>> searchLessons(
             @ParameterObject @Valid LessonFilterRequestDTO filter) {
         return ResponseEntity.ok(ApiResponse.of(LessonResponseCode.LESSON_SUCCESS, lessonService.searchLessons(filter)));
+    }
+
+    @Operation(summary = "2b. Curriculum tree", description = "Trả về chương trình học dạng cây Học kỳ → Chương → Bài, đã sắp xếp sẵn. Dùng cho màn hình tạo kịch bản.")
+    @GetMapping("/curriculum")
+    public ResponseEntity<ApiResponse<List<CurriculumSemesterResponse>>> getCurriculum(
+            @ParameterObject @Valid LessonFilterRequestDTO filter) {
+        return ResponseEntity.ok(ApiResponse.of(LessonResponseCode.LESSON_SUCCESS, lessonService.getCurriculum(filter)));
     }
 
     @Operation(summary = "3. Get lesson metadata", description = "Retrieves metadata for a specific lesson by ID.")

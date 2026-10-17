@@ -23,7 +23,7 @@ import {
   ChevronDown,
   Check,
 } from "lucide-react";
-import type { LessonSummaryDTO } from "@edore/types";
+import type { LessonSummaryDTO, CurriculumSemesterDTO } from "@edore/types";
 import { useCategories } from "@/features/course/queries/courseQueries";
 import { getSemesterForChapter } from "@/features/course/data/standardLessons";
 import { cn } from "@/lib/utils";
@@ -195,7 +195,8 @@ function SemesterDropdownItem({
 }
 
 interface LessonGridProps {
-  lessons: LessonSummaryDTO[];
+  lessons?: LessonSummaryDTO[];
+  curriculum?: CurriculumSemesterDTO[];
   isLoading: boolean;
   onSelectLesson: (lesson: LessonSummaryDTO) => void;
   selectedGrade?: string;
@@ -207,7 +208,8 @@ interface LessonGridProps {
 }
 
 export function LessonGrid({
-  lessons,
+  lessons = [],
+  curriculum,
   isLoading,
   onSelectLesson,
   selectedGrade = "",
@@ -349,6 +351,37 @@ export function LessonGrid({
 
   // Group lessons by Semester > Chapter > Lesson
   const semesterData = useMemo(() => {
+    // 1. If backend curriculum tree is provided directly
+    if (curriculum && curriculum.length > 0) {
+      const sem1Item = curriculum.find((c) => c.semesterCode === "1");
+      const sem2Item = curriculum.find((c) => c.semesterCode === "2");
+
+      const mapChapters = (chapters?: CurriculumSemesterDTO["chapters"]) => {
+        if (!chapters) return [];
+        return chapters.map((ch) => ({
+          title: ch.title,
+          lessons: ch.lessons.map((l) => ({
+            id: l.id,
+            code: l.code,
+            title: l.title,
+            orderInChapter: l.orderInChapter,
+            gradeCode: l.gradeCode,
+            subjectCode: l.subjectCode,
+            textbookCode: l.textbookCode,
+            chapterTitle: ch.title,
+            chapterId: ch.id,
+            chapterOrder: ch.order,
+          }) as LessonSummaryDTO),
+        }));
+      };
+
+      return {
+        sem1: mapChapters(sem1Item?.chapters),
+        sem2: mapChapters(sem2Item?.chapters),
+      };
+    }
+
+    // 2. Fallback: group from tabLessons (e.g. STANDARD_LESSONS or flat lessons)
     const chapterMap = new Map<
       string,
       {
@@ -399,7 +432,7 @@ export function LessonGrid({
       sem1: sem1Chapters,
       sem2: sem2Chapters,
     };
-  }, [tabLessons, activeGrade]);
+  }, [curriculum, tabLessons, activeGrade]);
 
   const sem1Count = useMemo(() => {
     return semesterData.sem1.reduce((sum, ch) => sum + ch.lessons.length, 0);

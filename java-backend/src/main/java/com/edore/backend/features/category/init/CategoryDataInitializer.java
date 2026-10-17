@@ -10,6 +10,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import java.util.List;
 
 /**
@@ -23,10 +25,24 @@ import java.util.List;
 public class CategoryDataInitializer implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional
     public void run(String... args) {
+        try {
+            // Drop outdated Hibernate check constraint if exists (PostgreSQL adds check (type in (...)) on enum which breaks on enum expansion)
+            jdbcTemplate.execute("ALTER TABLE categories DROP CONSTRAINT IF EXISTS categories_type_check");
+        } catch (Exception e) {
+            log.debug("[Seed] Constraint drop skipped: {}", e.getMessage());
+        }
+
+        try {
+            // Ensure sequence is in sync with max(id) to avoid duplicate key violations
+            jdbcTemplate.execute("SELECT setval(pg_get_serial_sequence('categories', 'id'), COALESCE(MAX(id), 1)) FROM categories");
+        } catch (Exception e) {
+            log.debug("[Seed] Sequence sync skipped: {}", e.getMessage());
+        }
+
         List<Category> categories = List.of(
                 // ── SUBJECT ───────────────────────────────────────────────
                 category(CategoryType.SUBJECT, "LS", "Lịch sử", "Môn Lịch sử phổ thông"),
@@ -56,9 +72,13 @@ public class CategoryDataInitializer implements CommandLineRunner {
 
         int newlySeeded = 0;
         for (Category cat : categories) {
-            if (!categoryRepository.existsByCode(cat.getCode())) {
-                categoryRepository.save(cat);
-                newlySeeded++;
+            try {
+                if (!categoryRepository.existsByCode(cat.getCode())) {
+                    categoryRepository.save(cat);
+                    newlySeeded++;
+                }
+            } catch (Exception e) {
+                log.warn("[Seed] Could not seed category code='{}': {}", cat.getCode(), e.getMessage());
             }
         }
 

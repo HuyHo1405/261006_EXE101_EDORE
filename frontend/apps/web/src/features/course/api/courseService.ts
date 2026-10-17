@@ -13,6 +13,7 @@ import type {
   ScriptUpdatePayload,
   LessonSummaryDTO,
   LessonFilterParams,
+  CurriculumSemesterDTO,
 } from "@edore/types";
 
 type ApiClientFn = <T = void>(endpoint: string, options?: RequestInit) => Promise<ApiResponse<T>>;
@@ -120,6 +121,21 @@ export function createCourseService(client: ApiClientFn = apiClient) {
       const endpoint = `/api/v1/lessons${queryStr ? `?${queryStr}` : ""}`;
       const res = await client<PageResponseDTO<LessonSummaryDTO>>(endpoint, { method: "GET" });
       return res.result!;
+    },
+
+    async getCurriculum(
+      params?: Pick<LessonFilterParams, "gradeCode" | "subjectCode" | "textbookCode" | "keyword">
+    ): Promise<CurriculumSemesterDTO[]> {
+      const queryParams = new URLSearchParams();
+      if (params?.keyword) queryParams.set("keyword", params.keyword);
+      if (params?.gradeCode) queryParams.set("gradeCode", params.gradeCode);
+      if (params?.subjectCode) queryParams.set("subjectCode", params.subjectCode);
+      if (params?.textbookCode) queryParams.set("textbookCode", params.textbookCode);
+
+      const queryStr = queryParams.toString();
+      const endpoint = `/api/v1/lessons/curriculum${queryStr ? `?${queryStr}` : ""}`;
+      const res = await client<CurriculumSemesterDTO[]>(endpoint, { method: "GET" });
+      return res.result || [];
     },
 
     async generateScriptWithAi(payload: {

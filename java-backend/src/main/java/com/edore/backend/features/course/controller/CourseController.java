@@ -45,7 +45,7 @@ public class CourseController {
     
     @Operation( summary = "2. Create course",
                 security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PreAuthorize("hasAuthority('" + CoursePermissions.CREATE + "') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('" + CoursePermissions.CREATE + "') or hasAuthority('ROLE_USER')")
     @PostMapping
     public ResponseEntity<ApiResponse<CourseDetailResponseDTO>> create(
             @CurrentUser UUID userId,
@@ -58,7 +58,7 @@ public class CourseController {
     @Operation( summary = "3. Search and filter my courses (Paged)",
                 description = "Returns courses owned by the current authenticated user.",
                 security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PreAuthorize("hasAuthority('" + CoursePermissions.READ_OWN + "') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('" + CoursePermissions.READ_OWN + "') or hasAuthority('ROLE_USER')")
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponseDTO<CourseResponseDTO>>> getMyCourses(
             @CurrentUser UUID userId,
@@ -70,7 +70,7 @@ public class CourseController {
 
     @Operation( summary = "4. Get course by ID",
                 security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PreAuthorize("hasAuthority('" + CoursePermissions.READ_OWN + "') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('" + CoursePermissions.READ_OWN + "') or hasAuthority('ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<CourseDetailResponseDTO>> getById(
             @PathVariable UUID id,
@@ -82,7 +82,7 @@ public class CourseController {
 
     @Operation( summary = "5. Update course",
                 security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PreAuthorize("hasAuthority('" + CoursePermissions.WRITE_OWN + "') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('" + CoursePermissions.WRITE_OWN + "') or hasAuthority('ROLE_USER')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<CourseDetailResponseDTO>> update(
             @PathVariable UUID id,
@@ -95,7 +95,7 @@ public class CourseController {
     @Operation( summary = "6. Assign class config to course",
                 description = "Assign or replace the ClassConfig for this course (clones snapshot). Only the owner can do this.",
                 security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PreAuthorize("hasAuthority('" + CoursePermissions.WRITE_OWN + "') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('" + CoursePermissions.WRITE_OWN + "') or hasAuthority('ROLE_USER')")
     @PutMapping("/{id}/class-config")
     public ResponseEntity<ApiResponse<CourseDetailResponseDTO>> assignClassConfig(
             @PathVariable UUID id,
@@ -107,7 +107,7 @@ public class CourseController {
 
     @Operation( summary = "7. Delete course",
                 security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PreAuthorize("hasAuthority('" + CoursePermissions.DELETE_OWN + "') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('" + CoursePermissions.DELETE_OWN + "') or hasAuthority('ROLE_USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable UUID id,

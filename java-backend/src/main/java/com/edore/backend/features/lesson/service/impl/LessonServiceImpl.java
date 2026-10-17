@@ -6,6 +6,12 @@ import com.edore.backend.features.lesson.dto.request.LessonFilterRequestDTO;
 import com.edore.backend.features.lesson.dto.response.LessonForAIResponse;
 import com.edore.backend.features.lesson.dto.response.LessonMetadataResponse;
 import com.edore.backend.features.lesson.dto.response.LessonSummaryResponse;
+import com.edore.backend.features.lesson.dto.response.CurriculumSemesterResponse;
+import com.edore.backend.features.lesson.dto.response.CurriculumChapterResponse;
+import com.edore.backend.features.lesson.dto.response.CurriculumLessonResponse;
+import com.edore.backend.features.category.entity.Category;
+import com.edore.backend.features.category.entity.CategoryType;
+import com.edore.backend.features.category.repository.CategoryRepository;
 import com.edore.backend.features.lesson.entity.Chapter;
 import com.edore.backend.features.lesson.entity.LessonContent;
 import com.edore.backend.features.lesson.entity.LessonMetadata;
@@ -23,7 +29,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +44,7 @@ public class LessonServiceImpl implements LessonService {
     private final LessonMetadataRepository metadataRepository;
     private final LessonContentRepository contentRepository;
     private final ChapterRepository chapterRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional
@@ -160,4 +172,67 @@ public class LessonServiceImpl implements LessonService {
 
         return PageResponseDTO.of(dtoPage, filter.getValidSortBy(), filter.isAscending() ? "ASC" : "DESC");
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CurriculumSemesterResponse> getCurriculum(LessonFilterRequestDTO filter) {
+        List<LessonMetadata> lessons = metadataRepository.findAll(LessonSpecification.filter(filter));
+
+        Map<String, Chapter> chapterById = chapterRepository.findAll().stream()
+                .filter(c -> c.getId() != null)
+                .collect(Collectors.toMap(Chapter::getId, c -> c, (a, b) -> a));
+
+        Map<String, String> semesterNameByCode = categoryRepository.findByType(CategoryType.SEMESTER).stream()
+                .collect(Collectors.toMap(Category::getCode, Category::getName, (a, b) -> a));
+
+        // semesterCode -> chapterId -> lessons
+        Map<String, Map<String, List<LessonMetadata>>> tree = new TreeMap<>();
+        for (LessonMetadata m : lessons) {
+            Chapter chapter = m.getChapterId() != null ? chapterById.get(m.getChapterId()) : null;
+            if (chapter == null) continue;
+            String semesterCode = chapter.getSemesterCode() != null ? chapter.getSemesterCode() : "";
+            tree.computeIfAbsent(semesterCode, k -> new LinkedHashMap<>())
+                    .computeIfAbsent(chapter.getId(), k -> new ArrayList<>())
+                    .add(m);
+        }
+
+        List<CurriculumSemesterResponse> result = new ArrayList<>();
+        tree.forEach((semesterCode, chapters) -> {
+            List<CurriculumChapterResponse> chapterDtos = chapters.entrySet().stream()
+                    .map(e -> {
+                        Chapter ch = chapterById.get(e.getKey());
+                        List<CurriculumLessonResponse> lessonDtos = e.getValue().stream()
+                                .sorted(Comparator.comparing(LessonMetadata::getOrderInChapter,
+                                        Comparator.nullsLast(Comparator.naturalOrder())))
+                                .map(m -> CurriculumLessonResponse.builder()
+                                        .id(m.getId())
+                                        .code(m.getCode())
+                                        .title(m.getTitle())
+                                        .orderInChapter(m.getOrderInChapter())
+                                        .gradeCode(m.getGradeCode())
+                                        .subjectCode(m.getSubjectCode())
+                                        .textbookCode(m.getTextbookCode())
+                                        .learningObjectives(m.getLearningObjectives())
+                                        .build())
+                                .toList();
+                        return CurriculumChapterResponse.builder()
+                                .id(ch.getId())
+                                .order(ch.getOrder())
+                                .title(ch.getTitle())
+                                .lessons(lessonDtos)
+                                .build();
+                    })
+                    .sorted(Comparator.comparing(CurriculumChapterResponse::getOrder,
+                            Comparator.nullsLast(Comparator.naturalOrder())))
+                    .toList();
+
+            result.add(CurriculumSemesterResponse.builder()
+                    .semesterCode(semesterCode.isEmpty() ? null : semesterCode)
+                    .semesterName(semesterNameByCode.get(semesterCode))
+                    .chapters(chapterDtos)
+                    .build());
+        });
+        return result;
+    }
 }
+

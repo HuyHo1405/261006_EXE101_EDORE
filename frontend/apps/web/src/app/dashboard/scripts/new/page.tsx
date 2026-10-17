@@ -12,6 +12,7 @@ import { useStageTransition } from '@/lib/hooks/useStageTransition'
 import {
   useMyCourses,
   useLessons,
+  useCurriculum,
   useGenerateScriptWithAiMutation,
 } from '@/features/course/queries/courseQueries'
 import { courseService } from '@/features/course/api/courseService'
@@ -60,7 +61,14 @@ function NewScriptContent() {
   const [sortBy, setSortBy] = useState('gradeCode')
   const [pageNumber, setPageNumber] = useState(0)
 
-  // ── Fetch Lessons via React Query ──────────────────────────────────────────────
+  // ── Fetch Curriculum Tree (Semester > Chapter > Lesson) ─────────────────────
+  const { data: curriculumData, isLoading: isLoadingCurriculum } = useCurriculum({
+    gradeCode: selectedGrade || undefined,
+    textbookCode: selectedTextbook || undefined,
+    keyword: searchTerm.trim() || undefined,
+  })
+
+  // ── Fetch Lessons via React Query (fallback & flat search list) ──────────────
   const { data: lessonPage, isLoading: isLoadingLessons } = useLessons({
     keyword: searchTerm.trim() || undefined,
     gradeCode: selectedGrade || undefined,
@@ -297,7 +305,8 @@ function NewScriptContent() {
                     <div className="flex-1">
                       <LessonGrid
                         lessons={allLessons}
-                        isLoading={isLoadingLessons}
+                        curriculum={curriculumData}
+                        isLoading={isLoadingLessons && isLoadingCurriculum}
                         onSelectLesson={handleSelectLesson}
                         selectedGrade={selectedGrade}
                         onSelectGrade={(grade) => {

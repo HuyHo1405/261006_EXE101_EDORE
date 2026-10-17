@@ -3,6 +3,8 @@ import type { CourseCreatePayload, CourseFilterParams, ScriptCreatePayload, Scri
 import { courseService, CourseService } from "../api/courseService";
 import { toast } from "@/components/ui/toast";
 
+type CurriculumParams = Pick<LessonFilterParams, "gradeCode" | "subjectCode" | "textbookCode" | "keyword">;
+
 // ── Query Keys Factory ──────────────────────────────────────────────────────
 export const courseKeys = {
   all: ["courses"] as const,
@@ -15,6 +17,7 @@ export const courseKeys = {
   scriptNodes: (scriptId: string) => [...courseKeys.all, "scriptNodes", scriptId] as const,
   categories: (type?: string) => ["categories", type ?? "all"] as const,
   lessons: (params?: LessonFilterParams) => ["lessons", params ?? {}] as const,
+  curriculum: (params?: CurriculumParams) => ["lessons", "curriculum", params ?? {}] as const,
 };
 
 // ── Query Options Factory ───────────────────────────────────────────────────
@@ -66,6 +69,14 @@ export function createCourseQueryOptions(service: CourseService = courseService)
         queryKey: courseKeys.lessons(params),
         queryFn: () => service.getLessons(params),
       }),
+
+    curriculum: (params?: CurriculumParams) =>
+      queryOptions({
+        queryKey: courseKeys.curriculum(params),
+        queryFn: () => service.getCurriculum(params),
+        staleTime: 1000 * 60 * 5,
+      }),
+
   };
 }
 
@@ -99,6 +110,10 @@ export function useCategories(type?: string) {
 
 export function useLessons(params?: LessonFilterParams) {
   return useQuery(courseQueryOptions.lessons(params));
+}
+
+export function useCurriculum(params?: Parameters<typeof courseService.getCurriculum>[0]) {
+  return useQuery(courseQueryOptions.curriculum(params));
 }
 
 // ── Mutations ──────────────────────────────────────────────────────────────

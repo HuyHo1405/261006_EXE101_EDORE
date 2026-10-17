@@ -56,7 +56,7 @@ public class ClassConfigController {
     @Operation( summary = "3. Get my class configs (Paged)",
                 description = "Returns class configs owned by the authenticated user with search/pagination.",
                 security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PreAuthorize("hasAuthority('" + ClassConfigPermissions.READ_OWN + "') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('" + ClassConfigPermissions.READ_OWN + "') or hasAuthority('ROLE_USER')")
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponseDTO<ClassConfigResponseDTO>>> getMine(
             @CurrentUser UUID userId,
@@ -69,7 +69,7 @@ public class ClassConfigController {
 
     @Operation( summary = "4. Get class config by ID",
                 security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PreAuthorize("hasAuthority('" + ClassConfigPermissions.READ_OWN + "') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('" + ClassConfigPermissions.READ_OWN + "') or hasAuthority('ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ClassConfigResponseDTO>> getById(
             @PathVariable Long id,

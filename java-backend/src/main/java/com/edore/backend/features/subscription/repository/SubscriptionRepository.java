@@ -13,4 +13,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
 
     java.util.Optional<Subscription> findTopByUserIdAndStatusAndEndDateAfterOrderByEndDateDesc(
             UUID userId, SubscriptionStatus status, Instant now);
+
+    java.util.List<Subscription> findAllByUserIdAndStatus(UUID userId, SubscriptionStatus status);
 }

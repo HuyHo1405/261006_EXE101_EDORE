@@ -8,12 +8,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.core.annotation.Order;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Component
+@Order(3)
 @RequiredArgsConstructor
 public class SubscriptionPlanDataInitializer implements CommandLineRunner {
 

@@ -164,7 +164,33 @@ export interface LessonSummaryDTO {
   textbookCode?: string;
   chapterId?: string;
   chapterTitle?: string;
+  chapterOrder?: number;
   semesterCode?: string;
+}
+
+// Curriculum tree: Semester → Chapter → Lesson (GET /api/v1/lessons/curriculum)
+export interface CurriculumLessonDTO {
+  id: string;
+  code: string;
+  title: string;
+  orderInChapter?: number;
+  gradeCode?: string;
+  subjectCode?: string;
+  textbookCode?: string;
+  learningObjectives?: string;
+}
+
+export interface CurriculumChapterDTO {
+  id: string;
+  order?: number;
+  title: string;
+  lessons: CurriculumLessonDTO[];
+}
+
+export interface CurriculumSemesterDTO {
+  semesterCode: string | null;
+  semesterName?: string;
+  chapters: CurriculumChapterDTO[];
 }
 
 export interface LessonFilterParams {
