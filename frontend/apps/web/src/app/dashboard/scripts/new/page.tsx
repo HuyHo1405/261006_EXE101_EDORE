@@ -19,7 +19,8 @@ import { courseService } from '@/features/course/api/courseService'
 import type { ClassroomCtx } from '@/features/playground/components/ClassroomConfigModal'
 import type { LessonSummaryDTO } from '@edore/types'
 import { toast } from '@/components/ui/toast'
-import { ArrowLeft, Users, Sparkles, BookOpen, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Users, Sparkles, BookOpen } from 'lucide-react'
+import { DashboardBreadcrumb } from '@/features/course/components/DashboardBreadcrumb'
 
 const DEFAULT_CTX: ClassroomCtx = {
   duration: 45,
@@ -230,28 +231,15 @@ function NewScriptContent() {
                 <div className="flex flex-col h-full space-y-3.5">
                   {/* 1. TOP HEADER & BREADCRUMBS */}
                   <div className="w-full font-sans space-y-2">
-                    {/* Breadcrumbs */}
-                    <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                        <button
-                          type="button"
-                          onClick={() => router.push(courseIdParam ? `/dashboard?courseId=${courseIdParam}` : '/dashboard')}
-                          className="hover:text-[var(--color-primary-600)] transition-colors cursor-pointer"
-                        >
-                          Khóa học
-                        </button>
-                        {currentCourse && (
-                          <>
-                            <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                            <span className="text-slate-700 font-bold max-w-[200px] truncate" title={currentCourse.title}>
-                              {currentCourse.title}
-                            </span>
-                          </>
-                        )}
-                        <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                        <span className="text-[var(--color-primary-600)] font-bold">Tạo kịch bản mới</span>
-                      </div>
-                    </div>
+                    {/* Standard Dashboard Breadcrumbs */}
+                    <DashboardBreadcrumb
+                      currentCourse={currentCourse}
+                      courseTitle={currentCourse?.title}
+                      courseHref={courseIdParam ? `/dashboard?courseId=${courseIdParam}` : '/dashboard'}
+                      scriptTitle="Tạo kịch bản mới"
+                      onBackToCourses={() => router.push('/dashboard')}
+                      onOpenMenu={() => setIsMenuOpen(true)}
+                    />
 
                     {/* Main Title Stack */}
                     <div className="flex items-stretch gap-3 pt-0.5">
@@ -291,8 +279,8 @@ function NewScriptContent() {
                   </div>
 
                   {/* 3. MAIN CONTAINER (GRADE TABS & 2-COLUMN CURRICULUM VIEW) */}
-                  <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-4 sm:p-5 rounded-2xl md:rounded-3xl shadow-sm flex flex-col flex-1 justify-between space-y-4">
-                    <div className="flex-1">
+                  <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-4 sm:p-5 rounded-2xl md:rounded-3xl shadow-sm flex flex-col flex-1 justify-between space-y-4 min-w-0 w-full">
+                    <div className="flex-1 min-w-0 w-full">
                       <LessonGrid
                         lessons={allLessons}
                         curriculum={curriculumData}

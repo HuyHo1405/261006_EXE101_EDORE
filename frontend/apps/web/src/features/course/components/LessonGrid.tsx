@@ -53,7 +53,7 @@ function SemesterDropdownItem({
   return (
     <div
       className={cn(
-        "rounded-2xl border transition-all duration-200 overflow-hidden",
+        "rounded-2xl border transition-all duration-200",
         isOpen
           ? isIndigo
             ? "border-indigo-300 bg-white shadow-xs"
@@ -138,7 +138,7 @@ function SemesterDropdownItem({
                       {chapter.order ? `Chương ${chapter.order}` : "Chương"}
                     </span>
                     <p
-                      className="font-header text-xs font-bold text-slate-800 line-clamp-1 flex-1 uppercase"
+                      className="font-header text-xs font-bold text-slate-800 flex-1 uppercase"
                       title={chapterLabel}
                     >
                       {isNumbered ? rawTitle.replace(/^chương\s*\d+[:\s-]*/i, "") : rawTitle}
@@ -173,7 +173,7 @@ function SemesterDropdownItem({
                           )}
                           title={lesson.title}
                         >
-                          <span className="line-clamp-1 leading-snug flex-1">
+                          <span className="leading-snug flex-1">
                             {displayTitle}
                           </span>
                         </button>
@@ -525,16 +525,13 @@ export function LessonGrid({
 
   // ── CASE 2: SELECTED TAB INTERFACE (2-COLUMN LAYOUT) ──
   return (
-    <div className="space-y-4">
+    <div className="w-full min-w-0 space-y-4">
       {/* ── 1. SELECTED GRADE TABS & FILTERS BAR (Replacing old LessonToolbar) ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-3 sm:p-3.5 rounded-2xl md:rounded-3xl border border-slate-200/90 shadow-2xs">
+      <div className="w-full min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl md:rounded-3xl border border-slate-200/90 shadow-2xs">
         {/* Grade tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 custom-scrollbar">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 custom-scrollbar min-w-0 max-w-full flex-1">
           {grades.map((g) => {
             const isActive = activeGrade === g.value;
-            const gradeLessons = lessons.filter(
-              (l) => (l.gradeCode || "").replace(/\D+/g, "") === g.value
-            );
 
             return (
               <button
@@ -542,7 +539,7 @@ export function LessonGrid({
                 type="button"
                 onClick={() => handleTabChange(g.value)}
                 className={cn(
-                  "group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer select-none outline-none whitespace-nowrap",
+                  "group relative flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer select-none outline-none whitespace-nowrap shrink-0",
                   isActive
                     ? "bg-[var(--color-primary-500)] text-white shadow-sm -translate-y-0.5"
                     : "bg-slate-50 text-slate-700 hover:text-[var(--color-primary-600)] hover:bg-slate-100 border border-slate-200/80"
@@ -550,44 +547,47 @@ export function LessonGrid({
               >
                 <GraduationCap
                   className={cn(
-                    "h-4 w-4 transition-colors",
+                    "h-4 w-4 shrink-0 transition-colors",
                     isActive ? "text-white" : "text-[var(--color-primary-500)]"
                   )}
                 />
                 <span>{g.label}</span>
-                <span
-                  className={cn(
-                    "text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors",
-                    isActive
-                      ? "bg-white/20 text-white"
-                      : "bg-white text-slate-600 group-hover:bg-[var(--color-primary-50)] group-hover:text-[var(--color-primary-700)] border border-slate-200"
-                  )}
-                >
-                  {gradeLessons.length} bài
-                </span>
               </button>
             );
           })}
         </div>
 
+        {/* Search input (if onSearchChange is provided) */}
+        {onSearchChange && (
+          <div className="relative shrink-0 w-full sm:w-60 md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Tìm theo tên bài học..."
+              className="w-full h-8.5 sm:h-9 pl-8.5 pr-3 text-xs bg-slate-50 hover:bg-white focus:bg-white border border-slate-200/90 rounded-xl outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-400)] transition-all font-medium text-slate-800 placeholder:text-slate-400"
+            />
+          </div>
+        )}
       </div>
 
       {/* ── 2. MAIN 2-COLUMN VIEW CONTAINER ── */}
-      <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-slate-200 min-h-[500px]">
+      <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200/90 shadow-xs grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-slate-200 min-h-[500px]">
         {/* ══════════════════════════════════════════════════════════════
             CỘT 1: PHÂN CẤP HỌC KỲ > CHƯƠNG > BÀI (~58% width)
            ══════════════════════════════════════════════════════════════ */}
         <div className="md:col-span-7 flex flex-col min-w-0">
           {/* Subheader: Lọc theo Học kỳ */}
-          <div className="border-b border-slate-100 px-5 md:px-6 py-3.5 bg-slate-50/50 flex items-center justify-between text-xs font-bold gap-3 flex-wrap">
-            <div className="flex items-center gap-2">
-              <span className="font-header font-bold text-slate-900 text-sm">
+          <div className="border-b border-slate-100 px-4 md:px-6 py-3 bg-slate-50/50 flex items-center justify-between text-xs font-bold gap-3 flex-wrap min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="font-header font-bold text-slate-900 text-sm truncate">
                 {activeGradeLabel}
               </span>
             </div>
 
             {/* Quick semester switcher */}
-            <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+            <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs shrink-0">
               <button
                 type="button"
                 onClick={() => setOpenSemester(1)}
@@ -616,7 +616,7 @@ export function LessonGrid({
           </div>
 
           {/* Danh sách phân cấp dạng Accordion Dropdown: Chỉ 1 học kỳ mở lên tại một thời điểm */}
-          <div className="flex-1 overflow-y-auto px-5 md:px-6 py-5 space-y-4 max-h-[580px] custom-scrollbar">
+          <div className="flex-1 px-5 md:px-6 py-5 space-y-4">
             {tabLessons.length === 0 ? (
               <div className="py-14 text-center text-sm text-slate-400">
                 Chưa có dữ liệu bài học cho khối {activeGradeLabel}.
@@ -654,12 +654,12 @@ export function LessonGrid({
         {/* ══════════════════════════════════════════════════════════════
             CỘT 2: PREVIEW BÀI HỌC HOẶC EMPTY CHỜ CLICK BÀI (~42% width)
            ══════════════════════════════════════════════════════════════ */}
-        <div className="md:col-span-5 bg-slate-50/60 flex flex-col min-h-[500px] max-h-[580px]">
+        <div className="md:col-span-5 bg-slate-50/60 flex flex-col min-h-[500px] md:sticky md:top-4 self-start rounded-b-2xl md:rounded-b-none md:rounded-r-3xl">
           {previewLesson ? (
             /* Đã chọn bài: Hiển thị Preview chi tiết với nút Action luôn ghim ở dưới cùng */
             <div className="flex flex-col h-full flex-1 min-h-0">
-              {/* Nội dung preview cuộn được */}
-              <div className="p-6 space-y-4 flex-1 overflow-y-auto custom-scrollbar">
+              {/* Nội dung preview */}
+              <div className="p-6 space-y-4 flex-1">
                 {/* Tiêu đề: Chương ở trên (với badge số chương), Bài học ở dưới */}
                 <div className="space-y-2">
                   {previewLesson.chapterTitle && (
