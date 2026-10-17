@@ -21,8 +21,6 @@ import type { LessonSummaryDTO } from '@edore/types'
 import { toast } from '@/components/ui/toast'
 import { ArrowLeft, Users, Sparkles, BookOpen, ChevronRight } from 'lucide-react'
 
-import { STANDARD_LESSONS } from '@/features/course/data/standardLessons'
-
 const DEFAULT_CTX: ClassroomCtx = {
   duration: 45,
   studentCount: '11-30',
@@ -79,17 +77,9 @@ function NewScriptContent() {
     size: 100,
   })
 
-  // All lessons combined with standard curriculum lessons as reliable fallback
+  // ── Lessons from API ────────────────────────────────────────────────────────
   const allLessons = useMemo(() => {
-    const apiLessons = lessonPage?.content || []
-    if (apiLessons.length > 0) {
-      const existingCodes = new Set(apiLessons.map((l) => l.code || l.id))
-      const extra = STANDARD_LESSONS.filter(
-        (l) => !existingCodes.has(l.code) && !existingCodes.has(l.id)
-      )
-      return [...apiLessons, ...extra]
-    }
-    return STANDARD_LESSONS
+    return lessonPage?.content || []
   }, [lessonPage?.content])
 
   // ── Pipeline & Polling state ──────────────────────────────────────────────────
@@ -268,7 +258,7 @@ function NewScriptContent() {
                       <div className="w-1.5 rounded-full shrink-0 self-stretch my-0.5 bg-[var(--color-primary-500)]" />
                       <div className="flex-1 min-w-0 space-y-0.5">
                         <h1 className="font-header font-bold text-xl sm:text-2xl uppercase tracking-tight text-slate-900 leading-tight">
-                          Thư viện bài học ({totalLessons})
+                          Thư viện bài học
                         </h1>
                         <p className="text-xs text-slate-600 font-body leading-relaxed">
                           Chọn bài học từ chương trình chuẩn để AI phân tích cấu trúc, ngữ liệu và hình ảnh nhằm tự động soạn kịch bản.

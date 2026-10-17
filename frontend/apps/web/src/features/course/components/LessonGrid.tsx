@@ -33,8 +33,7 @@ interface SemesterDropdownItemProps {
   title: string;
   isOpen: boolean;
   onToggle: () => void;
-  count: number;
-  chapters: Array<{ title: string; lessons: LessonSummaryDTO[] }>;
+  chapters: Array<{ title: string; order?: number; lessons: LessonSummaryDTO[] }>;
   previewLessonId?: string;
   onSelectLesson: (lesson: LessonSummaryDTO) => void;
   theme?: "primary" | "indigo";
@@ -44,7 +43,6 @@ function SemesterDropdownItem({
   title,
   isOpen,
   onToggle,
-  count,
   chapters,
   previewLessonId,
   onSelectLesson,
@@ -83,24 +81,9 @@ function SemesterDropdownItem({
             <Calendar className="h-4 w-4" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-header font-bold text-sm text-slate-900">
-                {title}
-              </span>
-              <span
-                className={cn(
-                  "text-[11px] font-bold px-2 py-0.5 rounded-full border",
-                  isIndigo
-                    ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                    : "bg-[var(--color-primary-50)] text-[var(--color-primary-700)] border-[var(--color-primary-200)]"
-                )}
-              >
-                {count} bài học
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-0.5">
-              {chapters.length} chương nội dung
-            </p>
+            <span className="font-header font-bold text-sm text-slate-900">
+              {title}
+            </span>
           </div>
         </div>
 
@@ -131,26 +114,39 @@ function SemesterDropdownItem({
               Chưa có bài học trong {title}
             </div>
           ) : (
-            chapters.map((chapter) => (
-              <div key={chapter.title} className="space-y-2">
-                {/* Tiêu đề chương */}
-                <div className="flex items-center gap-2">
-                  <span
-                    className={cn(
-                      "h-1.5 w-1.5 rounded-full",
-                      isIndigo ? "bg-indigo-500" : "bg-[var(--color-primary-500)]"
-                    )}
-                  />
-                  <p
-                    className="font-body text-xs font-bold uppercase tracking-wider text-slate-600 line-clamp-1"
-                    title={chapter.title}
-                  >
-                    {chapter.title}
-                  </p>
-                </div>
+            chapters.map((chapter) => {
+              const rawTitle = chapter.title || "Chương";
+              const isNumbered = /^chương\s*\d+/i.test(rawTitle);
+              const chapterLabel = isNumbered
+                ? rawTitle
+                : chapter.order
+                  ? `Chương ${chapter.order}: ${rawTitle}`
+                  : rawTitle;
 
-                {/* Danh sách bài trong chương */}
-                <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
+              return (
+                <div key={chapter.title} className="space-y-2 pt-1 first:pt-0">
+                  {/* Tiêu đề chương nổi bật với badge số chương */}
+                  <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
+                    <span
+                      className={cn(
+                        "px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider shrink-0",
+                        isIndigo
+                          ? "bg-indigo-100 text-indigo-750"
+                          : "bg-[var(--color-primary-100)] text-[var(--color-primary-800)]"
+                      )}
+                    >
+                      {chapter.order ? `Chương ${chapter.order}` : "Chương"}
+                    </span>
+                    <p
+                      className="font-header text-xs font-bold text-slate-800 line-clamp-1 flex-1 uppercase"
+                      title={chapterLabel}
+                    >
+                      {isNumbered ? rawTitle.replace(/^chương\s*\d+[:\s-]*/i, "") : rawTitle}
+                    </p>
+                  </div>
+
+                  {/* Danh sách bài trong chương */}
+                  <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
                   {chapter.lessons.map((lesson) => {
                     const isSelected = previewLessonId === lesson.id;
                     const rawTitle = lesson.title || "Bài học";
@@ -186,7 +182,8 @@ function SemesterDropdownItem({
                   })}
                 </ul>
               </div>
-            ))
+            );
+          })
           )}
         </div>
       )}
@@ -262,56 +259,26 @@ export function LessonGrid({
   // Preview lesson state for column 2
   const [previewLesson, setPreviewLesson] = useState<LessonSummaryDTO | null>(null);
 
-  // Dynamic learning outcomes matching the script outcome UI standard
+  // Learning outcomes parsed from lesson data (JSON array or newline string)
   const previewOutcomes = useMemo(() => {
     if (!previewLesson) return [];
-    const title = (previewLesson.title || "").toLowerCase();
-    if (title.includes("lịch sử là gì") || title.includes("tại sao cần học lịch sử")) {
-      return [
-        "Nêu được khái niệm lịch sử và môn Lịch sử.",
-        "Hiểu được lịch sử là những gì đã diễn ra trong quá khứ.",
-        "Giải thích được vì sao cần thiết phải học môn Lịch sử.",
-        "Phân biệt được các nguồn sử liệu cơ bản, ý nghĩa và giá trị của các nguồn sử liệu.",
-      ];
-    }
-    if (title.includes("nguyên thủy") || title.includes("vượn người") || title.includes("tinh khôn")) {
-      return [
-        "Trình bày được quá trình tiến hóa từ Vượn người thành người tối cổ và người tinh khôn.",
-        "Mô tả được đời sống vật chất và tinh thần của người nguyên thủy trên đất nước Việt Nam.",
-        "Nhận biết được ý nghĩa của lao động trong quá trình hình thành xã hội loài người.",
-      ];
-    }
-    if (
-      title.includes("cổ đại") ||
-      title.includes("ai cập") ||
-      title.includes("lưỡng hà") ||
-      title.includes("ấn độ") ||
-      title.includes("hy lạp") ||
-      title.includes("la mã")
-    ) {
-      return [
-        "Nêu được tác động của điều kiện tự nhiên đối với sự hình thành nền văn minh cổ đại.",
-        "Trình bày được những thành tựu văn hóa tiêu biểu và ý nghĩa đối với nền văn minh nhân loại.",
-        "Phân tích được quá trình xác lập và phát triển của nhà nước cổ đại phương Đông và phương Tây.",
-      ];
-    }
-    if (
-      title.includes("phong kiến") ||
-      title.includes("đại việt") ||
-      title.includes("thời lý") ||
-      title.includes("thời trần") ||
-      title.includes("thời lê")
-    ) {
-      return [
-        "Trình bày được bối cảnh lịch sử, tổ chức bộ máy nhà nước và chính sách kinh tế - xã hội thời kỳ này.",
-        "Phân tích được những chiến công tiêu biểu trong công cuộc dựng nước và giữ nước của dân tộc.",
-        "Đánh giá được vai trò lịch sử của các nhân vật và rút ra bài học kinh nghiệm cho hiện tại.",
-      ];
+    if (previewLesson.learningObjectives) {
+      try {
+        const parsed = JSON.parse(previewLesson.learningObjectives);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((item) => (typeof item === "string" ? item : JSON.stringify(item)));
+        }
+      } catch {
+        const lines = previewLesson.learningObjectives
+          .split("\n")
+          .map((s) => s.trim().replace(/^[-*•\d.]+\s*/, ""))
+          .filter(Boolean);
+        if (lines.length > 0) return lines;
+      }
     }
     return [
-      `Nắm vững kiến thức trọng tâm, bối cảnh lịch sử và diễn biến cốt lõi của bài học "${previewLesson.title}".`,
-      "Phát triển năng lực tìm hiểu, khai thác tư liệu lịch sử, lược đồ và liên hệ thực tiễn.",
-      "Bồi dưỡng phẩm chất yêu nước, tự hào dân tộc và vận dụng kiến thức vào thực tiễn cuộc sống.",
+      `Nắm vững kiến thức trọng tâm và nội dung cốt lõi của bài học "${previewLesson.title}".`,
+      "Vận dụng kiến thức để trả lời câu hỏi và thực hiện các hoạt động học tập liên quan.",
     ];
   }, [previewLesson]);
 
@@ -360,6 +327,7 @@ export function LessonGrid({
         if (!chapters) return [];
         return chapters.map((ch) => ({
           title: ch.title,
+          order: ch.order,
           lessons: ch.lessons.map((l) => ({
             id: l.id,
             code: l.code,
@@ -368,7 +336,9 @@ export function LessonGrid({
             gradeCode: l.gradeCode,
             subjectCode: l.subjectCode,
             textbookCode: l.textbookCode,
-            chapterTitle: ch.title,
+            chapterTitle: ch.order && !/^chương\s*\d+/i.test(ch.title)
+              ? `Chương ${ch.order}: ${ch.title}`
+              : ch.title,
             chapterId: ch.id,
             chapterOrder: ch.order,
           }) as LessonSummaryDTO),
@@ -401,7 +371,7 @@ export function LessonGrid({
           : lesson.semesterCode === "2" ? 2
           : getSemesterForChapter(lesson.gradeCode || activeGrade, chapterKey);
         const matchNum = chapterKey.match(/chương\s*(\d+)/i);
-        const orderNum = matchNum ? parseInt(matchNum[1], 10) : 1;
+        const orderNum = lesson.chapterOrder || (matchNum ? parseInt(matchNum[1], 10) : 1);
 
         chapterMap.set(chapterKey, {
           id: lesson.chapterId || chapterKey,
@@ -414,17 +384,17 @@ export function LessonGrid({
       chapterMap.get(chapterKey)!.lessons.push(lesson);
     });
 
-    const sem1Chapters: Array<{ title: string; lessons: LessonSummaryDTO[] }> = [];
-    const sem2Chapters: Array<{ title: string; lessons: LessonSummaryDTO[] }> = [];
+    const sem1Chapters: Array<{ title: string; order?: number; lessons: LessonSummaryDTO[] }> = [];
+    const sem2Chapters: Array<{ title: string; order?: number; lessons: LessonSummaryDTO[] }> = [];
 
     Array.from(chapterMap.values())
       .sort((a, b) => a.order - b.order)
       .forEach((ch) => {
         ch.lessons.sort((a, b) => (a.orderInChapter || 0) - (b.orderInChapter || 0));
         if (ch.semester === 1) {
-          sem1Chapters.push({ title: ch.title, lessons: ch.lessons });
+          sem1Chapters.push({ title: ch.title, order: ch.order, lessons: ch.lessons });
         } else {
-          sem2Chapters.push({ title: ch.title, lessons: ch.lessons });
+          sem2Chapters.push({ title: ch.title, order: ch.order, lessons: ch.lessons });
         }
       });
 
@@ -433,14 +403,6 @@ export function LessonGrid({
       sem2: sem2Chapters,
     };
   }, [curriculum, tabLessons, activeGrade]);
-
-  const sem1Count = useMemo(() => {
-    return semesterData.sem1.reduce((sum, ch) => sum + ch.lessons.length, 0);
-  }, [semesterData.sem1]);
-
-  const sem2Count = useMemo(() => {
-    return semesterData.sem2.reduce((sum, ch) => sum + ch.lessons.length, 0);
-  }, [semesterData.sem2]);
 
   // Search results if search term is active
   const searchResults = useMemo(() => {
@@ -601,9 +563,6 @@ export function LessonGrid({
               <span className="font-header font-bold text-slate-900 text-sm">
                 {activeGradeLabel}
               </span>
-              <span className="text-[11px] font-semibold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
-                {tabLessons.length} bài học
-              </span>
             </div>
 
             {/* Quick semester switcher */}
@@ -619,16 +578,6 @@ export function LessonGrid({
                 )}
               >
                 <span>Học kỳ I</span>
-                <span
-                  className={cn(
-                    "text-[10px] px-1.5 py-0.2 rounded-full font-bold",
-                    openSemester === 1
-                      ? "bg-white/20 text-white"
-                      : "bg-slate-100 text-slate-600"
-                  )}
-                >
-                  {sem1Count}
-                </span>
               </button>
               <button
                 type="button"
@@ -641,16 +590,6 @@ export function LessonGrid({
                 )}
               >
                 <span>Học kỳ II</span>
-                <span
-                  className={cn(
-                    "text-[10px] px-1.5 py-0.2 rounded-full font-bold",
-                    openSemester === 2
-                      ? "bg-white/20 text-white"
-                      : "bg-slate-100 text-slate-600"
-                  )}
-                >
-                  {sem2Count}
-                </span>
               </button>
             </div>
           </div>
@@ -666,14 +605,12 @@ export function LessonGrid({
                 {
                   number: 1 as const,
                   title: "Học kỳ I",
-                  count: sem1Count,
                   chapters: semesterData.sem1,
                   theme: "primary" as const,
                 },
                 {
                   number: 2 as const,
                   title: "Học kỳ II",
-                  count: sem2Count,
                   chapters: semesterData.sem2,
                   theme: "indigo" as const,
                 },
@@ -683,7 +620,6 @@ export function LessonGrid({
                   title={sem.title}
                   isOpen={openSemester === sem.number}
                   onToggle={() => setOpenSemester(sem.number)}
-                  count={sem.count}
                   chapters={sem.chapters}
                   previewLessonId={previewLesson?.id}
                   onSelectLesson={setPreviewLesson}
@@ -703,11 +639,15 @@ export function LessonGrid({
             <div className="flex flex-col h-full flex-1 min-h-0">
               {/* Nội dung preview cuộn được */}
               <div className="p-6 space-y-4 flex-1 overflow-y-auto custom-scrollbar">
-                {/* Tiêu đề: Chương ở trên, Bài học ở dưới */}
-                <div className="space-y-1.5">
+                {/* Tiêu đề: Chương ở trên (với badge số chương), Bài học ở dưới */}
+                <div className="space-y-2">
                   {previewLesson.chapterTitle && (
-                    <div className="flex items-center gap-1.5 text-xs font-header font-bold uppercase tracking-wider text-[var(--color-primary-700)]">
-                      <span className="truncate">{previewLesson.chapterTitle}</span>
+                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[var(--color-primary-100)] border border-[var(--color-primary-200)] text-[var(--color-primary-800)] text-xs font-header font-bold uppercase tracking-wider max-w-full">
+                      <span className="truncate">
+                        {previewLesson.chapterOrder && !/^chương\s*\d+/i.test(previewLesson.chapterTitle)
+                          ? `Chương ${previewLesson.chapterOrder}: ${previewLesson.chapterTitle}`
+                          : previewLesson.chapterTitle}
+                      </span>
                     </div>
                   )}
                   <h2 className="font-header font-bold text-base md:text-lg text-slate-900 leading-snug">

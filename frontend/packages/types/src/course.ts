@@ -166,6 +166,7 @@ export interface LessonSummaryDTO {
   chapterTitle?: string;
   chapterOrder?: number;
   semesterCode?: string;
+  learningObjectives?: string;
 }
 
 // Curriculum tree: Semester → Chapter → Lesson (GET /api/v1/lessons/curriculum)
