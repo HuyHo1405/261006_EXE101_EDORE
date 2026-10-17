@@ -21,6 +21,9 @@ public class Chapter {
 
     private String title;
 
+    @Column(name = "semester_code")
+    private String semesterCode; // SEMESTER category code: "1" | "2"
+
     @Column(columnDefinition = "TEXT")
     private String description;
 }

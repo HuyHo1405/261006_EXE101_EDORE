@@ -7,7 +7,6 @@ import { DashboardAside } from '@/features/course/components/DashboardAside'
 import ProcessingLoader from '@/features/playground/components/ProcessingLoader'
 import ClassroomConfigModal from '@/features/playground/components/ClassroomConfigModal'
 import { LessonGrid } from '@/features/course/components/LessonGrid'
-import { LessonToolbar } from '@/features/course/components/LessonToolbar'
 import { LessonStartModal } from '@/features/course/components/LessonStartModal'
 import { useStageTransition } from '@/lib/hooks/useStageTransition'
 import {
@@ -20,6 +19,8 @@ import type { ClassroomCtx } from '@/features/playground/components/ClassroomCon
 import type { LessonSummaryDTO } from '@edore/types'
 import { toast } from '@/components/ui/toast'
 import { ArrowLeft, Users, Sparkles, BookOpen, ChevronRight } from 'lucide-react'
+
+import { STANDARD_LESSONS } from '@/features/course/data/standardLessons'
 
 const DEFAULT_CTX: ClassroomCtx = {
   duration: 45,
@@ -56,7 +57,7 @@ function NewScriptContent() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedGrade, setSelectedGrade] = useState('')
   const [selectedTextbook, setSelectedTextbook] = useState('')
-  const [sortBy, setSortBy] = useState('orderInChapter')
+  const [sortBy, setSortBy] = useState('gradeCode')
   const [pageNumber, setPageNumber] = useState(0)
 
   // ── Fetch Lessons via React Query ──────────────────────────────────────────────
@@ -66,9 +67,22 @@ function NewScriptContent() {
     textbookCode: selectedTextbook || undefined,
     sortBy: sortBy,
     sortDirection: 'ASC',
-    page: pageNumber,
-    size: 8,
+    page: 0,
+    size: 100,
   })
+
+  // All lessons combined with standard curriculum lessons as reliable fallback
+  const allLessons = useMemo(() => {
+    const apiLessons = lessonPage?.content || []
+    if (apiLessons.length > 0) {
+      const existingCodes = new Set(apiLessons.map((l) => l.code || l.id))
+      const extra = STANDARD_LESSONS.filter(
+        (l) => !existingCodes.has(l.code) && !existingCodes.has(l.id)
+      )
+      return [...apiLessons, ...extra]
+    }
+    return STANDARD_LESSONS
+  }, [lessonPage?.content])
 
   // ── Pipeline & Polling state ──────────────────────────────────────────────────
   const [hasError, setHasError] = useState(false)
@@ -191,7 +205,7 @@ function NewScriptContent() {
     resetPipelineState()
   }
 
-  const totalLessons = lessonPage?.totalElements || 0
+  const totalLessons = allLessons.length
   const totalPages = lessonPage?.totalPages || 1
 
   return (
@@ -203,7 +217,7 @@ function NewScriptContent() {
             activeTab="scripts"
             onTabChange={() => router.push('/dashboard')}
             selectedCategoryId={null}
-            onSelectCategory={() => {}}
+            onSelectCategory={() => { }}
             courses={coursePage?.content || []}
             selectedCourseId={courseIdParam || null}
             isDrawerOnly={true}
@@ -212,14 +226,14 @@ function NewScriptContent() {
           />
 
           {/* Main Content Area */}
-          <main className="flex-1 min-w-0 w-full bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col justify-between self-stretch min-h-[580px]">
+          <main className="flex-1 min-w-0 w-full bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-6 flex flex-col justify-between self-stretch min-h-[580px]">
             <div key={stage} className={`flex-1 flex flex-col h-full ${isExiting ? 'stage-exit' : 'stage-enter'}`}>
               {stage === 'input' && (
-                <div className="flex flex-col h-full space-y-6">
+                <div className="flex flex-col h-full space-y-3.5">
                   {/* 1. TOP HEADER & BREADCRUMBS */}
-                  <div className="w-full font-sans space-y-3">
+                  <div className="w-full font-sans space-y-2">
                     {/* Breadcrumbs */}
-                    <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
                       <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                         <button
                           type="button"
@@ -242,13 +256,13 @@ function NewScriptContent() {
                     </div>
 
                     {/* Main Title Stack */}
-                    <div className="flex items-stretch gap-3.5 pt-1">
+                    <div className="flex items-stretch gap-3 pt-0.5">
                       <div className="w-1.5 rounded-full shrink-0 self-stretch my-0.5 bg-[var(--color-primary-500)]" />
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <h1 className="font-header font-bold text-2xl sm:text-3xl uppercase tracking-tight text-slate-900 leading-tight">
-                          Thư viện bài học nội bộ ({totalLessons})
+                      <div className="flex-1 min-w-0 space-y-0.5">
+                        <h1 className="font-header font-bold text-xl sm:text-2xl uppercase tracking-tight text-slate-900 leading-tight">
+                          Thư viện bài học ({totalLessons})
                         </h1>
-                        <p className="text-xs sm:text-sm text-slate-600 font-body leading-relaxed">
+                        <p className="text-xs text-slate-600 font-body leading-relaxed">
                           Chọn bài học từ chương trình chuẩn để AI phân tích cấu trúc, ngữ liệu và hình ảnh nhằm tự động soạn kịch bản.
                         </p>
                       </div>
@@ -256,12 +270,12 @@ function NewScriptContent() {
                   </div>
 
                   {/* 2. ACTION ROW (BACK BUTTON & CLASSROOM CONFIG) */}
-                  <div className="flex items-center justify-between gap-4 pb-0.5 pt-0">
+                  <div className="flex items-center justify-between gap-4 py-0">
                     <div>
                       <button
                         type="button"
                         onClick={() => router.push(courseIdParam ? `/dashboard?courseId=${courseIdParam}` : '/dashboard')}
-                        className="group inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] transition-all duration-200 cursor-pointer py-1"
+                        className="group inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] transition-all duration-200 cursor-pointer py-0.5"
                       >
                         <ArrowLeft className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
                         <span className="font-body whitespace-nowrap group-hover:underline">Quay lại khóa học</span>
@@ -271,45 +285,35 @@ function NewScriptContent() {
                     <button
                       type="button"
                       onClick={() => setIsConfigOpen(true)}
-                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] transition-all duration-200 cursor-pointer py-1"
+                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] transition-all duration-200 cursor-pointer py-0.5"
                     >
                       <Users className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
                       <span className="font-body whitespace-nowrap group-hover:underline">Cấu hình lớp học</span>
                     </button>
                   </div>
 
-                  {/* 3. GRAY CONTAINER (TOOLBAR & 8-SLOT MATRIX GRID) */}
-                  <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-5 sm:p-6 md:p-7 rounded-2xl md:rounded-3xl shadow-sm flex flex-col flex-1 justify-between space-y-6">
-                    {/* Toolbar */}
-                    <LessonToolbar
-                      searchTerm={searchTerm}
-                      onSearchChange={(val) => {
-                        setSearchTerm(val)
-                        setPageNumber(0)
-                      }}
-                      selectedGrade={selectedGrade}
-                      onSelectGrade={(grade) => {
-                        setSelectedGrade(grade)
-                        setPageNumber(0)
-                      }}
-                      selectedTextbook={selectedTextbook}
-                      onSelectTextbook={(tb) => {
-                        setSelectedTextbook(tb)
-                        setPageNumber(0)
-                      }}
-                      sortBy={sortBy}
-                      onSortByChange={(s) => setSortBy(s)}
-                    />
-
-                    {/* Matrix Grid */}
+                  {/* 3. MAIN CONTAINER (GRADE TABS & 2-COLUMN CURRICULUM VIEW) */}
+                  <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-4 sm:p-5 rounded-2xl md:rounded-3xl shadow-sm flex flex-col flex-1 justify-between space-y-4">
                     <div className="flex-1">
                       <LessonGrid
-                        lessons={lessonPage?.content || []}
+                        lessons={allLessons}
                         isLoading={isLoadingLessons}
                         onSelectLesson={handleSelectLesson}
-                        pageNumber={pageNumber}
-                        totalPages={totalPages}
-                        onPageChange={setPageNumber}
+                        selectedGrade={selectedGrade}
+                        onSelectGrade={(grade) => {
+                          setSelectedGrade(grade)
+                          setPageNumber(0)
+                        }}
+                        selectedTextbook={selectedTextbook}
+                        onSelectTextbook={(tb) => {
+                          setSelectedTextbook(tb)
+                          setPageNumber(0)
+                        }}
+                        searchTerm={searchTerm}
+                        onSearchChange={(val) => {
+                          setSearchTerm(val)
+                          setPageNumber(0)
+                        }}
                       />
                     </div>
                   </div>

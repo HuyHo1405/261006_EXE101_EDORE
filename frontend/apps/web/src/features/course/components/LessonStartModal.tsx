@@ -104,10 +104,10 @@ export function LessonStartModal({
     lesson.textbookCode === "KNTT"
       ? "Kết nối tri thức"
       : lesson.textbookCode === "CTST"
-      ? "Chân trời sáng tạo"
-      : lesson.textbookCode === "CD"
-      ? "Cánh diều"
-      : lesson.textbookCode || "SGK";
+        ? "Chân trời sáng tạo"
+        : lesson.textbookCode === "CD"
+          ? "Cánh diều"
+          : lesson.textbookCode || "SGK";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-6 md:p-8 animate-in fade-in duration-200 font-body">
@@ -125,7 +125,7 @@ export function LessonStartModal({
             </div>
 
             <p className="font-body text-[11px] text-[var(--color-neutral-500)] mt-0.5 leading-relaxed font-medium">
-              AI sẽ sử dụng toàn bộ nội dung giáo khoa và hệ thống tư liệu hình ảnh nội bộ của bài học này để sinh kịch bản.
+              AI sẽ sử dụng toàn bộ nội dung giáo khoa và hệ thống tư liệu hình ảnh của bài học này để sinh kịch bản.
             </p>
 
             {/* Lesson summary card */}
@@ -241,18 +241,16 @@ export function LessonStartModal({
                         type="button"
                         onClick={() => setTemplateId(opt.value)}
                         className={`relative w-full p-3.5 rounded-[var(--radius-lg)] border transition-all flex flex-col items-center text-center gap-2 cursor-pointer
-                          ${
-                            isSelected
-                              ? "border-[var(--color-primary-300)] bg-[var(--color-primary-50)] shadow-md ring-4 ring-[var(--color-primary-50)]"
-                              : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)] hover:bg-[var(--color-neutral-50)]"
+                          ${isSelected
+                            ? "border-[var(--color-primary-300)] bg-[var(--color-primary-50)] shadow-md ring-4 ring-[var(--color-primary-50)]"
+                            : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)] hover:bg-[var(--color-neutral-50)]"
                           }`}
                       >
                         <div
                           className={`absolute top-3 right-3 w-4 h-4 rounded-[var(--radius-full)] border-2 flex items-center justify-center shrink-0 transition-all
-                            ${
-                              isSelected
-                                ? "border-[var(--color-primary-500)] bg-[var(--color-primary-500)]"
-                                : "border-[var(--color-neutral-300)]"
+                            ${isSelected
+                              ? "border-[var(--color-primary-500)] bg-[var(--color-primary-500)]"
+                              : "border-[var(--color-neutral-300)]"
                             }`}
                         >
                           {isSelected && (
@@ -261,22 +259,20 @@ export function LessonStartModal({
                         </div>
 
                         <div
-                          className={`p-2.5 rounded-[var(--radius-full)] transition-colors ${
-                            isSelected
+                          className={`p-2.5 rounded-[var(--radius-full)] transition-colors ${isSelected
                               ? "bg-[var(--color-primary-100)] text-[var(--color-primary-600)]"
                               : "bg-[var(--color-neutral-100)] text-[var(--color-neutral-500)]"
-                          }`}
+                            }`}
                         >
                           <Icon className="w-5 h-5" />
                         </div>
 
                         <div>
                           <p
-                            className={`font-header text-xs uppercase tracking-tight font-extrabold ${
-                              isSelected
+                            className={`font-header text-xs uppercase tracking-tight font-extrabold ${isSelected
                                 ? "text-[var(--color-primary-700)]"
                                 : "text-[var(--color-neutral-800)]"
-                            }`}
+                              }`}
                           >
                             {opt.label}
                           </p>

@@ -125,10 +125,14 @@ public class LessonServiceImpl implements LessonService {
     public PageResponseDTO<LessonSummaryResponse> searchLessons(LessonFilterRequestDTO filter) {
         Specification<LessonMetadata> spec = LessonSpecification.filter(filter);
 
-        Sort sort = Sort.by(
-                filter.isAscending() ? Sort.Direction.ASC : Sort.Direction.DESC,
-                filter.getValidSortBy()
-        );
+        Sort.Direction direction = filter.isAscending() ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort;
+        if ("gradeCode".equalsIgnoreCase(filter.getValidSortBy())) {
+            sort = Sort.by(direction, "gradeCode")
+                    .and(Sort.by(Sort.Direction.ASC, "orderInChapter"));
+        } else {
+            sort = Sort.by(direction, filter.getValidSortBy());
+        }
         Pageable pageable = PageRequest.of(filter.getPageNumber(), filter.getPageSize(), sort);
 
         Page<LessonMetadata> page = metadataRepository.findAll(spec, pageable);
@@ -136,6 +140,10 @@ public class LessonServiceImpl implements LessonService {
         Map<String, String> chapterTitleMap = chapterRepository.findAll().stream()
                 .filter(c -> c.getId() != null && c.getTitle() != null)
                 .collect(Collectors.toMap(Chapter::getId, Chapter::getTitle, (a, b) -> a));
+
+        Map<String, String> chapterSemesterMap = chapterRepository.findAll().stream()
+                .filter(c -> c.getId() != null && c.getSemesterCode() != null)
+                .collect(Collectors.toMap(Chapter::getId, Chapter::getSemesterCode, (a, b) -> a));
 
         Page<LessonSummaryResponse> dtoPage = page.map(m -> LessonSummaryResponse.builder()
                 .id(m.getId())
@@ -147,6 +155,7 @@ public class LessonServiceImpl implements LessonService {
                 .textbookCode(m.getTextbookCode())
                 .chapterId(m.getChapterId())
                 .chapterTitle(m.getChapterId() != null ? chapterTitleMap.get(m.getChapterId()) : null)
+                .semesterCode(m.getChapterId() != null ? chapterSemesterMap.get(m.getChapterId()) : null)
                 .build());
 
         return PageResponseDTO.of(dtoPage, filter.getValidSortBy(), filter.isAscending() ? "ASC" : "DESC");

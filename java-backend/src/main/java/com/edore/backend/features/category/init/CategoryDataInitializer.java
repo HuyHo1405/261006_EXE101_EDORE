@@ -27,11 +27,6 @@ public class CategoryDataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        if (categoryRepository.count() > 0) {
-            log.info("[Seed] Categories already seeded, skipping.");
-            return;
-        }
-
         List<Category> categories = List.of(
                 // ── SUBJECT ───────────────────────────────────────────────
                 category(CategoryType.SUBJECT, "LS", "Lịch sử", "Môn Lịch sử phổ thông"),
@@ -47,6 +42,10 @@ public class CategoryDataInitializer implements CommandLineRunner {
                 category(CategoryType.GRADE, "8", "Lớp 8", "Khối lớp 8 trung học cơ sở"),
                 category(CategoryType.GRADE, "9", "Lớp 9", "Khối lớp 9 trung học cơ sở"),
 
+                // ── SEMESTER ─────────────────────────────────────────────
+                category(CategoryType.SEMESTER, "1", "Học kỳ I", "Học kỳ 1 năm học phổ thông"),
+                category(CategoryType.SEMESTER, "2", "Học kỳ II", "Học kỳ 2 năm học phổ thông"),
+
                 // ── PURPOSE ──────────────────────────────────────────────
                 category(CategoryType.PURPOSE, "EXAM_PREP",      "Ôn thi",    "Tài liệu ôn tập và luyện thi"),
                 category(CategoryType.PURPOSE, "TOPIC_SPECIAL",  "Chuyên đề", "Bài giảng chuyên đề chuyên sâu"),
@@ -55,8 +54,19 @@ public class CategoryDataInitializer implements CommandLineRunner {
                 category(CategoryType.OTHER, "GENERAL", "Chung", "Danh mục chung, không phân loại")
         );
 
-        categoryRepository.saveAll(categories);
-        log.info("[Seed] CategoryDataInitializer completed: {} categories seeded.", categories.size());
+        int newlySeeded = 0;
+        for (Category cat : categories) {
+            if (!categoryRepository.existsByCode(cat.getCode())) {
+                categoryRepository.save(cat);
+                newlySeeded++;
+            }
+        }
+
+        if (newlySeeded > 0) {
+            log.info("[Seed] CategoryDataInitializer: {} new categories seeded.", newlySeeded);
+        } else {
+            log.info("[Seed] Categories already up to date, skipping.");
+        }
     }
 
     private Category category(CategoryType type, String code, String name, String description) {
