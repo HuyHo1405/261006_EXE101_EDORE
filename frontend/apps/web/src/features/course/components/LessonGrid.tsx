@@ -3,13 +3,13 @@
 /**
  * LessonGrid — Selected Tab Interface (2-Column Layout)
  *
- * Tab bar chọn Khối lớp: Lớp 6, Lớp 7, Lớp 8, Lớp 9
+ * Select chọn Khối lớp (cạnh bộ chuyển Học kỳ I / II)
  * Cột 1: Phân cấp theo: Học kỳ > Chương > Bài
  * Cột 2: Preview chi tiết của bài đã chọn (hoặc Empty state chờ click bài)
  */
 
 import React, { useState, useMemo, useEffect } from "react";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, ChevronDown } from "lucide-react";
 import type { LessonSummaryDTO, CurriculumSemesterDTO } from "@edore/types";
 import { useCategories } from "@/features/course/queries/courseQueries";
 import { getSemesterForChapter } from "@/features/course/data/standardLessons";
@@ -206,11 +206,6 @@ export function LessonGrid({
   if (isLoading) {
     return (
       <div className="bg-white rounded-2xl border border-slate-200/90 p-6 space-y-4 animate-pulse">
-        <div className="flex gap-2">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-10 w-28 rounded-xl bg-slate-200" />
-          ))}
-        </div>
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 min-h-[460px]">
           <div className="md:col-span-7 bg-slate-100 rounded-xl" />
           <div className="md:col-span-5 bg-slate-100 rounded-xl" />
@@ -233,40 +228,6 @@ export function LessonGrid({
   // ── CASE 2: SELECTED TAB INTERFACE (2-COLUMN LAYOUT) ──
   return (
     <div className="w-full min-w-0 space-y-4 overflow-visible">
-      {/* ── 1. SELECTED GRADE TABS & FILTERS BAR ── */}
-      <div className="w-full min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl md:rounded-3xl border border-slate-200/90 shadow-2xs overflow-visible">
-        {/* Grade tabs */}
-        <div className="flex items-center gap-2 overflow-visible min-w-0 max-w-full flex-1 flex-wrap py-1">
-          {grades.map((g) => {
-            const isActive =
-              (g.value || "").replace(/\D+/g, "") === (activeGrade || "").replace(/\D+/g, "") ||
-              activeGrade === g.value;
-
-            return (
-              <button
-                key={g.value}
-                type="button"
-                onClick={() => handleTabChange(g.value)}
-                className={cn(
-                  "group relative flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer select-none outline-none whitespace-nowrap shrink-0",
-                  isActive
-                    ? "bg-[var(--color-primary-500)] text-white shadow-sm border border-[var(--color-primary-600)] ring-1 ring-[var(--color-primary-400)]/40 -translate-y-0.5"
-                    : "bg-slate-50 text-slate-700 hover:text-[var(--color-primary-600)] hover:bg-slate-100 border border-slate-200/80"
-                )}
-              >
-                <GraduationCap
-                  className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
-                    isActive ? "text-white" : "text-[var(--color-primary-500)]"
-                  )}
-                />
-                <span>{g.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       {/* ── 2. MAIN 2-COLUMN VIEW CONTAINER ── */}
       <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200/90 shadow-xs grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-slate-200 min-h-[500px] overflow-visible">
         {/* ══════════════════════════════════════════════════════════════
@@ -275,10 +236,22 @@ export function LessonGrid({
         <div className="md:col-span-7 flex flex-col min-w-0 overflow-visible">
           {/* Subheader: Lọc theo Học kỳ */}
           <div className="border-b border-slate-100 px-4 md:px-6 py-3 bg-slate-50/50 flex items-center justify-between text-xs font-bold gap-3 flex-wrap min-w-0">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="font-header font-bold text-slate-900 text-sm truncate">
-                {activeGradeLabel}
-              </span>
+            <div className="relative inline-flex items-center min-w-0">
+              <GraduationCap className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-primary-500)] pointer-events-none" />
+              <select
+                value={activeGrade}
+                onChange={(e) => handleTabChange(e.target.value)}
+                title="Chọn khối lớp"
+                aria-label="Chọn khối lớp"
+                className="h-8 pl-8 pr-8 rounded-xl text-sm font-header font-bold text-slate-900 bg-white border border-slate-200 shadow-2xs appearance-none cursor-pointer hover:border-[var(--color-primary-400)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary-400)] transition-colors"
+              >
+                {grades.map((g) => (
+                  <option key={g.value} value={g.value}>
+                    {g.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
             </div>
 
             {/* Quick semester switcher */}
