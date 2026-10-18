@@ -32,8 +32,11 @@ export const metadata: Metadata = {
   description:
     "Edore là nền tảng ed-tech giúp giáo viên tự động phân tích tài liệu và biên soạn kịch bản bài giảng thông minh.",
   icons: {
-    icon: "/edore_logo.png",
-    shortcut: "/edore_logo.png",
+    icon: [
+      { url: "/EDORE_FAVICON.svg", type: "image/svg+xml" },
+      { url: "/edore_logo.png" },
+    ],
+    shortcut: "/EDORE_FAVICON.svg",
     apple: "/edore_logo.png",
   },
   openGraph: {
@@ -68,7 +71,7 @@ export default function RootLayout({
   return (
     <html lang="vi" className={`${sairaExtraCondensed.variable} ${mulish.variable} ${ibmPlexMono.variable}`}>
       <head>
-
+        <link rel="icon" href="/EDORE_FAVICON.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/edore_logo.png" />
       </head>
       <body className="flex flex-col min-h-screen">
