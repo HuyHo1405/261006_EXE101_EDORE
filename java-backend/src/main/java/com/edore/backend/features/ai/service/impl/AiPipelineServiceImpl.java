@@ -81,6 +81,7 @@ public class AiPipelineServiceImpl implements AiPipelineService {
     private final UserSettingsRepository      userSettingsRepository;
     private final SubscriptionService         subscriptionService;
     private final LessonService               lessonService;
+    private final PracticeNodeService         practiceNodeService;
     private final com.edore.backend.features.lesson.repository.ChapterRepository chapterRepository;
 
     @Override
@@ -111,7 +112,8 @@ public class AiPipelineServiceImpl implements AiPipelineService {
         String keyFacts = chunkingService.extractKeyFacts(rawText);
 
         // 4. Context per node
-        List<String> nodeCodes = nodes.stream().map(NodeType::getCode).toList();
+        List<NodeType> aiNodes = nodes.stream().filter(n -> !practiceNodeService.isPractice(n)).toList();
+        List<String> nodeCodes = aiNodes.stream().map(NodeType::getCode).toList();
         boolean isLargeFile = rawText.length() > llmProperties.largeFileThreshold();
         Map<String, String> contextPerNode = isLargeFile
                 ? chunkingService.getContextPerNode(chunks, nodeCodes)
@@ -125,8 +127,8 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                 .orElse("");
         }
 
-        String systemPrompt = aiPromptBuilder.buildSystemPrompt(nodes, classConfig, lessonMetaRes.getLearningObjectives(), com.edore.backend.features.vector.dto.GroundingLevel.STRONG);
-        String userContent  = aiPromptBuilder.buildUserContent(nodes, contextPerNode, classConfig, lessonMetaRes.getLearningObjectives(), keyFacts, course, lessonMetaRes.getImages(), chapterContext);
+        String systemPrompt = aiPromptBuilder.buildSystemPrompt(aiNodes, classConfig, lessonMetaRes.getLearningObjectives(), com.edore.backend.features.vector.dto.GroundingLevel.STRONG);
+        String userContent  = aiPromptBuilder.buildUserContent(aiNodes, contextPerNode, classConfig, lessonMetaRes.getLearningObjectives(), keyFacts, course, lessonMetaRes.getImages(), chapterContext);
 
         List<LlmMessage> messages = List.of(
                 LlmMessage.system(systemPrompt),
@@ -135,8 +137,10 @@ public class AiPipelineServiceImpl implements AiPipelineService {
 
         // 6. Call LLM & Parse
         long t3 = System.currentTimeMillis();
-        com.edore.backend.features.ai.dto.response.AiParsedResult parsedResult = callAndParseWithRetry(messages, nodes);
-        List<ScriptNodeResultDto> nodeResults = parsedResult.nodes();
+        com.edore.backend.features.ai.dto.response.AiParsedResult parsedResult = aiNodes.isEmpty()
+                ? new com.edore.backend.features.ai.dto.response.AiParsedResult(Map.of(), List.of())
+                : callAndParseWithRetry(messages, aiNodes);
+        List<ScriptNodeResultDto> nodeResults = practiceNodeService.merge(nodes, parsedResult.nodes(), lessonMetaRes.getCode());
         long aiMs = System.currentTimeMillis() - t3;
 
         // Populate lessonMeta manually from LessonMetadataResponse
@@ -300,7 +304,8 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                 groundingResult.level(), groundingResult.topScore(), qdrantMs);
 
         // â”€â”€ 4. Context per node â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        List<String> nodeCodes = nodes.stream().map(NodeType::getCode).toList();
+        List<NodeType> aiNodes = nodes.stream().filter(n -> !practiceNodeService.isPractice(n)).toList();
+        List<String> nodeCodes = aiNodes.stream().map(NodeType::getCode).toList();
         boolean isLargeFile = rawText.length() > llmProperties.largeFileThreshold();
 
         Map<String, String> contextPerNode = isLargeFile
@@ -320,8 +325,8 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                 .orElse("");
         }
         
-        String systemPrompt = aiPromptBuilder.buildSystemPrompt(nodes, classConfig, learningOutcome, groundingResult.level());
-        String userContent  = aiPromptBuilder.buildUserContent(nodes, contextPerNode, classConfig, learningOutcome, keyFacts, course, lessonAiRes.getImages(), chapterContext);
+        String systemPrompt = aiPromptBuilder.buildSystemPrompt(aiNodes, classConfig, learningOutcome, groundingResult.level());
+        String userContent  = aiPromptBuilder.buildUserContent(aiNodes, contextPerNode, classConfig, learningOutcome, keyFacts, course, lessonAiRes.getImages(), chapterContext);
 
         List<LlmMessage> messages = List.of(
                 LlmMessage.system(systemPrompt),
@@ -330,8 +335,10 @@ public class AiPipelineServiceImpl implements AiPipelineService {
 
         // â”€â”€ 6. Call LLM with Retry & Parse via AiResponseParser â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         long t3 = System.currentTimeMillis();
-        com.edore.backend.features.ai.dto.response.AiParsedResult parsedResult = callAndParseWithRetry(messages, nodes);
-        List<ScriptNodeResultDto> nodeResults = parsedResult.nodes();
+        com.edore.backend.features.ai.dto.response.AiParsedResult parsedResult = aiNodes.isEmpty()
+                ? new com.edore.backend.features.ai.dto.response.AiParsedResult(Map.of(), List.of())
+                : callAndParseWithRetry(messages, aiNodes);
+        List<ScriptNodeResultDto> nodeResults = practiceNodeService.merge(nodes, parsedResult.nodes(), lessonMetaRes.getCode());
         long aiMs = System.currentTimeMillis() - t3;
 
         if (jobStatus != null) {
@@ -400,6 +407,9 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                                                     Map<String, String> contextPerNode,
                                                     String rawText,
                                                     Boolean requestOverride) {
+        savedNodes = savedNodes.stream()
+                .filter(n -> n.getNodeType() == null || !practiceNodeService.isPractice(n.getNodeType())).toList();
+        final List<ScriptNode> verificationNodes = savedNodes;
         try {
             boolean enabled = requestOverride != null ? requestOverride : resolveFactCheckToggle();
             if (!enabled) {
@@ -413,12 +423,12 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                     new org.springframework.transaction.support.TransactionSynchronization() {
                         @Override
                         public void afterCommit() {
-                            scriptVerificationService.verifyScriptAsync(scriptId, savedNodes, contextPerNode, rawText);
+                            scriptVerificationService.verifyScriptAsync(scriptId, verificationNodes, contextPerNode, rawText);
                         }
                     }
                 );
             } else {
-                scriptVerificationService.verifyScriptAsync(scriptId, savedNodes, contextPerNode, rawText);
+                scriptVerificationService.verifyScriptAsync(scriptId, verificationNodes, contextPerNode, rawText);
             }
         } catch (Exception e) {
             // Phase 2 failure must never break the Phase 1 response

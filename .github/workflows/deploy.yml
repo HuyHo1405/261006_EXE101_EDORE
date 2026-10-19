@@ -30,6 +30,10 @@ jobs:
           cd frontend
           npm run type-check
 
+      - name: Test quiz export
+        run: node --test apps/web/tests/kahootExport.test.cjs
+        working-directory: frontend
+
   backend-check:
     name: Java Backend Compile & Docker Build
     runs-on: ubuntu-latest
@@ -47,7 +51,7 @@ jobs:
       - name: Compile & Package Java App
         run: |
           cd java-backend
-          mvn clean package -DskipTests
+          mvn clean package
 
       - name: Build Docker Image Test
         run: |

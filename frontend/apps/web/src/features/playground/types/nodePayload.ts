@@ -47,6 +47,11 @@ export interface HinhThanhKienThucPayload {
 }
 
 export interface ExerciseItem {
+  question_id?: string
+  options?: string[]
+  correct_answer?: number
+  time_limit?: number
+  explanation?: string
   question?: string
   level?: 'nhan_biet' | 'thong_hieu' | 'van_dung_thap' | 'van_dung_cao' | string
   answer?: string

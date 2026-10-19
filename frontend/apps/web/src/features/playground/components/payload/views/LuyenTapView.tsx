@@ -1,21 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import type { ReactNode } from 'react'
-import {
-  HelpCircle, MessageCircle, Flag, ChevronRight, Lightbulb, Plus, Trash2,
-  Eye, EyeOff, Award, Target, ClipboardList, Pencil, ListChecks,
-  Monitor, Ruler, FileText, Package, PackageCheck, Presentation,
-  Compass, Sparkles, Check, ArrowDown, Quote, Wand2, ArrowRight,
-  Image as ImageIcon, BookOpen, Gamepad2, Zap, Play,
-} from 'lucide-react'
+import { useId, useState } from 'react'
+import { Plus, Trash2, Eye, EyeOff, ClipboardList } from 'lucide-react'
 import { AutoResizeTextarea } from '../StepEnrichmentRender'
-import { classifyMaterial, splitStepText } from '../../../utils/stepText'
-import type { MaterialKind, ParsedMaterial } from '../../../utils/stepText'
-import { normalizeNodeType } from '../../../utils/stepEnrichment'
-import { parseTeachingTools } from '../../LessonOverviewPanel'
 
-import { SectionLabel, EditableList, MaterialList, StepList, TONE_BG, TONE_TEXT, fieldCls } from './Shared'
+import { SectionLabel, fieldCls } from './Shared'
+import { apiClient } from '@/lib/fetcher'
+import { downloadQuiz, prepareKahootQuestions, toKahootCsv } from '../../../utils/kahootExport'
 
 // ─── Luyện tập (ôn tập) ───────────────────────────────────────────────────────
 const LEVELS: { key: string; label: string; cls: string }[] = [
@@ -29,6 +20,30 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
   const p = payload || {}
   const exercises: any[] = Array.isArray(p.exercises) ? p.exercises : []
   const [shown, setShown] = useState<Record<number, boolean>>({})
+  const [exportError, setExportError] = useState('')
+  const [exporting, setExporting] = useState(false)
+  const radioGroup = useId()
+
+  const exportQuiz = async (format: 'csv' | 'xlsx') => {
+    setExportError('')
+    setExporting(true)
+    try {
+      const questions = prepareKahootQuestions(exercises, format === 'xlsx')
+      if (format === 'csv') {
+        downloadQuiz(new Blob([toKahootCsv(questions)], { type: 'text/csv;charset=utf-8' }), 'luyen-tap.csv')
+      } else {
+        const response = await apiClient<{ base64: string }>('/api/v1/lessons/questions/export-kahoot', {
+          method: 'POST', body: JSON.stringify({ questions }),
+        })
+        const bytes = Uint8Array.from(atob(response.result!.base64), c => c.charCodeAt(0))
+        downloadQuiz(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'kahoot-luyen-tap.xlsx')
+      }
+    } catch (error) {
+      setExportError(error instanceof Error ? error.message : 'Không thể xuất câu hỏi. Vui lòng thử lại.')
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const update = (i: number, patch: Record<string, any>) =>
     onChange({ ...p, exercises: exercises.map((e, j) => (j === i ? { ...e, ...patch } : e)) })
@@ -92,6 +107,29 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
               onChange={v => update(i, { question: v })}
               className={fieldCls + ' font-semibold'}
             />
+            {Array.isArray(ex.options) && (
+              <div className="space-y-2">
+                {ex.options.map((option: string, j: number) => (
+                  <label key={j} className="flex items-center gap-2">
+                    <input type="radio" name={`${radioGroup}-correct-${i}`} checked={ex.correct_answer === j + 1}
+                      aria-label={`Đáp án ${String.fromCharCode(65 + j)} đúng cho câu ${i + 1}`}
+                      onChange={() => update(i, { correct_answer: j + 1, answer: ex.options[j] })} />
+                    <span className="text-xs font-bold">{String.fromCharCode(65 + j)}.</span>
+                    <AutoResizeTextarea value={option} minRows={1} placeholder="Nhập lựa chọn…"
+                      onChange={value => update(i, {
+                        options: ex.options.map((o: string, k: number) => k === j ? value : o),
+                        ...(ex.correct_answer === j + 1 ? { answer: value } : {}),
+                      })} className={fieldCls} />
+                  </label>
+                ))}
+                <label className="text-xs text-slate-600 flex items-center gap-2">Thời gian trả lời
+                  <select value={ex.time_limit ?? 20} onChange={e => update(i, { time_limit: Number(e.target.value) })}
+                    className="border rounded p-1">
+                    {[5, 10, 20, 30, 60, 120].map(t => <option key={t} value={t}>{t} giây</option>)}
+                  </select>
+                </label>
+              </div>
+            )}
             <button
               type="button"
               onClick={() => setShown(s => ({ ...s, [i]: !s[i] }))}
@@ -100,7 +138,7 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
               {reveal ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
               {reveal ? 'Ẩn đáp án' : 'Xem đáp án / hướng dẫn giải'}
             </button>
-            {reveal && (
+            {reveal && !Array.isArray(ex.options) && (
               <AutoResizeTextarea
                 value={ex.answer || ''}
                 minRows={2}
@@ -109,17 +147,37 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
                 className={fieldCls + ' bg-emerald-50/60 border-emerald-200 focus:border-emerald-500 text-[13px]'}
               />
             )}
+            {reveal && Array.isArray(ex.options) && (
+              <div className="rounded-lg bg-emerald-50 p-3 space-y-2 text-sm">
+                <p>Đáp án đúng: {ex.correct_answer ? `${String.fromCharCode(64 + ex.correct_answer)}. ${ex.options[ex.correct_answer - 1] || ''}` : 'Chưa chọn'}</p>
+                <AutoResizeTextarea value={ex.explanation || ''} minRows={1} placeholder="Giải thích đáp án…"
+                  onChange={value => update(i, { explanation: value })} className={fieldCls} />
+              </div>
+            )}
           </div>
         )
       })}
 
       <button
         type="button"
-        onClick={() => onChange({ ...p, exercises: [...exercises, { question: '', level: 'thong_hieu', answer: '' }] })}
+        onClick={() => onChange({ ...p, exercises: [...exercises, { question: '', level: 'thong_hieu', answer: '', options: ['', '', '', ''], correct_answer: 1, time_limit: 20 }] })}
         className="w-full py-2 rounded-xl border-2 border-dashed border-slate-300 text-xs font-bold text-slate-500 hover:text-blue-600 hover:border-blue-400 transition-colors flex items-center justify-center gap-1"
       >
         <Plus className="w-3.5 h-3.5" /> Thêm câu hỏi
       </button>
+      {!exercises.length && <p className="text-sm text-slate-600">Bài học chưa có câu hỏi luyện tập. Thêm câu hỏi để bắt đầu.</p>}
+      <div className="border-t pt-3 space-y-2">
+        <div className="flex flex-wrap gap-2">
+          <button type="button" disabled={exporting || !exercises.length} onClick={() => exportQuiz('csv')}
+            className="rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50">Xuất CSV</button>
+          <button type="button" disabled={exporting || !exercises.length} onClick={() => exportQuiz('xlsx')}
+            className="rounded-lg bg-blue-600 text-white px-3 py-2 text-xs font-bold disabled:opacity-50">
+            {exporting ? 'Đang xuất…' : 'Xuất Excel cho Kahoot'}
+          </button>
+        </div>
+        <p className="text-xs text-slate-500">Dùng file Excel để nhập vào Kahoot qua Add question → Import → Import spreadsheet. Câu hỏi tối đa 120 ký tự, lựa chọn tối đa 75 ký tự.</p>
+        {exportError && <p role="alert" className="text-sm text-red-600">{exportError}</p>}
+      </div>
     </div>
   )
 }
