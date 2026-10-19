@@ -1,12 +1,13 @@
 'use client'
 
 import { useId, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Plus, Trash2, Eye, EyeOff, ClipboardList } from 'lucide-react'
 import { AutoResizeTextarea } from '../StepEnrichmentRender'
 
 import { SectionLabel, fieldCls } from './Shared'
-import { apiClient } from '@/lib/fetcher'
-import { downloadQuiz, prepareKahootQuestions, toKahootCsv } from '../../../utils/kahootExport'
+import { downloadQuiz, prepareKahootQuestions, toKahootCsv, type KahootQuestion } from '../../../utils/kahootExport'
+import { KahootReviewPanel } from './KahootReviewPanel'
 
 // ─── Luyện tập (ôn tập) ───────────────────────────────────────────────────────
 const LEVELS: { key: string; label: string; cls: string }[] = [
@@ -21,27 +22,23 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
   const exercises: any[] = Array.isArray(p.exercises) ? p.exercises : []
   const [shown, setShown] = useState<Record<number, boolean>>({})
   const [exportError, setExportError] = useState('')
-  const [exporting, setExporting] = useState(false)
+  const [reviewSource, setReviewSource] = useState<KahootQuestion[] | null>(null)
   const radioGroup = useId()
+  const pathname = usePathname()
+  let sourceSignature = ''
+  try { sourceSignature = JSON.stringify(prepareKahootQuestions(exercises, false)) } catch { /* Invalid originals cannot be exported. */ }
 
-  const exportQuiz = async (format: 'csv' | 'xlsx') => {
+  const exportQuiz = (format: 'csv' | 'xlsx') => {
     setExportError('')
-    setExporting(true)
     try {
-      const questions = prepareKahootQuestions(exercises, format === 'xlsx')
+      const questions = prepareKahootQuestions(exercises, false)
       if (format === 'csv') {
         downloadQuiz(new Blob([toKahootCsv(questions)], { type: 'text/csv;charset=utf-8' }), 'luyen-tap.csv')
       } else {
-        const response = await apiClient<{ base64: string }>('/api/v1/lessons/questions/export-kahoot', {
-          method: 'POST', body: JSON.stringify({ questions }),
-        })
-        const bytes = Uint8Array.from(atob(response.result!.base64), c => c.charCodeAt(0))
-        downloadQuiz(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'kahoot-luyen-tap.xlsx')
+        setReviewSource(questions)
       }
     } catch (error) {
       setExportError(error instanceof Error ? error.message : 'Không thể xuất câu hỏi. Vui lòng thử lại.')
-    } finally {
-      setExporting(false)
     }
   }
 
@@ -168,15 +165,20 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
       {!exercises.length && <p className="text-sm text-slate-600">Bài học chưa có câu hỏi luyện tập. Thêm câu hỏi để bắt đầu.</p>}
       <div className="border-t pt-3 space-y-2">
         <div className="flex flex-wrap gap-2">
-          <button type="button" disabled={exporting || !exercises.length} onClick={() => exportQuiz('csv')}
+          <button type="button" disabled={!exercises.length} onClick={() => exportQuiz('csv')}
             className="rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50">Xuất CSV</button>
-          <button type="button" disabled={exporting || !exercises.length} onClick={() => exportQuiz('xlsx')}
+          <button type="button" disabled={!exercises.length} onClick={() => exportQuiz('xlsx')}
             className="rounded-lg bg-blue-600 text-white px-3 py-2 text-xs font-bold disabled:opacity-50">
-            {exporting ? 'Đang xuất…' : 'Xuất Excel cho Kahoot'}
+            Xuất Excel cho Kahoot
           </button>
         </div>
         <p className="text-xs text-slate-500">Dùng file Excel để nhập vào Kahoot qua Add question → Import → Import spreadsheet. Câu hỏi tối đa 120 ký tự, lựa chọn tối đa 75 ký tự.</p>
         {exportError && <p role="alert" className="text-sm text-red-600">{exportError}</p>}
+        {reviewSource && JSON.stringify(reviewSource) === sourceSignature && (
+          <KahootReviewPanel key={sourceSignature} source={reviewSource} saved={p.kahoot_export}
+            cacheKey={`edore:kahoot-export:v1:${pathname}`}
+            onClose={() => setReviewSource(null)} onSave={draft => onChange({ ...p, kahoot_export: draft })} />
+        )}
       </div>
     </div>
   )

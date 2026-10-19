@@ -8,7 +8,7 @@ const source = fs.readFileSync(path.join(__dirname, '../src/features/playground/
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText
 const target = { exports: {} }
 new Function('exports', 'module', compiled)(target.exports, target)
-const { prepareKahootQuestions, toKahootCsv } = target.exports
+const { prepareKahootQuestions, toKahootCsv, restoreKahootDraft, applyKahootSuggestions } = target.exports
 const question = { question: 'Lịch sử, "quá khứ"?\nChọn đáp án', options: ['Đúng', 'Sai', '', ''], correct_answer: 1, time_limit: 20 }
 
 test('CSV preserves Vietnamese, quotes, commas, newlines and answer positions', () => {
@@ -44,4 +44,34 @@ test('CSV can preserve long bank questions while Kahoot Excel requires shortenin
   assert.ok(csv.includes(long.question))
   assert.ok(csv.includes(long.options[0]))
   assert.throws(() => prepareKahootQuestions([long]), /120/)
+})
+
+test('AI suggestions preserve source, existing short fields, answer key and time', () => {
+  const source = prepareKahootQuestions([{ ...question, options: ['a'.repeat(90), 'B', '', ''] }], false)
+  const suggestion = { question: 'AI changed question', options: ['A ngắn', 'AI changed B', 'new C', 'new D'], correct_answer: 2, time_limit: 60 }
+  const result = applyKahootSuggestions(source, [0], [suggestion])
+  assert.equal(source[0].options[0].length, 90)
+  assert.equal(result[0].question, source[0].question)
+  assert.deepEqual(result[0].options, ['A ngắn', 'B', '', ''])
+  assert.equal(result[0].correct_answer, 1)
+  assert.equal(result[0].time_limit, 20)
+})
+
+test('rejects invalid AI output without truncating it', () => {
+  const source = prepareKahootQuestions([{ ...question, options: ['a'.repeat(90), 'B', '', ''] }], false)
+  assert.throws(() => applyKahootSuggestions(source, [0], []), /thiếu/)
+  assert.throws(() => applyKahootSuggestions(source, [0], [{ ...source[0], options: ['a'.repeat(76), 'B', '', ''] }]), /75/)
+  assert.throws(() => applyKahootSuggestions(source, [0], [{ ...source[0], options: ['B', 'B', '', ''] }]), /trùng/)
+  assert.equal(source[0].options[0].length, 90)
+})
+
+test('restores saved export copy but discards it when originals or answer key change', () => {
+  const source = prepareKahootQuestions([question])
+  const saved = restoreKahootDraft(source)
+  saved.questions[0].question = 'Bản rút gọn'
+  assert.equal(restoreKahootDraft(source, saved).questions[0].question, 'Bản rút gọn')
+  const changed = [{ ...source[0], correct_answer: 2 }]
+  assert.equal(restoreKahootDraft(changed, saved).questions[0].question, source[0].question)
+  const broken = { ...saved, questions: [{ ...saved.questions[0], correct_answer: 2 }] }
+  assert.equal(restoreKahootDraft(source, broken).questions[0].correct_answer, 1)
 })
