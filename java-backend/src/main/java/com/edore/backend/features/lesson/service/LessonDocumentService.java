@@ -52,10 +52,22 @@ public class LessonDocumentService {
     public byte[] exportQuestions(Request request) throws IOException {
         if (request.questions().isEmpty())
             throw new ApiException(CommonResponseCode.VALIDATION_FAILED, "Bài học chưa có câu hỏi để xuất Word.");
-        return export(new Request(request.title(), request.subtitle(), List.of(), request.questions()), "BỘ CÂU HỎI");
+        return export(new Request(request.title(), request.subtitle(), List.of(), request.questions()), "BỘ CÂU HỎI DÀNH CHO GIÁO VIÊN");
+    }
+
+    public byte[] exportStudentQuestions(Request request) throws IOException {
+        if (request.questions().isEmpty())
+            throw new ApiException(CommonResponseCode.VALIDATION_FAILED, "Bài học chưa có câu hỏi để xuất Word.");
+        // Remove the answer key before rendering so it cannot enter the student document.
+        var questions = request.questions().stream().map(q -> new Question(q.question(), q.options(), null, "", "")).toList();
+        return export(new Request(request.title(), request.subtitle(), List.of(), questions), "PHIẾU CÂU HỎI DÀNH CHO HỌC SINH", false);
     }
 
     private byte[] export(Request request, String documentLabel) throws IOException {
+        return export(request, documentLabel, true);
+    }
+
+    private byte[] export(Request request, String documentLabel, boolean includeAnswers) throws IOException {
         long length = request.sections().stream().flatMap(s -> s.blocks().stream()).mapToLong(b -> b.text().length()).sum()
                 + request.questions().stream().mapToLong(q -> q.question().length() + q.options().stream().mapToInt(String::length).sum()
                 + value(q.answer()).length() + value(q.explanation()).length()).sum();
@@ -73,6 +85,12 @@ public class LessonDocumentService {
                 var subtitle = paragraph(document, request.subtitle(), false);
                 subtitle.setAlignment(ParagraphAlignment.CENTER); subtitle.setSpacingAfter(240);
                 subtitle.getRuns().forEach(r -> { r.setFontSize(10); r.setColor("8392A0"); });
+            }
+            if (!includeAnswers) {
+                paragraph(document, "Họ và tên: ................................................  Lớp: ................", false);
+                var instructions = paragraph(document, "Với câu trắc nghiệm, ghi chữ cái của lựa chọn. Với câu tự luận, viết câu trả lời vào phần trống dưới mỗi câu.", false);
+                instructions.setSpacingAfter(180);
+                instructions.getRuns().forEach(r -> r.setFontSize(10));
             }
             for (Section section : request.sections()) {
                 var sectionHeading = heading(document, section.title(), 1);
@@ -101,11 +119,24 @@ public class LessonDocumentService {
                     var question = paragraph(document, q.question(), false, "Câu " + (++i));
                     question.setSpacingBefore(200);
                     question.setKeepNext(true);
+                    boolean hasOptions = q.options().stream().anyMatch(o -> !o.isBlank());
                     for (int j = 0; j < q.options().size(); j++) if (!q.options().get(j).isBlank())
                         {
                             var p = paragraph(document, (char) ('A' + j) + ". " + q.options().get(j), false);
                             p.setIndentationLeft(300); p.setIndentationHanging(240); p.setSpacingAfter(65);
+                            if (!includeAnswers) p.setKeepNext(true);
                         }
+                    if (!includeAnswers) {
+                        var response = paragraph(document, hasOptions ? "................" : "................................................................................................", false, "Đáp án của bạn là");
+                        response.setAlignment(ParagraphAlignment.LEFT); response.setSpacingBefore(100); response.setSpacingAfter(140);
+                        response.setKeepNext(!hasOptions);
+                        if (!hasOptions) for (int line = 0; line < 2; line++) {
+                            var space = paragraph(document, "........................................................................................................................", false);
+                            space.setSpacingAfter(100);
+                            space.setKeepNext(line == 0);
+                        }
+                        continue;
+                    }
                     if (q.correctAnswer() != null && q.correctAnswer() <= q.options().size()
                             && !q.options().get(q.correctAnswer() - 1).isBlank()) {
                         paragraph(document, (char) ('A' + q.correctAnswer() - 1) + ". " + q.options().get(q.correctAnswer() - 1), false, "Đáp án đúng");

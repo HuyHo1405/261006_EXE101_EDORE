@@ -9,6 +9,56 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LessonDocumentServiceTest {
+    @Test void studentWorksheetOmitsAllAnswerFieldsWhileTeacherKeepsThem() throws Exception {
+        var request = new LessonDocumentService.Request("Lịch sử và cuộc sống", "Lịch sử 6 KNTT", List.of(),
+                List.of(new LessonDocumentService.Question("Lịch sử là gì?", List.of("Những gì đã xảy ra", "Dự đoán tương lai"), 1,
+                        "Hướng dẫn riêng cho giáo viên", "Giải thích riêng cho giáo viên"),
+                        new LessonDocumentService.Question("Nêu một cột mốc lịch sử em biết", List.of(), null,
+                                "Đáp án tự luận bí mật", "Lời giải tự luận bí mật")));
+        var service = new LessonDocumentService();
+        byte[] student = service.exportStudentQuestions(request);
+        byte[] teacher = service.exportQuestions(request);
+        try (var doc = new XWPFDocument(new ByteArrayInputStream(student))) {
+            String text = doc.getParagraphs().stream().map(XWPFParagraph::getText).reduce("", (a, b) -> a + "\n" + b);
+            assertTrue(text.contains("DÀNH CHO HỌC SINH"));
+            assertTrue(text.contains("Họ và tên:"));
+            assertEquals(2, doc.getParagraphs().stream().filter(p -> p.getText().startsWith("Đáp án của bạn là: ")).count());
+            assertTrue(text.contains("A. Những gì đã xảy ra"));
+            assertTrue(text.contains("B. Dự đoán tương lai"));
+            for (var q : request.questions()) assertTrue(text.contains(q.question()));
+            assertFalse(text.contains("Đáp án đúng"));
+            assertFalse(text.contains("Hướng dẫn trả lời"));
+            assertTrue(doc.getParagraphs().stream().noneMatch(XWPFParagraph::isPageBreak));
+        }
+        // Check every ZIP part too: answers must not survive as hidden content or metadata.
+        try (var zip = new java.util.zip.ZipInputStream(new ByteArrayInputStream(student))) {
+            while (zip.getNextEntry() != null) {
+                String part = new String(zip.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                for (var q : request.questions()) {
+                    assertFalse(part.contains(q.answer()));
+                    assertFalse(part.contains(q.explanation()));
+                }
+            }
+        }
+        try (var doc = new XWPFDocument(new ByteArrayInputStream(teacher))) {
+            String text = doc.getParagraphs().stream().map(XWPFParagraph::getText).reduce("", (a, b) -> a + "\n" + b);
+            assertTrue(text.contains("DÀNH CHO GIÁO VIÊN"));
+            assertTrue(text.contains("Đáp án đúng: A. Những gì đã xảy ra"));
+            assertFalse(text.contains("Đáp án của bạn là"));
+            for (var q : request.questions()) {
+                assertTrue(text.contains(q.answer()));
+                assertTrue(text.contains(q.explanation()));
+            }
+        }
+        assertThrows(com.edore.backend.core.exception.ApiException.class, () -> service.exportStudentQuestions(
+                new LessonDocumentService.Request("Chưa có câu hỏi", "", List.of(), List.of())));
+        String preview = System.getProperty("lesson.docx.audiencePreview");
+        if (preview != null) {
+            Files.write(Path.of(preview + "-hoc-sinh.docx"), student);
+            Files.write(Path.of(preview + "-giao-vien.docx"), teacher);
+        }
+    }
+
     @Test void separateExportsKeepOnlyTheirOwnContentAndQuestionsStartOnFirstPage() throws Exception {
         var service = new LessonDocumentService();
         var request = new LessonDocumentService.Request("Lịch sử và cuộc sống", "Lịch sử 6 KNTT",
