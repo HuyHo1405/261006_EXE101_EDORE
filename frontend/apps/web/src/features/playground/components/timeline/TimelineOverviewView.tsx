@@ -1,11 +1,12 @@
-'use client'
-
-import React from 'react'
-import { LayoutList, ChevronRight, ArrowRight } from 'lucide-react'
+import React, { useContext, useState } from 'react'
+import { LayoutList, ChevronRight, ArrowRight, FileText, Loader2 } from 'lucide-react'
 import type { TimelineStep } from '@/lib/services/pipelineService'
 import { EMPTY_LESSON_META } from '../../types/lessonMeta'
 import type { LessonMeta } from '../../types/lessonMeta'
 import { LessonOverviewPanel } from '../LessonOverviewPanel'
+import { LessonDocumentContext } from '../LessonDocumentContext'
+import { apiClient } from '@/lib/fetcher'
+import { downloadQuiz } from '../../utils/kahootExport'
 
 interface TimelineOverviewViewProps {
   lessonMeta?: LessonMeta
@@ -34,16 +35,56 @@ export function TimelineOverviewView({
   onToggleTool,
   onNavigateToNode,
 }: TimelineOverviewViewProps) {
+  const lessonDocument = useContext(LessonDocumentContext)
+  const [exportingDocx, setExportingDocx] = useState(false)
+  const [exportError, setExportError] = useState('')
+
+  const exportLessonDocx = async () => {
+    if (!lessonDocument || exportingDocx) return
+    setExportError('')
+    setExportingDocx(true)
+    try {
+      const response = await apiClient<{ base64: string }>('/api/v1/lessons/export-docx/lesson', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...lessonDocument,
+          sections: lessonDocument.sections,
+          questions: [],
+        }),
+      })
+      const bytes = Uint8Array.from(atob(response.result!.base64), c => c.charCodeAt(0))
+      const filename = (lessonDocument.title.replace(/[<>:"/\\|?*\x00-\x1F]/g, '-').trim().slice(0, 100) || 'bai-hoc') + '-bai-giang.docx'
+      downloadQuiz(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }), filename)
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : 'Không thể xuất Word bài giảng. Vui lòng thử lại.')
+    } finally {
+      setExportingDocx(false)
+    }
+  }
+
   return (
     <>
       <main className="col-span-12 lg:col-span-8 border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-sm">
-        <div className="p-5 bg-white border-b border-[var(--color-neutral-200)] flex flex-col gap-1">
-          <span className="font-mono text-[10px] font-bold text-[var(--color-primary-600)] uppercase tracking-wider">
-            TỔNG QUAN KỊCH BẢN
-          </span>
-          <h1 className="font-header font-extrabold text-2xl uppercase tracking-tight text-[var(--color-neutral-900)]">
-            Cấu trúc tiến trình giảng dạy đề xuất
-          </h1>
+        <div className="p-5 bg-white border-b border-[var(--color-neutral-200)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex flex-col gap-1">
+            <span className="font-mono text-[10px] font-bold text-[var(--color-primary-600)] uppercase tracking-wider">
+              TỔNG QUAN KỊCH BẢN
+            </span>
+            <h1 className="font-header font-extrabold text-2xl uppercase tracking-tight text-[var(--color-neutral-900)]">
+              Cấu trúc tiến trình giảng dạy đề xuất
+            </h1>
+          </div>
+          <button
+            type="button"
+            disabled={exportingDocx || !lessonDocument}
+            onClick={exportLessonDocx}
+            className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-blue-200 hover:border-blue-300 bg-blue-50 text-blue-800 text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
+            title="Tải bài giảng đầy đủ định dạng Word (.docx)"
+          >
+            <FileText className="w-4 h-4 text-blue-600" />
+            <span>{exportingDocx ? 'Đang xuất Word…' : 'Tải bài giảng (.docx)'}</span>
+            {exportingDocx && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />}
+          </button>
         </div>
 
         <div className="p-6 space-y-6 flex-1 overflow-y-auto bg-white">
@@ -152,6 +193,22 @@ export function TimelineOverviewView({
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}
+
+            <div className="pt-2 border-t border-[var(--color-neutral-200)] space-y-1.5">
+              <button
+                type="button"
+                disabled={exportingDocx || !lessonDocument}
+                onClick={exportLessonDocx}
+                className="w-full py-2.5 px-3 rounded-[var(--radius-md)] border-2 border-blue-200 hover:border-blue-300 bg-blue-50/80 hover:bg-blue-100/80 text-blue-800 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
+              >
+                <FileText className="w-4 h-4 text-blue-600" />
+                <span>{exportingDocx ? 'Đang xuất bài giảng…' : 'Tải bài giảng (Word .docx)'}</span>
+                {exportingDocx && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />}
+              </button>
+              {exportError && (
+                <p className="text-[11px] text-red-600 text-center font-medium">{exportError}</p>
+              )}
+            </div>
           </div>
         </div>
       </aside>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ChevronRight, FolderOpen, BookOpen, FileText, Pencil, PanelLeftOpen, Compass } from "lucide-react";
+import { ChevronRight, FolderOpen, BookOpen, FileText, Pencil, PanelLeftOpen } from "lucide-react";
 import type { CourseCardViewModel, CourseResponseDTO } from "@edore/types";
 
 export interface BreadcrumbItem {
@@ -191,21 +191,6 @@ export function DashboardBreadcrumb({
           </>
         )}
       </div>
-
-      {onToggleSidebar && (
-        <button
-          type="button"
-          onClick={onToggleSidebar}
-          className={`shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-xl border shadow-2xs font-bold text-xs transition-all active:scale-95 cursor-pointer ${isSidebarOpen
-              ? 'bg-[var(--color-primary-50)] text-[var(--color-primary-700)] border-[var(--color-primary-300)] hover:bg-[var(--color-primary-100)]'
-              : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-            }`}
-          title="Bật/tắt thanh chi tiết (Right Sidebar)"
-        >
-          <Compass className="w-4 h-4" />
-          <span className="hidden sm:inline">{isSidebarOpen ? 'Đóng chi tiết' : 'Mở chi tiết'}</span>
-        </button>
-      )}
     </header>
   );
 }
