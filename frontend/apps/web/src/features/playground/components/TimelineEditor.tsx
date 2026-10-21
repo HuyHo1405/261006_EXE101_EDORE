@@ -447,6 +447,7 @@ export default function TimelineEditor({
                   />
                 )}
                 images={lessonMeta?.images}
+                onPayloadChange={(newPayload) => updateStep({ nodePayload: newPayload })}
               />
             )}
           </>
