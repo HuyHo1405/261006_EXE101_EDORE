@@ -21,6 +21,7 @@ import {
   useCategories,
 } from '@/features/course/queries/courseQueries'
 import type { LessonQuestionDTO } from '../types/oralQuiz'
+import { MOCK_ORAL_CURRICULUM, getMockQuestions } from '../data/mockOralQuizData'
 
 interface SetupViewProps {
   onStart: (config: {
@@ -33,7 +34,6 @@ interface SetupViewProps {
   initialLessonId?: string
   initialLessonTitle?: string
   initialQuestions?: LessonQuestionDTO[]
-  onClose?: () => void
 }
 
 const DEFAULT_GRADES = [
@@ -48,7 +48,6 @@ export function SetupView({
   initialLessonId,
   initialLessonTitle,
   initialQuestions,
-  onClose,
 }: SetupViewProps) {
   // ── Flow Steps: 1. Nhập số học sinh -> 2. Chọn câu hỏi trả bài -> Bắt đầu ──
   const [currentStep, setCurrentStep] = useState<1 | 2>(1)
@@ -89,27 +88,9 @@ export function SetupView({
     gradeCode: selectedGrade || undefined,
   })
 
-  // Danh sách toàn bộ bài học thuộc khối lớp (Grade -> Bài trực tiếp, không cần chương)
-  const allLessonsOfGrade = useMemo(() => {
-    const list: Array<{ id: string; title: string; order?: number; chapterTitle?: string }> = []
-    semesters.forEach(sem => {
-      sem.chapters?.forEach(ch => {
-        ch.lessons?.forEach(les => {
-          list.push({
-            id: les.id,
-            title: les.title,
-            order: les.orderInChapter,
-            chapterTitle: ch.title,
-          })
-        })
-      })
-    })
-    return list
-  }, [semesters])
-
-  // Danh sách toàn bộ chương thuộc khối lớp (Grade -> Select chương trực tiếp)
+  // Danh sách toàn bộ chương thuộc khối lớp (tự động fallback sang Mock Data nếu API rỗng)
   const allChaptersOfGrade = useMemo(() => {
-    const list: Array<{ id: string; title: string; order?: number; lessonCount: number }> = []
+    const list: Array<{ id: string; title: string; order?: number; lessonCount: number; lessons?: any[] }> = []
     semesters.forEach(sem => {
       sem.chapters?.forEach(ch => {
         list.push({
@@ -117,11 +98,32 @@ export function SetupView({
           title: ch.title,
           order: ch.order,
           lessonCount: ch.lessons?.length || 0,
+          lessons: ch.lessons,
+        })
+      })
+    })
+
+    if (list.length > 0) return list
+
+    // Fallback sang Mock Data nếu Backend chưa có dữ liệu hoặc offline
+    return MOCK_ORAL_CURRICULUM.filter(ch => ch.gradeCode === selectedGrade)
+  }, [semesters, selectedGrade])
+
+  // Danh sách toàn bộ bài học thuộc khối lớp (Grade -> Bài trực tiếp, không cần chương)
+  const allLessonsOfGrade = useMemo(() => {
+    const list: Array<{ id: string; title: string; order?: number; chapterTitle?: string }> = []
+    allChaptersOfGrade.forEach(ch => {
+      ch.lessons?.forEach((les: any) => {
+        list.push({
+          id: les.id,
+          title: les.title,
+          order: les.order ?? les.orderInChapter,
+          chapterTitle: ch.title,
         })
       })
     })
     return list
-  }, [semesters])
+  }, [allChaptersOfGrade])
 
   // Tự động chọn bài đầu tiên khi đổi lớp hoặc chuyển sang mode bài
   useEffect(() => {
@@ -157,18 +159,27 @@ export function SetupView({
 
   const isLoadingQuestions = mode === 'lesson' ? isLoadingLessonQuestions : isLoadingChapterQuestions
 
-  // Tổng hợp câu hỏi có hiệu lực
+  // Tổng hợp câu hỏi có hiệu lực (tự động fallback sang Mock Data nếu DB chưa có câu hỏi để test local)
   const effectiveQuestions = useMemo(() => {
     if (initialQuestions && initialQuestions.length > 0 && selectedLessonId === initialLessonId && mode === 'lesson') {
       return [...initialQuestions, ...customQuestions]
     }
     const base = mode === 'lesson' ? dbLessonQuestions : dbChapterQuestions
-    return [...base, ...customQuestions]
+    if (base && base.length > 0) {
+      return [...base, ...customQuestions]
+    }
+    // Fallback sang mock questions khi DB rỗng
+    const fallback = getMockQuestions(
+      mode === 'lesson' ? selectedLessonId : undefined,
+      mode === 'chapter' ? selectedChapterId : undefined
+    )
+    return [...fallback, ...customQuestions]
   }, [
     mode,
     initialQuestions,
     initialLessonId,
     selectedLessonId,
+    selectedChapterId,
     dbLessonQuestions,
     dbChapterQuestions,
     customQuestions,
@@ -216,25 +227,15 @@ export function SetupView({
   }
 
   return (
-    <div className="w-full max-w-xl mx-auto bg-white rounded-[var(--radius-xl)] border border-[var(--color-neutral-200)] p-5 sm:p-7 shadow-sm flex flex-col gap-5 sm:gap-6 font-body text-[var(--color-neutral-900)] my-auto">
+    <div className="w-full flex flex-col gap-5 sm:gap-6 font-body text-[var(--color-neutral-900)]">
       {/* ── HEADER ── */}
-      <div className="border-b border-[var(--color-neutral-200)] pb-4 space-y-1 relative pr-8">
+      <div className="border-b border-[var(--color-neutral-200)] pb-4 space-y-1">
         <h1 className="font-header font-bold text-xl sm:text-2xl uppercase tracking-tight text-[var(--color-neutral-900)]">
           CÀI ĐẶT TRẢ BÀI
         </h1>
         <p className="text-xs sm:text-sm text-[var(--color-neutral-500)]">
           Thiết lập sĩ số học sinh và câu hỏi trước khi bắt đầu vòng quay.
         </p>
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute top-0 right-0 p-1.5 text-[var(--color-neutral-400)] hover:text-[var(--color-neutral-700)] rounded-[var(--radius-xs)] hover:bg-[var(--color-neutral-100)] transition-colors cursor-pointer"
-            title="Đóng"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
       </div>
 
       {/* ── STEPPER TABS / INDICATOR ── */}

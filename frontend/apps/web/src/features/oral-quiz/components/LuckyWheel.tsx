@@ -291,23 +291,23 @@ export function LuckyWheel({
   }, [])
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
+    <div className="flex flex-col items-center justify-center p-1 sm:p-2">
       {/* Canvas Wheel container */}
       <div className="relative cursor-pointer" onClick={() => !isSpinning && onSpinStart()}>
         <canvas
           ref={canvasRef}
           width={400}
           height={400}
-          className="max-w-[300px] sm:max-w-[360px] md:max-w-[400px] aspect-square rounded-[var(--radius-full)] shadow-md transition-transform duration-200 hover:scale-[1.01]"
+          className="max-w-[280px] sm:max-w-[340px] md:max-w-[370px] aspect-square rounded-[var(--radius-full)] shadow-md transition-transform duration-200 hover:scale-[1.01]"
         />
       </div>
 
       {/* Control button */}
-      <div className="mt-5 flex items-center gap-3">
+      <div className="mt-3.5 flex items-center gap-3">
         <button
           onClick={onSpinStart}
           disabled={isSpinning || availableNumbers.length === 0}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-[var(--radius-md)] font-bold text-sm shadow-xs transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-6 py-2 rounded-[var(--radius-md)] font-bold text-sm shadow-xs transition-all cursor-pointer ${
             isSpinning
               ? 'bg-[var(--color-neutral-200)] text-[var(--color-neutral-500)] cursor-not-allowed'
               : 'bg-[var(--color-primary-500)] hover:bg-[#023ec0] text-white active:scale-[0.98]'
@@ -319,7 +319,7 @@ export function LuckyWheel({
       </div>
 
       {/* Available students badge */}
-      <div className="mt-3 text-xs text-[var(--color-neutral-500)] font-medium flex items-center gap-1.5 font-mono">
+      <div className="mt-2 text-xs text-[var(--color-neutral-500)] font-medium flex items-center gap-1.5 font-mono">
         <span>Còn lại:</span>
         <strong className="text-[var(--color-primary-500)] font-bold">{availableNumbers.length}</strong>
         <span>/ {totalStudents} học sinh</span>

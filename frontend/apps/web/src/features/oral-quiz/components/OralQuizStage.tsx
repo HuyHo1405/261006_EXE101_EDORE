@@ -173,24 +173,23 @@ export function OralQuizStage({
   // If not configured, show SetupView
   if (!isConfigured) {
     return (
-      <div className="w-full flex-1 min-h-0 overflow-y-auto flex flex-col items-center justify-center p-3 sm:p-6 md:p-8 bg-[var(--color-neutral-50)]/50 relative">
+      <div className="w-full max-w-xl mx-auto my-auto bg-white border border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-2xl overflow-hidden relative font-body text-[var(--color-neutral-900)]">
         {onClose && (
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-3.5 right-3.5 p-2 text-[var(--color-neutral-400)] hover:text-[var(--color-neutral-800)] hover:bg-[var(--color-neutral-200)]/60 rounded-[var(--radius-md)] transition-colors cursor-pointer z-20"
-            title="Đóng cửa sổ"
+            className="absolute top-4 right-4 p-1.5 text-[var(--color-neutral-400)] hover:text-[var(--color-neutral-800)] hover:bg-[var(--color-neutral-100)] rounded-[var(--radius-md)] transition-colors cursor-pointer z-20"
+            title="Đóng"
           >
             <X className="w-5 h-5" />
           </button>
         )}
-        <div className="w-full max-w-xl my-auto">
+        <div className="p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
           <SetupView
             onStart={handleSetupStart}
             initialLessonId={lessonId}
             initialLessonTitle={lessonTitle}
             initialQuestions={questions}
-            onClose={onClose}
           />
         </div>
       </div>
@@ -198,14 +197,14 @@ export function OralQuizStage({
   }
 
   return (
-    <div className="w-full min-h-[75vh] flex-1 flex flex-col bg-white border border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-sm overflow-hidden relative select-none font-body text-[var(--color-neutral-900)]">
+    <div className="w-full max-w-4xl mx-auto my-auto h-[610px] max-h-[92vh] flex flex-col bg-white border border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-2xl overflow-hidden relative select-none font-body text-[var(--color-neutral-900)]">
       {/* ── TOP CLASSROOM BAR ── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-3.5 bg-[var(--color-neutral-50)] border-b border-[var(--color-neutral-200)] shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 bg-[var(--color-neutral-50)] border-b border-[var(--color-neutral-200)] shrink-0">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           <button
             type="button"
             onClick={() => setIsConfigured(false)}
-            className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-neutral-700)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] px-3 py-1.5 rounded-[var(--radius-md)] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-neutral-700)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] px-2.5 py-1.5 rounded-[var(--radius-md)] transition-colors cursor-pointer"
             title="Đổi bài học hoặc cài đặt"
           >
             <ChevronLeft className="w-4 h-4" /> Đổi bài học
@@ -213,15 +212,15 @@ export function OralQuizStage({
 
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-tertiary-500)]" />
-            <h1 className="font-header font-bold text-base text-[var(--color-neutral-900)] uppercase truncate max-w-[280px] sm:max-w-md">
+            <h1 className="font-header font-bold text-sm sm:text-base text-[var(--color-neutral-900)] uppercase truncate max-w-[240px] sm:max-w-md">
               {lessonTitle || 'Trả bài miệng'}
             </h1>
           </div>
         </div>
 
         {/* Stats & Actions */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-md)] bg-white border border-[var(--color-neutral-200)] text-xs font-mono font-bold text-[var(--color-neutral-700)]">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-md)] bg-white border border-[var(--color-neutral-200)] text-xs font-mono font-bold text-[var(--color-neutral-700)]">
             <Users className="w-3.5 h-3.5 text-[var(--color-primary-500)]" />
             <span>
               Đã gọi: {history.length}/{totalStudents}
@@ -231,10 +230,10 @@ export function OralQuizStage({
           <button
             type="button"
             onClick={() => setShowHistory(true)}
-            className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-neutral-700)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] px-3 py-1.5 rounded-[var(--radius-md)] transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-xs font-bold text-[var(--color-neutral-700)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] px-2.5 py-1.5 rounded-[var(--radius-md)] transition-colors cursor-pointer"
             title="Lịch sử gọi học sinh"
           >
-            <History className="w-4 h-4 text-[var(--color-primary-500)]" />
+            <History className="w-3.5 h-3.5 text-[var(--color-primary-500)]" />
             <span className="hidden sm:inline">Lịch sử</span>
           </button>
 
@@ -244,7 +243,7 @@ export function OralQuizStage({
             className="p-1.5 text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] rounded-[var(--radius-md)] transition-colors cursor-pointer"
             title="Đặt lại lượt quay"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-3.5 h-3.5" />
           </button>
 
           <button
@@ -253,7 +252,7 @@ export function OralQuizStage({
             className="p-1.5 text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] rounded-[var(--radius-md)] transition-colors cursor-pointer"
             title="Bật/Tắt Toàn màn hình"
           >
-            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
           </button>
 
           {onClose && (
@@ -262,22 +261,22 @@ export function OralQuizStage({
               onClick={onClose}
               className="p-1.5 text-[var(--color-neutral-600)] hover:text-rose-600 bg-white border border-[var(--color-neutral-200)] hover:bg-rose-50 rounded-[var(--radius-md)] transition-colors cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
       </div>
 
-      {/* ── MAIN SCREEN BODY ── */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-white">
+      {/* ── MAIN SCREEN BODY (Unified height - No layout shift) ── */}
+      <div className="flex-1 flex items-center justify-center p-2.5 sm:p-3 md:p-4 bg-white overflow-hidden">
         {stage === 'wheel' ? (
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-200">
             {/* Stage Title */}
-            <div className="text-center mb-2 space-y-1">
+            <div className="text-center mb-1.5 space-y-0.5">
               <span className="text-xs uppercase tracking-wider font-mono font-bold text-[var(--color-primary-500)]">
                 VÒNG QUAY MAY MẮN
               </span>
-              <p className="text-xs sm:text-sm text-[var(--color-neutral-500)]">
+              <p className="text-xs text-[var(--color-neutral-500)]">
                 Bấm <strong>QUAY</strong> để chọn ngẫu nhiên học sinh lên bảng trả lời
               </p>
             </div>
@@ -294,7 +293,7 @@ export function OralQuizStage({
         ) : (
           currentQuestion &&
           currentStudent !== null && (
-            <div className="w-full">
+            <div className="w-full flex items-center justify-center animate-in fade-in duration-200">
               <QuestionCard
                 studentNumber={currentStudent}
                 question={currentQuestion}
