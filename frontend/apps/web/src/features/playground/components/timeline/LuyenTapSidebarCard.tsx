@@ -206,7 +206,7 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
           </div>
 
           {exercises.length > 0 ? (
-            <div className="grid grid-cols-5 gap-2 max-h-56 overflow-y-auto p-1.5 bg-slate-50/80 rounded-xl border border-slate-200">
+            <div className="grid grid-cols-5 gap-2 p-1.5 bg-slate-50/80 rounded-xl border border-slate-200">
               {exercises.map((ex, i) => {
                 const qLen = (ex.question || '').trim().length
                 const optOver = Array.isArray(ex.options) && ex.options.some((o: string) => (o || '').trim().length > 75)

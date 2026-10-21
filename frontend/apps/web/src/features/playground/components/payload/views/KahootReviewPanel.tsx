@@ -362,7 +362,7 @@ export function KahootReviewPanel({ source, saved, cacheKey, onSave, onClose }: 
                   {selected.length}/{draft.questions.length} câu
                 </span>
               </div>
-              <div className="grid grid-cols-5 gap-2 max-h-56 overflow-y-auto p-1 bg-white rounded-xl border border-slate-200">
+              <div className="grid grid-cols-5 gap-2 p-1 bg-white rounded-xl border border-slate-200">
                 {draft.questions.map((q, i) => {
                   const isSelected = draft.included[i]
                   const isOverLimit = isSelected && exceedsKahootLimits(q)
