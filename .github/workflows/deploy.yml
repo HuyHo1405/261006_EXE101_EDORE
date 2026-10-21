@@ -31,7 +31,7 @@ jobs:
           npm run type-check
 
       - name: Test lesson exports
-        run: node --test apps/web/tests/kahootExport.test.cjs apps/web/tests/lessonDocument.test.cjs
+        run: node --test apps/web/tests/*.test.cjs
         working-directory: frontend
 
   backend-check:

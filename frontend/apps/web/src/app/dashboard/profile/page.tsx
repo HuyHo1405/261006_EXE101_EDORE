@@ -48,6 +48,7 @@ function UserProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const authUser = useAuthStore((s) => s.user);
+  const authUserId = authUser?.userId;
 
   const initialTab = (searchParams?.get("tab") as TabKey) || "profile";
   const [activeTab, setActiveTab] = useState<TabKey>(
@@ -77,6 +78,7 @@ function UserProfileContent() {
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadData() {
       try {
         setLoading(true);
@@ -89,12 +91,14 @@ function UserProfileContent() {
           subscriptionService.getActivePlans().catch(() => []),
         ]);
 
+        if (cancelled) return;
+
         if (profData) {
           setProfile(profData);
           setFullName(profData.fullName || "");
           setPhone(profData.phone || "");
-        } else if (authUser) {
-          setFullName(authUser.name || "");
+        } else {
+          setFullName(useAuthStore.getState().user?.name || "");
         }
 
         if (setDataSettings) setSettings(setDataSettings);
@@ -112,12 +116,14 @@ function UserProfileContent() {
       } catch (err: any) {
         console.error(err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
-    loadData();
-  }, [authUser]);
+    if (authUserId) loadData();
+    else setLoading(false);
+    return () => { cancelled = true; };
+  }, [authUserId]);
 
   const handleUpgradeToPro = async () => {
     const proPlan = plans.find((p) => 

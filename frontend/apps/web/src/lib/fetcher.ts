@@ -3,6 +3,34 @@ import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
+let tokenRefresh: { token: string; promise: Promise<boolean> } | null = null;
+
+function refreshSession(refreshToken: string): Promise<boolean> {
+  if (tokenRefresh?.token === refreshToken) return tokenRefresh.promise;
+  const promise = (async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      });
+      const data = await response.json();
+      // A logout or a different login must not be undone by an older response.
+      if (useAuthStore.getState().refreshToken !== refreshToken) return false;
+      if (!response.ok || !data.result?.accessToken || !data.result?.refreshToken) return false;
+      useAuthStore.getState().setTokens(data.result.accessToken, data.result.refreshToken);
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+  tokenRefresh = { token: refreshToken, promise };
+  void promise.finally(() => {
+    if (tokenRefresh?.promise === promise) tokenRefresh = null;
+  });
+  return promise;
+}
+
 export class FetchError extends Error {
   code: number;
   errors?: Record<string, string>;
@@ -25,7 +53,9 @@ export async function apiClient<T = void>(
   endpoint: string,
   options: ApiOptions = {}
 ): Promise<ApiResponse<T>> {
-  const token = useAuthStore.getState().accessToken;
+  const requestSession = useAuthStore.getState();
+  const token = requestSession.accessToken;
+  const requestUserId = requestSession.user?.userId;
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -48,28 +78,25 @@ export async function apiClient<T = void>(
 
   // ── AUTO REFRESH TOKEN INTERCEPTOR ──
   const isUnauthorized = response.status === 401 || (data.message && data.message.includes("expired"));
-  if (isUnauthorized && !options._isRetry) {
-    const refreshToken = useAuthStore.getState().refreshToken;
-    if (refreshToken) {
-      try {
-        const refreshRes = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refreshToken }),
-        });
-
-        const refreshData = await refreshRes.json();
-        if (refreshRes.ok && refreshData.result?.accessToken) {
-          const newAccessToken = refreshData.result.accessToken;
-          useAuthStore.getState().setAccessToken(newAccessToken);
-
-          // Retry original API request with new token
-          return apiClient<T>(endpoint, { ...options, _isRetry: true });
-        }
-      } catch {
-        useAuthStore.getState().logout();
-      }
+  if (isUnauthorized && !options._isRetry && useAuthStore.getState().user?.userId === requestUserId) {
+    const current = useAuthStore.getState();
+    // Another request may already have refreshed while this response was in flight.
+    if (current.accessToken && current.accessToken !== token) {
+      return apiClient<T>(endpoint, { ...options, _isRetry: true });
     }
+    const refreshToken = current.refreshToken;
+    if (refreshToken) {
+      if (await refreshSession(refreshToken) && useAuthStore.getState().user?.userId === requestUserId) {
+        return apiClient<T>(endpoint, { ...options, _isRetry: true });
+      }
+      if (useAuthStore.getState().refreshToken === refreshToken) useAuthStore.getState().logout();
+    } else {
+      useAuthStore.getState().logout();
+    }
+  }
+
+  if (isUnauthorized && options._isRetry && useAuthStore.getState().accessToken === token
+      && useAuthStore.getState().user?.userId === requestUserId) {
     useAuthStore.getState().logout();
   }
 

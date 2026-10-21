@@ -20,6 +20,7 @@ export interface AuthState {
   setHasHydrated: (state: boolean) => void;
   setAuth: (data: LoginResponseDTO) => void;
   setAccessToken: (token: string) => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
   updatePlan: (plan: "free" | "pro") => void;
   logout: () => void;
 }
@@ -52,10 +53,13 @@ export const useAuthStore = create<AuthState>()(
       setAccessToken: (token: string) =>
         set({ accessToken: token }),
 
+      setTokens: (accessToken: string, refreshToken: string) =>
+        set({ accessToken, refreshToken }),
+
       updatePlan: (plan: "free" | "pro") =>
-        set((state) => ({
-          user: state.user ? { ...state.user, plan } : null,
-        })),
+        set((state) => !state.user || state.user.plan === plan
+          ? state
+          : { user: { ...state.user, plan } }),
 
       logout: () =>
         set({
