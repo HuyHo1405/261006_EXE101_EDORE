@@ -55,20 +55,18 @@ export function KhoiDongSidebarCard({ onOpenOralQuiz }: KhoiDongSidebarCardProps
         <button
           type="button"
           onClick={onOpenOralQuiz}
-          className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white font-body text-xs font-bold shadow-sm transition-all active:scale-[0.98] cursor-pointer group"
+          className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-amber-200 hover:border-amber-300 bg-amber-50 text-amber-800 font-body text-xs font-bold transition-all active:scale-[0.98] cursor-pointer group"
         >
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center font-extrabold text-sm select-none">
-              🎡
-            </div>
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
             <div className="text-left">
               <div className="leading-tight">Vòng quay trả bài (Lucky Wheel)</div>
-              <div className="text-[10px] text-amber-100 font-normal mt-0.5">
-                Bắt đầu quay chọn học sinh & hiện câu hỏi
+              <div className="text-[10px] text-amber-700/80 font-normal mt-0.5">
+                Bắt đầu quay chọn học sinh &amp; hiện câu hỏi
               </div>
             </div>
           </div>
-          <ArrowRight className="w-4 h-4 text-amber-200 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" />
+          <ArrowRight className="w-4 h-4 text-amber-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
         </button>
       </div>
     </div>

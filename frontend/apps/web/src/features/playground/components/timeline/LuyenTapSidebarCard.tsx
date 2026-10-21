@@ -205,7 +205,7 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
         <div className="space-y-2 pt-2 border-t border-slate-100">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
               Tương tác lớp học
             </span>
             <span className="text-[10px] font-medium text-slate-400">Gọi tên ngẫu nhiên</span>
@@ -215,20 +215,18 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
             type="button"
             disabled={!exercises.length}
             onClick={() => setIsOralQuizOpen(true)}
-            className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white font-body text-xs font-bold shadow-sm transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
+            className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-amber-200 hover:border-amber-300 bg-amber-50 text-amber-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
           >
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center font-extrabold text-sm select-none">
-                🎡
-              </div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
               <div className="text-left">
                 <div className="leading-tight">Vòng quay trả bài (Lucky Wheel)</div>
-                <div className="text-[10px] text-amber-100 font-normal mt-0.5">
+                <div className="text-[10px] text-amber-700/80 font-normal mt-0.5">
                   Quay chọn học sinh theo STT &amp; hiện câu hỏi
                 </div>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-amber-200 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+            <ArrowRight className="w-4 h-4 text-amber-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
           </button>
         </div>
 

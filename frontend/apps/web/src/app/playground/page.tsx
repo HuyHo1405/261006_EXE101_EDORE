@@ -34,9 +34,9 @@ export default function PlaygroundPreviewPage() {
             <button
               type="button"
               onClick={() => setIsOralQuizOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white font-bold text-xs shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-amber-200 hover:border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs transition-all active:scale-95 cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
               <span>Mở Popup Trả Bài (Mockdata)</span>
             </button>
             <div className="text-slate-500 text-[11px] hidden sm:block">
