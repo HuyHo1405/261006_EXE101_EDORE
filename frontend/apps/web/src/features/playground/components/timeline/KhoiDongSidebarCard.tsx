@@ -60,7 +60,7 @@ export function KhoiDongSidebarCard({ onOpenOralQuiz }: KhoiDongSidebarCardProps
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
             <div className="text-left">
-              <div className="leading-tight">Vòng quay trả bài (Lucky Wheel)</div>
+              <div className="leading-tight">Vòng quay may mắn (Lucky Wheel)</div>
               <div className="text-[10px] text-amber-700/80 font-normal mt-0.5">
                 Bắt đầu quay chọn học sinh &amp; hiện câu hỏi
               </div>

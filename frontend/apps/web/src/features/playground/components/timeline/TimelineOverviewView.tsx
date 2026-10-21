@@ -85,7 +85,7 @@ export function TimelineOverviewView({
                 title="Mở Vòng quay may mắn để kiểm tra bài cũ / trả bài học sinh"
               >
                 <Sparkles className="w-4 h-4 text-amber-600" />
-                <span>Vòng quay trả bài</span>
+                <span>Vòng quay may mắn</span>
               </button>
             )}
 
@@ -190,9 +190,8 @@ export function TimelineOverviewView({
                 <div className="flex justify-between items-center pb-2 border-b border-[var(--color-neutral-200)]">
                   <span>Học liệu đã chuẩn bị</span>
                   <span
-                    className={`font-mono font-bold text-sm ${
-                      isToolsIncomplete ? 'text-amber-600' : 'text-emerald-600'
-                    }`}
+                    className={`font-mono font-bold text-sm ${isToolsIncomplete ? 'text-amber-600' : 'text-emerald-600'
+                      }`}
                   >
                     {preparedToolsCount}/{totalToolsCount}
                   </span>
@@ -216,10 +215,10 @@ export function TimelineOverviewView({
                   type="button"
                   onClick={onOpenOralQuiz}
                   className="w-full py-2.5 px-3 rounded-[var(--radius-md)] border-2 border-amber-200 hover:border-amber-300 bg-amber-50/90 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
-                  title="Mở Vòng quay trả bài đầu giờ"
+                  title="Mở Vòng quay may mắn đầu giờ"
                 >
                   <Sparkles className="w-4 h-4 text-amber-600" />
-                  <span>Vòng quay trả bài (Lucky Wheel)</span>
+                  <span>Vòng quay may mắn (Lucky Wheel)</span>
                 </button>
               </div>
             )}

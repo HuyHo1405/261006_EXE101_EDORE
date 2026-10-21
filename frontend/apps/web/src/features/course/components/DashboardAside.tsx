@@ -97,19 +97,17 @@ export function DashboardAside({
     <>
       {/* ── SMOOTH BACKDROP OVERLAY (GPU-ACCELERATED FADE) ── */}
       <div
-        className={`fixed inset-0 z-[100] bg-black/30 backdrop-blur-[2px] transition-opacity duration-300 ease-in-out ${
-          isOverlayOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-[100] bg-black/30 backdrop-blur-[2px] transition-opacity duration-300 ease-in-out ${isOverlayOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
         onClick={() => setIsOverlayOpen(false)}
       />
 
       {/* ── FULL ASIDE OVERLAY DRAWER (GPU-ACCELERATED FULL HORIZONTAL SLIDE DRAWER) ── */}
       <div
-        className={`fixed top-0 left-0 z-[110] w-72 sm:w-80 h-full bg-white border-r border-slate-200/80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.3)] p-3 sm:p-4 md:p-5 flex flex-col justify-between transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1) transform font-sans ${
-          isOverlayOpen
-            ? "translate-x-0 opacity-100 pointer-events-auto"
-            : "-translate-x-full opacity-0 pointer-events-none"
-        }`}
+        className={`fixed top-0 left-0 z-[110] w-72 sm:w-80 h-full bg-white border-r border-slate-200/80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.3)] p-3 sm:p-4 md:p-5 flex flex-col justify-between transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1) transform font-sans ${isOverlayOpen
+          ? "translate-x-0 opacity-100 pointer-events-auto"
+          : "-translate-x-full opacity-0 pointer-events-none"
+          }`}
       >
         {/* Header Bar: Minimalist Minimize Button (Fixed at top) */}
         <div className="shrink-0 flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
@@ -136,11 +134,10 @@ export function DashboardAside({
               <button
                 type="button"
                 onClick={handleGeneralCoursesSelect}
-                className={`flex-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-bold transition-all duration-200 cursor-pointer transform hover:translate-x-0.5 ${
-                  activeTab === "courses" && selectedCategoryId === null
-                    ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
-                    : "text-slate-800 hover:bg-slate-100"
-                }`}
+                className={`flex-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-bold transition-all duration-200 cursor-pointer transform hover:translate-x-0.5 ${activeTab === "courses" && selectedCategoryId === null
+                  ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
+                  : "text-slate-800 hover:bg-slate-100"
+                  }`}
               >
                 <div className="flex items-center gap-2.5">
                   <FolderOpen className={`h-4 w-4 transition-colors ${activeTab === "courses" ? "text-white" : "text-[var(--color-primary-600)]"}`} />
@@ -149,7 +146,7 @@ export function DashboardAside({
                   </span>
                 </div>
               </button>
-              
+
               <button
                 type="button"
                 onClick={() => setIsCoursesExpanded(!isCoursesExpanded)}
@@ -157,28 +154,25 @@ export function DashboardAside({
                 title="Mở rộng / Thu gọn cây thư mục"
               >
                 <ChevronDown
-                  className={`h-3.5 w-3.5 transform transition-transform duration-300 ${
-                    isCoursesExpanded ? "rotate-0" : "-rotate-90"
-                  }`}
+                  className={`h-3.5 w-3.5 transform transition-transform duration-300 ${isCoursesExpanded ? "rotate-0" : "-rotate-90"
+                    }`}
                 />
               </button>
             </div>
 
             {/* IDE Tree View Branch Accordion (Natural flow, fully visible) */}
             <div
-              className={`transition-all duration-300 ease-in-out ${
-                isCoursesExpanded ? "opacity-100" : "hidden opacity-0"
-              }`}
+              className={`transition-all duration-300 ease-in-out ${isCoursesExpanded ? "opacity-100" : "hidden opacity-0"
+                }`}
             >
               <div className="ml-4 pl-3 border-l-2 border-slate-200 space-y-1 pt-1.5 pb-1">
                 <button
                   type="button"
                   onClick={handleGeneralCoursesSelect}
-                  className={`group flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer transform hover:translate-x-1 ${
-                    activeTab === "courses" && selectedCategoryId === null && !selectedCourseId
-                      ? "bg-[var(--color-primary-50)] text-[var(--color-primary-700)] font-bold border border-[var(--color-primary-200)] shadow-xs"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                  }`}
+                  className={`group flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer transform hover:translate-x-1 ${activeTab === "courses" && selectedCategoryId === null && !selectedCourseId
+                    ? "bg-[var(--color-primary-50)] text-[var(--color-primary-700)] font-bold border border-[var(--color-primary-200)] shadow-xs"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    }`}
                 >
                   <div className="flex items-center gap-2">
                     <FolderOpen className="h-3.5 w-3.5 text-[var(--color-primary-600)] shrink-0" />
@@ -207,11 +201,10 @@ export function DashboardAside({
                               [course.id]: true,
                             }));
                           }}
-                          className={`group flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer transform hover:translate-x-0.5 ${
-                            isSelected
-                              ? "bg-[var(--color-primary-50)] text-[var(--color-primary-700)] font-bold border border-[var(--color-primary-200)] shadow-xs"
-                              : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                          }`}
+                          className={`group flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer transform hover:translate-x-0.5 ${isSelected
+                            ? "bg-[var(--color-primary-50)] text-[var(--color-primary-700)] font-bold border border-[var(--color-primary-200)] shadow-xs"
+                            : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                            }`}
                           title={course.title}
                         >
                           {/* Left side: Icon that turns into Chevron on hover or when expanded */}
@@ -225,19 +218,17 @@ export function DashboardAside({
                               <div className="relative h-3.5 w-3.5 flex items-center justify-center">
                                 {/* BookOpen icon: visible ONLY when NOT expanded and NOT hovering */}
                                 <BookOpen
-                                  className={`h-3.5 w-3.5 transition-opacity duration-200 ${
-                                    isExpanded
-                                      ? "opacity-0 absolute"
-                                      : "group-hover/course:opacity-0 opacity-100"
-                                  } ${isSelected ? "text-[var(--color-primary-600)]" : "text-slate-400"}`}
+                                  className={`h-3.5 w-3.5 transition-opacity duration-200 ${isExpanded
+                                    ? "opacity-0 absolute"
+                                    : "group-hover/course:opacity-0 opacity-100"
+                                    } ${isSelected ? "text-[var(--color-primary-600)]" : "text-slate-400"}`}
                                 />
                                 {/* Chevron icon: visible when EXPANDED OR when HOVERING */}
                                 <ChevronDown
-                                  className={`h-3.5 w-3.5 transition-all duration-200 ${
-                                    isExpanded
-                                      ? "rotate-0 opacity-100 text-[var(--color-primary-600)]"
-                                      : "-rotate-90 opacity-0 group-hover/course:opacity-100 absolute text-slate-500"
-                                  }`}
+                                  className={`h-3.5 w-3.5 transition-all duration-200 ${isExpanded
+                                    ? "rotate-0 opacity-100 text-[var(--color-primary-600)]"
+                                    : "-rotate-90 opacity-0 group-hover/course:opacity-100 absolute text-slate-500"
+                                    }`}
                                 />
                               </div>
                             </button>
@@ -328,7 +319,7 @@ export function DashboardAside({
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-sm">🎡</span>
-                    <span>Vòng quay trả bài</span>
+                    <span>Vòng quay may mắn</span>
                   </div>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/60 text-amber-900 font-mono">
                     HOT
@@ -384,11 +375,10 @@ export function DashboardAside({
             setIsOverlayOpen(true);
           }}
           title="Khóa học của tôi (Mở Aside)"
-          className={`p-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-105 active:scale-95 ${
-            activeTab === "courses"
-              ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
-              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-          }`}
+          className={`p-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-105 active:scale-95 ${activeTab === "courses"
+            ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
+            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            }`}
         >
           <FolderOpen className="h-5 w-5" />
         </button>
@@ -397,7 +387,7 @@ export function DashboardAside({
         <button
           type="button"
           onClick={() => router.push("/dashboard/tra-bai")}
-          title="Vòng quay trả bài (Lucky Wheel)"
+          title="Vòng quay may mắn (Lucky Wheel)"
           className="p-3 rounded-2xl text-amber-600 hover:bg-amber-50 hover:text-amber-700 transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-110 active:scale-95"
         >
           <span className="text-xl">🎡</span>

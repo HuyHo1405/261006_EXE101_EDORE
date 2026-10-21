@@ -85,7 +85,8 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
     try {
       const response = await apiClient<{ base64: string }>(`/api/v1/lessons/export-docx/${part}`, {
         method: 'POST',
-        body: JSON.stringify({ ...lessonDocument,
+        body: JSON.stringify({
+          ...lessonDocument,
           sections: [],
           questions: lessonDocument.questions,
         }),
@@ -220,7 +221,7 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
               <div className="text-left">
-                <div className="leading-tight">Vòng quay trả bài (Lucky Wheel)</div>
+                <div className="leading-tight">Vòng quay may mắn (Lucky Wheel)</div>
                 <div className="text-[10px] text-amber-700/80 font-normal mt-0.5">
                   Quay chọn học sinh theo STT &amp; hiện câu hỏi
                 </div>
@@ -273,9 +274,8 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
                     type="button"
                     onClick={() => scrollToExercise(i)}
                     title={`Câu ${i + 1} (${lv?.label || 'Chưa chọn'}): ${ex.question ? ex.question.slice(0, 50) + '...' : '(Chưa có nội dung)'}`}
-                    className={`relative h-10 rounded-lg text-xs font-bold border transition-all cursor-pointer flex flex-col items-center justify-center ${btnCls} ${
-                      isActive ? 'ring-2 ring-blue-600 ring-offset-1 font-extrabold scale-105' : ''
-                    }`}
+                    className={`relative h-10 rounded-lg text-xs font-bold border transition-all cursor-pointer flex flex-col items-center justify-center ${btnCls} ${isActive ? 'ring-2 ring-blue-600 ring-offset-1 font-extrabold scale-105' : ''
+                      }`}
                   >
                     <span>{i + 1}</span>
                   </button>

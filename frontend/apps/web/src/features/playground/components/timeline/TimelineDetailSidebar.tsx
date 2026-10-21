@@ -41,7 +41,7 @@ export function TimelineDetailSidebar({
 
   // Xác định danh sách ảnh hiện tại dựa trên Node
   let currentImageIds: string[] = []
-  
+
   if (type === 'Khởi động') {
     currentImageIds = p.used_image_ids || []
   } else if (type === 'Hình thành kiến thức' && p.knowledge_units) {
@@ -103,9 +103,9 @@ export function TimelineDetailSidebar({
   if (!currentImageIds || currentImageIds.length === 0) {
     return (
       <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4 sticky top-6 self-start">
-         <div className="bg-slate-50 border border-slate-200 p-4 rounded-[var(--radius-xl)] flex items-center justify-center min-h-[100px]">
-           <p className="text-xs text-slate-400 font-medium">Không có hình ảnh trực quan</p>
-         </div>
+        <div className="bg-slate-50 border border-slate-200 p-4 rounded-[var(--radius-xl)] flex items-center justify-center min-h-[100px]">
+          <p className="text-xs text-slate-400 font-medium">Không có hình ảnh trực quan</p>
+        </div>
       </aside>
     )
   }
@@ -113,7 +113,7 @@ export function TimelineDetailSidebar({
   return (
     <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4 sticky top-6 self-start max-h-[calc(100vh-2rem)] overflow-y-auto no-scrollbar">
       <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3">
-        
+
         {/* Header */}
         <div className="bg-[var(--color-primary-500)] text-white p-3.5 rounded-[var(--radius-lg)] flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
