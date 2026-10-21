@@ -26,7 +26,8 @@ public enum AiResponseCode implements ResponseCode {
     LLM_API_ERROR(3201, "Lỗi khi gọi AI API.", HttpStatus.BAD_GATEWAY, "ai.llm_error"),
     JSON_PARSE_ERROR(3202, "AI trả về dữ liệu không hợp lệ, không thể phân tích JSON.", HttpStatus.INTERNAL_SERVER_ERROR, "ai.json_parse_error"),
     SCRIPT_SAVE_ERROR(3203, "Lỗi khi lưu kịch bản vào database.", HttpStatus.INTERNAL_SERVER_ERROR, "ai.script_save_error"),
-    NODE_COUNT_MISMATCH(3204, "AI trả về số lượng node không khớp với template.", HttpStatus.INTERNAL_SERVER_ERROR, "ai.node_count_mismatch");
+    NODE_COUNT_MISMATCH(3204, "AI trả về số lượng node không khớp với template.", HttpStatus.INTERNAL_SERVER_ERROR, "ai.node_count_mismatch"),
+    LLM_INSUFFICIENT_BALANCE(3205, "Tài khoản API Beeknoee của hệ thống không đủ số dư. Vui lòng liên hệ quản trị viên nạp thêm để tiếp tục sử dụng AI.", HttpStatus.SERVICE_UNAVAILABLE, "ai.insufficient_balance");
 
     private final int code;
     private final String message;

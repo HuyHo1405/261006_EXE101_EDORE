@@ -43,8 +43,13 @@ class AiPracticePipelineTest {
 
     @Test void synchronousGenerationExcludesPracticeFromPromptAndParser() { check(false); }
     @Test void asynchronousGenerationExcludesPracticeFromPromptAndParser() { check(true); }
+    @Test void insufficientApiBalanceFailsTheJobWithoutParsingOrRetrying() { check(true, true); }
 
     private void check(boolean async) {
+        check(async, false);
+    }
+
+    private void check(boolean async, boolean insufficientBalance) {
         var practice = NodeType.builder().id(com.edore.backend.features.script.model.NodeTypeEnum.LUYEN_TAP)
                 .code("node_luyen_tap").name("Luyện tập").build();
         var core = NodeType.builder().id(com.edore.backend.features.script.model.NodeTypeEnum.HINH_THANH_KIEN_THUC)
@@ -67,19 +72,31 @@ class AiPracticePipelineTest {
         when(practiceNodeService.isPractice(any(NodeType.class))).thenCallRealMethod();
         var generated = mock(ScriptNodeResultDto.class);
         var bank = mock(ScriptNodeResultDto.class);
-        when(llmApiClient.chat(anyList(), anyDouble(), anyInt())).thenReturn("json");
-        when(aiResponseParser.parseAiResponse("json", aiNodes)).thenReturn(new AiParsedResult(Map.of(), List.of(generated)));
-        when(practiceNodeService.merge(nodes, List.of(generated), "LS6_KNTT_B01")).thenReturn(List.of(generated, bank));
-        var saved = mock(Script.class);
-        when(saved.getId()).thenReturn(UUID.randomUUID());
-        when(scriptPersistService.saveScript(eq(courseId), eq(template), eq(nodes), eq(List.of(generated, bank)), anyMap(), eq("Title")))
-                .thenReturn(new SaveScriptResult(saved, List.of()));
+        if (insufficientBalance) {
+            when(llmApiClient.chat(anyList(), anyDouble(), anyInt())).thenThrow(new com.edore.backend.core.exception.ApiException(
+                    com.edore.backend.features.ai.code.AiResponseCode.LLM_INSUFFICIENT_BALANCE));
+        } else {
+            when(llmApiClient.chat(anyList(), anyDouble(), anyInt())).thenReturn("json");
+            when(aiResponseParser.parseAiResponse("json", aiNodes)).thenReturn(new AiParsedResult(Map.of(), List.of(generated)));
+            when(practiceNodeService.merge(nodes, List.of(generated), "LS6_KNTT_B01")).thenReturn(List.of(generated, bank));
+            var saved = mock(Script.class);
+            when(saved.getId()).thenReturn(UUID.randomUUID());
+            when(scriptPersistService.saveScript(eq(courseId), eq(template), eq(nodes), eq(List.of(generated, bank)), anyMap(), eq("Title")))
+                    .thenReturn(new SaveScriptResult(saved, List.of()));
+        }
         if (async) {
             var status = new AiJobStatus();
             when(aiJobService.getJobStatus("job")).thenReturn(status);
             when(vectorMatchService.findSimilarReferences(anyString(), nullable(String.class), anyInt(), any()))
                     .thenReturn(ReferenceMatchResult.empty());
             pipeline.generateScriptAsync("job", "lesson", 1L, courseId, "Title", "[]", false, null);
+            if (insufficientBalance) {
+                assertEquals("FAILED", status.getStatus());
+                assertTrue(status.getErrorMessage().contains("không đủ số dư"));
+                verify(llmApiClient, times(1)).chat(anyList(), anyDouble(), anyInt());
+                verifyNoInteractions(aiResponseParser, scriptPersistService);
+                return;
+            }
             assertEquals("COMPLETED", status.getStatus(), status.getErrorMessage());
         } else {
             assertEquals(List.of(generated, bank), pipeline.generateScriptFromLesson("lesson", 1L, courseId, "Title", false).nodes());

@@ -203,8 +203,8 @@ public class AiPromptBuilder {
             sb.append("NỘI DUNG TÀI LIỆU GỐC:\n").append(ctx).append("\n");
         }
 
-        sb.append("\nHãy sinh ra JSON array chứa chính xác ")
-          .append(nodes.size()).append(" objects tương ứng.");
+        sb.append("\nChỉ trả về một JSON object có khóa `nodes`. Mảng `nodes` chứa chính xác ")
+          .append(nodes.size()).append(" objects tương ứng. Không trả JSON array ở cấp gốc.");
 
         return sb.toString();
     }

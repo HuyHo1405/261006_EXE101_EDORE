@@ -461,6 +461,9 @@ public class AiPipelineServiceImpl implements AiPipelineService {
                 String rawContent = llmApiClient.chat(messages, llmProperties.temperature(), llmProperties.maxTokens());
                 return aiResponseParser.parseAiResponse(rawContent, nodes);
             } catch (ApiException e) {
+                // Provider billing/network errors cannot be repaired by asking for different JSON.
+                if (e.getResponseCode() != AiResponseCode.JSON_PARSE_ERROR
+                        && e.getResponseCode() != AiResponseCode.NODE_COUNT_MISMATCH) throw e;
                 if (attempt == 2) {
                     log.error("[Pipeline] LLM parse failed on retry attempt {}: {}", attempt, e.getMessage());
                     throw e;

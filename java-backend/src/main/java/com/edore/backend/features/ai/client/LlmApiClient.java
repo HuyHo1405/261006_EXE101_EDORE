@@ -97,8 +97,18 @@ public class LlmApiClient {
                         .retrieve()
                         .body(String.class);
 
+                if (LlmProviderErrors.insufficientBalance(rawJson)) {
+                    log.warn("[LlmApiClient] Provider returned a billing error in a successful HTTP response");
+                    throw new ApiException(com.edore.backend.features.ai.code.AiResponseCode.LLM_INSUFFICIENT_BALANCE);
+                }
+
                 LlmChatResponse response = objectMapper.readValue(rawJson, LlmChatResponse.class);
                 String content = response.firstContent();
+
+                if (LlmProviderErrors.insufficientBalance(content)) {
+                    log.warn("[LlmApiClient] Provider reported insufficient API balance; request will not be retried");
+                    throw new ApiException(com.edore.backend.features.ai.code.AiResponseCode.LLM_INSUFFICIENT_BALANCE);
+                }
 
                 if (content == null || content.isBlank()) {
                     log.error("[LlmApiClient] API returned empty content. Raw: {}", rawJson);
@@ -111,6 +121,10 @@ public class LlmApiClient {
             } catch (ApiException e) {
                 throw e;
             } catch (org.springframework.web.client.HttpClientErrorException | org.springframework.web.client.HttpServerErrorException e) {
+                if (e.getStatusCode().value() == 402 || LlmProviderErrors.insufficientBalance(e.getResponseBodyAsString())) {
+                    log.warn("[LlmApiClient] Provider billing error (HTTP {}); request will not be retried", e.getStatusCode().value());
+                    throw new ApiException(com.edore.backend.features.ai.code.AiResponseCode.LLM_INSUFFICIENT_BALANCE);
+                }
                 if (e.getStatusCode().value() == 429) {
                     log.warn("[LlmApiClient] HTTP 429 TOO_MANY_REQUESTS on attempt {}/3. Body: {}. Retrying in {}ms...",
                             attempt, e.getResponseBodyAsString(), attempt * 2000);
