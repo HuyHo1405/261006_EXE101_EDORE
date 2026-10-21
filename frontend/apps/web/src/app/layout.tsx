@@ -28,6 +28,9 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://edore.id.vn"
+  ),
   title: "Edore — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy",
   description:
     "Nền tảng ed-tech Edore giúp tự động phân tích tài liệu, soạn bài giảng thông minh.",
@@ -42,13 +45,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Edore — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy",
     description:
-      "Edore là nền tảng ed-tech giúp giáo viên tự động phân tích tài liệu và biên soạn kịch bản bài giảng thông minh.",
+      "Nền tảng ed-tech Edore giúp tự động phân tích tài liệu, soạn bài giảng thông minh.",
     images: [
       {
-        url: "/edore_logo.png",
-        width: 512,
-        height: 512,
-        alt: "Edore Logo",
+        url: "/EDORE_COVER.png",
+        width: 2658,
+        height: 984,
+        alt: "Edore — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy",
       },
     ],
   },
@@ -56,8 +59,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Edore — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy",
     description:
-      "Edore là nền tảng ed-tech giúp giáo viên tự động phân tích tài liệu và biên soạn kịch bản bài giảng thông minh.",
-    images: ["/edore_logo.png"],
+      "Nền tảng ed-tech Edore giúp tự động phân tích tài liệu, soạn bài giảng thông minh.",
+    images: ["/EDORE_COVER.png"],
   },
 };
 
