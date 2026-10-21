@@ -17,9 +17,23 @@ import java.util.Map;
 public class LessonDocumentController {
     private final LessonDocumentService documents;
 
+    @PostMapping("/export-docx/lesson")
+    public ResponseEntity<ApiResponse<Map<String, String>>> exportLesson(@Valid @RequestBody LessonDocumentService.Request request) throws IOException {
+        return response(documents.exportLesson(request));
+    }
+
+    @PostMapping("/export-docx/questions")
+    public ResponseEntity<ApiResponse<Map<String, String>>> exportQuestions(@Valid @RequestBody LessonDocumentService.Request request) throws IOException {
+        return response(documents.exportQuestions(request));
+    }
+
     @PostMapping("/export-docx")
     public ResponseEntity<ApiResponse<Map<String, String>>> export(@Valid @RequestBody LessonDocumentService.Request request) throws IOException {
+        return response(documents.export(request));
+    }
+
+    private ResponseEntity<ApiResponse<Map<String, String>>> response(byte[] bytes) {
         return ResponseEntity.ok(ApiResponse.of(CommonResponseCode.SUCCESS,
-                Map.of("base64", Base64.getEncoder().encodeToString(documents.export(request)))));
+                Map.of("base64", Base64.getEncoder().encodeToString(bytes))));
     }
 }

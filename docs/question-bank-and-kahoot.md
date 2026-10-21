@@ -58,6 +58,8 @@ Quy cách và template: https://support.kahoot.com/hc/en-us/articles/11500281254
 
 ## Kiểm tra tự động
 
+Xuất Word trên UI có hai nút riêng: **Xuất Word bài giảng** gọi `POST /api/v1/lessons/export-docx/lesson` và **Xuất Word bộ câu hỏi** gọi `POST /api/v1/lessons/export-docx/questions`. File bài giảng chứa nội dung và tiến trình dạy học, không kèm bộ câu hỏi cuối tài liệu. File bộ câu hỏi chỉ chứa câu hỏi gốc đầy đủ, lựa chọn, đáp án và lời giải; không áp dụng giới hạn Kahoot. Cả hai giữ logo EDORE và mẫu pastel, lấy dữ liệu hiện tại gồm các chỉnh sửa chưa lưu trên UI, không gọi AI để viết lại. Nút xuất bộ câu hỏi bị vô hiệu khi chưa có câu hỏi. Endpoint `/export-docx` cũ vẫn giữ để tương thích.
+
 ```powershell
 # Dùng JDK 21
 mvn -f java-backend/pom.xml test

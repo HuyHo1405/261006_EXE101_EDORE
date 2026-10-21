@@ -42,6 +42,20 @@ public class LessonDocumentService {
                           @NotNull @Size(max = 1000) List<@NotNull @Valid Question> questions) {}
 
     public byte[] export(Request request) throws IOException {
+        return export(request, "NỘI DUNG BÀI HỌC");
+    }
+
+    public byte[] exportLesson(Request request) throws IOException {
+        return export(new Request(request.title(), request.subtitle(), request.sections(), List.of()), "BÀI GIẢNG");
+    }
+
+    public byte[] exportQuestions(Request request) throws IOException {
+        if (request.questions().isEmpty())
+            throw new ApiException(CommonResponseCode.VALIDATION_FAILED, "Bài học chưa có câu hỏi để xuất Word.");
+        return export(new Request(request.title(), request.subtitle(), List.of(), request.questions()), "BỘ CÂU HỎI");
+    }
+
+    private byte[] export(Request request, String documentLabel) throws IOException {
         long length = request.sections().stream().flatMap(s -> s.blocks().stream()).mapToLong(b -> b.text().length()).sum()
                 + request.questions().stream().mapToLong(q -> q.question().length() + q.options().stream().mapToInt(String::length).sum()
                 + value(q.answer()).length() + value(q.explanation()).length()).sum();
@@ -51,7 +65,7 @@ public class LessonDocumentService {
             BigInteger sectionNumbering = document.getNumbering().addNum(BigInteger.ZERO);
             var kicker = document.createParagraph(); kicker.setAlignment(ParagraphAlignment.CENTER);
             kicker.setSpacingBefore(160); kicker.setSpacingAfter(100); kicker.setKeepNext(true);
-            var kickerRun = kicker.createRun(); base(kickerRun); kickerRun.setFontSize(9); kickerRun.setColor("8C9EAE"); kickerRun.setText("NỘI DUNG BÀI HỌC");
+            var kickerRun = kicker.createRun(); base(kickerRun); kickerRun.setFontSize(9); kickerRun.setColor("8C9EAE"); kickerRun.setText(documentLabel);
             var title = document.createParagraph();
             title.setStyle("Title"); title.setAlignment(ParagraphAlignment.CENTER); title.setKeepNext(true); title.setSpacingAfter(220);
             var titleRun = title.createRun(); base(titleRun); titleRun.setFontSize(23); titleRun.setBold(true); titleRun.setColor(BLUE); titleRun.setText(clean(request.title()));
@@ -81,7 +95,7 @@ public class LessonDocumentService {
             if (!request.questions().isEmpty()) {
                 var appendix = heading(document, "Bộ câu hỏi đầy đủ", 1);
                 appendix.setNumID(sectionNumbering); appendix.setNumILvl(BigInteger.ZERO);
-                appendix.setPageBreak(true);
+                appendix.setPageBreak(!request.sections().isEmpty());
                 int i = 0;
                 for (Question q : request.questions()) {
                     var question = paragraph(document, q.question(), false, "Câu " + (++i));

@@ -9,6 +9,48 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LessonDocumentServiceTest {
+    @Test void separateExportsKeepOnlyTheirOwnContentAndQuestionsStartOnFirstPage() throws Exception {
+        var service = new LessonDocumentService();
+        var request = new LessonDocumentService.Request("Lịch sử và cuộc sống", "Lịch sử 6 KNTT",
+                List.of(new LessonDocumentService.Section("Hình thành kiến thức", List.of(
+                        new LessonDocumentService.Block("Kiến thức trọng tâm", "**Lịch sử** là những gì đã xảy ra. Năm 1945 là một cột mốc quan trọng.", true)))),
+                List.of(new LessonDocumentService.Question("Lịch sử là gì?", List.of("Những gì đã xảy ra", "Dự đoán tương lai"), 1,
+                        "", "Lịch sử phản ánh quá khứ."),
+                        new LessonDocumentService.Question("Nêu một cột mốc em biết", List.of(), null, "Ngày 2/9/1945", "")));
+        byte[] lesson = service.exportLesson(request);
+        byte[] questions = service.exportQuestions(request);
+        try (var doc = new XWPFDocument(new ByteArrayInputStream(lesson))) {
+            String text = doc.getParagraphs().stream().map(XWPFParagraph::getText).reduce("", (a, b) -> a + "\n" + b);
+            assertTrue(text.contains("BÀI GIẢNG"));
+            assertTrue(text.contains("Hình thành kiến thức"));
+            assertTrue(text.contains("Năm 1945"));
+            assertFalse(text.contains("Lịch sử là gì?"));
+            assertFalse(text.contains("Bộ câu hỏi đầy đủ"));
+        }
+        try (var doc = new XWPFDocument(new ByteArrayInputStream(questions))) {
+            String text = doc.getParagraphs().stream().map(XWPFParagraph::getText).reduce("", (a, b) -> a + "\n" + b);
+            assertTrue(text.contains("BỘ CÂU HỎI"));
+            assertFalse(text.contains("Hình thành kiến thức"));
+            assertFalse(text.contains("Năm 1945"));
+            for (var question : request.questions()) {
+                assertTrue(text.contains(question.question()));
+                for (String option : question.options()) assertTrue(text.contains(option));
+            }
+            assertTrue(text.contains("Đáp án đúng: A."));
+            assertTrue(text.contains("Lịch sử phản ánh quá khứ."));
+            assertTrue(text.contains("Hướng dẫn trả lời: Ngày 2/9/1945"));
+            assertTrue(doc.getParagraphs().stream().noneMatch(XWPFParagraph::isPageBreak));
+            assertTrue(doc.getHeaderList().stream().anyMatch(h -> !h.getAllPictures().isEmpty()));
+        }
+        assertThrows(com.edore.backend.core.exception.ApiException.class, () -> service.exportQuestions(
+                new LessonDocumentService.Request("Chưa có câu hỏi", "", request.sections(), List.of())));
+        String preview = System.getProperty("lesson.docx.splitPreview");
+        if (preview != null) {
+            Files.write(Path.of(preview + "-bai-giang.docx"), lesson);
+            Files.write(Path.of(preview + "-bo-cau-hoi.docx"), questions);
+        }
+    }
+
     @Test void exportsFullLessonWithPastelPaletteRomanSectionsAndCenteredTitle() throws Exception {
         var service = new LessonDocumentService();
         var request = new LessonDocumentService.Request("Lịch sử và cuộc sống", "Lịch sử 6 KNTT",
