@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { Plus, Trash2, Eye, EyeOff, ClipboardList, ListFilter } from 'lucide-react'
+import { Plus, Trash2, Eye, EyeOff, ClipboardList } from 'lucide-react'
 import { AutoResizeTextarea } from '../StepEnrichmentRender'
 import { SectionLabel, fieldCls } from './Shared'
 
@@ -15,18 +15,7 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
   const p = payload || {}
   const exercises: any[] = Array.isArray(p.exercises) ? p.exercises : []
   const [shown, setShown] = useState<Record<number, boolean>>({})
-  const [activeCard, setActiveCard] = useState<number | null>(null)
   const radioGroup = useId()
-
-  const scrollToExercise = (idx: number) => {
-    setActiveCard(idx)
-    const el = document.getElementById(`luyentap-exercise-${idx}`)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      el.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2')
-      setTimeout(() => el.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2'), 1500)
-    }
-  }
 
   const update = (i: number, patch: Record<string, any>) =>
     onChange({ ...p, exercises: exercises.map((e, j) => (j === i ? { ...e, ...patch } : e)) })
@@ -47,36 +36,6 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
           ))}
         </div>
       </div>
-
-      {/* Thanh nhảy câu hỏi nhanh */}
-      {exercises.length > 0 && (
-        <div className="p-2.5 bg-slate-50/90 rounded-xl border border-slate-200 flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0 flex items-center gap-1">
-            <ListFilter className="w-3.5 h-3.5 text-blue-600" />
-            Nhảy nhanh:
-          </span>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {exercises.map((ex, i) => {
-              const lv = LEVELS.find(l => l.key === ex.level)
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => scrollToExercise(i)}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
-                    activeCard === i
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs scale-105'
-                      : 'bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-700 border-slate-200 hover:border-blue-300 shadow-2xs'
-                  }`}
-                  title={`Nhảy tới Câu ${i + 1} (${lv?.label || ''})`}
-                >
-                  Câu {i + 1}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
 
       {exercises.map((ex, i) => {
         const lv = LEVELS.find(l => l.key === ex.level)
