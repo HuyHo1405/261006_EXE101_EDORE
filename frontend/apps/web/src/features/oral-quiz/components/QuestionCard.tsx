@@ -22,7 +22,7 @@ interface QuestionCardProps {
   onNextStudent: () => void
 }
 
-const OPTION_LABELS = ['A', 'B', 'C', 'D']
+const OPTION_LABELS = ['A', 'B', 'C', 'D', 'E', 'F']
 
 export function QuestionCard({
   studentNumber,
@@ -62,6 +62,11 @@ export function QuestionCard({
   }, [isTimerRunning, timeLeft])
 
   const isTimeCritical = timeLeft <= 5 && timeLeft > 0
+
+  // Filter valid non-empty options (supports 2, 3, 4+ options dynamically)
+  const validOptions = (question.options || []).filter(
+    (opt): opt is string => typeof opt === 'string' && opt.trim().length > 0
+  )
 
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col gap-4 font-body">
@@ -130,36 +135,42 @@ export function QuestionCard({
           </h3>
         </div>
 
-        {/* Options Grid (4 items) */}
-        {question.options && question.options.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {question.options.map((opt, idx) => {
+        {/* Options List: bố trí dọc (flex-col), hiển thị chính xác theo số lượng lựa chọn thực tế (2, 3 hoặc 4) */}
+        {validOptions.length > 0 && (
+          <div className="flex flex-col gap-2.5 sm:gap-3">
+            {validOptions.map((opt, idx) => {
               const isCorrectAnswer = idx + 1 === question.correctAnswer
               const isRevealed = showAnswer && isCorrectAnswer
 
               return (
                 <div
                   key={idx}
-                  className={`p-3.5 rounded-[var(--radius-md)] border transition-all flex items-start gap-3 ${
+                  className={`p-3.5 sm:p-4 rounded-[var(--radius-md)] border transition-all flex items-start justify-between gap-3 ${
                     isRevealed
                       ? 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-xs'
                       : 'bg-[var(--color-neutral-50)] hover:bg-white border-[var(--color-neutral-200)] hover:border-[var(--color-primary-500)] text-[var(--color-neutral-800)]'
                   }`}
                 >
-                  <span
-                    className={`w-7 h-7 rounded-[var(--radius-xs)] flex items-center justify-center font-header font-bold text-xs shrink-0 ${
-                      isRevealed
-                        ? 'bg-[var(--color-tertiary-500)] text-white'
-                        : 'bg-white text-[var(--color-primary-500)] border border-[var(--color-neutral-200)]'
-                    }`}
-                  >
-                    {OPTION_LABELS[idx] || idx + 1}
-                  </span>
-                  <div className="flex-1 text-sm sm:text-base font-medium pt-0.5">
-                    {opt}
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <span
+                      className={`w-7 h-7 rounded-[var(--radius-xs)] flex items-center justify-center font-header font-bold text-xs shrink-0 mt-0.5 transition-colors ${
+                        isRevealed
+                          ? 'bg-[var(--color-tertiary-500)] text-white shadow-xs'
+                          : 'bg-white text-[var(--color-primary-500)] border border-[var(--color-neutral-200)]'
+                      }`}
+                    >
+                      {OPTION_LABELS[idx] || idx + 1}
+                    </span>
+                    <div className="text-sm sm:text-base font-medium leading-relaxed break-words pt-0.5">
+                      {opt}
+                    </div>
                   </div>
+
                   {isRevealed && (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                    <div className="flex items-center gap-1.5 shrink-0 text-emerald-600 font-bold text-xs sm:text-sm pl-2 pt-0.5">
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span className="hidden sm:inline">Đáp án đúng</span>
+                    </div>
                   )}
                 </div>
               )
@@ -175,6 +186,9 @@ export function QuestionCard({
               <span>
                 Đáp án đúng: Phương án{' '}
                 {OPTION_LABELS[question.correctAnswer - 1] || question.correctAnswer}
+                {validOptions[question.correctAnswer - 1]
+                  ? ` - ${validOptions[question.correctAnswer - 1]}`
+                  : ''}
               </span>
             </div>
             {question.explanation && (

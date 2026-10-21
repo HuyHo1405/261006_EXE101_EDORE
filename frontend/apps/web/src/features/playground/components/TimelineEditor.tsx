@@ -18,6 +18,7 @@ import { TimelineOverviewView } from './timeline/TimelineOverviewView'
 import { parseActivitySubSteps } from './timeline/timelineUtils'
 import { LessonDocumentContext } from './LessonDocumentContext'
 import { buildLessonDocument } from '../utils/lessonDocument'
+import { OralQuizModal } from '@/features/oral-quiz/components/OralQuizModal'
 
 export interface TimelineEditorProps {
   steps: TimelineStep[]
@@ -120,6 +121,7 @@ export default function TimelineEditor({
   const [hasDismissedToolWarning, setHasDismissedToolWarning] = useState(false)
   const [showWarningModal, setShowWarningModal] = useState(false)
   const [pendingTargetIdx, setPendingTargetIdx] = useState<number | null>(null)
+  const [isOralQuizOpen, setIsOralQuizOpen] = useState(false)
 
   const parsedLessonTools = parseTeachingTools(lessonMeta?.teachingTools || [])
   const totalToolsCount = parsedLessonTools.length
@@ -320,6 +322,7 @@ export default function TimelineEditor({
             checkedTools={checkedTools}
             onToggleTool={(idx) => setCheckedTools(prev => ({ ...prev, [idx]: !prev[idx] }))}
             onNavigateToNode={handleNavigateToNode}
+            onOpenOralQuiz={() => setIsOralQuizOpen(true)}
           />
         ) : (
           <>
@@ -448,6 +451,7 @@ export default function TimelineEditor({
                 )}
                 images={lessonMeta?.images}
                 onPayloadChange={(newPayload) => updateStep({ nodePayload: newPayload })}
+                onOpenOralQuiz={() => setIsOralQuizOpen(true)}
               />
             )}
           </>
@@ -478,6 +482,14 @@ export default function TimelineEditor({
         unpreparedTools={unpreparedTools}
         onSkip={handleModalSkip}
         onPrepare={handleModalPrepare}
+      />
+
+      {/* Modal Vòng quay trả bài đầu giờ */}
+      <OralQuizModal
+        isOpen={isOralQuizOpen}
+        onClose={() => setIsOralQuizOpen(false)}
+        lessonId={lessonMeta?.lessonNumber || undefined}
+        lessonTitle={lessonHeading}
       />
     </div>
     </LessonDocumentContext.Provider>

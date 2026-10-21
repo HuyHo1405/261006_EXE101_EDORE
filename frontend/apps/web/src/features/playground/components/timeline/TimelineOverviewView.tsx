@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { LayoutList, ChevronRight, ArrowRight, FileText, Loader2 } from 'lucide-react'
+import { LayoutList, ChevronRight, ArrowRight, FileText, Loader2, Sparkles } from 'lucide-react'
 import type { TimelineStep } from '@/lib/services/pipelineService'
 import { EMPTY_LESSON_META } from '../../types/lessonMeta'
 import type { LessonMeta } from '../../types/lessonMeta'
@@ -20,6 +20,7 @@ interface TimelineOverviewViewProps {
   checkedTools: Record<number, boolean>
   onToggleTool: (idx: number) => void
   onNavigateToNode: (idx: number) => void
+  onOpenOralQuiz?: () => void
 }
 
 export function TimelineOverviewView({
@@ -34,6 +35,7 @@ export function TimelineOverviewView({
   checkedTools,
   onToggleTool,
   onNavigateToNode,
+  onOpenOralQuiz,
 }: TimelineOverviewViewProps) {
   const lessonDocument = useContext(LessonDocumentContext)
   const [exportingDocx, setExportingDocx] = useState(false)
@@ -74,17 +76,31 @@ export function TimelineOverviewView({
               Cấu trúc tiến trình giảng dạy đề xuất
             </h1>
           </div>
-          <button
-            type="button"
-            disabled={exportingDocx || !lessonDocument}
-            onClick={exportLessonDocx}
-            className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-blue-200 hover:border-blue-300 bg-blue-50 text-blue-800 text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
-            title="Tải bài giảng đầy đủ định dạng Word (.docx)"
-          >
-            <FileText className="w-4 h-4 text-blue-600" />
-            <span>{exportingDocx ? 'Đang xuất Word…' : 'Tải bài giảng (.docx)'}</span>
-            {exportingDocx && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />}
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5">
+            {onOpenOralQuiz && (
+              <button
+                type="button"
+                onClick={onOpenOralQuiz}
+                className="shrink-0 flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-amber-300 hover:border-amber-400 bg-amber-50 hover:bg-amber-100/90 text-amber-900 text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
+                title="Mở Vòng quay may mắn để kiểm tra bài cũ / trả bài học sinh"
+              >
+                <Sparkles className="w-4 h-4 text-amber-600" />
+                <span>Vòng quay trả bài</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              disabled={exportingDocx || !lessonDocument}
+              onClick={exportLessonDocx}
+              className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-blue-200 hover:border-blue-300 bg-blue-50 text-blue-800 text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
+              title="Tải bài giảng đầy đủ định dạng Word (.docx)"
+            >
+              <FileText className="w-4 h-4 text-blue-600" />
+              <span>{exportingDocx ? 'Đang xuất Word…' : 'Tải bài giảng (.docx)'}</span>
+              {exportingDocx && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />}
+            </button>
+          </div>
         </div>
 
         <div className="p-6 space-y-6 flex-1 overflow-y-auto bg-white">
@@ -192,6 +208,20 @@ export function TimelineOverviewView({
                 Bắt đầu xem &amp; chỉnh sửa
                 <ArrowRight className="w-4 h-4" />
               </button>
+            )}
+
+            {onOpenOralQuiz && (
+              <div className="pt-2 border-t border-[var(--color-neutral-200)]">
+                <button
+                  type="button"
+                  onClick={onOpenOralQuiz}
+                  className="w-full py-2.5 px-3 rounded-[var(--radius-md)] border-2 border-amber-200 hover:border-amber-300 bg-amber-50/90 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
+                  title="Mở Vòng quay trả bài đầu giờ"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <span>Vòng quay trả bài (Lucky Wheel)</span>
+                </button>
+              </div>
             )}
 
             <div className="pt-2 border-t border-[var(--color-neutral-200)] space-y-1.5">
