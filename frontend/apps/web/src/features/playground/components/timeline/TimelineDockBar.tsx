@@ -34,7 +34,7 @@ export function TimelineDockBar({
     (!knowledgeUnits.length || (activeUnitIdx ?? 0) >= knowledgeUnits.length - 1)
 
   return (
-    <div className="sticky bottom-0 z-30 w-full mt-2 pt-3 pb-2 bg-gradient-to-t from-white via-white/95 to-transparent backdrop-blur-md flex flex-col items-start gap-1.5">
+    <div className="sticky bottom-0 z-10 w-full mt-2 pt-3 pb-2 bg-gradient-to-t from-white via-white/95 to-transparent backdrop-blur-md flex flex-col items-start gap-1.5">
       <style>{`
         @keyframes chipPopUp {
           0% {

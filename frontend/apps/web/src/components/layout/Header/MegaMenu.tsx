@@ -93,7 +93,7 @@ export function MegaMenu({
       {/* Backdrop mờ fade-in khi trượt xuống & fade-out khi trượt lên */}
       <div
         className={cn(
-          "fixed inset-0 top-[84px] z-40 bg-slate-900/10 backdrop-blur-[2px] transition-opacity duration-300 ease-out",
+          "fixed inset-0 top-[84px] z-20 bg-slate-900/10 backdrop-blur-[2px] transition-opacity duration-300 ease-out",
           isAnimatingIn ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
         onClick={onClose}
@@ -103,7 +103,7 @@ export function MegaMenu({
       {/* Floating Panel Container — Slide Down khi Hover & Slide Up khi Unhover */}
       <div
         className={cn(
-          "absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 max-w-[1400px] w-[calc(100%-48px)] z-50 bg-white/98 backdrop-blur-xl border border-[var(--color-neutral-200)] rounded-2xl shadow-2xl overflow-hidden origin-top transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[transform,opacity]",
+          "absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 max-w-[1400px] w-[calc(100%-48px)] z-25 bg-white/98 backdrop-blur-xl border border-[var(--color-neutral-200)] rounded-2xl shadow-2xl overflow-hidden origin-top transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[transform,opacity]",
           isAnimatingIn
             ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
             : "opacity-0 -translate-y-6 scale-95 pointer-events-none"

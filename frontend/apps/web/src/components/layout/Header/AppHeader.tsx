@@ -197,7 +197,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
     : {};
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-[var(--color-neutral-200)] shadow-xs px-2.5 sm:px-4 md:px-6">
+    <header className="sticky top-0 z-20 w-full bg-white border-b border-[var(--color-neutral-200)] shadow-xs px-2.5 sm:px-4 md:px-6">
       <div className="relative flex items-center justify-between h-[84px] max-w-[1400px] mx-auto w-full">
         {/* ── Logo (góc trái — căn giữa tâm theo cột w-16 của Aside) ── */}
         <div className="w-16 flex items-center justify-center shrink-0">
@@ -274,7 +274,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
                 {/* Account Dropdown Menu (mt-2 = 8px khớp gap-2 của nút) */}
                 {userDropdownOpen && (
                   <div
-                    className="absolute right-0 top-full mt-2 w-64 bg-white border border-[var(--color-neutral-200)] shadow-2xl rounded-xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150"
+                    className="absolute right-0 top-full mt-2 w-64 bg-white border border-[var(--color-neutral-200)] shadow-2xl rounded-xl p-2 z-30 animate-in fade-in zoom-in-95 duration-150"
                     onMouseEnter={cancelCloseUserDropdown}
                     onMouseLeave={scheduleCloseUserDropdown}
                   >
@@ -364,7 +364,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
 
 function HeaderFallbackShell() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-[var(--color-neutral-200)] shadow-xs px-2.5 sm:px-4 md:px-6">
+    <header className="sticky top-0 z-20 w-full bg-white border-b border-[var(--color-neutral-200)] shadow-xs px-2.5 sm:px-4 md:px-6">
       <div className="relative flex items-center justify-between h-[84px] max-w-[1400px] mx-auto w-full">
         <div className="w-16 flex items-center justify-center shrink-0">
           <Link href="/" className="flex items-center shrink-0">
