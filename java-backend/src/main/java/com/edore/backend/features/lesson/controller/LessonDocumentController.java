@@ -22,9 +22,14 @@ public class LessonDocumentController {
         return response(documents.exportLesson(request));
     }
 
-    @PostMapping("/export-docx/questions")
+    @PostMapping({"/export-docx/questions", "/export-docx/questions/teacher"})
     public ResponseEntity<ApiResponse<Map<String, String>>> exportQuestions(@Valid @RequestBody LessonDocumentService.Request request) throws IOException {
         return response(documents.exportQuestions(request));
+    }
+
+    @PostMapping("/export-docx/questions/student")
+    public ResponseEntity<ApiResponse<Map<String, String>>> exportStudentQuestions(@Valid @RequestBody LessonDocumentService.Request request) throws IOException {
+        return response(documents.exportStudentQuestions(request));
     }
 
     @PostMapping("/export-docx")

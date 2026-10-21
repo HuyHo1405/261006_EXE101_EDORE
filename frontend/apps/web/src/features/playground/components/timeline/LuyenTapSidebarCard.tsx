@@ -26,7 +26,7 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
   const pathname = usePathname()
   const lessonDocument = useContext(LessonDocumentContext)
 
-  const [exportingDocx, setExportingDocx] = useState<'lesson' | 'questions' | null>(null)
+  const [exportingDocx, setExportingDocx] = useState<'lesson' | 'questions/student' | 'questions/teacher' | null>(null)
   const [exportError, setExportError] = useState('')
   const [reviewSource, setReviewSource] = useState<KahootQuestion[] | null>(null)
 
@@ -57,7 +57,7 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
     }
   }
 
-  const exportDocument = async (part: 'lesson' | 'questions') => {
+  const exportDocument = async (part: 'lesson' | 'questions/student' | 'questions/teacher') => {
     if (!lessonDocument || exportingDocx) return
     setExportError('')
     setExportingDocx(part)
@@ -66,12 +66,12 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
         method: 'POST',
         body: JSON.stringify({ ...lessonDocument,
           sections: part === 'lesson' ? lessonDocument.sections : [],
-          questions: part === 'questions' ? lessonDocument.questions : [],
+          questions: part === 'lesson' ? [] : lessonDocument.questions,
         }),
       })
       const bytes = Uint8Array.from(atob(response.result!.base64), c => c.charCodeAt(0))
       const filename = (lessonDocument.title.replace(/[<>:"/\\|?*\x00-\x1F]/g, '-').trim().slice(0, 100) || 'bai-hoc')
-        + (part === 'lesson' ? '-bai-giang.docx' : '-bo-cau-hoi.docx')
+        + (part === 'lesson' ? '-bai-giang.docx' : part === 'questions/student' ? '-cau-hoi-hoc-sinh.docx' : '-cau-hoi-giao-vien.docx')
       downloadQuiz(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }), filename)
     } catch (e) {
       setExportError(e instanceof Error ? e.message : 'Không thể xuất Word. Vui lòng thử lại.')
@@ -138,14 +138,32 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
           <button
             type="button"
             disabled={exportingDocx !== null || !lessonDocument?.questions.length}
-            onClick={() => exportDocument('questions')}
+            onClick={() => exportDocument('questions/student')}
+            className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-emerald-200 hover:border-emerald-300 bg-emerald-50 text-emerald-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-emerald-600" />
+              <div className="text-left">
+                <div>{exportingDocx === 'questions/student' ? 'Đang xuất phiếu học sinh…' : 'Word câu hỏi — Học sinh'}</div>
+                <div className="text-[10px] font-normal mt-0.5">Không đáp án, có chỗ điền câu trả lời</div>
+              </div>
+            </div>
+            {exportingDocx === 'questions/student' && <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" />}
+          </button>
+          <button
+            type="button"
+            disabled={exportingDocx !== null || !lessonDocument?.questions.length}
+            onClick={() => exportDocument('questions/teacher')}
             className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-purple-200 hover:border-purple-300 bg-purple-50 text-purple-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4 text-purple-600" />
-              <span>{exportingDocx === 'questions' ? 'Đang xuất bộ câu hỏi…' : 'Xuất Word bộ câu hỏi'}</span>
+              <div className="text-left">
+                <div>{exportingDocx === 'questions/teacher' ? 'Đang xuất bản giáo viên…' : 'Word câu hỏi — Giáo viên'}</div>
+                <div className="text-[10px] font-normal mt-0.5">Kèm đáp án và giải thích đầy đủ</div>
+              </div>
             </div>
-            {exportingDocx === 'questions' && <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" />}
+            {exportingDocx === 'questions/teacher' && <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" />}
           </button>
         </div>
 

@@ -58,7 +58,7 @@ Quy cách và template: https://support.kahoot.com/hc/en-us/articles/11500281254
 
 ## Kiểm tra tự động
 
-Xuất Word trên UI có hai nút riêng: **Xuất Word bài giảng** gọi `POST /api/v1/lessons/export-docx/lesson` và **Xuất Word bộ câu hỏi** gọi `POST /api/v1/lessons/export-docx/questions`. File bài giảng chứa nội dung và tiến trình dạy học, không kèm bộ câu hỏi cuối tài liệu. File bộ câu hỏi chỉ chứa câu hỏi gốc đầy đủ, lựa chọn, đáp án và lời giải; không áp dụng giới hạn Kahoot. Cả hai giữ logo EDORE và mẫu pastel, lấy dữ liệu hiện tại gồm các chỉnh sửa chưa lưu trên UI, không gọi AI để viết lại. Nút xuất bộ câu hỏi bị vô hiệu khi chưa có câu hỏi. Endpoint `/export-docx` cũ vẫn giữ để tương thích.
+Xuất Word trên sidebar có ba nút: **Xuất Word bài giảng** gọi `POST /api/v1/lessons/export-docx/lesson`, **Word câu hỏi — Học sinh** gọi `/export-docx/questions/student` và **Word câu hỏi — Giáo viên** gọi `/export-docx/questions/teacher` (cùng tiền tố `/api/v1/lessons`). File bài giảng chứa nội dung và tiến trình dạy học. Bản học sinh chứa câu hỏi và lựa chọn gốc, không kèm đáp án hay giải thích, có họ tên/lớp và dòng “Đáp án của bạn là:” dưới từng câu; câu tự luận thêm hai dòng trống. Backend loại bỏ toàn bộ trường đáp án trước khi dựng bản học sinh. Bản giáo viên giữ đáp án và giải thích đầy đủ. Cả ba giữ logo EDORE và mẫu pastel, lấy dữ liệu hiện tại gồm các chỉnh sửa chưa lưu trên UI, không gọi AI để viết lại và không áp dụng giới hạn Kahoot. Hai nút câu hỏi bị vô hiệu khi chưa có câu hỏi. Endpoint `/export-docx` cũ và `/export-docx/questions` (bản giáo viên) vẫn giữ để tương thích.
 
 ```powershell
 # Dùng JDK 21
