@@ -2,7 +2,7 @@
 
 import { useContext, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { FileText, Sparkles, Download, Loader2 } from 'lucide-react'
+import { FileText, ArrowRight, Download, Loader2 } from 'lucide-react'
 import { apiClient } from '@/lib/fetcher'
 import { downloadQuiz, prepareKahootQuestions, type KahootQuestion } from '../../utils/kahootExport'
 import { KahootReviewPanel } from '../payload/views/KahootReviewPanel'
@@ -131,7 +131,7 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
                 </div>
               </div>
             </div>
-            <Sparkles className="w-4 h-4 text-blue-200 group-hover:rotate-12 transition-transform" />
+            <Download className="w-4 h-4 text-blue-200 group-hover:text-white group-hover:translate-y-0.5 transition-all" />
           </button>
         </div>
 
@@ -150,7 +150,7 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
               type="button"
               disabled={exportingDocx !== null || !lessonDocument?.questions.length}
               onClick={() => exportDocument('questions/student')}
-              className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-emerald-200 hover:border-emerald-300 bg-emerald-50 text-emerald-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-emerald-200 hover:border-emerald-300 bg-emerald-50 text-emerald-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
             >
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-emerald-600" />
@@ -159,13 +159,17 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
                   <div className="text-[10px] font-normal mt-0.5">Không đáp án, có dòng kẻ để làm bài</div>
                 </div>
               </div>
-              {exportingDocx === 'questions/student' && <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" />}
+              {exportingDocx === 'questions/student' ? (
+                <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+              ) : (
+                <Download className="w-4 h-4 text-emerald-600 group-hover:translate-y-0.5 transition-transform" />
+              )}
             </button>
             <button
               type="button"
               disabled={exportingDocx !== null || !lessonDocument?.questions.length}
               onClick={() => exportDocument('questions/teacher')}
-              className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-purple-200 hover:border-purple-300 bg-purple-50 text-purple-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-purple-200 hover:border-purple-300 bg-purple-50 text-purple-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
             >
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-purple-600" />
@@ -174,7 +178,11 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
                   <div className="text-[10px] font-normal mt-0.5">Kèm đáp án đúng và hướng dẫn giải</div>
                 </div>
               </div>
-              {exportingDocx === 'questions/teacher' && <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" />}
+              {exportingDocx === 'questions/teacher' ? (
+                <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
+              ) : (
+                <Download className="w-4 h-4 text-purple-600 group-hover:translate-y-0.5 transition-transform" />
+              )}
             </button>
           </div>
         </div>
