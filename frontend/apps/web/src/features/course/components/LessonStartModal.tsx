@@ -24,6 +24,7 @@ const templateOptions = [
     description: "Khởi động → Hình thành kiến thức → Luyện tập/Vận dụng",
     tags: ["Phổ biến", "45 phút"],
     Icon: School,
+    disabled: false,
   },
   {
     value: "2",
@@ -31,6 +32,7 @@ const templateOptions = [
     description: "Khởi động → Hình thành kiến thức → Luyện tập → Vận dụng",
     tags: ["Chuyên sâu", "90 phút+"],
     Icon: BrainCircuit,
+    disabled: true,
   },
 ];
 
@@ -52,8 +54,7 @@ export function LessonStartModal({
   onConfirm,
   onCancel,
 }: LessonStartModalProps) {
-  const initialTemplateId =
-    ctx.template_id === "extended-4-node" || ctx.template_id === "2" ? "2" : "1";
+  const initialTemplateId = "1";
 
   const displayTitle = React.useMemo(() => {
     const raw = lesson.title || "Bài học";
@@ -235,44 +236,60 @@ export function LessonStartModal({
                   {templateOptions.map((opt) => {
                     const Icon = opt.Icon;
                     const isSelected = templateId === opt.value;
+                    const isDisabled = opt.disabled;
                     return (
                       <button
                         key={opt.value}
                         type="button"
-                        onClick={() => setTemplateId(opt.value)}
-                        className={`relative w-full p-3.5 rounded-[var(--radius-lg)] border transition-all flex flex-col items-center text-center gap-2 cursor-pointer
-                          ${isSelected
-                            ? "border-[var(--color-primary-300)] bg-[var(--color-primary-50)] shadow-md ring-4 ring-[var(--color-primary-50)]"
-                            : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)] hover:bg-[var(--color-neutral-50)]"
+                        disabled={isDisabled}
+                        onClick={() => !isDisabled && setTemplateId(opt.value)}
+                        className={`relative w-full p-3.5 rounded-[var(--radius-lg)] border transition-all flex flex-col items-center text-center gap-2
+                          ${isDisabled
+                            ? "border-slate-200 bg-slate-50/70 opacity-60 cursor-not-allowed select-none"
+                            : isSelected
+                            ? "border-[var(--color-primary-300)] bg-[var(--color-primary-50)] shadow-md ring-4 ring-[var(--color-primary-50)] cursor-pointer"
+                            : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)] hover:bg-[var(--color-neutral-50)] cursor-pointer"
                           }`}
                       >
-                        <div
-                          className={`absolute top-3 right-3 w-4 h-4 rounded-[var(--radius-full)] border-2 flex items-center justify-center shrink-0 transition-all
-                            ${isSelected
-                              ? "border-[var(--color-primary-500)] bg-[var(--color-primary-500)]"
-                              : "border-[var(--color-neutral-300)]"
-                            }`}
-                        >
-                          {isSelected && (
-                            <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
-                          )}
-                        </div>
+                        {isDisabled ? (
+                          <span className="absolute top-2.5 right-2.5 font-mono text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+                            Đang phát triển
+                          </span>
+                        ) : (
+                          <div
+                            className={`absolute top-3 right-3 w-4 h-4 rounded-[var(--radius-full)] border-2 flex items-center justify-center shrink-0 transition-all
+                              ${isSelected
+                                ? "border-[var(--color-primary-500)] bg-[var(--color-primary-500)]"
+                                : "border-[var(--color-neutral-300)]"
+                              }`}
+                          >
+                            {isSelected && (
+                              <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                            )}
+                          </div>
+                        )}
 
                         <div
-                          className={`p-2.5 rounded-[var(--radius-full)] transition-colors ${isSelected
+                          className={`p-2.5 rounded-[var(--radius-full)] transition-colors ${
+                            isDisabled
+                              ? "bg-slate-200 text-slate-400"
+                              : isSelected
                               ? "bg-[var(--color-primary-100)] text-[var(--color-primary-600)]"
                               : "bg-[var(--color-neutral-100)] text-[var(--color-neutral-500)]"
-                            }`}
+                          }`}
                         >
                           <Icon className="w-5 h-5" />
                         </div>
 
                         <div>
                           <p
-                            className={`font-header text-xs uppercase tracking-tight font-extrabold ${isSelected
+                            className={`font-header text-xs uppercase tracking-tight font-extrabold ${
+                              isDisabled
+                                ? "text-slate-500"
+                                : isSelected
                                 ? "text-[var(--color-primary-700)]"
                                 : "text-[var(--color-neutral-800)]"
-                              }`}
+                            }`}
                           >
                             {opt.label}
                           </p>
