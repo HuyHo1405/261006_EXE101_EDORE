@@ -16,6 +16,8 @@ import { TimelineDockBar } from './timeline/TimelineDockBar'
 import { TimelineDetailSidebar } from './timeline/TimelineDetailSidebar'
 import { TimelineOverviewView } from './timeline/TimelineOverviewView'
 import { parseActivitySubSteps } from './timeline/timelineUtils'
+import { LessonDocumentContext } from './LessonDocumentContext'
+import { buildLessonDocument } from '../utils/lessonDocument'
 
 export interface TimelineEditorProps {
   steps: TimelineStep[]
@@ -238,6 +240,7 @@ export default function TimelineEditor({
     : []
 
   return (
+    <LessonDocumentContext.Provider value={buildLessonDocument(steps, lessonMeta, scriptTitle, courseTitle)}>
     <div className="flex flex-col justify-between min-h-full font-body">
       {/* ─── Top Breadcrumb Bar ─── */}
       <DashboardBreadcrumb
@@ -476,5 +479,6 @@ export default function TimelineEditor({
         onPrepare={handleModalPrepare}
       />
     </div>
+    </LessonDocumentContext.Provider>
   )
 }

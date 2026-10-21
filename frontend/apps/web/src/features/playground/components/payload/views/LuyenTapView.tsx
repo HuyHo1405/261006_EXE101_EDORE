@@ -1,13 +1,15 @@
 'use client'
 
-import { useId, useState } from 'react'
+import { useContext, useId, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Plus, Trash2, Eye, EyeOff, ClipboardList } from 'lucide-react'
 import { AutoResizeTextarea } from '../StepEnrichmentRender'
 
 import { SectionLabel, fieldCls } from './Shared'
-import { downloadQuiz, prepareKahootQuestions, toKahootCsv, type KahootQuestion } from '../../../utils/kahootExport'
+import { downloadQuiz, prepareKahootQuestions, type KahootQuestion } from '../../../utils/kahootExport'
 import { KahootReviewPanel } from './KahootReviewPanel'
+import { LessonDocumentContext } from '../../LessonDocumentContext'
+import { apiClient } from '@/lib/fetcher'
 
 // ─── Luyện tập (ôn tập) ───────────────────────────────────────────────────────
 const LEVELS: { key: string; label: string; cls: string }[] = [
@@ -25,21 +27,35 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
   const [reviewSource, setReviewSource] = useState<KahootQuestion[] | null>(null)
   const radioGroup = useId()
   const pathname = usePathname()
+  const lessonDocument = useContext(LessonDocumentContext)
+  const [exportingDocx, setExportingDocx] = useState(false)
   let sourceSignature = ''
   try { sourceSignature = JSON.stringify(prepareKahootQuestions(exercises, false)) } catch { /* Invalid originals cannot be exported. */ }
 
-  const exportQuiz = (format: 'csv' | 'xlsx') => {
+  const exportQuiz = () => {
     setExportError('')
     try {
       const questions = prepareKahootQuestions(exercises, false)
-      if (format === 'csv') {
-        downloadQuiz(new Blob([toKahootCsv(questions)], { type: 'text/csv;charset=utf-8' }), 'luyen-tap.csv')
-      } else {
-        setReviewSource(questions)
-      }
+      setReviewSource(questions)
     } catch (error) {
       setExportError(error instanceof Error ? error.message : 'Không thể xuất câu hỏi. Vui lòng thử lại.')
     }
+  }
+
+  const exportDocument = async () => {
+    if (!lessonDocument) return
+    setExportError('')
+    setExportingDocx(true)
+    try {
+      const response = await apiClient<{ base64: string }>('/api/v1/lessons/export-docx', {
+        method: 'POST', body: JSON.stringify(lessonDocument),
+      })
+      const bytes = Uint8Array.from(atob(response.result!.base64), c => c.charCodeAt(0))
+      const filename = (lessonDocument.title.replace(/[<>:"/\\|?*\x00-\x1F]/g, '-').trim().slice(0, 100) || 'bai-hoc') + '.docx'
+      downloadQuiz(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }), filename)
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : 'Không thể xuất Word. Vui lòng thử lại.')
+    } finally { setExportingDocx(false) }
   }
 
   const update = (i: number, patch: Record<string, any>) =>
@@ -165,9 +181,9 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
       {!exercises.length && <p className="text-sm text-slate-600">Bài học chưa có câu hỏi luyện tập. Thêm câu hỏi để bắt đầu.</p>}
       <div className="border-t pt-3 space-y-2">
         <div className="flex flex-wrap gap-2">
-          <button type="button" disabled={!exercises.length} onClick={() => exportQuiz('csv')}
-            className="rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50">Xuất CSV</button>
-          <button type="button" disabled={!exercises.length} onClick={() => exportQuiz('xlsx')}
+          <button type="button" disabled={exportingDocx || !lessonDocument} onClick={exportDocument}
+            className="rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50">{exportingDocx ? 'Đang xuất Word…' : 'Xuất Word toàn bộ bài học'}</button>
+          <button type="button" disabled={!exercises.length} onClick={exportQuiz}
             className="rounded-lg bg-blue-600 text-white px-3 py-2 text-xs font-bold disabled:opacity-50">
             Xuất Excel cho Kahoot
           </button>

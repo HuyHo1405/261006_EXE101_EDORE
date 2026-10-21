@@ -8,6 +8,8 @@
 - Nếu chưa có dữ liệu cho bài, node Luyện tập rỗng và cho phép thêm thủ công.
 - Câu hỏi `WARM_UP` được nhập vào ngân hàng nhưng không gắn vào node Luyện tập. Luồng AI Khởi động giữ nguyên.
 - Node Luyện tập từ ngân hàng không tham gia lượt kiểm chứng AI tự động sau khi tạo giáo án.
+- Nút `Xuất CSV` được thay bằng `Xuất Word toàn bộ bài học`. File Word chứa tổng quan, đủ các phần giáo án hiện đang mở, nội dung chi tiết, ghi chú của giáo viên và bộ câu hỏi nguyên văn ở cuối, gồm lựa chọn, đáp án, lời giải và câu tự luận nếu có. Không dùng bản rút gọn Kahoot để xuất Word.
+- Mẫu Word A4 dùng logo EDORE có sẵn, tiêu đề xanh đậm, font Arial, số trang. Các ý được đánh dấu đậm, nội dung trọng tâm ngắn và mốc thời gian được tô vàng. Không gọi AI để viết lại hay cắt ngắn nội dung khi xuất Word. Danh sách tư liệu hình ảnh gồm chú thích và đường dẫn, không tự tải ảnh từ bên ngoài.
 - Các giáo án đã lưu trước đây giữ nguyên. Tạo giáo án mới để sử dụng câu hỏi từ ngân hàng.
 
 ## Nhập dữ liệu
@@ -40,16 +42,16 @@ Thay host/user/database theo cấu hình môi trường. SQL tự tạo bảng c
 Trong phần Luyện tập:
 
 1. Kiểm tra câu hỏi và các lựa chọn A–D, chọn đáp án đúng bằng nút radio. Chỉnh thời gian nếu cần.
-2. Xem/sửa lời giải; thêm hoặc xóa câu hỏi theo nhu cầu. Lưu giáo án bằng chức năng lưu hiện có.
-3. `Xuất CSV` tải các câu đang hiển thị, hỗ trợ tiếng Việt, dấu phẩy, dấu ngoặc kép và xuống dòng. File CSV dùng để trao đổi/chỉnh sửa; không phải file nhập trực tiếp vào Kahoot.
+2. Xem/sửa lời giải; thêm hoặc xóa câu hỏi theo nhu cầu. Các chỉnh sửa nội dung node hiện giữ trong phiên trang đang mở.
+3. `Xuất Word toàn bộ bài học` tải toàn bộ giáo án hiện trên giao diện, bao gồm các chỉnh sửa trong phiên, thay vì chỉ xuất các câu hỏi của node Luyện tập. Câu hỏi/đáp án dài hơn giới hạn Kahoot vẫn được xuất đầy đủ.
 4. `Xuất Excel cho Kahoot` mở bản dành riêng cho Kahoot với số ký tự của từng trường. Bấm `AI rút gọn các câu dài theo quy tắc Kahoot` để xử lý các câu quá dài theo nhóm tối đa 5 câu. Prompt yêu cầu câu hỏi ≤120 ký tự, lựa chọn ≤75 ký tự, giữ ý nghĩa, phủ định, mốc thời gian và thứ tự đáp án. Server kiểm tra lại JSON và độ dài, thử lại một lần nếu sai. Trường vốn đã ngắn, vị trí đáp án đúng, ô lựa chọn trống và thời gian được giữ bằng code.
 5. Đối chiếu bản gốc trong mỗi câu, chỉnh sửa bản rút gọn hoặc bỏ chọn câu không muốn đưa vào Kahoot. Kiểm tra độ dài không chứng minh được ý nghĩa tương đương, vì vậy cần duyệt lại nội dung. Đánh dấu đã kiểm tra rồi bấm `Tải Excel và giữ bản Kahoot`.
-6. Bản thử giữ bản đã duyệt trong trình duyệt (`localStorage`), theo đường dẫn giáo án và nội dung gốc. Trong trang đang mở, bản này cũng nằm ở `node_payload.kahoot_export`. Trang hiện chưa có API lưu nội dung node nên bản này chưa ghi vào database/ngân hàng dùng chung và chưa đồng bộ sang thiết bị khác. Nếu câu hỏi gốc, đáp án đúng hoặc thời gian thay đổi, bản đã lưu không được dùng lại. Bộ câu hỏi gốc và CSV giữ nguyên.
+6. Bản thử giữ bản đã duyệt trong trình duyệt (`localStorage`), theo đường dẫn giáo án và nội dung gốc. Trong trang đang mở, bản này cũng nằm ở `node_payload.kahoot_export`. Trang hiện chưa có API lưu nội dung node nên bản này chưa ghi vào database/ngân hàng dùng chung và chưa đồng bộ sang thiết bị khác. Nếu câu hỏi gốc, đáp án đúng hoặc thời gian thay đổi, bản đã lưu không được dùng lại. Bộ câu hỏi gốc và bản Word giữ nguyên.
 7. Vào Kahoot: Add question → Import → Import spreadsheet, chọn file `.xlsx`.
 
-Bản Excel giới hạn mỗi lần xuất tối đa 200 câu, câu hỏi 120 ký tự và mỗi đáp án 75 ký tự. CSV giữ nguyên cả câu hỏi/đáp án dài hơn giới hạn này. Cả hai định dạng cần ít nhất hai lựa chọn và đáp án đúng hợp lệ; thời gian là 5, 10, 20, 30, 60 hoặc 120 giây. Trong bản Kahoot, trường vượt giới hạn hiện số ký tự màu đỏ. Không cắt lấy đầu chuỗi để ép độ dài. Câu tự luận của giáo án cũ cần chuyển thành trắc nghiệm trước khi xuất.
+Bản Excel giới hạn mỗi lần xuất tối đa 200 câu, câu hỏi 120 ký tự và mỗi đáp án 75 ký tự. Word giữ nguyên cả câu hỏi/đáp án dài hơn giới hạn này và hỗ trợ cả câu tự luận. Bản Kahoot cần ít nhất hai lựa chọn và đáp án đúng hợp lệ; thời gian là 5, 10, 20, 30, 60 hoặc 120 giây. Trong bản Kahoot, trường vượt giới hạn hiện số ký tự màu đỏ. Không cắt lấy đầu chuỗi để ép độ dài. Câu tự luận của giáo án cũ cần chuyển thành trắc nghiệm trước khi xuất Kahoot.
 
-Trong dữ liệu nguồn có 191 câu `PRACTICE` vượt ít nhất một giới hạn độ dài của Kahoot. Các câu này vẫn dùng và xuất CSV bình thường; cần rút gọn câu hỏi/lựa chọn trước khi xuất Excel nhập Kahoot. Câu hỏi thuộc 20 bài `LS6_KNTT_B01` đến `LS6_KNTT_B20`; các mã này đều có trong bộ SQL bài học hiện có.
+Trong dữ liệu nguồn có 191 câu `PRACTICE` vượt ít nhất một giới hạn độ dài của Kahoot. Các câu này vẫn dùng và xuất Word bình thường; cần rút gọn câu hỏi/lựa chọn trước khi xuất Excel nhập Kahoot. Câu hỏi thuộc 20 bài `LS6_KNTT_B01` đến `LS6_KNTT_B20`; các mã này đều có trong bộ SQL bài học hiện có.
 
 Quy cách và template: https://support.kahoot.com/hc/en-us/articles/115002812547
 
@@ -61,7 +63,7 @@ mvn -f java-backend/pom.xml test
 
 Set-Location frontend
 npm run type-check --workspace=@edore/web
-node --test apps/web/tests/kahootExport.test.cjs
+node --test apps/web/tests/kahootExport.test.cjs apps/web/tests/lessonDocument.test.cjs
 ```
 
 Test bao phủ loại node Luyện tập khỏi prompt/parser ở cả hai đường tạo giáo án; ghép lại thứ tự; đáp án và lời giải từ ngân hàng; bài chưa có câu; cấu trúc template Excel; từ chối dữ liệu không hợp lệ; CSV tiếng Việt, escape và giới hạn độ dài.
