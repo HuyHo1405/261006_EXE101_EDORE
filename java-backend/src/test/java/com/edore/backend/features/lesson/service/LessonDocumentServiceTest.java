@@ -9,7 +9,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LessonDocumentServiceTest {
-    @Test void exportsFullLessonAndQuestionsWithLogoBlueHeadingsAndHighlightedMilestones() throws Exception {
+    @Test void exportsFullLessonWithPastelPaletteRomanSectionsAndCenteredTitle() throws Exception {
         var service = new LessonDocumentService();
         var request = new LessonDocumentService.Request("Lịch sử và cuộc sống", "Lịch sử 6 KNTT",
                 List.of(new LessonDocumentService.Section("Hình thành kiến thức", List.of(
@@ -27,8 +27,13 @@ class LessonDocumentServiceTest {
             assertTrue(doc.getHeaderList().stream().anyMatch(h -> !h.getAllPictures().isEmpty()));
             assertTrue(doc.getHeaderList().stream().anyMatch(h -> h.getText().contains("EDORE")));
             assertTrue(doc.getParagraphs().stream().filter(p -> p.getStyle() != null && (p.getStyle().startsWith("Heading") || p.getStyle().equals("Title")))
-                    .allMatch(p -> p.getRuns().stream().allMatch(r -> r.isBold() && "034CE4".equals(r.getColor()))));
-            assertTrue(doc.getParagraphs().stream().flatMap(p -> p.getRuns().stream()).anyMatch(r -> r.getTextHighlightColor() != null && r.getTextHighlightColor().toString().equals("yellow")));
+                    .allMatch(p -> p.getRuns().stream().allMatch(r -> r.isBold() && List.of("6E86A6", "887E9D").contains(r.getColor()))));
+            assertEquals(ParagraphAlignment.CENTER, doc.getParagraphs().stream().filter(p -> "Title".equals(p.getStyle())).findFirst().orElseThrow().getAlignment());
+            assertEquals("upperRoman", doc.getNumbering().getAbstractNum(java.math.BigInteger.ZERO).getCTAbstractNum().getLvlArray(0).getNumFmt().getVal().toString());
+            assertTrue(doc.getParagraphs().stream().filter(p -> "Heading1".equals(p.getStyle())).allMatch(p -> p.getNumID() != null));
+            String xml = doc.getDocument().xmlText();
+            assertTrue(xml.contains("E5F1EA")); assertTrue(xml.contains("F7E9D8"));
+            assertFalse(xml.contains("yellow")); assertFalse(xml.contains("034CE4"));
             assertFalse(text.contains("✨")); assertFalse(text.contains("**"));
             for (var question : request.questions()) {
                 assertTrue(text.contains(question.question().strip()));

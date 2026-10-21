@@ -18,7 +18,10 @@ import java.util.regex.Pattern;
 
 @Service
 public class LessonDocumentService {
-    private static final String BLUE = "034CE4";
+    private static final String BLUE = "6E86A6";
+    private static final String LILAC = "887E9D";
+    private static final String MINT = "E5F1EA";
+    private static final String PEACH = "F7E9D8";
     private static final Pattern EMPHASIS = Pattern.compile("\\*\\*(.+?)\\*\\*");
     private static final Pattern MILESTONE = Pattern.compile(
             "(?iu)(?:ngày\\s+\\d{1,2}(?:\\s*[–—/-]\\s*\\d{1,2})?(?:\\s*[–—/-]\\s*\\d{2,4})?"
@@ -45,37 +48,57 @@ public class LessonDocumentService {
         if (length > 1_000_000) throw new ApiException(CommonResponseCode.VALIDATION_FAILED, "Bài học quá lớn để xuất Word trong một lần.");
         try (var document = new XWPFDocument(); var output = new ByteArrayOutputStream()) {
             configure(document);
+            BigInteger sectionNumbering = document.getNumbering().addNum(BigInteger.ZERO);
+            var kicker = document.createParagraph(); kicker.setAlignment(ParagraphAlignment.CENTER);
+            kicker.setSpacingBefore(160); kicker.setSpacingAfter(100); kicker.setKeepNext(true);
+            var kickerRun = kicker.createRun(); base(kickerRun); kickerRun.setFontSize(9); kickerRun.setColor("8C9EAE"); kickerRun.setText("NỘI DUNG BÀI HỌC");
             var title = document.createParagraph();
-            title.setStyle("Title"); title.setSpacingAfter(180);
-            var titleRun = title.createRun(); base(titleRun); titleRun.setFontSize(22); titleRun.setBold(true); titleRun.setColor(BLUE); titleRun.setText(clean(request.title()));
-            if (!value(request.subtitle()).isBlank()) paragraph(document, request.subtitle(), false);
+            title.setStyle("Title"); title.setAlignment(ParagraphAlignment.CENTER); title.setKeepNext(true); title.setSpacingAfter(220);
+            var titleRun = title.createRun(); base(titleRun); titleRun.setFontSize(23); titleRun.setBold(true); titleRun.setColor(BLUE); titleRun.setText(clean(request.title()));
+            if (!value(request.subtitle()).isBlank()) {
+                var subtitle = paragraph(document, request.subtitle(), false);
+                subtitle.setAlignment(ParagraphAlignment.CENTER); subtitle.setSpacingAfter(240);
+                subtitle.getRuns().forEach(r -> { r.setFontSize(10); r.setColor("8392A0"); });
+            }
             for (Section section : request.sections()) {
-                heading(document, section.title(), 1);
+                var sectionHeading = heading(document, section.title(), 1);
+                sectionHeading.setNumID(sectionNumbering); sectionHeading.setNumILvl(BigInteger.ZERO);
+                BigInteger unitNumbering = document.getNumbering().addNum(BigInteger.ONE);
                 String previousLabel = "";
                 for (Block block : section.blocks()) {
                     if (block.text().isBlank()) continue;
-                    if (!value(block.label()).isBlank() && !block.label().equals(previousLabel)) heading(document, block.label(), 2);
-                    paragraphs(document, block.text(), block.important());
+                    if (value(block.label()).equals("Đơn vị kiến thức")) {
+                        var unit = heading(document, block.text(), 2);
+                        unit.setNumID(unitNumbering); unit.setNumILvl(BigInteger.ZERO);
+                    } else {
+                        String label = value(block.label());
+                        boolean generic = List.of("Tiêu đề", "Mô tả", "Diễn giải", "Nội dung bổ sung").contains(label);
+                        paragraphs(document, block.text(), block.important(), generic || label.equals(previousLabel) ? "" : label);
+                    }
                     previousLabel = value(block.label());
                 }
             }
             if (!request.questions().isEmpty()) {
                 var appendix = heading(document, "Bộ câu hỏi đầy đủ", 1);
+                appendix.setNumID(sectionNumbering); appendix.setNumILvl(BigInteger.ZERO);
                 appendix.setPageBreak(true);
                 int i = 0;
                 for (Question q : request.questions()) {
-                    var question = heading(document, "Câu " + (++i), 2);
+                    var question = paragraph(document, q.question(), false, "Câu " + (++i));
+                    question.setSpacingBefore(200);
                     question.setKeepNext(true);
-                    paragraphs(document, q.question(), false);
                     for (int j = 0; j < q.options().size(); j++) if (!q.options().get(j).isBlank())
-                        paragraphs(document, (char) ('A' + j) + ". " + q.options().get(j), false);
+                        {
+                            var p = paragraph(document, (char) ('A' + j) + ". " + q.options().get(j), false);
+                            p.setIndentationLeft(300); p.setIndentationHanging(240); p.setSpacingAfter(65);
+                        }
                     if (q.correctAnswer() != null && q.correctAnswer() <= q.options().size()
                             && !q.options().get(q.correctAnswer() - 1).isBlank()) {
-                        paragraph(document, "Đáp án đúng: " + (char) ('A' + q.correctAnswer() - 1) + ". " + q.options().get(q.correctAnswer() - 1), true);
+                        paragraph(document, (char) ('A' + q.correctAnswer() - 1) + ". " + q.options().get(q.correctAnswer() - 1), false, "Đáp án đúng");
                         if (!value(q.answer()).isBlank() && !q.answer().strip().equals(q.options().get(q.correctAnswer() - 1).strip()))
                             paragraphs(document, "Hướng dẫn giải bổ sung: " + q.answer(), false);
-                    } else if (!value(q.answer()).isBlank()) paragraph(document, "Đáp án / hướng dẫn giải: " + q.answer(), true);
-                    if (!value(q.explanation()).isBlank()) paragraphs(document, "Giải thích: " + q.explanation(), false);
+                    } else if (!value(q.answer()).isBlank()) paragraphs(document, q.answer(), false, "Hướng dẫn trả lời");
+                    if (!value(q.explanation()).isBlank()) paragraphs(document, q.explanation(), false, "Giải thích");
                 }
             }
             document.write(output);
@@ -89,46 +112,73 @@ public class LessonDocumentService {
         var size = sect.addNewPgSz(); size.setW(BigInteger.valueOf(11906)); size.setH(BigInteger.valueOf(16838));
         var margins = sect.addNewPgMar();
         margins.setTop(BigInteger.valueOf(1134)); margins.setBottom(BigInteger.valueOf(1134));
-        margins.setLeft(BigInteger.valueOf(1134)); margins.setRight(BigInteger.valueOf(1134));
+        margins.setLeft(BigInteger.valueOf(1247)); margins.setRight(BigInteger.valueOf(1247));
         margins.setHeader(BigInteger.valueOf(400)); margins.setFooter(BigInteger.valueOf(500));
         var styles = document.createStyles();
         for (String name : List.of("Title", "Heading1", "Heading2")) {
             CTStyle ct = CTStyle.Factory.newInstance(); ct.setStyleId(name); ct.setType(STStyleType.PARAGRAPH);
-            ct.addNewName().setVal(name); ct.addNewRPr().addNewColor().setVal(BLUE);
+            ct.addNewName().setVal(name); ct.addNewRPr().addNewColor().setVal(name.equals("Heading2") ? LILAC : BLUE);
             ct.getRPr().addNewB().setVal(true);
             if (!name.equals("Title")) ct.addNewPPr().addNewOutlineLvl().setVal(BigInteger.valueOf(name.equals("Heading1") ? 0 : 1));
             styles.addStyle(new XWPFStyle(ct));
         }
+        var numbering = document.createNumbering();
+        for (int i = 0; i < 2; i++) {
+            var abstractNum = CTAbstractNum.Factory.newInstance(); abstractNum.setAbstractNumId(BigInteger.valueOf(i));
+            var level = abstractNum.addNewLvl(); level.setIlvl(BigInteger.ZERO);
+            level.addNewStart().setVal(BigInteger.ONE);
+            level.addNewNumFmt().setVal(i == 0 ? STNumberFormat.UPPER_ROMAN : STNumberFormat.DECIMAL);
+            level.addNewLvlText().setVal("%1.");
+            level.addNewLvlJc().setVal(STJc.LEFT);
+            var ind = level.addNewPPr().addNewInd(); ind.setLeft(BigInteger.ZERO); ind.setHanging(BigInteger.ZERO);
+            var numberStyle = level.addNewRPr(); numberStyle.addNewColor().setVal(i == 0 ? BLUE : LILAC); numberStyle.addNewB().setVal(true);
+            numberStyle.addNewSz().setVal(BigInteger.valueOf(i == 0 ? 28 : 24));
+            var numberFont = numberStyle.addNewRFonts(); numberFont.setAscii("Arial"); numberFont.setHAnsi("Arial");
+            numbering.addAbstractNum(new XWPFAbstractNum(abstractNum));
+        }
         var header = document.createHeader(HeaderFooterType.DEFAULT).createParagraph();
-        header.setSpacingAfter(120);
+        header.setSpacingAfter(80);
         var logo = header.createRun();
         try (var input = new ClassPathResource("export/edore-logo.png").getInputStream()) {
-            logo.addPicture(input, Document.PICTURE_TYPE_PNG, "EDORE", Units.toEMU(22), Units.toEMU(28));
+            logo.addPicture(input, Document.PICTURE_TYPE_PNG, "EDORE", Units.toEMU(14), Units.toEMU(18));
         } catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException e) { throw new IOException("Invalid EDORE logo", e); }
-        var brand = header.createRun(); base(brand); brand.setText("  EDORE"); brand.setBold(true); brand.setColor(BLUE); brand.setFontSize(16);
+        var brand = header.createRun(); base(brand); brand.setText("  EDORE"); brand.setBold(true); brand.setColor(BLUE); brand.setFontSize(11);
         var footer = document.createFooter(HeaderFooterType.DEFAULT).createParagraph();
         footer.setAlignment(ParagraphAlignment.RIGHT);
-        var foot = footer.createRun(); base(foot); foot.setFontSize(9); foot.setColor(BLUE); foot.setText("EDORE  |  Trang ");
+        var foot = footer.createRun(); base(foot); foot.setFontSize(9); foot.setColor("8398AC"); foot.setText("EDORE  |  Trang ");
         var field = footer.getCTP().addNewFldSimple(); field.setInstr("PAGE"); field.addNewR().addNewT().setStringValue("1");
     }
 
     private XWPFParagraph heading(XWPFDocument document, String text, int level) {
         var p = document.createParagraph(); p.setStyle("Heading" + level); p.setKeepNext(true);
-        p.setSpacingBefore(level == 1 ? 240 : 130); p.setSpacingAfter(80);
-        var run = p.createRun(); base(run); run.setColor(BLUE); run.setBold(true); run.setFontSize(level == 1 ? 15 : 11);
+        p.setSpacingBefore(level == 1 ? 260 : 170); p.setSpacingAfter(level == 1 ? 130 : 100);
+        var run = p.createRun(); base(run); run.setColor(level == 1 ? BLUE : LILAC); run.setBold(true); run.setFontSize(level == 1 ? 14 : 12);
         run.setText(clean(text).replace("**", "")); return p;
     }
 
     private void paragraphs(XWPFDocument document, String text, boolean important) {
+        paragraphs(document, text, important, "");
+    }
+
+    private void paragraphs(XWPFDocument document, String text, boolean important, String label) {
+        boolean first = true;
         for (String line : clean(text).replace("\\n", "\n").split("\\R")) {
             if (line.isBlank()) continue;
             if (line.matches("^#{1,6}\\s+.*")) heading(document, line.replaceFirst("^#{1,6}\\s+", ""), 2);
-            else paragraph(document, line.replaceFirst("^\\s*[-*•]\\s+", "– "), important);
+            else paragraph(document, line.replaceFirst("^\\s*[-*•]\\s+", "– "), important, first ? label : "");
+            first = false;
         }
     }
 
     private XWPFParagraph paragraph(XWPFDocument document, String text, boolean important) {
-        var p = document.createParagraph(); p.setSpacingAfter(90); p.setSpacingBetween(1.15);
+        return paragraph(document, text, important, "");
+    }
+
+    private XWPFParagraph paragraph(XWPFDocument document, String text, boolean important, String label) {
+        var p = document.createParagraph(); p.setSpacingAfter(100); p.setSpacingBetween(1.22); p.setAlignment(ParagraphAlignment.BOTH);
+        if (!value(label).isBlank()) {
+            var lead = p.createRun(); base(lead); lead.setBold(true); lead.setColor(LILAC); lead.setText(clean(label) + ": ");
+        }
         String line = clean(text);
         var bold = EMPHASIS.matcher(line); int start = 0;
         while (bold.find()) {
@@ -152,17 +202,26 @@ public class LessonDocumentService {
         boolean highlight = important && text.length() <= 220;
         while (dates.find()) {
             run(p, text.substring(start, dates.start()), bold, highlight);
-            run(p, dates.group(), true, true); start = dates.end();
+            var milestone = run(p, dates.group(), true, false);
+            shade(milestone, PEACH); start = dates.end();
         }
         run(p, text.substring(start), bold, highlight);
     }
 
-    private void run(XWPFParagraph p, String text, boolean bold, boolean highlight) {
-        if (text.isEmpty()) return;
-        var run = p.createRun(); base(run); run.setBold(bold); run.setText(text);
-        if (highlight) run.setTextHighlightColor("yellow");
+    private XWPFRun run(XWPFParagraph p, String text, boolean bold, boolean highlight) {
+        if (text.isEmpty()) return null;
+        var run = p.createRun(); base(run); run.setBold(bold);
+        String[] lines = text.split("\\R", -1);
+        for (int i = 0; i < lines.length; i++) { if (i > 0) run.addBreak(); run.setText(lines[i]); }
+        if (highlight) shade(run, MINT);
+        return run;
     }
-    private void base(XWPFRun run) { run.setFontFamily("Arial"); run.setFontSize(11); run.setColor("172033"); }
+    private void shade(XWPFRun run, String fill) {
+        var properties = run.getCTR().isSetRPr() ? run.getCTR().getRPr() : run.getCTR().addNewRPr();
+        var shade = properties.sizeOfShdArray() == 0 ? properties.addNewShd() : properties.getShdArray(0);
+        shade.setVal(STShd.CLEAR); shade.setFill(fill);
+    }
+    private void base(XWPFRun run) { run.setFontFamily("Arial"); run.setFontSize(11); run.setColor("414C5A"); }
     private static String value(String s) { return s == null ? "" : s; }
     private String clean(String s) {
         return value(s).replaceAll("[\\x{1F000}-\\x{1FAFF}\\x{2600}-\\x{27BF}\\uFE0F\\u200D]", "")

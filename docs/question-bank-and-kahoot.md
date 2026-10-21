@@ -9,7 +9,8 @@
 - Câu hỏi `WARM_UP` được nhập vào ngân hàng nhưng không gắn vào node Luyện tập. Luồng AI Khởi động giữ nguyên.
 - Node Luyện tập từ ngân hàng không tham gia lượt kiểm chứng AI tự động sau khi tạo giáo án.
 - Nút `Xuất CSV` được thay bằng `Xuất Word toàn bộ bài học`. File Word chứa tổng quan, đủ các phần giáo án hiện đang mở, nội dung chi tiết, ghi chú của giáo viên và bộ câu hỏi nguyên văn ở cuối, gồm lựa chọn, đáp án, lời giải và câu tự luận nếu có. Không dùng bản rút gọn Kahoot để xuất Word.
-- Mẫu Word A4 dùng logo EDORE có sẵn, tiêu đề xanh đậm, font Arial, số trang. Các ý được đánh dấu đậm, nội dung trọng tâm ngắn và mốc thời gian được tô vàng. Không gọi AI để viết lại hay cắt ngắn nội dung khi xuất Word. Danh sách tư liệu hình ảnh gồm chú thích và đường dẫn, không tự tải ảnh từ bên ngoài.
+- Mẫu Word A4 dùng logo EDORE, font Arial, lề trái/phải 2,2 cm, tên bài căn giữa, đoạn văn căn đều hai lề và số trang ở chân trang. Phần lớn đánh số La Mã bằng danh sách Word, đơn vị kiến thức đánh số Ả Rập và bắt đầu lại trong từng phần. Nhãn nhỏ gộp vào đầu đoạn để tránh chia vụn nội dung.
+- Bảng màu pastel: xanh phấn cho tiêu đề và thương hiệu, tím dịu cho đề mục/nhãn, nền mint nhạt cho ý chính và nền kem đào cho mốc thời gian. Chữ nội dung dùng xám đậm để dễ đọc, không dùng vàng chói. Không gọi AI để viết lại hay cắt ngắn nội dung khi xuất Word. Danh sách tư liệu hình ảnh gồm chú thích và đường dẫn, không tự tải ảnh từ bên ngoài.
 - Các giáo án đã lưu trước đây giữ nguyên. Tạo giáo án mới để sử dụng câu hỏi từ ngân hàng.
 
 ## Nhập dữ liệu
