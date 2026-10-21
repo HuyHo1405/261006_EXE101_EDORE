@@ -7,10 +7,9 @@ import com.edore.backend.features.user.dto.request.UserSettingsUpdateRequest;
 import com.edore.backend.features.user.dto.request.UserUpdateRequest;
 import com.edore.backend.features.user.dto.response.UserResponse;
 import com.edore.backend.features.user.dto.response.UserSettingsResponse;
-import com.edore.backend.features.user.entity.UserSettings;
-import com.edore.backend.features.user.repository.UserSettingsRepository;
 import com.edore.backend.features.user.security.UserPermissions;
 import com.edore.backend.features.user.service.UserService;
+import com.edore.backend.features.user.service.UserSettingsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +29,7 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService          userService;
-    private final UserSettingsRepository userSettingsRepository;
+    private final UserSettingsService userSettingsService;
 
     @Operation( summary = "1. Get own profile",
                 security = @SecurityRequirement(name = "Bearer Authentication"))
@@ -60,15 +59,7 @@ public class UserController {
     @GetMapping("/me/settings")
     public ResponseEntity<ApiResponse<UserSettingsResponse>> getUserSettings(
             @CurrentUser UUID userId) {
-        UserSettings settings = userSettingsRepository.findById(userId)
-                .orElseGet(() -> userSettingsRepository.save(UserSettings.builder().userId(userId).build()));
-
-        UserSettingsResponse response = UserSettingsResponse.builder()
-                .userId(settings.getUserId())
-                .enableFactCheckVerification(settings.getEnableFactCheckVerification())
-                .theme(settings.getTheme())
-                .language(settings.getLanguage())
-                .build();
+        UserSettingsResponse response = userSettingsService.get(userId);
 
         return ResponseEntity.ok(ApiResponse.of(UserResponseCode.GET_PROFILE_SUCCESS, response));
     }
@@ -84,27 +75,7 @@ public class UserController {
             @CurrentUser UUID userId,
             @RequestBody UserSettingsUpdateRequest request) {
 
-        UserSettings settings = userSettingsRepository.findById(userId)
-                .orElseGet(() -> UserSettings.builder().userId(userId).build());
-
-        if (request.getEnableFactCheckVerification() != null) {
-            settings.setEnableFactCheckVerification(request.getEnableFactCheckVerification());
-        }
-        if (request.getTheme() != null) {
-            settings.setTheme(request.getTheme());
-        }
-        if (request.getLanguage() != null) {
-            settings.setLanguage(request.getLanguage());
-        }
-
-        userSettingsRepository.save(settings);
-
-        UserSettingsResponse response = UserSettingsResponse.builder()
-                .userId(settings.getUserId())
-                .enableFactCheckVerification(settings.getEnableFactCheckVerification())
-                .theme(settings.getTheme())
-                .language(settings.getLanguage())
-                .build();
+        UserSettingsResponse response = userSettingsService.update(userId, request);
 
         return ResponseEntity.ok(ApiResponse.of(UserResponseCode.UPDATE_PROFILE_SUCCESS, response));
     }
