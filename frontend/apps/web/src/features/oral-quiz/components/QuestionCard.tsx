@@ -79,11 +79,11 @@ export function QuestionCard({
   }
 
   return (
-    <div className="w-full max-w-2xl lg:max-w-3xl mx-auto flex flex-col gap-2.5 sm:gap-3 font-body">
+    <div className="w-full max-w-2xl lg:max-w-3xl mx-auto flex flex-col gap-2 font-body">
       {/* ── TOP BANNER: STT HỌC SINH & TIMER (Brand Blue - Compact) ── */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 bg-[var(--color-primary-500)] text-white rounded-[var(--radius-lg)] px-3.5 py-2 sm:px-4 sm:py-2.5 shadow-xs">
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-[var(--radius-md)] bg-white text-[var(--color-primary-500)] font-mono font-bold text-base sm:text-lg shadow-xs">
+      <div className="flex items-center justify-between gap-2 bg-[var(--color-primary-500)] text-white rounded-[var(--radius-lg)] px-3 py-1.5 sm:px-4 sm:py-2 shadow-xs shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-[var(--radius-md)] bg-white text-[var(--color-primary-500)] font-mono font-bold text-sm sm:text-base shadow-xs shrink-0">
             {studentNumber}
           </div>
           <div>
@@ -95,17 +95,17 @@ export function QuestionCard({
                 Câu {questionIndex + 1}/{totalQuestions}
               </span>
             </div>
-            <h2 className="text-sm sm:text-base font-header font-bold text-white uppercase tracking-tight">
+            <h2 className="text-xs sm:text-sm font-header font-bold text-white uppercase tracking-tight">
               Học sinh số {studentNumber}
             </h2>
           </div>
         </div>
 
         {/* Timer */}
-        <div className="flex items-center gap-2 bg-white/15 px-2.5 py-1 rounded-[var(--radius-md)] border border-white/20">
+        <div className="flex items-center gap-1.5 bg-white/15 px-2 py-0.5 rounded-[var(--radius-md)] border border-white/20">
           <Clock className={`w-3.5 h-3.5 ${isTimeCritical ? 'text-amber-300 animate-pulse' : 'text-white'}`} />
           <span
-            className={`text-base sm:text-lg font-mono font-bold ${
+            className={`text-sm sm:text-base font-mono font-bold ${
               timeLeft === 0
                 ? 'text-rose-200'
                 : isTimeCritical
@@ -118,17 +118,17 @@ export function QuestionCard({
           <button
             type="button"
             onClick={() => setIsTimerRunning(!isTimerRunning)}
-            className="text-[11px] px-1.5 py-0.5 rounded-[var(--radius-xs)] bg-white/20 hover:bg-white/30 text-white font-medium cursor-pointer transition-colors"
+            className="text-[10px] px-1.5 py-0.5 rounded-[var(--radius-xs)] bg-white/20 hover:bg-white/30 text-white font-medium cursor-pointer transition-colors"
           >
             {isTimerRunning ? 'Dừng' : 'Tiếp'}
           </button>
         </div>
       </div>
 
-      {/* ── QUESTION CARD BODY (Compact to prevent scroll) ── */}
-      <div className="bg-white rounded-[var(--radius-lg)] p-3.5 sm:p-4 md:p-4.5 border border-[var(--color-neutral-200)] shadow-xs flex flex-col gap-2.5 sm:gap-3">
+      {/* ── QUESTION CARD BODY (Compact 2x2 grid to prevent scroll) ── */}
+      <div className="bg-white rounded-[var(--radius-lg)] p-3 sm:p-3.5 border border-[var(--color-neutral-200)] shadow-xs flex flex-col gap-2 sm:gap-2.5">
         {/* Difficulty badge & question text */}
-        <div className="space-y-1 sm:space-y-1.5">
+        <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 rounded-[var(--radius-xs)] text-[10px] sm:text-[11px] font-mono font-bold uppercase bg-[var(--color-neutral-100)] text-[var(--color-neutral-700)] border border-[var(--color-neutral-200)]">
               {question.difficulty || 'Trắc nghiệm'}
@@ -145,13 +145,18 @@ export function QuestionCard({
           </h3>
         </div>
 
-        {/* Options List: Bố trí dọc gọn gàng + Click chọn đáp án */}
+        {/* Options List: Bố trí 2 cột (2x2 grid) khi có từ 2 options trở lên để cực kỳ gọn gàng */}
         {validOptions.length > 0 && (
-          <div className="flex flex-col gap-1.5 sm:gap-2">
+          <div
+            className={`grid gap-2 ${
+              validOptions.length >= 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'
+            }`}
+          >
             {validOptions.map((opt, idx) => {
               const optionNumber = idx + 1
               const isSelected = selectedOption === optionNumber
               const isCorrectAnswer = optionNumber === question.correctAnswer
+              const isLastOdd = validOptions.length % 2 === 1 && idx === validOptions.length - 1
 
               // Determine styling state based on selection & reveal
               let itemStyle =
@@ -169,7 +174,7 @@ export function QuestionCard({
                     statusIndicator = (
                       <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs shrink-0">
                         <CheckCircle2 className="w-4 h-4" />
-                        <span className="hidden sm:inline">Chính xác</span>
+                        <span className="hidden sm:inline">Đúng</span>
                       </div>
                     )
                   } else {
@@ -179,7 +184,7 @@ export function QuestionCard({
                     statusIndicator = (
                       <div className="flex items-center gap-1 text-rose-600 font-bold text-xs shrink-0">
                         <XCircle className="w-4 h-4" />
-                        <span className="hidden sm:inline">Chưa đúng</span>
+                        <span className="hidden sm:inline">Sai</span>
                       </div>
                     )
                   }
@@ -190,7 +195,7 @@ export function QuestionCard({
                   statusIndicator = (
                     <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs shrink-0">
                       <CheckCircle2 className="w-4 h-4" />
-                      <span className="hidden sm:inline">Đáp án đúng</span>
+                      <span className="hidden sm:inline">Đáp án</span>
                     </div>
                   )
                 } else {
@@ -206,7 +211,7 @@ export function QuestionCard({
                 statusIndicator = (
                   <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs shrink-0">
                     <CheckCircle2 className="w-4 h-4" />
-                    <span className="hidden sm:inline">Đáp án đúng</span>
+                    <span className="hidden sm:inline">Đáp án</span>
                   </div>
                 )
               }
@@ -216,15 +221,17 @@ export function QuestionCard({
                   key={idx}
                   type="button"
                   onClick={() => handleOptionClick(optionNumber)}
-                  className={`w-full text-left py-2 px-3 sm:py-2 sm:px-3.5 rounded-[var(--radius-md)] border transition-all flex items-center justify-between gap-2.5 cursor-pointer active:scale-[0.995] ${itemStyle}`}
+                  className={`w-full text-left py-2 px-3 rounded-[var(--radius-md)] border transition-all flex items-center justify-between gap-2 cursor-pointer active:scale-[0.995] ${
+                    isLastOdd ? 'sm:col-span-2' : ''
+                  } ${itemStyle}`}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
                     <span
-                      className={`w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-[var(--radius-xs)] flex items-center justify-center font-header font-bold text-xs shrink-0 transition-colors ${badgeStyle}`}
+                      className={`w-6 h-6 rounded-[var(--radius-xs)] flex items-center justify-center font-header font-bold text-xs shrink-0 transition-colors ${badgeStyle}`}
                     >
                       {OPTION_LABELS[idx] || idx + 1}
                     </span>
-                    <div className="text-xs sm:text-sm font-medium leading-normal break-words">
+                    <div className="text-xs sm:text-sm font-medium leading-snug break-words flex-1">
                       {opt}
                     </div>
                   </div>
@@ -236,11 +243,11 @@ export function QuestionCard({
           </div>
         )}
 
-        {/* Answer & Explanation Box (if toggled) */}
+        {/* Answer & Explanation Box (Compact) */}
         {showAnswer && (
-          <div className="rounded-[var(--radius-md)] p-2.5 sm:p-3 bg-emerald-50/90 border border-emerald-200 space-y-1 text-xs">
+          <div className="rounded-[var(--radius-md)] p-2 sm:p-2.5 bg-emerald-50/90 border border-emerald-200 space-y-0.5 text-xs">
             <div className="flex items-center gap-1.5 text-emerald-900 font-bold">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span>
                 Đáp án đúng: Phương án{' '}
                 {OPTION_LABELS[question.correctAnswer - 1] || question.correctAnswer}
@@ -250,7 +257,7 @@ export function QuestionCard({
               </span>
             </div>
             {question.explanation && (
-              <p className="text-emerald-800 leading-normal pl-5">
+              <p className="text-emerald-800 leading-normal pl-5 text-[11px]">
                 <strong>Giải thích:</strong> {question.explanation}
               </p>
             )}
@@ -258,7 +265,7 @@ export function QuestionCard({
         )}
 
         {/* Bottom Actions for Teacher (Compact) */}
-        <div className="pt-2 sm:pt-2.5 border-t border-[var(--color-neutral-200)] flex flex-wrap items-center justify-between gap-2">
+        <div className="pt-2 border-t border-[var(--color-neutral-200)] flex flex-wrap items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-1.5">
             <button
               type="button"

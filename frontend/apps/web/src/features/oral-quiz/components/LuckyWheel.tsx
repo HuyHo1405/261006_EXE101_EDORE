@@ -12,16 +12,16 @@ interface LuckyWheelProps {
   selectedNumber: number | null
 }
 
-// Edore brand color palette (Primary, Tertiary Teal, Secondary Amber, and shades)
+// Edore brand color palette (Vibrant harmonious tones with high contrast)
 const WHEEL_COLORS = [
-  '#034ce4', // Primary 500
-  '#12ab83', // Tertiary 500 (Teal)
-  '#f28c0f', // Secondary 500 (Amber)
-  '#023ec0', // Primary 600
-  '#0e906e', // Tertiary 600
-  '#d47304', // Secondary 600
-  '#2a69ea', // Primary 400
-  '#35bea0', // Tertiary 400
+  '#034ce4', // Edore Royal Blue
+  '#0d9488', // Teal
+  '#f59e0b', // Amber
+  '#6366f1', // Indigo
+  '#10b981', // Emerald
+  '#ec4899', // Pink
+  '#0284c7', // Sky Blue
+  '#f97316', // Orange
 ]
 
 export function LuckyWheel({
@@ -116,27 +116,51 @@ export function LuckyWheel({
     const sliceAngle = (2 * Math.PI) / count
     const startOffset = angleRef.current
 
-    // 1. Draw outer rim (Neutral 800 with Primary border)
+    // 1. Draw outer rim (Layered gameshow rim with subtle metallic bezel)
     ctx.save()
     ctx.beginPath()
-    ctx.arc(centerX, centerY, radius + 8, 0, 2 * Math.PI)
-    ctx.fillStyle = '#1a1c1f'
+    ctx.arc(centerX, centerY, radius + 9, 0, 2 * Math.PI)
+    ctx.fillStyle = '#0f172a'
+    ctx.shadowColor = 'rgba(3, 76, 228, 0.3)'
+    ctx.shadowBlur = 12
     ctx.fill()
-    ctx.lineWidth = 4
-    ctx.strokeStyle = '#034ce4'
+
+    // Inner metallic bezel
+    ctx.beginPath()
+    ctx.arc(centerX, centerY, radius + 7, 0, 2 * Math.PI)
+    const rimGrad = ctx.createLinearGradient(centerX - radius, centerY - radius, centerX + radius, centerY + radius)
+    rimGrad.addColorStop(0, '#1e293b')
+    rimGrad.addColorStop(0.5, '#334155')
+    rimGrad.addColorStop(1, '#0f172a')
+    ctx.fillStyle = rimGrad
+    ctx.fill()
+    ctx.lineWidth = 2.5
+    ctx.strokeStyle = '#38bdf8'
     ctx.stroke()
     ctx.restore()
 
-    // 2. Draw outer decorative dots
-    const dotCount = Math.min(count * 2, 36)
+    // 2. Draw outer decorative lights (LED bulbs)
+    const dotCount = Math.min(Math.max(count * 2, 24), 36)
     for (let d = 0; d < dotCount; d++) {
       const dotAngle = (d * (2 * Math.PI)) / dotCount
       const dotX = centerX + (radius + 4) * Math.cos(dotAngle)
       const dotY = centerY + (radius + 4) * Math.sin(dotAngle)
+      ctx.save()
       ctx.beginPath()
-      ctx.arc(dotX, dotY, 2.5, 0, 2 * Math.PI)
-      ctx.fillStyle = d % 2 === 0 ? '#f28c0f' : '#ffffff'
+      ctx.arc(dotX, dotY, 2.2, 0, 2 * Math.PI)
+      if (d % 3 === 0) {
+        ctx.fillStyle = '#fbbf24'
+        ctx.shadowColor = '#f59e0b'
+      } else if (d % 3 === 1) {
+        ctx.fillStyle = '#ffffff'
+        ctx.shadowColor = '#ffffff'
+      } else {
+        ctx.fillStyle = '#38bdf8'
+        ctx.shadowColor = '#0ea5e9'
+      }
+      ctx.shadowBlur = 4
       ctx.fill()
+      ctx.restore()
     }
 
     // 3. Draw Slices
@@ -165,52 +189,83 @@ export function LuckyWheel({
       ctx.textAlign = 'right'
       ctx.textBaseline = 'middle'
       ctx.fillStyle = '#ffffff'
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.4)'
+      ctx.shadowBlur = 3
 
       const fontSize = count > 35 ? 12 : count > 22 ? 14 : 16
       ctx.font = `bold ${fontSize}px "IBM Plex Mono", monospace`
-      ctx.fillText(String(num), radius - 16, 0)
+      ctx.fillText(String(num), radius - 15, 0)
       ctx.restore()
     }
 
-    // 4. Center hub (Edore Primary button)
+    // 4. Center hub (Layered 3D Button)
     ctx.save()
+    // Outer white ring with shadow
     ctx.beginPath()
-    ctx.arc(centerX, centerY, 36, 0, 2 * Math.PI)
+    ctx.arc(centerX, centerY, 34, 0, 2 * Math.PI)
     ctx.fillStyle = '#ffffff'
-    ctx.shadowColor = 'rgba(0,0,0,0.15)'
+    ctx.shadowColor = 'rgba(0,0,0,0.2)'
     ctx.shadowBlur = 8
+    ctx.shadowOffsetY = 2
     ctx.fill()
-    ctx.lineWidth = 3
-    ctx.strokeStyle = '#034ce4'
+    ctx.lineWidth = 2.5
+    ctx.strokeStyle = '#e2e8f0'
     ctx.stroke()
 
+    // Inner vibrant blue gradient button
     ctx.beginPath()
-    ctx.arc(centerX, centerY, 28, 0, 2 * Math.PI)
-    ctx.fillStyle = '#034ce4'
+    ctx.arc(centerX, centerY, 27, 0, 2 * Math.PI)
+    const hubGrad = ctx.createLinearGradient(centerX, centerY - 27, centerX, centerY + 27)
+    hubGrad.addColorStop(0, '#2563eb')
+    hubGrad.addColorStop(1, '#034ce4')
+    ctx.fillStyle = hubGrad
     ctx.fill()
+    ctx.lineWidth = 1.5
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)'
+    ctx.stroke()
 
-    // Inner text
+    // Inner text "QUAY"
     ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 12px "Saira Extra Condensed", sans-serif'
+    ctx.font = 'bold 12px "IBM Plex Sans", sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
+    ctx.shadowColor = 'rgba(0,0,0,0.3)'
+    ctx.shadowBlur = 2
     ctx.fillText('QUAY', centerX, centerY)
     ctx.restore()
 
-    // 5. Draw indicator pointer at 12 o'clock (Secondary Amber)
+    // 5. Draw indicator pointer at 12 o'clock (Sleek Gameshow Needle)
     ctx.save()
-    ctx.translate(centerX, centerY - radius - 5)
-    ctx.beginPath()
-    ctx.moveTo(-12, -12)
-    ctx.lineTo(12, -12)
-    ctx.lineTo(0, 14)
-    ctx.closePath()
-    ctx.fillStyle = '#f28c0f'
-    ctx.shadowColor = 'rgba(0,0,0,0.25)'
+    ctx.translate(centerX, centerY - radius - 2)
+
+    // Needle drop shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'
     ctx.shadowBlur = 6
+    ctx.shadowOffsetY = 3
+
+    // Needle body
+    ctx.beginPath()
+    ctx.moveTo(-11, -12)
+    ctx.lineTo(11, -12)
+    ctx.lineTo(0, 16)
+    ctx.closePath()
+
+    const pointerGrad = ctx.createLinearGradient(0, -12, 0, 16)
+    pointerGrad.addColorStop(0, '#fbbf24')
+    pointerGrad.addColorStop(1, '#d97706')
+    ctx.fillStyle = pointerGrad
     ctx.fill()
     ctx.lineWidth = 2
     ctx.strokeStyle = '#ffffff'
+    ctx.stroke()
+
+    // Center jewel / screw pin at pointer top
+    ctx.beginPath()
+    ctx.arc(0, -9, 3.5, 0, 2 * Math.PI)
+    ctx.fillStyle = '#ffffff'
+    ctx.fill()
+    ctx.lineWidth = 1
+    ctx.strokeStyle = '#b45309'
     ctx.stroke()
     ctx.restore()
   }, [availableNumbers, selectedNumber])
@@ -292,29 +347,30 @@ export function LuckyWheel({
 
   return (
     <div className="flex flex-col items-center justify-center p-1 sm:p-2">
-      {/* Canvas Wheel container */}
-      <div className="relative cursor-pointer" onClick={() => !isSpinning && onSpinStart()}>
+      {/* Canvas Wheel container with subtle radial glow */}
+      <div className="relative group cursor-pointer" onClick={() => !isSpinning && onSpinStart()}>
+        <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-amber-500/15 rounded-full blur-md opacity-70 group-hover:opacity-100 transition-opacity pointer-events-none" />
         <canvas
           ref={canvasRef}
           width={400}
           height={400}
-          className="max-w-[240px] sm:max-w-[270px] md:max-w-[300px] aspect-square rounded-[var(--radius-full)] shadow-md transition-transform duration-200 hover:scale-[1.01]"
+          className="relative max-w-[240px] sm:max-w-[270px] md:max-w-[300px] aspect-square rounded-[var(--radius-full)] shadow-lg transition-transform duration-200 group-hover:scale-[1.01]"
         />
       </div>
 
       {/* Control button */}
-      <div className="mt-2.5 sm:mt-3 flex items-center gap-3">
+      <div className="mt-3 flex items-center gap-3">
         <button
           onClick={onSpinStart}
           disabled={isSpinning || availableNumbers.length === 0}
-          className={`flex items-center gap-2 px-6 py-2 rounded-[var(--radius-md)] font-bold text-sm shadow-xs transition-all cursor-pointer ${
+          className={`group flex items-center gap-2.5 px-7 py-2.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 cursor-pointer ${
             isSpinning
-              ? 'bg-[var(--color-neutral-200)] text-[var(--color-neutral-500)] cursor-not-allowed'
-              : 'bg-[var(--color-primary-500)] hover:bg-[#023ec0] text-white active:scale-[0.98]'
+              ? 'bg-[var(--color-neutral-100)] text-[var(--color-neutral-400)] cursor-not-allowed shadow-none'
+              : 'bg-gradient-to-r from-[var(--color-primary-500)] to-indigo-600 hover:from-[#023ec0] hover:to-indigo-700 text-white shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]'
           }`}
         >
-          <Play className={`w-4 h-4 fill-current ${isSpinning ? 'animate-spin' : ''}`} />
-          {isSpinning ? 'Đang quay số...' : 'QUAY CHỌN HỌC SINH'}
+          <Play className={`w-4 h-4 fill-current transition-transform ${isSpinning ? 'animate-spin' : 'group-hover:scale-110'}`} />
+          <span>{isSpinning ? 'Đang quay số...' : 'QUAY CHỌN HỌC SINH'}</span>
         </button>
       </div>
 
