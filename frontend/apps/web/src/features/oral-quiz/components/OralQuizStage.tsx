@@ -173,19 +173,32 @@ export function OralQuizStage({
   // If not configured, show SetupView
   if (!isConfigured) {
     return (
-      <div className="w-full min-h-[80vh] flex items-center justify-center p-4">
-        <SetupView
-          onStart={handleSetupStart}
-          initialLessonId={lessonId}
-          initialLessonTitle={lessonTitle}
-          initialQuestions={questions}
-        />
+      <div className="w-full flex-1 min-h-0 overflow-y-auto flex flex-col items-center justify-center p-3 sm:p-6 md:p-8 bg-[var(--color-neutral-50)]/50 relative">
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-3.5 right-3.5 p-2 text-[var(--color-neutral-400)] hover:text-[var(--color-neutral-800)] hover:bg-[var(--color-neutral-200)]/60 rounded-[var(--radius-md)] transition-colors cursor-pointer z-20"
+            title="Đóng cửa sổ"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+        <div className="w-full max-w-xl my-auto">
+          <SetupView
+            onStart={handleSetupStart}
+            initialLessonId={lessonId}
+            initialLessonTitle={lessonTitle}
+            initialQuestions={questions}
+            onClose={onClose}
+          />
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="w-full min-h-[85vh] flex flex-col bg-white border border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-sm overflow-hidden relative select-none font-body text-[var(--color-neutral-900)]">
+    <div className="w-full min-h-[75vh] flex-1 flex flex-col bg-white border border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-sm overflow-hidden relative select-none font-body text-[var(--color-neutral-900)]">
       {/* ── TOP CLASSROOM BAR ── */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-3.5 bg-[var(--color-neutral-50)] border-b border-[var(--color-neutral-200)] shrink-0">
         <div className="flex items-center gap-3">
