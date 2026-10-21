@@ -30,7 +30,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Edore — Nền tảng Hỗ trợ Giáo viên Chuẩn bị Kịch bản Giảng dạy",
   description:
-    "Edore là nền tảng ed-tech giúp giáo viên tự động phân tích tài liệu và biên soạn kịch bản bài giảng thông minh.",
+    "Nền tảng ed-tech Edore giúp tự động phân tích tài liệu, soạn bài giảng thông minh.",
   icons: {
     icon: [
       { url: "/EDORE_FAVICON.svg", type: "image/svg+xml" },
