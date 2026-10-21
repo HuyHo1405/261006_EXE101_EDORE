@@ -8,6 +8,8 @@ import com.edore.backend.features.lesson.dto.response.LessonMetadataResponse;
 import com.edore.backend.features.lesson.dto.response.LessonSummaryResponse;
 import com.edore.backend.features.lesson.dto.response.CurriculumSemesterResponse;
 
+import com.edore.backend.features.lesson.dto.response.LessonQuestionResponse;
+
 import java.util.List;
 
 public interface LessonService {
@@ -17,4 +19,6 @@ public interface LessonService {
     void updateOCRStatus(String lessonId, String status, String ocrFlag);
     PageResponseDTO<LessonSummaryResponse> searchLessons(LessonFilterRequestDTO filter);
     List<CurriculumSemesterResponse> getCurriculum(LessonFilterRequestDTO filter);
+    List<LessonQuestionResponse> getLessonQuestions(String lessonId, String stageTag);
+    List<LessonQuestionResponse> getChapterQuestions(String chapterId, String stageTag);
 }

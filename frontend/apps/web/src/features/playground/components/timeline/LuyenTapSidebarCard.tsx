@@ -1,12 +1,13 @@
 'use client'
 
-import { useContext, useState } from 'react'
+import { useContext, useState, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
-import { FileText, ArrowRight, Download, Loader2 } from 'lucide-react'
+import { FileText, ArrowRight, Download, Loader2, Sparkles } from 'lucide-react'
 import { apiClient } from '@/lib/fetcher'
 import { downloadQuiz, prepareKahootQuestions, type KahootQuestion } from '../../utils/kahootExport'
 import { KahootReviewPanel } from '../payload/views/KahootReviewPanel'
 import { LessonDocumentContext } from '../LessonDocumentContext'
+import { OralQuizModal } from '@/features/oral-quiz/components/OralQuizModal'
 
 const LEVELS: { key: string; label: string; cls: string }[] = [
   { key: 'nhan_biet', label: 'Nhận biết', cls: 'bg-blue-100 text-blue-800 border-blue-200' },
@@ -29,6 +30,19 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
   const [exportingDocx, setExportingDocx] = useState<'questions/student' | 'questions/teacher' | null>(null)
   const [exportError, setExportError] = useState('')
   const [reviewSource, setReviewSource] = useState<KahootQuestion[] | null>(null)
+  const [isOralQuizOpen, setIsOralQuizOpen] = useState(false)
+
+  const formattedQuestions = useMemo(() => {
+    return exercises.map((ex: any, idx: number) => ({
+      id: ex.question_id || String(idx + 1),
+      questionText: ex.question || '',
+      options: Array.isArray(ex.options) ? ex.options : [],
+      correctAnswer: ex.correct_answer || 1,
+      timeLimit: ex.time_limit || 30,
+      difficulty: ex.level || 'Trắc nghiệm',
+      explanation: ex.explanation || '',
+    }))
+  }, [exercises])
 
   let sourceSignature = ''
   try {
@@ -187,6 +201,37 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
           </div>
         </div>
 
+        {/* Nhóm 3: Tương tác lớp học — Vòng quay trả bài */}
+        <div className="space-y-2 pt-2 border-t border-slate-100">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              Tương tác lớp học
+            </span>
+            <span className="text-[10px] font-medium text-slate-400">Gọi tên ngẫu nhiên</span>
+          </div>
+
+          <button
+            type="button"
+            disabled={!exercises.length}
+            onClick={() => setIsOralQuizOpen(true)}
+            className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white font-body text-xs font-bold shadow-sm transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center font-extrabold text-sm select-none">
+                🎡
+              </div>
+              <div className="text-left">
+                <div className="leading-tight">Vòng quay trả bài (Lucky Wheel)</div>
+                <div className="text-[10px] text-amber-100 font-normal mt-0.5">
+                  Quay chọn học sinh theo STT &amp; hiện câu hỏi
+                </div>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-amber-200 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+          </button>
+        </div>
+
         {/* Cảnh báo lỗi nếu có */}
         {exportError && (
           <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-600">
@@ -272,6 +317,15 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
           onSave={draft => onChange?.({ ...p, kahoot_export: draft })}
         />
       )}
+
+      {/* Modal Vòng quay trả bài */}
+      <OralQuizModal
+        isOpen={isOralQuizOpen}
+        onClose={() => setIsOralQuizOpen(false)}
+        lessonId={p.lesson_code || undefined}
+        lessonTitle={lessonDocument?.title || 'Bài học'}
+        questions={formattedQuestions}
+      />
     </div>
   )
 }

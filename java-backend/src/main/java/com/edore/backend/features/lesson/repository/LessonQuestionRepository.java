@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface LessonQuestionRepository extends JpaRepository<LessonQuestion, String> {
     List<LessonQuestion> findByLessonCodeAndStageTagOrderByIdAsc(String lessonCode, String stageTag);
+    List<LessonQuestion> findByLessonCodeOrderByIdAsc(String lessonCode);
+    List<LessonQuestion> findByLessonIdOrderByIdAsc(String lessonId);
+    List<LessonQuestion> findByLessonCodeInAndStageTagOrderByIdAsc(List<String> lessonCodes, String stageTag);
+    List<LessonQuestion> findByLessonCodeInOrderByIdAsc(List<String> lessonCodes);
 }

@@ -116,6 +116,22 @@ export function useCurriculum(params?: Parameters<typeof courseService.getCurric
   return useQuery(courseQueryOptions.curriculum(params));
 }
 
+export function useLessonQuestions(lessonId?: string, stageTag = "PRACTICE") {
+  return useQuery({
+    queryKey: ["lessonQuestions", lessonId, stageTag],
+    queryFn: () => (lessonId ? courseService.getLessonQuestions(lessonId, stageTag) : Promise.resolve([])),
+    enabled: !!lessonId,
+  });
+}
+
+export function useChapterQuestions(chapterId?: string, stageTag = "PRACTICE") {
+  return useQuery({
+    queryKey: ["chapterQuestions", chapterId, stageTag],
+    queryFn: () => (chapterId && chapterId !== "ALL" ? courseService.getChapterQuestions(chapterId, stageTag) : Promise.resolve([])),
+    enabled: !!chapterId && chapterId !== "ALL",
+  });
+}
+
 // ── Mutations ──────────────────────────────────────────────────────────────
 
 export function useCreateCourseMutation() {

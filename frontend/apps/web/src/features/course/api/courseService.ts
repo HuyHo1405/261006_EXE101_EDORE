@@ -138,6 +138,18 @@ export function createCourseService(client: ApiClientFn = apiClient) {
       return res.result || [];
     },
 
+    async getLessonQuestions(lessonId: string, stageTag = "PRACTICE"): Promise<import("@/features/oral-quiz/types/oralQuiz").LessonQuestionDTO[]> {
+      const endpoint = `/api/v1/lessons/${encodeURIComponent(lessonId)}/questions?stageTag=${encodeURIComponent(stageTag)}`;
+      const res = await client<import("@/features/oral-quiz/types/oralQuiz").LessonQuestionDTO[]>(endpoint, { method: "GET" });
+      return res.result || [];
+    },
+
+    async getChapterQuestions(chapterId: string, stageTag = "PRACTICE"): Promise<import("@/features/oral-quiz/types/oralQuiz").LessonQuestionDTO[]> {
+      const endpoint = `/api/v1/lessons/chapters/${encodeURIComponent(chapterId)}/questions?stageTag=${encodeURIComponent(stageTag)}`;
+      const res = await client<import("@/features/oral-quiz/types/oralQuiz").LessonQuestionDTO[]>(endpoint, { method: "GET" });
+      return res.result || [];
+    },
+
     async generateScriptWithAi(payload: {
       lessonId: string;
       courseId: string;

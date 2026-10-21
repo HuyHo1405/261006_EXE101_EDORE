@@ -95,4 +95,20 @@ public class LessonController {
             throw new ApiException(LessonResponseCode.UPLOAD_FAILED, e.getMessage());
         }
     }
+
+    @Operation(summary = "7. Get questions for a lesson", description = "Lấy danh sách câu hỏi kiểm tra/luyện tập từ ngân hàng câu hỏi của bài học.")
+    @GetMapping("/{id}/questions")
+    public ResponseEntity<ApiResponse<List<com.edore.backend.features.lesson.dto.response.LessonQuestionResponse>>> getLessonQuestions(
+            @Parameter(description = "Lesson ID hoặc Code") @PathVariable String id,
+            @Parameter(description = "Giai đoạn (mặc định: PRACTICE)") @RequestParam(value = "stageTag", required = false, defaultValue = "PRACTICE") String stageTag) {
+        return ResponseEntity.ok(ApiResponse.of(CommonResponseCode.SUCCESS, lessonService.getLessonQuestions(id, stageTag)));
+    }
+
+    @Operation(summary = "8. Get questions for a chapter", description = "Lấy tất cả câu hỏi kiểm tra/luyện tập của các bài học trong toàn bộ chương.")
+    @GetMapping("/chapters/{chapterId}/questions")
+    public ResponseEntity<ApiResponse<List<com.edore.backend.features.lesson.dto.response.LessonQuestionResponse>>> getChapterQuestions(
+            @Parameter(description = "Chapter ID") @PathVariable String chapterId,
+            @Parameter(description = "Giai đoạn (mặc định: PRACTICE)") @RequestParam(value = "stageTag", required = false, defaultValue = "PRACTICE") String stageTag) {
+        return ResponseEntity.ok(ApiResponse.of(CommonResponseCode.SUCCESS, lessonService.getChapterQuestions(chapterId, stageTag)));
+    }
 }

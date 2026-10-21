@@ -45,6 +45,7 @@ public class LessonServiceImpl implements LessonService {
     private final LessonContentRepository contentRepository;
     private final ChapterRepository chapterRepository;
     private final CategoryRepository categoryRepository;
+    private final com.edore.backend.features.lesson.repository.LessonQuestionRepository questionRepository;
 
     @Override
     @Transactional
@@ -233,6 +234,91 @@ public class LessonServiceImpl implements LessonService {
                     .build());
         });
         return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<com.edore.backend.features.lesson.dto.response.LessonQuestionResponse> getLessonQuestions(String lessonId, String stageTag) {
+        LessonMetadata metadata = metadataRepository.findById(lessonId).orElse(null);
+        String lessonCode = metadata != null ? metadata.getCode() : lessonId;
+
+        List<com.edore.backend.features.lesson.entity.LessonQuestion> questions;
+        if (stageTag != null && !stageTag.isBlank()) {
+            questions = questionRepository.findByLessonCodeAndStageTagOrderByIdAsc(lessonCode, stageTag);
+            if (questions.isEmpty() && metadata != null) {
+                questions = questionRepository.findByLessonIdOrderByIdAsc(lessonId);
+            }
+        } else {
+            questions = questionRepository.findByLessonCodeOrderByIdAsc(lessonCode);
+            if (questions.isEmpty() && metadata != null) {
+                questions = questionRepository.findByLessonIdOrderByIdAsc(lessonId);
+            }
+        }
+
+        return questions.stream()
+                .map(q -> com.edore.backend.features.lesson.dto.response.LessonQuestionResponse.builder()
+                        .id(q.getId())
+                        .lessonId(q.getLessonId())
+                        .lessonCode(q.getLessonCode())
+                        .questionText(q.getQuestionText())
+                        .options(java.util.Arrays.asList(
+                                q.getOption1() != null ? q.getOption1() : "",
+                                q.getOption2() != null ? q.getOption2() : "",
+                                q.getOption3() != null ? q.getOption3() : "",
+                                q.getOption4() != null ? q.getOption4() : ""
+                        ))
+                        .correctAnswer(q.getCorrectAnswer())
+                        .timeLimit(q.getTimeLimit() != null ? q.getTimeLimit() : 30)
+                        .stageTag(q.getStageTag())
+                        .difficulty(q.getDifficulty())
+                        .explanation(q.getExplanation())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<com.edore.backend.features.lesson.dto.response.LessonQuestionResponse> getChapterQuestions(String chapterId, String stageTag) {
+        List<LessonMetadata> lessons = metadataRepository.findByChapterId(chapterId);
+        if (lessons.isEmpty()) {
+            return List.of();
+        }
+
+        List<String> lessonCodes = lessons.stream()
+                .map(LessonMetadata::getCode)
+                .filter(c -> c != null && !c.isBlank())
+                .toList();
+
+        if (lessonCodes.isEmpty()) {
+            return List.of();
+        }
+
+        List<com.edore.backend.features.lesson.entity.LessonQuestion> questions;
+        if (stageTag != null && !stageTag.isBlank()) {
+            questions = questionRepository.findByLessonCodeInAndStageTagOrderByIdAsc(lessonCodes, stageTag);
+        } else {
+            questions = questionRepository.findByLessonCodeInOrderByIdAsc(lessonCodes);
+        }
+
+        return questions.stream()
+                .map(q -> com.edore.backend.features.lesson.dto.response.LessonQuestionResponse.builder()
+                        .id(q.getId())
+                        .lessonId(q.getLessonId())
+                        .lessonCode(q.getLessonCode())
+                        .questionText(q.getQuestionText())
+                        .options(java.util.Arrays.asList(
+                                q.getOption1() != null ? q.getOption1() : "",
+                                q.getOption2() != null ? q.getOption2() : "",
+                                q.getOption3() != null ? q.getOption3() : "",
+                                q.getOption4() != null ? q.getOption4() : ""
+                        ))
+                        .correctAnswer(q.getCorrectAnswer())
+                        .timeLimit(q.getTimeLimit() != null ? q.getTimeLimit() : 30)
+                        .stageTag(q.getStageTag())
+                        .difficulty(q.getDifficulty())
+                        .explanation(q.getExplanation())
+                        .build())
+                .toList();
     }
 }
 

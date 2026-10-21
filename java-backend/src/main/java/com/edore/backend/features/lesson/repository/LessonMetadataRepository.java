@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface LessonMetadataRepository extends JpaRepository<LessonMetadata, String>, JpaSpecificationExecutor<LessonMetadata> {
     Optional<LessonMetadata> findByCode(String code);
+    java.util.List<LessonMetadata> findByChapterId(String chapterId);
 }

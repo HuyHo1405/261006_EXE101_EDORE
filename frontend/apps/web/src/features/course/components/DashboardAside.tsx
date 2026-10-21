@@ -318,6 +318,24 @@ export function DashboardAside({
                         <span>Thêm khóa học</span>
                       </div>
                     </button>
+
+                    {/* Tool Item: Vòng quay trả bài */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOverlayOpen(false);
+                        router.push("/dashboard/tra-bai");
+                      }}
+                      className="group flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-700 bg-amber-50/70 hover:bg-amber-100/80 border border-amber-200/60 transition-all duration-200 cursor-pointer transform hover:translate-x-1 mt-1"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">🎡</span>
+                        <span>Vòng quay trả bài</span>
+                      </div>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/60 text-amber-900 font-mono">
+                        HOT
+                      </span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -377,6 +395,16 @@ export function DashboardAside({
           }`}
         >
           <FolderOpen className="h-5 w-5" />
+        </button>
+
+        {/* Vòng quay trả bài Icon Button */}
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard/tra-bai")}
+          title="Vòng quay trả bài (Lucky Wheel)"
+          className="p-3 rounded-2xl text-amber-600 hover:bg-amber-50 hover:text-amber-700 transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-110 active:scale-95"
+        >
+          <span className="text-xl">🎡</span>
         </button>
       </div>
 
