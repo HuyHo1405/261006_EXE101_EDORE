@@ -128,7 +128,7 @@ export function DashboardAside({
         </div>
 
         {/* IDE Tree View Menu (Scrollable body without artificial max-h-260px or overflow-hidden clipping) */}
-        <div className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-3">
+        <div className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-3 no-scrollbar">
           {/* ── SECTION 1: KHÓA HỌC CỦA TÔI ── */}
           <div className="space-y-1">
             {/* Top Level Item */}

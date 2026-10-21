@@ -22,7 +22,7 @@ export function OralQuizModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-xs flex items-center justify-center p-2 sm:p-3 md:p-4 overflow-y-auto font-body">
+    <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-xs flex items-center justify-center p-2 sm:p-3 md:p-4 overflow-y-auto no-scrollbar font-body">
       <OralQuizStage
         initialLessonId={lessonId}
         initialLessonTitle={lessonTitle}

@@ -298,12 +298,12 @@ export function LuckyWheel({
           ref={canvasRef}
           width={400}
           height={400}
-          className="max-w-[280px] sm:max-w-[340px] md:max-w-[370px] aspect-square rounded-[var(--radius-full)] shadow-md transition-transform duration-200 hover:scale-[1.01]"
+          className="max-w-[240px] sm:max-w-[270px] md:max-w-[300px] aspect-square rounded-[var(--radius-full)] shadow-md transition-transform duration-200 hover:scale-[1.01]"
         />
       </div>
 
       {/* Control button */}
-      <div className="mt-3.5 flex items-center gap-3">
+      <div className="mt-2.5 sm:mt-3 flex items-center gap-3">
         <button
           onClick={onSpinStart}
           disabled={isSpinning || availableNumbers.length === 0}
@@ -319,7 +319,7 @@ export function LuckyWheel({
       </div>
 
       {/* Available students badge */}
-      <div className="mt-2 text-xs text-[var(--color-neutral-500)] font-medium flex items-center gap-1.5 font-mono">
+      <div className="mt-1.5 text-xs text-[var(--color-neutral-500)] font-medium flex items-center gap-1.5 font-mono">
         <span>Còn lại:</span>
         <strong className="text-[var(--color-primary-500)] font-bold">{availableNumbers.length}</strong>
         <span>/ {totalStudents} học sinh</span>

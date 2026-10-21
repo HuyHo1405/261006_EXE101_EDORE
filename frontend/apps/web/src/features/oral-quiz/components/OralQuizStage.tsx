@@ -197,7 +197,7 @@ export function OralQuizStage({
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto my-auto h-[610px] max-h-[92vh] flex flex-col bg-white border border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-2xl overflow-hidden relative select-none font-body text-[var(--color-neutral-900)]">
+    <div className="w-full max-w-4xl mx-auto my-auto h-[540px] max-h-[92vh] flex flex-col bg-white border border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-2xl overflow-hidden relative select-none font-body text-[var(--color-neutral-900)]">
       {/* ── TOP CLASSROOM BAR ── */}
       <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 bg-[var(--color-neutral-50)] border-b border-[var(--color-neutral-200)] shrink-0">
         <div className="flex items-center gap-2.5 sm:gap-3">
@@ -267,12 +267,12 @@ export function OralQuizStage({
         </div>
       </div>
 
-      {/* ── MAIN SCREEN BODY (Unified height - No layout shift) ── */}
-      <div className="flex-1 flex items-center justify-center p-2.5 sm:p-3 md:p-4 bg-white overflow-hidden">
+      {/* ── MAIN SCREEN BODY (Unified height - No clipping & No layout shift) ── */}
+      <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-4 bg-white overflow-y-auto no-scrollbar">
         {stage === 'wheel' ? (
           <div className="flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-200">
             {/* Stage Title */}
-            <div className="text-center mb-1.5 space-y-0.5">
+            <div className="text-center mb-1 space-y-0.5">
               <span className="text-xs uppercase tracking-wider font-mono font-bold text-[var(--color-primary-500)]">
                 VÒNG QUAY MAY MẮN
               </span>
