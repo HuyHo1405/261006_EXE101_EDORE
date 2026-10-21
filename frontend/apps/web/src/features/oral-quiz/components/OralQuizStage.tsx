@@ -66,9 +66,9 @@ export function OralQuizStage({
   // Fullscreen toggle
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {})
+      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => { })
     } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {})
+      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => { })
     }
   }
 
@@ -274,10 +274,6 @@ export function OralQuizStage({
           <div className="flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-200">
             {/* Stage Title */}
             <div className="text-center mb-1 flex flex-col items-center gap-1">
-              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[11px] font-bold text-[var(--color-primary-500)] tracking-wide uppercase">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                Vòng quay may mắn
-              </div>
               <p className="text-xs text-[var(--color-neutral-500)]">
                 Bấm <strong className="text-[var(--color-neutral-700)]">QUAY</strong> để chọn ngẫu nhiên học sinh lên bảng trả lời
               </p>
