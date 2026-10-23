@@ -80,20 +80,22 @@ export function AppFooter() {
             {/* Các Nền tảng Mạng xã hội (Chỉ Facebook & TikTok) */}
             <div className="flex items-center gap-2.5 pt-2">
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/profile.php?id=61595110230727"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook Edore"
-                className="p-2 rounded-xl bg-slate-100 hover:bg-[var(--color-primary-500)] hover:text-white transition-all text-slate-600"
+                title="Facebook Edore"
+                className="p-2.5 rounded-xl bg-slate-100 hover:bg-[#1877F2] hover:text-white transition-all text-slate-600 shadow-xs hover:scale-105"
               >
                 <FacebookIcon className="w-4 h-4" />
               </a>
               <a
-                href="https://tiktok.com"
+                href="https://www.tiktok.com/@edore.id.vn?_r=1&_t=ZS-9AnTycqcHWq"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok Edore"
-                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-900 hover:text-white transition-all text-slate-600"
+                title="TikTok Edore"
+                className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-900 hover:text-white transition-all text-slate-600 shadow-xs hover:scale-105"
               >
                 <TiktokIcon className="w-4 h-4" />
               </a>
@@ -109,17 +111,17 @@ export function AppFooter() {
               <ul className="space-y-2.5 text-xs list-none p-0 m-0 text-slate-600">
                 <li>
                   <Link href="/" className="hover:text-[var(--color-primary-600)] transition-colors block font-medium">
-                    Landing Page
+                    Trang chủ
                   </Link>
                 </li>
                 <li>
                   <Link href="/dashboard" className="hover:text-[var(--color-primary-600)] transition-colors block font-medium">
-                    Dashboard
+                    Thư viện bài giảng
                   </Link>
                 </li>
                 <li>
                   <Link href="/guide" className="hover:text-[var(--color-primary-600)] transition-colors block font-medium">
-                    User Guide
+                    Tài liệu hướng dẫn
                   </Link>
                 </li>
               </ul>

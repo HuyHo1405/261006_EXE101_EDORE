@@ -51,7 +51,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
   );
 
   const plusActionHref = isInsideCourse
-    ? (courseId ? `/dashboard/scripts/new?courseId=${courseId}` : `/studio`)
+    ? (courseId ? `/dashboard/scripts/new?courseId=${courseId}` : `/dashboard`)
     : `/dashboard?action=create-course`;
 
   const plusActionTitle = isInsideCourse ? "Tạo kịch bản mới" : "Tạo khóa học mới";

@@ -21,6 +21,47 @@ import {
   CornerDownRight,
 } from "@/components/ui/icons";
 
+const DEFAULT_STARTER_FEATURES = [
+  "Khởi tạo tối đa 3 Khóa học & Lớp học",
+  "AI phân tích theo bộ dữ liệu nội bộ chuẩn hóa (không cần tải file)",
+  "Biên soạn tiến trình kịch bản bài giảng cơ bản",
+  "Xuất kịch bản bài học dạng văn bản",
+  "Hỗ trợ kỹ thuật qua Email",
+];
+
+const DEFAULT_PRO_FEATURES = [
+  "Không giới hạn số lượng Khóa học & Lớp học",
+  "Khai thác toàn bộ kho dữ liệu nội bộ chuyên sâu đa môn học",
+  "Dòng thời gian tương tác & chuyển bước bài giảng đầy đủ",
+  "Trả bài sôi nổi: Vòng quay may mắn (Lucky Wheel)",
+  "Xuất file câu hỏi trắc nghiệm, doc bài giảng & mẫu Kahoot",
+  "Lưu trữ và tái sử dụng ngân hàng kịch bản không giới hạn",
+];
+
+const DEFAULT_TEAM_FEATURES = [
+  "Bao gồm toàn bộ tính năng của gói Chuyên nghiệp",
+  "Quản lý tập trung cho tổ bộ môn & nhà trường (Đang phát triển)",
+  "Chia sẻ kho học liệu & kịch bản giảng dạy dùng chung",
+  "Phân quyền chuyên môn giữa các giáo viên",
+  "Hỗ trợ đào tạo và triển khai chuyên biệt",
+];
+
+const formatFeatureText = (text: string): string => {
+  return text
+    .replace(/Studio Timeline/gi, "Dòng thời gian kịch bản")
+    .replace(/Timeline/gi, "Tiến trình kịch bản")
+    .replace(/Sidebar Gợi ý Hoạt động Sư phạm cá nhân hóa/gi, "Bảng gợi ý hoạt động sư phạm cá nhân hóa")
+    .replace(/Sidebar Gợi ý/gi, "Bảng gợi ý")
+    .replace(/Sidebar/gi, "Bảng điều khiển")
+    .replace(/AI Phân tích tài liệu PDF\/Word \(tối đa 10 trang\)/gi, "AI phân tích theo bộ dữ liệu nội bộ chuẩn hóa")
+    .replace(/AI Phân tích tài liệu & bài trình chiếu nâng cao/gi, "Khai thác kho dữ liệu nội bộ chuyên sâu đa môn học")
+    .replace(/AI Phân tích tài liệu & Slide giảng dạy nâng cao/gi, "Khai thác kho dữ liệu nội bộ chuyên sâu đa môn học")
+    .replace(/\(Text\)/gi, "")
+    .replace(/Slide giảng dạy/gi, "Trang trình chiếu")
+    .replace(/Slide/gi, "Trang trình chiếu")
+    .trim();
+};
+
 export default function Home() {
   const { user, isAuthenticated } = useAuthStore();
   const [plans, setPlans] = useState<SubscriptionPlanDTO[]>([]);
@@ -40,13 +81,37 @@ export default function Home() {
       });
   }, []);
 
-  const starterPlan = plans.find((p) => p.name.toLowerCase().includes("starter") && p.features?.length > 0) || plans.find((p) => p.name.toLowerCase().includes("starter"));
-  const proPlan = plans.find((p) => p.name.toLowerCase().includes("pro") && p.features?.length > 0) || plans.find((p) => p.name.toLowerCase().includes("pro"));
-  const teamPlan = plans.find((p) => p.name.toLowerCase().includes("team") && p.features?.length > 0) || plans.find((p) => p.name.toLowerCase().includes("team"));
+  const isStarterMatch = (name: string) => {
+    const n = name.toLowerCase();
+    return n.includes("starter") || n.includes("cơ bản") || n.includes("khởi đầu") || n.includes("miễn phí");
+  };
+  const isProMatch = (name: string) => {
+    const n = name.toLowerCase();
+    return n.includes("pro") || n.includes("chuyên nghiệp") || n.includes("nâng cao");
+  };
+  const isTeamMatch = (name: string) => {
+    const n = name.toLowerCase();
+    return n.includes("team") || n.includes("đội ngũ") || n.includes("đội nhóm") || n.includes("trường học");
+  };
 
-  const starterFeatures = starterPlan?.features || [];
-  const proFeatures = proPlan?.features || [];
-  const teamFeatures = teamPlan?.features || [];
+  const starterPlan = plans.find((p) => isStarterMatch(p.name) && p.features?.length > 0) || plans.find((p) => isStarterMatch(p.name));
+  const proPlan = plans.find((p) => isProMatch(p.name) && p.features?.length > 0) || plans.find((p) => isProMatch(p.name));
+  const teamPlan = plans.find((p) => isTeamMatch(p.name) && p.features?.length > 0) || plans.find((p) => isTeamMatch(p.name));
+
+  const starterFeatures = (starterPlan?.features && starterPlan.features.length > 0
+    ? starterPlan.features
+    : DEFAULT_STARTER_FEATURES
+  ).map(formatFeatureText);
+
+  const proFeatures = (proPlan?.features && proPlan.features.length > 0
+    ? proPlan.features
+    : DEFAULT_PRO_FEATURES
+  ).map(formatFeatureText);
+
+  const teamFeatures = (teamPlan?.features && teamPlan.features.length > 0
+    ? teamPlan.features
+    : DEFAULT_TEAM_FEATURES
+  ).map(formatFeatureText);
 
   return (
     /* ── BASE PRIMARY BLUE BACKGROUND CANVAS (MÀU XANH PRIMARY BASE #034ce4) ────── */
@@ -121,7 +186,7 @@ export default function Home() {
               Công cụ soạn kịch bản & quản lý khóa học toàn diện
             </h2>
             <p className="text-sm md:text-base text-slate-600 font-body">
-              Edore cung cấp giải pháp tự động hóa kịch bản từ tài liệu, tùy chỉnh Timeline bài giảng và gợi ý sư phạm thông minh cho từng khóa học.
+              Edore cung cấp giải pháp tự động hóa kịch bản từ bộ dữ liệu nội bộ chuẩn hóa, tùy chỉnh dòng thời gian bài giảng và bộ công cụ đi kèm hỗ trợ lớp học trực quan.
             </p>
           </div>
 
@@ -146,7 +211,7 @@ export default function Home() {
               </div>
             </AnimateOnScroll>
 
-            {/* Feature 2 */}
+            {/* Feature 2: PHÂN TÍCH AI TỪ BỘ DỮ LIỆU NỘI BỘ, KHÔNG CẦN TẢI FILE */}
             <AnimateOnScroll className="h-full">
               <div className="group bg-slate-50/70 hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
                 <div className="space-y-4">
@@ -154,10 +219,10 @@ export default function Home() {
                     <BookOpen className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Phân Tích AI & Sinh Kịch Bản
+                    Phân Tích AI Từ Dữ Liệu Nội Bộ
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Tải lên sách giáo khoa, slide, tài liệu PDF/Word để AI tự động trích xuất tri thức và sinh kịch bản bài học chuẩn hóa.
+                    Tận dụng tri thức và chương trình giáo dục tích hợp sẵn trong bộ dữ liệu nội bộ chuẩn hóa của Edore để AI tự động trích xuất và tạo kịch bản bài học mà không cần tải file lên.
                   </p>
                 </div>
                 <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-[var(--color-secondary-600)] group-hover:translate-x-1 transition-transform">
@@ -166,7 +231,7 @@ export default function Home() {
               </div>
             </AnimateOnScroll>
 
-            {/* Feature 3 */}
+            {/* Feature 3: BIÊN SOẠN DÒNG THỜI GIAN BÀI GIẢNG (ĐIỀU HƯỚNG /dashboard) */}
             <AnimateOnScroll className="h-full">
               <div className="group bg-slate-50/70 hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
                 <div className="space-y-4">
@@ -174,19 +239,19 @@ export default function Home() {
                     <Users className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Studio Timeline Bài Giảng
+                    Biên Soạn Dòng Thời Gian Bài Giảng
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Trình biên soạn kịch bản dạng dòng thời gian trực quan, giúp sắp xếp thứ tự và nhảy bước dễ dàng khi đứng lớp.
+                    Trình biên soạn kịch bản dạng dòng thời gian trực quan, giúp sắp xếp thứ tự và chuyển bước bài giảng dễ dàng khi đứng lớp.
                   </p>
                 </div>
-                <Link href="/studio" className="pt-4 flex items-center text-xs font-bold text-emerald-600 group-hover:translate-x-1 transition-transform">
-                  Mở Studio kịch bản <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-emerald-600 group-hover:translate-x-1 transition-transform">
+                  Mở trình soạn kịch bản <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </Link>
               </div>
             </AnimateOnScroll>
 
-            {/* Feature 4 */}
+            {/* Feature 4: TIỆN ÍCH ĐI KÈM & TRẢ BÀI (LUCKY WHEEL, XUẤT CÂU HỎI, DOC, KAHOOT) */}
             <AnimateOnScroll className="h-full">
               <div className="group bg-slate-50/70 hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
                 <div className="space-y-4">
@@ -194,14 +259,14 @@ export default function Home() {
                     <BarChart3 className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Gợi Ý Sư Phạm & Lưu Trữ
+                    Tiện Ích Đi Kèm & Trả Bài
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Đề xuất hoạt động sư phạm phù hợp ngữ cảnh lớp học, hỗ trợ lưu trữ ngân hàng kịch bản để tái sử dụng lâu dài.
+                    Tích hợp vòng quay may mắn (Lucky Wheel) trả bài tương tác sôi nổi; xuất dữ liệu câu hỏi trắc nghiệm, tài liệu bài giảng (Docx/PDF) và mẫu Kahoot dễ dàng.
                   </p>
                 </div>
-                <Link href="/guide" className="pt-4 flex items-center text-xs font-bold text-purple-600 group-hover:translate-x-1 transition-transform">
-                  Xem hướng dẫn chi tiết <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                <Link href="/dashboard/tra-bai" className="pt-4 flex items-center text-xs font-bold text-purple-600 group-hover:translate-x-1 transition-transform">
+                  Trải nghiệm trả bài tương tác <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </Link>
               </div>
             </AnimateOnScroll>
@@ -230,7 +295,7 @@ export default function Home() {
               <div className="flex items-center gap-3 flex-wrap">
                 {isAuthenticated ? (
                   <Button asChild className="bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-bold shadow-md hover-elastic-button">
-                    <Link href="/studio">Bắt đầu soạn bài</Link>
+                    <Link href="/dashboard">Bắt đầu soạn bài</Link>
                   </Button>
                 ) : (
                   <Button asChild className="bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-bold shadow-md hover-elastic-button">
@@ -256,7 +321,7 @@ export default function Home() {
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-400 via-transparent to-transparent pointer-events-none" />
               <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[11px] font-mono text-slate-200 border border-white/10">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                VIDEO HƯỚNG DẪN PLATFORM (PLACEHOLDER)
+                VIDEO HƯỚNG DẪN NỀN TẢNG (MINH HỌA)
               </div>
 
               {/* Nút Play tương tác ở chính giữa */}
@@ -271,7 +336,7 @@ export default function Home() {
 
                 <div className="space-y-1">
                   <span className="text-sm md:text-base font-bold text-white tracking-wide block">
-                    Xem Video Hướng Dẫn Soạn Kịch Bản 1-Click
+                    Xem Video Hướng Dẫn Soạn Kịch Bản Nhanh Chóng
                   </span>
                   <span className="text-xs text-blue-200/80 font-mono block">
                     Thời lượng: 1 phút 45 giây • Độ phân giải 4K HD
@@ -310,7 +375,7 @@ export default function Home() {
 
                   <div className="space-y-2">
                     <h3 className="font-header font-bold text-2xl tracking-tight text-slate-900">
-                      Starter
+                      Gói Cơ Bản
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed font-body">
                       {starterPlan?.description || "Công cụ đồng hành soạn giảng. Trải nghiệm kịch bản AI thế hệ mới miễn phí hàng tháng."}
@@ -319,7 +384,7 @@ export default function Home() {
 
                   <div className="space-y-4 pt-2">
                     <div className="font-header font-bold text-3xl md:text-4xl tracking-tight text-slate-900">
-                      Free Plan
+                      Miễn phí
                     </div>
 
                     {isAuthenticated ? (
@@ -329,7 +394,7 @@ export default function Home() {
                         </button>
                       ) : (
                         <button disabled className="w-full bg-slate-100 text-slate-500 font-bold py-3 px-4 rounded-full text-xs md:text-sm cursor-not-allowed">
-                          Đang sử dụng gói Pro
+                          Đang sử dụng gói Chuyên nghiệp
                         </button>
                       )
                     ) : (
@@ -352,7 +417,7 @@ export default function Home() {
 
                   <div className="space-y-2">
                     <h3 className="font-header font-bold text-2xl tracking-tight text-slate-900">
-                      Pro Plan
+                      Gói Chuyên Nghiệp
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed font-body">
                       {proPlan?.description || "Giải pháp toàn diện cho giáo viên chuyên nghiệp. Mở khóa toàn bộ sức mạnh AI kịch bản."}
@@ -367,32 +432,32 @@ export default function Home() {
                     {isAuthenticated ? (
                       user?.plan === "pro" ? (
                         <button disabled className="w-full bg-[var(--color-primary-600)] text-white font-bold py-3 px-4 rounded-full text-xs md:text-sm opacity-90 cursor-not-allowed">
-                          Đang sử dụng gói PRO
+                          Đang sử dụng gói Chuyên nghiệp
                         </button>
                       ) : (
                         <Link href="/dashboard/profile?tab=subscription" className="w-full bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-bold py-3 px-4 rounded-full text-xs md:text-sm shadow-md hover-elastic-button flex items-center justify-center gap-2">
-                          Nâng cấp Pro Plan
+                          Nâng cấp gói Chuyên nghiệp
                         </Link>
                       )
                     ) : (
                       <Link href="/register" className="w-full bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-bold py-3 px-4 rounded-full text-xs md:text-sm shadow-md hover-elastic-button flex items-center justify-center gap-2">
-                        Nâng cấp Pro Plan
+                        Nâng cấp gói Chuyên nghiệp
                       </Link>
                     )}
                   </div>
                 </div>
               </AnimateOnScroll>
 
-              {/* TOP WHITE CARD 3: TEAM PLAN (CHƯA HỖ TRỢ) */}
+              {/* TOP WHITE CARD 3: TEAM PLAN (ĐANG PHÁT TRIỂN) */}
               <AnimateOnScroll className="h-full">
                 <div className="bg-white rounded-3xl p-6 md:p-7 shadow-sm border border-slate-200/80 flex flex-col justify-between h-full space-y-4 relative transition-elastic hover-elastic opacity-85">
                   <span className="absolute -top-3 right-6 px-3 py-0.5 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-xs">
-                    Chưa hỗ trợ
+                    Đang phát triển
                   </span>
 
                   <div className="space-y-2">
                     <h3 className="font-header font-bold text-2xl tracking-tight text-slate-900">
-                      Team Plan
+                      Gói Đội Ngũ
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed font-body">
                       {teamPlan?.description || "Giải pháp dành cho tổ bộ môn & nhà trường. Quản lý tập trung, chia sẻ tài nguyên bài giảng."}
@@ -405,7 +470,7 @@ export default function Home() {
                     </div>
 
                     <button disabled className="w-full bg-slate-100 text-slate-400 font-bold py-3 px-4 rounded-full text-xs md:text-sm cursor-not-allowed flex items-center justify-center gap-2">
-                      Chưa hỗ trợ
+                      Đang phát triển
                     </button>
                   </div>
                 </div>
@@ -419,7 +484,7 @@ export default function Home() {
               {/* TÍNH NĂNG CỘT 1: STARTER */}
               <div className="px-2 space-y-4">
                 <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase block">
-                  BẮT ĐẦU VỚI
+                  GÓI CƠ BẢN BAO GỒM
                 </span>
 
                 {isLoadingPlans ? (
@@ -448,7 +513,7 @@ export default function Home() {
               {/* TÍNH NĂNG CỘT 2: PRO PLAN */}
               <div className="px-2 space-y-4">
                 <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase block">
-                  BAO GỒM TẤT CẢ CỦA STARTER
+                  BAO GỒM TOÀN BỘ GÓI CƠ BẢN VÀ:
                 </span>
 
                 {isLoadingPlans ? (
@@ -477,7 +542,7 @@ export default function Home() {
               {/* TÍNH NĂNG CỘT 3: TEAM PLAN */}
               <div className="px-2 space-y-4">
                 <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase block">
-                  BAO GỒM TẤT CẢ CỦA PRO
+                  BAO GỒM TOÀN BỘ GÓI CHUYÊN NGHIỆP VÀ:
                 </span>
 
                 {teamFeatures.length > 0 ? (

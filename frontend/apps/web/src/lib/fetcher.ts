@@ -66,10 +66,15 @@ export async function apiClient<T = void>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  } catch (err: any) {
+    throw new FetchError(0, "Không thể kết nối đến máy chủ backend (port 8080)", {}, endpoint);
+  }
 
   const data: ApiResponse<T> = await response.json().catch(() => ({
     code: response.status,

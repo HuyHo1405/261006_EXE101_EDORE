@@ -32,28 +32,36 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
         // 1. Starter Plan
         List<String> starterFeatures = List.of(
                 "Khởi tạo tối đa 3 Khóa học & Lớp học",
-                "AI Phân tích tài liệu PDF/Word (tối đa 10 trang)",
-                "Studio Timeline biên soạn kịch bản cơ bản",
-                "Xuất kịch bản dạng Văn bản (Text)",
-                "Hỗ trợ qua Email"
+                "AI phân tích theo bộ dữ liệu nội bộ chuẩn hóa (không cần tải file)",
+                "Biên soạn tiến trình kịch bản bài giảng cơ bản",
+                "Xuất kịch bản bài học dạng văn bản",
+                "Hỗ trợ kỹ thuật qua Email"
         );
-        upsertPlan(existingPlans, "starter", "Starter", "Công cụ đồng hành soạn giảng. Trải nghiệm kịch bản AI thế hệ mới miễn phí hàng tháng.",
+        upsertPlan(existingPlans, "starter", "Gói Cơ Bản", "Công cụ đồng hành soạn giảng. Trải nghiệm kịch bản AI thế hệ mới miễn phí hàng tháng.",
                 BigDecimal.ZERO, 30, 3, 5, 30, true, starterFeatures);
 
         // 2. Pro Plan
         List<String> proFeatures = List.of(
-                "Không giới hạn Khóa học & Lớp học",
-                "AI Phân tích tài liệu & Slide giảng dạy nâng cao",
-                "Studio Timeline tương tác & nhảy bước đầy đủ",
-                "Sidebar Gợi ý Hoạt động Sư phạm cá nhân hóa",
-                "Lưu trữ ngân hàng kịch bản tái sử dụng"
+                "Không giới hạn số lượng Khóa học & Lớp học",
+                "Khai thác toàn bộ kho dữ liệu nội bộ chuyên sâu đa môn học",
+                "Dòng thời gian tương tác & chuyển bước bài giảng đầy đủ",
+                "Trả bài sôi nổi: Vòng quay may mắn (Lucky Wheel)",
+                "Xuất file câu hỏi trắc nghiệm, doc bài giảng & mẫu Kahoot",
+                "Lưu trữ và tái sử dụng ngân hàng kịch bản không giới hạn"
         );
-        upsertPlan(existingPlans, "pro", "Pro Plan", "Giải pháp toàn diện cho giáo viên chuyên nghiệp. Mở khóa toàn bộ sức mạnh AI kịch bản.",
+        upsertPlan(existingPlans, "pro", "Gói Chuyên Nghiệp", "Giải pháp toàn diện cho giáo viên chuyên nghiệp. Mở khóa toàn bộ sức mạnh AI kịch bản.",
                 new BigDecimal("199000"), 30, 999, 30, 200, true, proFeatures);
 
         // 3. Team Plan
-        upsertPlan(existingPlans, "team", "Team Plan", "Giải pháp dành cho tổ bộ môn & nhà trường. Quản lý tập trung, chia sẻ tài nguyên bài giảng.",
-                new BigDecimal("499000"), 30, 9999, 50, 500, false, List.of());
+        List<String> teamFeatures = List.of(
+                "Bao gồm toàn bộ tính năng của gói Chuyên nghiệp",
+                "Quản lý tập trung cho tổ bộ môn & nhà trường (Đang phát triển)",
+                "Chia sẻ kho học liệu & kịch bản giảng dạy dùng chung",
+                "Phân quyền chuyên môn giữa các giáo viên",
+                "Hỗ trợ đào tạo và triển khai chuyên biệt"
+        );
+        upsertPlan(existingPlans, "team", "Gói Đội Ngũ", "Giải pháp dành cho tổ bộ môn & nhà trường (Đang phát triển). Quản lý tập trung, chia sẻ tài nguyên bài giảng.",
+                new BigDecimal("499000"), 30, 9999, 50, 500, false, teamFeatures);
 
         log.info("[Initializer] Subscription plans and features synced successfully.");
     }
@@ -62,7 +70,7 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
                             BigDecimal price, int durationDays, int maxCourses, int maxScriptsPerCourse,
                             int maxStudents, boolean isActive, List<String> features) {
         List<SubscriptionPlan> matched = existingPlans.stream()
-                .filter(p -> p.getName() != null && p.getName().toLowerCase().contains(keyword.toLowerCase()))
+                .filter(p -> p.getName() != null && (p.getName().toLowerCase().contains(keyword.toLowerCase()) || p.getName().toLowerCase().contains(name.toLowerCase())))
                 .toList();
 
         if (matched.isEmpty()) {

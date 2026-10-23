@@ -65,6 +65,7 @@ export const metadata: Metadata = {
 };
 
 import { ToastContainer } from "@/components/ui/toast";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
 export default function RootLayout({
   children,
@@ -78,6 +79,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/edore_logo.png" />
       </head>
       <body className="flex flex-col min-h-screen">
+        <GoogleAnalytics />
         <NextTopLoader color="#034ce4" showSpinner={false} shadow="0 0 10px #034ce4,0 0 5px #034ce4" height={3} />
         <QueryProvider>
           <ToastContainer />
