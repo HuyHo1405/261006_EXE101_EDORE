@@ -26,7 +26,7 @@ const DEFAULT_STARTER_FEATURES = [
   "AI phân tích theo bộ dữ liệu nội bộ chuẩn hóa (không cần tải file)",
   "Biên soạn tiến trình kịch bản bài giảng cơ bản",
   "Xuất kịch bản bài học dạng văn bản",
-  "Hỗ trợ kỹ thuật qua Email",
+  "Hỗ trợ kỹ thuật qua Email (dengocrong123@gmail.com)",
 ];
 
 const DEFAULT_PRO_FEATURES = [
@@ -542,6 +542,12 @@ export default function Home() {
                   </p>
                   <p className="text-[11px] text-slate-500 font-body leading-relaxed">
                     Dự kiến hỗ trợ quản lý tập trung cho tổ bộ môn, chia sẻ kho học liệu dùng chung và phân quyền chuyên môn giữa các giáo viên.
+                  </p>
+                  <p className="text-xs text-slate-600 font-medium pt-1">
+                    Liên hệ tư vấn &amp; đăng ký sớm:{" "}
+                    <a href="mailto:dengocrong123@gmail.com" className="text-[var(--color-primary-600)] font-bold hover:underline">
+                      dengocrong123@gmail.com
+                    </a>
                   </p>
                 </div>
               </div>

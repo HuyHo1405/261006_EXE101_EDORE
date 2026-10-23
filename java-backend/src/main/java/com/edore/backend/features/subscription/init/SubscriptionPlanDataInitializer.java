@@ -35,7 +35,7 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
                 "AI phân tích theo bộ dữ liệu nội bộ chuẩn hóa (không cần tải file)",
                 "Biên soạn tiến trình kịch bản bài giảng cơ bản",
                 "Xuất kịch bản bài học dạng văn bản",
-                "Hỗ trợ kỹ thuật qua Email"
+                "Hỗ trợ kỹ thuật qua Email (dengocrong123@gmail.com)"
         );
         upsertPlan(existingPlans, "starter", "Gói Cơ Bản", "Công cụ đồng hành soạn giảng. Trải nghiệm kịch bản AI thế hệ mới miễn phí hàng tháng.",
                 BigDecimal.ZERO, 30, 3, 5, 30, true, starterFeatures);

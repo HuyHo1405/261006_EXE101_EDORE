@@ -72,7 +72,7 @@ export function AppFooter() {
               <div className="flex items-center gap-2.5">
                 <MailIcon className="w-4 h-4 text-[var(--color-primary-500)] shrink-0" />
                 <span className="text-slate-600">
-                  Email: <a href="mailto:support.edore@gmail.com" className="text-slate-900 font-semibold hover:underline">support.edore@gmail.com</a>
+                  Email hỗ trợ: <a href="mailto:dengocrong123@gmail.com" className="text-slate-900 font-semibold hover:underline">dengocrong123@gmail.com</a>
                 </span>
               </div>
             </div>
