@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   TrendingUp,
@@ -35,11 +35,13 @@ import {
   ArrowDownRight,
   Tag,
   AlertCircle,
+  ShieldAlert,
+  Lock,
 } from "lucide-react";
+import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import {
   adminDashboardService,
   AdminDashboardMetrics,
-  GoogleAnalyticsMetrics,
   AdminUserResponse,
 } from "@/features/admin/api/adminDashboardService";
 import { OrderResponseDTO, PaymentResponseDTO } from "@edore/types";
@@ -58,26 +60,19 @@ import {
   Cell,
 } from "recharts";
 
-type AdminTab = "revenue" | "analytics" | "users" | "transactions";
+type AdminTab = "revenue" | "users" | "transactions";
 
-const revenueDataMock = [
-  { name: "T2", revenue: 12000000, orders: 12 },
-  { name: "T3", revenue: 15000000, orders: 15 },
-  { name: "T4", revenue: 8000000, orders: 8 },
-  { name: "T5", revenue: 22000000, orders: 24 },
-  { name: "T6", revenue: 19000000, orders: 19 },
-  { name: "T7", revenue: 25000000, orders: 26 },
-  { name: "CN", revenue: 30000000, orders: 32 },
-];
-
-const pieDataMock = [
-  { name: "Gói Cơ Bản (Free)", value: 620 },
-  { name: "Gói Chuyên Nghiệp (Pro)", value: 340 },
-  { name: "Gói Đội Ngũ (Team)", value: 85 },
-];
-const PLAN_COLORS = ["#f28c0f", "#034ce4", "#12ab83"];
+const PLAN_COLORS = ["#034ce4", "#12ab83", "#f28c0f", "#8b5cf6", "#ec4899"];
 
 export default function AdminDashboardPage() {
+  const user = useAuthStore((s) => s.user);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const _hasHydrated = useAuthStore((s) => s._hasHydrated);
+
+  const isAdmin = Boolean(
+    user?.roles?.some((r) => r.toUpperCase().includes("ADMIN"))
+  );
+
   const [activeTab, setActiveTab] = useState<AdminTab>("revenue");
   const [loading, setLoading] = useState<boolean>(true);
   const [timeRange, setTimeRange] = useState<string>("7d");
@@ -85,7 +80,6 @@ export default function AdminDashboardPage() {
 
   // Metrics
   const [metrics, setMetrics] = useState<AdminDashboardMetrics | null>(null);
-  const [gaData, setGaData] = useState<GoogleAnalyticsMetrics | null>(null);
 
   // Orders
   const [allOrders, setAllOrders] = useState<OrderResponseDTO[]>([]);
@@ -105,229 +99,83 @@ export default function AdminDashboardPage() {
   const [userSearchQuery, setUserSearchQuery] = useState<string>("");
   const [selectedUser, setSelectedUser] = useState<AdminUserResponse | null>(null);
 
+  // Biểu đồ Doanh thu 7 ngày thực tế (100% từ Database Orders / Payments)
+  const revenueChartData = useMemo(() => {
+    const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+    const result: { name: string; dateStr: string; revenue: number; orders: number }[] = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dayName = days[d.getDay()];
+      const dateKey = d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
+      result.push({
+        name: i === 0 ? "Hôm nay" : `${dayName} (${dateKey})`,
+        dateStr: d.toDateString(),
+        revenue: 0,
+        orders: 0,
+      });
+    }
+
+    (allOrders || []).forEach((ord) => {
+      if (ord.status === "PAID" && ord.createdAt) {
+        const orderDate = new Date(ord.createdAt).toDateString();
+        const target = result.find((r) => r.dateStr === orderDate);
+        if (target) {
+          target.revenue += ord.amount || 0;
+          target.orders += 1;
+        }
+      }
+    });
+
+    return result.map(({ name, revenue, orders }) => ({ name, revenue, orders }));
+  }, [allOrders]);
+
+  // Biểu đồ Phân bổ Gói Cước Thực Tế từ Database Orders
+  const planPieChartData = useMemo(() => {
+    const countMap: Record<string, number> = {};
+    (allOrders || []).forEach((o) => {
+      const name = o.subscriptionPlanName || "Gói Dịch Vụ";
+      countMap[name] = (countMap[name] || 0) + 1;
+    });
+
+    const entries = Object.entries(countMap);
+    if (entries.length === 0) {
+      return [{ name: "Chưa có đơn hàng", value: 1 }];
+    }
+    return entries.map(([name, value]) => ({ name, value }));
+  }, [allOrders]);
+
   const loadData = async () => {
     try {
       setLoading(true);
-      const [met, ordersPage, paymentsPage, usersPage, ga] = await Promise.all([
+      const [met, ordersPage, paymentsPage, usersPage] = await Promise.all([
         adminDashboardService.getMetrics(),
         adminDashboardService.getAllOrders(0, 100),
         adminDashboardService.getAllPayments(0, 100),
         adminDashboardService.getAllUsers(0, 100),
-        adminDashboardService.getGoogleAnalyticsMetrics(timeRange),
       ]);
 
-      const isLive = Boolean(
-        (ordersPage.content && ordersPage.content.length > 0) ||
-        (usersPage.content && usersPage.content.length > 0) ||
-        (paymentsPage.content && paymentsPage.content.length > 0)
-      );
-      setIsBackendConnected(isLive);
-
+      setIsBackendConnected(true);
       setMetrics(met);
-      setGaData(ga);
 
-      // Orders: if backend returns data use it, otherwise provide rich fallback
-      if (ordersPage.content && ordersPage.content.length > 0) {
-        setAllOrders(ordersPage.content);
-      } else {
-        setAllOrders([
-          {
-            id: "ord-94821-vn",
-            userId: "usr_nguyenvana",
-            subscriptionPlanId: 2,
-            subscriptionPlanName: "Gói Chuyên Nghiệp (Pro)",
-            amount: 199000,
-            status: "PAID",
-            gatewayOrderCode: 8492019,
-            createdAt: new Date(Date.now() - 3600000 * 2.5).toISOString(),
-            updatedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-          },
-          {
-            id: "ord-94822-vn",
-            userId: "usr_tranthib",
-            subscriptionPlanId: 2,
-            subscriptionPlanName: "Gói Chuyên Nghiệp (Pro)",
-            amount: 199000,
-            status: "PAID",
-            gatewayOrderCode: 8492020,
-            createdAt: new Date(Date.now() - 3600000 * 8.2).toISOString(),
-            updatedAt: new Date(Date.now() - 3600000 * 8).toISOString(),
-          },
-          {
-            id: "ord-94819-vn",
-            userId: "usr_levanc",
-            subscriptionPlanId: 2,
-            subscriptionPlanName: "Gói Chuyên Nghiệp (Pro)",
-            amount: 199000,
-            status: "PENDING",
-            gatewayOrderCode: 8492015,
-            createdAt: new Date(Date.now() - 86400000).toISOString(),
-            updatedAt: new Date(Date.now() - 86400000).toISOString(),
-          },
-          {
-            id: "ord-94815-vn",
-            userId: "usr_phamthid",
-            subscriptionPlanId: 2,
-            subscriptionPlanName: "Gói Chuyên Nghiệp (Pro)",
-            amount: 199000,
-            status: "CANCELLED",
-            gatewayOrderCode: 8492002,
-            createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-            updatedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-          },
-        ]);
-      }
-
-      // Payments: if backend has data use it, otherwise provide rich fallback
-      const fetchedPayments = paymentsPage.content || [];
-      if (fetchedPayments.length > 0) {
-        setAllPayments(fetchedPayments);
-      } else if (ordersPage.content && ordersPage.content.length > 0) {
-        // Derive payment records from orders
-        const derivedPayments: PaymentResponseDTO[] = ordersPage.content.map((o) => ({
-          id: `PAY-${o.id.substring(0, 8)}`,
-          orderId: o.id,
-          userId: o.userId,
-          subscriptionPlanId: o.subscriptionPlanId,
-          subscriptionPlanName: o.subscriptionPlanName,
-          provider: "PayOS (VietQR)",
-          transactionId: `TXN-${o.gatewayOrderCode || Math.floor(Math.random() * 900000 + 100000)}`,
-          amount: o.amount,
-          status: o.status === "PAID" ? "SUCCESS" : o.status === "PENDING" ? "PENDING" : "FAILED",
-          paidAt: o.status === "PAID" ? o.updatedAt || o.createdAt : undefined,
-          createdAt: o.createdAt,
-        }));
-        setAllPayments(derivedPayments);
-      } else {
-        // Demo transaction mock
-        setAllPayments([
-          {
-            id: "PAY-20261023-01",
-            orderId: "ORD-94821",
-            userId: "usr_nguyenvana",
-            subscriptionPlanId: 2,
-            subscriptionPlanName: "Gói Chuyên Nghiệp (Pro)",
-            provider: "PayOS (VietQR)",
-            transactionId: "TXN-8492019",
-            amount: 199000,
-            status: "SUCCESS",
-            paidAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-            createdAt: new Date(Date.now() - 3600000 * 2.5).toISOString(),
-          },
-          {
-            id: "PAY-20261023-02",
-            orderId: "ORD-94822",
-            userId: "usr_tranthib",
-            subscriptionPlanId: 2,
-            subscriptionPlanName: "Gói Chuyên Nghiệp (Pro)",
-            provider: "PayOS (VietQR)",
-            transactionId: "TXN-8492020",
-            amount: 199000,
-            status: "SUCCESS",
-            paidAt: new Date(Date.now() - 3600000 * 8).toISOString(),
-            createdAt: new Date(Date.now() - 3600000 * 8.2).toISOString(),
-          },
-          {
-            id: "PAY-20261022-03",
-            orderId: "ORD-94819",
-            userId: "usr_levanc",
-            subscriptionPlanId: 2,
-            subscriptionPlanName: "Gói Chuyên Nghiệp (Pro)",
-            provider: "PayOS (VietQR)",
-            transactionId: "TXN-8492015",
-            amount: 199000,
-            status: "PENDING",
-            createdAt: new Date(Date.now() - 86400000).toISOString(),
-          },
-          {
-            id: "PAY-20261021-04",
-            orderId: "ORD-94815",
-            userId: "usr_phamthid",
-            subscriptionPlanId: 2,
-            subscriptionPlanName: "Gói Chuyên Nghiệp (Pro)",
-            provider: "PayOS (VietQR)",
-            transactionId: "TXN-8492002",
-            amount: 199000,
-            status: "FAILED",
-            createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-          },
-        ]);
-      }
-
-      // Users
-      const fetchedUsers = usersPage.content || [];
-      if (fetchedUsers.length > 0) {
-        setAllUsers(fetchedUsers);
-      } else {
-        // Fallback user mock for demonstration
-        setAllUsers([
-          {
-            id: "u-101",
-            fullName: "Nguyễn Văn An",
-            email: "an.nguyen@edore.vn",
-            phone: "0912345678",
-            role: "ROLE_ADMIN",
-            status: "ACTIVE",
-            isActive: true,
-            plan: "Pro Plan",
-            createdAt: "2026-09-01T08:00:00Z",
-          },
-          {
-            id: "u-102",
-            fullName: "Trần Thị Bích",
-            email: "bich.tran@gmail.com",
-            phone: "0987654321",
-            role: "ROLE_USER",
-            status: "ACTIVE",
-            isActive: true,
-            plan: "Pro Plan",
-            createdAt: "2026-09-12T14:30:00Z",
-          },
-          {
-            id: "u-103",
-            fullName: "Lê Hoàng Nam",
-            email: "nam.le@thcs-chuvanan.edu.vn",
-            phone: "0903112233",
-            role: "ROLE_USER",
-            status: "ACTIVE",
-            isActive: true,
-            plan: "Free Plan",
-            createdAt: "2026-10-02T10:15:00Z",
-          },
-          {
-            id: "u-104",
-            fullName: "Phạm Thu Hương",
-            email: "huong.pham@thpt-chuyen.edu.vn",
-            phone: "0934556677",
-            role: "ROLE_USER",
-            status: "ACTIVE",
-            isActive: true,
-            plan: "Pro Plan",
-            createdAt: "2026-10-15T09:20:00Z",
-          },
-          {
-            id: "u-105",
-            fullName: "Võ Minh Đức",
-            email: "duc.vo@gmail.com",
-            phone: "0945667788",
-            role: "ROLE_USER",
-            status: "SUSPENDED",
-            isActive: false,
-            plan: "Free Plan",
-            createdAt: "2026-10-18T16:45:00Z",
-          },
-        ]);
-      }
+      // Gán dữ liệu thực tế 100% nhận từ API Backend
+      setAllOrders(ordersPage.content || []);
+      setAllPayments(paymentsPage.content || []);
+      setAllUsers(usersPage.content || []);
     } catch (err: any) {
-      console.error(err);
+      console.error("[AdminDashboard] Lỗi tải dữ liệu:", err);
+      setIsBackendConnected(false);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadData();
-  }, [timeRange]);
+    if (_hasHydrated && isAuthenticated && isAdmin) {
+      loadData();
+    }
+  }, [timeRange, _hasHydrated, isAuthenticated, isAdmin]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
@@ -385,6 +233,108 @@ export default function AdminDashboardPage() {
     return matchesStatus && matchesQuery;
   });
 
+  // Khi chưa hoàn tất hydrate state từ localStorage
+  if (!_hasHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <div className="flex items-center gap-2.5 text-gray-500 font-bold text-sm">
+          <RefreshCw className="w-4 h-4 animate-spin text-[var(--color-primary-500,#034ce4)]" />
+          <span>Đang xác thực quyền truy cập hệ thống...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Nếu chưa đăng nhập
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 font-body">
+        <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-gray-200 shadow-xl text-center space-y-5">
+          <div className="w-14 h-14 bg-blue-50 text-[var(--color-primary-600,#0240c0)] rounded-2xl flex items-center justify-center mx-auto border border-blue-100">
+            <Lock className="w-7 h-7" />
+          </div>
+          <div className="space-y-1.5">
+            <h2 className="text-xl font-bold font-header text-gray-900 tracking-tight">
+              Yêu Cầu Đăng Nhập Quản Trị
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-500 font-sans">
+              Bảng điều khiển Quản trị EDORE chỉ dành riêng cho tài khoản được cấp quyền <strong>ROLE_ADMIN</strong>.
+            </p>
+          </div>
+
+          <div className="p-4 bg-blue-50/80 rounded-2xl border border-blue-100 text-xs text-blue-900 text-left space-y-1.5">
+            <p className="font-bold">Tài khoản Quản trị viên mặc định của hệ thống:</p>
+            <p>• Email: <code className="font-mono font-bold text-blue-700 bg-white px-1.5 py-0.5 rounded">admin@sba.com</code></p>
+            <p>• Mật khẩu: <code className="font-mono font-bold text-blue-700 bg-white px-1.5 py-0.5 rounded">P@ssw0rd123</code></p>
+          </div>
+
+          <div className="pt-2 flex flex-col gap-2">
+            <Link
+              href="/login?redirect=/dashboard/admin"
+              className="w-full py-3 rounded-xl bg-[var(--color-primary-500,#034ce4)] hover:bg-[var(--color-primary-600,#0240c0)] text-white font-bold text-sm transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+            >
+              Đăng nhập tài khoản Admin
+            </Link>
+            <Link
+              href="/"
+              className="w-full py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition-all flex items-center justify-center"
+            >
+              Về Trang chủ
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Nếu đã đăng nhập nhưng là tài khoản thường (ROLE_USER, không có quyền ROLE_ADMIN)
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 font-body">
+        <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-red-200 shadow-xl text-center space-y-5">
+          <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto border border-red-100">
+            <ShieldAlert className="w-7 h-7" />
+          </div>
+          <div className="space-y-1.5">
+            <span className="px-3 py-1 bg-red-100 text-red-700 font-mono text-[11px] font-bold rounded-full uppercase">
+              Lỗi 403 Forbidden
+            </span>
+            <h2 className="text-xl font-bold font-header text-gray-900 tracking-tight pt-1">
+              Quyền Truy Cập Bị Từ Chối
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-600 font-sans leading-relaxed">
+              Tài khoản hiện tại của bạn là <strong>{user?.email}</strong> với quyền hạn <strong>ROLE_USER</strong> (Giáo viên / Người dùng thông thường).
+            </p>
+            <p className="text-xs text-red-600 font-semibold">
+              Tài khoản thường không có quyền truy cập các API Quản trị hệ thống backend.
+            </p>
+          </div>
+
+          <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 text-left space-y-1.5">
+            <p className="font-bold">Để kiểm tra tính năng Admin thật, hãy đăng nhập bằng tài khoản Quản trị viên:</p>
+            <p>• Email: <code className="font-mono font-bold text-amber-800 bg-white px-1.5 py-0.5 rounded">admin@sba.com</code></p>
+            <p>• Mật khẩu: <code className="font-mono font-bold text-amber-800 bg-white px-1.5 py-0.5 rounded">P@ssw0rd123</code></p>
+          </div>
+
+          <div className="pt-2 flex flex-col gap-2">
+            <Link
+              href="/login?redirect=/dashboard/admin"
+              className="w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+            >
+              Đổi sang tài khoản Admin
+            </Link>
+            <Link
+              href="/dashboard"
+              className="w-full py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition-all flex items-center justify-center"
+            >
+              Về Bàn làm việc
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--color-neutral-50,#fafafa)] py-6 px-3 sm:px-6 lg:px-8 font-body">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -413,11 +363,22 @@ export default function AdminDashboardPage() {
               BẢNG ĐIỀU KHIỂN QUẢN TRỊ (ADMIN DASHBOARD)
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 font-sans mt-0.5">
-              Theo dõi trực quan 4 trọng tâm: Doanh thu mua gói, Google Analytics, Quản lý tài khoản & Lịch sử giao dịch.
+              Theo dõi trực quan 3 trọng tâm: Doanh thu mua gói, Quản lý tài khoản người dùng & Lịch sử giao dịch thanh toán.
             </p>
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
+            {/* Nút liên kết ngoài Google Analytics Console */}
+            <a
+              href="https://analytics.google.com/analytics/web/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-bold text-xs flex items-center gap-1.5 shadow-2xs transition-all whitespace-nowrap active:scale-95"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-blue-600" />
+              Mở Google Analytics
+            </a>
+
             {/* Bộ chọn khoảng thời gian */}
             <div className="flex items-center bg-gray-100 p-1 rounded-xl text-xs font-semibold">
               {[
@@ -457,10 +418,10 @@ export default function AdminDashboardPage() {
             <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <div className="space-y-1">
               <p className="font-bold">
-                Đang hiển thị dữ liệu mô phỏng do Backend (Spring Boot port 8080) chưa khởi động
+                Chưa thể kết nối tới máy chủ Backend (Cổng 8080)
               </p>
               <p className="text-amber-700 text-xs leading-relaxed">
-                Các API quản trị (<code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-800 font-semibold">/api/v1/admin/orders</code>, <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-800 font-semibold">/api/v1/admin/orders/payments</code>, <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-800 font-semibold">/api/v1/admin/users</code>) đã được kết nối hoàn chỉnh trên giao diện. Khi bạn khởi động backend bằng lệnh: <code className="font-mono bg-amber-100 px-1.5 py-0.5 rounded font-bold text-amber-900">cd java-backend; mvn spring-boot:run</code>, bảng điều khiển sẽ tự động đồng bộ dữ liệu thực tế từ cơ sở dữ liệu.
+                Các API quản trị (<code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-800 font-semibold">/api/v1/admin/orders</code>, <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-800 font-semibold">/api/v1/admin/orders/payments</code>, <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-800 font-semibold">/api/v1/admin/users</code>) đã được kết nối trực tiếp. Vui lòng kiểm tra đảm bảo máy chủ Spring Boot đang chạy: <code className="font-mono bg-amber-100 px-1.5 py-0.5 rounded font-bold text-amber-900">cd java-backend; mvn spring-boot:run</code>.
               </p>
             </div>
           </div>
@@ -504,20 +465,20 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          {/* Card 3: Google Analytics Traffic */}
+          {/* Card 3: Giao dịch thanh toán */}
           <div className="p-5 rounded-2xl bg-white border border-[var(--color-neutral-200,#d9d9d9)] shadow-xs space-y-2.5 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase font-bold text-gray-500">LƯỢNG TRUY CẬP (GA4)</span>
+              <span className="text-[11px] font-mono uppercase font-bold text-gray-500">GIAO DỊCH THANH TOÁN</span>
               <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <Globe className="w-5 h-5" />
+                <Activity className="w-5 h-5" />
               </div>
             </div>
             <div>
               <h3 className="text-2xl font-extrabold font-mono text-gray-900 tracking-tight">
-                {loading ? "..." : `${gaData?.pageViews?.toLocaleString("vi-VN") || 0}`}
+                {loading ? "..." : allPayments.length}
               </h3>
               <p className="text-xs text-indigo-600 font-semibold mt-1 flex items-center gap-1">
-                <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-500" /> Đang online: {gaData?.activeUsersRealtime || 0} người
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Thành công: {allPayments.filter((p) => p.status === "SUCCESS").length}
               </p>
             </div>
           </div>
@@ -539,7 +500,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* ── 4 TABS NAVIGATION ─────────────────────────────────────────────────── */}
+        {/* ── 3 TABS NAVIGATION ─────────────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-[var(--color-neutral-200,#d9d9d9)] p-2 shadow-xs flex items-center gap-1 overflow-x-auto">
           <button
             onClick={() => setActiveTab("revenue")}
@@ -554,18 +515,6 @@ export default function AdminDashboardPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("analytics")}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all whitespace-nowrap ${
-              activeTab === "analytics"
-                ? "bg-[var(--color-primary-500,#034ce4)] text-white shadow-xs"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            }`}
-          >
-            <BarChart3 className="w-4 h-4" />
-            2. Lưu Lượng Website (Web Analytics)
-          </button>
-
-          <button
             onClick={() => setActiveTab("users")}
             className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all whitespace-nowrap ${
               activeTab === "users"
@@ -574,7 +523,7 @@ export default function AdminDashboardPage() {
             }`}
           >
             <Users className="w-4 h-4" />
-            3. Quản Lý Người Dùng
+            2. Quản Lý Người Dùng
           </button>
 
           <button
@@ -586,7 +535,7 @@ export default function AdminDashboardPage() {
             }`}
           >
             <CreditCard className="w-4 h-4" />
-            4. Lịch Sử Giao Dịch
+            3. Lịch Sử Giao Dịch
           </button>
         </div>
 
@@ -613,7 +562,7 @@ export default function AdminDashboardPage() {
 
                 <div className="min-h-[280px] w-full">
                   <ResponsiveContainer width="100%" height={280}>
-                    <BarChart data={revenueDataMock} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                    <BarChart data={revenueChartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                       <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} dy={10} />
                       <YAxis
@@ -646,7 +595,7 @@ export default function AdminDashboardPage() {
                   <ResponsiveContainer width="100%" height={220}>
                     <PieChart>
                       <Pie
-                        data={pieDataMock}
+                        data={planPieChartData}
                         cx="50%"
                         cy="45%"
                         innerRadius={65}
@@ -655,12 +604,12 @@ export default function AdminDashboardPage() {
                         dataKey="value"
                         stroke="none"
                       >
-                        {pieDataMock.map((entry, index) => (
+                        {planPieChartData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={PLAN_COLORS[index % PLAN_COLORS.length]} />
                         ))}
                       </Pie>
                       <RechartsTooltip
-                        formatter={(value) => [`${Number(value ?? 0)} người dùng`, "Số lượng"]}
+                        formatter={(value) => [`${Number(value ?? 0)} đơn`, "Số lượng"]}
                         contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
                       />
                     </PieChart>
@@ -668,10 +617,10 @@ export default function AdminDashboardPage() {
 
                   {/* Legend */}
                   <div className="flex flex-col gap-1.5 pt-2">
-                    {pieDataMock.map((entry, index) => (
+                    {planPieChartData.map((entry, index) => (
                       <div key={entry.name} className="flex items-center justify-between text-xs text-gray-700 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
                         <div className="flex items-center gap-2">
-                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: PLAN_COLORS[index] }} />
+                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: PLAN_COLORS[index % PLAN_COLORS.length] }} />
                           <span className="font-medium">{entry.name}</span>
                         </div>
                         <span className="font-bold font-mono">{entry.value}</span>
@@ -800,240 +749,7 @@ export default function AdminDashboardPage() {
         )}
 
         {/* ═════════════════════════════════════════════════════════════════════════ */}
-        {/* TAB 2: GOOGLE ANALYTICS METRICS                                         */}
-        {/* ═════════════════════════════════════════════════════════════════════════ */}
-        {activeTab === "analytics" && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            {/* Status Bar GA4 */}
-            <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20">
-                  <BarChart3 className="w-6 h-6 text-blue-300" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold font-header text-lg uppercase tracking-wide">
-                      HỆ THỐNG PHÂN TÍCH LƯU LƯỢNG TRUY CẬP (WEB ANALYTICS)
-                    </h3>
-                    <span className="px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-bold uppercase rounded-full">
-                      TÍCH HỢP TRỰC TIẾP
-                    </span>
-                  </div>
-                  <p className="text-xs text-blue-200/80">
-                    Chế độ: <code className="font-mono font-bold text-white bg-white/10 px-1.5 py-0.5 rounded">{gaData?.measurementId || "Bộ đếm phân tích nội bộ (In-house Analytics)"}</code> • Tự động theo dõi trên tên miền của bạn
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 shrink-0 flex-wrap">
-                <div className="flex items-center gap-4 bg-white/10 px-4 py-2 rounded-xl border border-white/10">
-                  <div className="text-right">
-                    <span className="text-[10px] text-blue-200 block uppercase font-mono">Đang online (Realtime)</span>
-                    <span className="text-lg font-bold font-mono text-emerald-400 flex items-center gap-1.5 justify-end">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                      {gaData?.activeUsersRealtime || 38} người
-                    </span>
-                  </div>
-                </div>
-
-                <a
-                  href="https://analytics.google.com/analytics/web/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3.5 py-2.5 rounded-xl bg-white text-gray-900 hover:bg-gray-100 font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all whitespace-nowrap active:scale-95"
-                >
-                  <ExternalLink className="w-4 h-4 text-blue-600" />
-                  Mở GA4 Console
-                </a>
-              </div>
-            </div>
-
-            {/* 4 Cards Chỉ số GA4 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-2">
-                <span className="text-[11px] font-mono uppercase font-bold text-gray-500">TỔNG LƯỢT XEM TRANG</span>
-                <h4 className="text-2xl font-bold font-mono text-gray-900">{gaData?.pageViews?.toLocaleString("vi-VN") || "14.850"}</h4>
-                <p className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                  <ArrowUpRight className="w-3.5 h-3.5" /> +22.4% so với tuần trước
-                </p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-2">
-                <span className="text-[11px] font-mono uppercase font-bold text-gray-500">SỐ PHIÊN TRUY CẬP (SESSIONS)</span>
-                <h4 className="text-2xl font-bold font-mono text-gray-900">{gaData?.sessions?.toLocaleString("vi-VN") || "5.290"}</h4>
-                <p className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                  <ArrowUpRight className="w-3.5 h-3.5" /> +15.8% số phiên mới
-                </p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-2">
-                <span className="text-[11px] font-mono uppercase font-bold text-gray-500">THỜI GIAN TƯƠNG TÁC TB</span>
-                <h4 className="text-2xl font-bold font-mono text-gray-900">{gaData?.avgEngagementTime || "3m 42s"}</h4>
-                <p className="text-xs text-blue-600 font-semibold">Tập trung cao vào soạn kịch bản</p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-2">
-                <span className="text-[11px] font-mono uppercase font-bold text-gray-500">TỶ LỆ THOÁT (BOUNCE RATE)</span>
-                <h4 className="text-2xl font-bold font-mono text-gray-900">{gaData?.bounceRate || "34.2%"}</h4>
-                <p className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                  <ArrowDownRight className="w-3.5 h-3.5" /> Giảm 4.2% (Tương tác tốt)
-                </p>
-              </div>
-            </div>
-
-            {/* Biểu đồ Lưu Lượng Theo Ngày */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-base font-bold font-header uppercase text-gray-900">
-                    Xu Hướng Lưu Lượng Truy Cập 7 Ngày Qua
-                  </h3>
-                  <p className="text-xs text-gray-500">Số lượng người dùng và số lượt xem trang theo từng ngày</p>
-                </div>
-                <div className="flex items-center gap-3 text-xs font-semibold">
-                  <span className="flex items-center gap-1.5 text-blue-600">
-                    <span className="w-3 h-3 rounded-full bg-blue-600" /> Lượt xem trang
-                  </span>
-                  <span className="flex items-center gap-1.5 text-emerald-600">
-                    <span className="w-3 h-3 rounded-full bg-emerald-500" /> Người dùng
-                  </span>
-                </div>
-              </div>
-
-              <div className="min-h-[260px] w-full">
-                <ResponsiveContainer width="100%" height={260}>
-                  <AreaChart data={gaData?.dailyTraffic || []} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="colorPageViews" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#034ce4" stopOpacity={0.25} />
-                        <stop offset="95%" stopColor="#034ce4" stopOpacity={0.0} />
-                      </linearGradient>
-                      <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
-                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} />
-                    <RechartsTooltip
-                      contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
-                    />
-                    <Area type="monotone" dataKey="pageViews" name="Lượt xem" stroke="#034ce4" strokeWidth={2.5} fillOpacity={1} fill="url(#colorPageViews)" />
-                    <Area type="monotone" dataKey="users" name="Người dùng" stroke="#10b981" strokeWidth={2.5} fillOpacity={1} fill="url(#colorUsers)" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* 2 Cột: Nguồn Traffic & Thiết Bị */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {/* Nguồn Lưu Lượng */}
-              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold font-header uppercase text-gray-900">
-                    Kênh & Nguồn Truy Cập (Traffic Channels)
-                  </h3>
-                  <Compass className="w-4 h-4 text-gray-400" />
-                </div>
-
-                <div className="space-y-3.5">
-                  {gaData?.trafficSources.map((src) => (
-                    <div key={src.name} className="space-y-1.5">
-                      <div className="flex justify-between text-xs font-semibold">
-                        <span className="text-gray-700">{src.name}</span>
-                        <span className="text-gray-900 font-mono font-bold">
-                          {src.percentage}% ({src.visits.toLocaleString()} lượt)
-                        </span>
-                      </div>
-                      <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{ width: `${src.percentage}%`, backgroundColor: src.fill }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Phân Bố Thiết Bị */}
-              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold font-header uppercase text-gray-900">
-                    Thiết Bị Truy Cập (Device Breakdown)
-                  </h3>
-                  <Laptop className="w-4 h-4 text-gray-400" />
-                </div>
-
-                <div className="grid grid-cols-3 gap-3 pt-2">
-                  <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 text-center space-y-1">
-                    <Laptop className="w-6 h-6 text-blue-600 mx-auto" />
-                    <span className="text-xs text-gray-600 block font-medium">Máy tính</span>
-                    <span className="text-xl font-extrabold font-mono text-blue-700">67%</span>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 text-center space-y-1">
-                    <Smartphone className="w-6 h-6 text-emerald-600 mx-auto" />
-                    <span className="text-xs text-gray-600 block font-medium">Di động</span>
-                    <span className="text-xl font-extrabold font-mono text-emerald-700">30%</span>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 text-center space-y-1">
-                    <Layers className="w-6 h-6 text-amber-600 mx-auto" />
-                    <span className="text-xs text-gray-600 block font-medium">Tablet</span>
-                    <span className="text-xl font-extrabold font-mono text-amber-700">3%</span>
-                  </div>
-                </div>
-
-                <p className="text-xs text-gray-500 leading-relaxed font-body">
-                  Hầu hết giáo viên sử dụng máy tính để thiết kế bài giảng trên studio và dùng điện thoại hoặc máy tính bảng khi thao tác quay vòng quay trả bài trong lớp học.
-                </p>
-              </div>
-            </div>
-
-            {/* Bảng Top Trang Được Xem Nhiều Nhất */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-xs space-y-4">
-              <h3 className="text-base font-bold font-header uppercase text-gray-900">
-                Top Trang Được Xem Nhiều Nhất (Top Visited Pages)
-              </h3>
-
-              <div className="overflow-x-auto rounded-xl border border-gray-200">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50 border-b border-gray-200 text-[11px] font-mono uppercase text-gray-500">
-                      <th className="py-3 px-4">Đường dẫn trang (URL)</th>
-                      <th className="py-3 px-4">Tên trang</th>
-                      <th className="py-3 px-4 text-right">Lượt xem (Views)</th>
-                      <th className="py-3 px-4 text-right">Tăng trưởng</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 text-sm">
-                    {gaData?.topPages.map((pg) => (
-                      <tr key={pg.path} className="hover:bg-gray-50/70 transition-colors">
-                        <td className="py-3.5 px-4 font-mono font-bold text-blue-600 text-xs">
-                          {pg.path}
-                        </td>
-                        <td className="py-3.5 px-4 font-medium text-gray-800">
-                          {pg.title}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-right text-gray-900">
-                          {pg.views.toLocaleString()}
-                        </td>
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-emerald-600 text-xs">
-                          {pg.change}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ═════════════════════════════════════════════════════════════════════════ */}
-        {/* TAB 3: QUẢN LÝ NGƯỜI DÙNG                                                */}
+        {/* TAB 2: QUẢN LÝ NGƯỜI DÙNG                                                */}
         {/* ═════════════════════════════════════════════════════════════════════════ */}
         {activeTab === "users" && (
           <div className="space-y-6 animate-in fade-in duration-200">
