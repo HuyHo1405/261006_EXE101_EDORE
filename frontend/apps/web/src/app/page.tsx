@@ -38,13 +38,7 @@ const DEFAULT_PRO_FEATURES = [
   "Lưu trữ và tái sử dụng ngân hàng kịch bản không giới hạn",
 ];
 
-const DEFAULT_TEAM_FEATURES = [
-  "Bao gồm toàn bộ tính năng của gói Chuyên nghiệp",
-  "Quản lý tập trung cho tổ bộ môn & nhà trường (Đang phát triển)",
-  "Chia sẻ kho học liệu & kịch bản giảng dạy dùng chung",
-  "Phân quyền chuyên môn giữa các giáo viên",
-  "Hỗ trợ đào tạo và triển khai chuyên biệt",
-];
+
 
 const formatFeatureText = (text: string): string => {
   return text
@@ -108,10 +102,7 @@ export default function Home() {
     : DEFAULT_PRO_FEATURES
   ).map(formatFeatureText);
 
-  const teamFeatures = (teamPlan?.features && teamPlan.features.length > 0
-    ? teamPlan.features
-    : DEFAULT_TEAM_FEATURES
-  ).map(formatFeatureText);
+
 
   return (
     /* ── BASE PRIMARY BLUE BACKGROUND CANVAS (MÀU XANH PRIMARY BASE #034ce4) ────── */
@@ -539,28 +530,20 @@ export default function Home() {
                 )}
               </div>
 
-              {/* TÍNH NĂNG CỘT 3: TEAM PLAN */}
-              <div className="px-2 space-y-4">
+              {/* TÍNH NĂNG CỘT 3: TEAM PLAN (ĐANG PHÁT TRIỂN) */}
+              <div className="px-2 space-y-3">
                 <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase block">
-                  BAO GỒM TOÀN BỘ GÓI CHUYÊN NGHIỆP VÀ:
+                  THÔNG TIN GÓI ĐỘI NGŨ
                 </span>
 
-                {teamFeatures.length > 0 ? (
-                  <ul className="space-y-3">
-                    {teamFeatures.map((feat: string, i: number) => (
-                      <li key={i} className="flex items-center gap-3 text-xs md:text-sm font-medium text-slate-500">
-                        <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-400 border border-slate-200 flex items-center justify-center shrink-0">
-                          <Check className="w-3 h-3 stroke-[3]" />
-                        </span>
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-xs text-slate-400 italic py-2 font-body">
-                    Tính năng đang được cập nhật...
+                <div className="p-4 rounded-2xl bg-slate-50/80 border border-dashed border-slate-200 text-slate-600 space-y-2">
+                  <p className="text-xs md:text-sm font-medium leading-relaxed font-body text-slate-700">
+                    Tính năng đang trong lộ trình phát triển &amp; thử nghiệm cùng các nhà trường.
                   </p>
-                )}
+                  <p className="text-[11px] text-slate-500 font-body leading-relaxed">
+                    Dự kiến hỗ trợ quản lý tập trung cho tổ bộ môn, chia sẻ kho học liệu dùng chung và phân quyền chuyên môn giữa các giáo viên.
+                  </p>
+                </div>
               </div>
 
             </div>

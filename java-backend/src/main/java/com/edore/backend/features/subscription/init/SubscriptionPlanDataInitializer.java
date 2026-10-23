@@ -52,16 +52,9 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
         upsertPlan(existingPlans, "pro", "Gói Chuyên Nghiệp", "Giải pháp toàn diện cho giáo viên chuyên nghiệp. Mở khóa toàn bộ sức mạnh AI kịch bản.",
                 new BigDecimal("199000"), 30, 999, 30, 200, true, proFeatures);
 
-        // 3. Team Plan
-        List<String> teamFeatures = List.of(
-                "Bao gồm toàn bộ tính năng của gói Chuyên nghiệp",
-                "Quản lý tập trung cho tổ bộ môn & nhà trường (Đang phát triển)",
-                "Chia sẻ kho học liệu & kịch bản giảng dạy dùng chung",
-                "Phân quyền chuyên môn giữa các giáo viên",
-                "Hỗ trợ đào tạo và triển khai chuyên biệt"
-        );
+        // 3. Team Plan (Đang phát triển - Chưa công bố tính năng cụ thể)
         upsertPlan(existingPlans, "team", "Gói Đội Ngũ", "Giải pháp dành cho tổ bộ môn & nhà trường (Đang phát triển). Quản lý tập trung, chia sẻ tài nguyên bài giảng.",
-                new BigDecimal("499000"), 30, 9999, 50, 500, false, teamFeatures);
+                new BigDecimal("499000"), 30, 9999, 50, 500, false, List.of());
 
         log.info("[Initializer] Subscription plans and features synced successfully.");
     }
