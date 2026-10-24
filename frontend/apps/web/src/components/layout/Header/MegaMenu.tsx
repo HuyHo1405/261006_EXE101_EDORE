@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowRight, LogOut } from "@/components/ui/icons";
-import { SquareArrowRightEnter, CornerRightDown } from "lucide-react";
+import { SquareArrowRightEnter, SquareArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface CourseMenuItem {
@@ -277,7 +277,7 @@ function NavHoverIcon({ href, pathname }: { href: string; pathname: string | nul
 
   if (isSamePage) {
     return (
-      <CornerRightDown className="w-3.5 h-3.5 text-[var(--color-primary-500)] shrink-0 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 ease-out pointer-events-none" />
+      <SquareArrowDown className="w-4 h-4 text-[var(--color-primary-500)] shrink-0 opacity-0 -translate-y-1.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 ease-out pointer-events-none" />
     );
   }
 

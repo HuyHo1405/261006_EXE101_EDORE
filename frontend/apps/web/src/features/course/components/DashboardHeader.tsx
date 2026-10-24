@@ -317,8 +317,8 @@ export function DashboardToolbar({
                 className="h-8 px-3 pr-7 rounded-xl text-xs font-bold transition-all cursor-pointer bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-100 appearance-none focus:outline-none focus:ring-1 focus:ring-[var(--color-primary-400)]"
                 title="Sắp xếp theo"
               >
-                <option value="updatedAt">Mới cập nhật</option>
                 <option value="title">Theo tên (A-Z)</option>
+                <option value="updatedAt">Mới cập nhật</option>
               </select>
               <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
             </div>

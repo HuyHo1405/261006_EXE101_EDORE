@@ -45,10 +45,17 @@ function DashboardContent() {
     }
   }, [categoryIdParam]);
 
+  React.useEffect(() => {
+    if (courseIdParam) {
+      setSortBy("title");
+      setSortOrder("asc");
+    }
+  }, [courseIdParam]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
-  const [sortBy, setSortBy] = useState<"updatedAt" | "title">("updatedAt");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [sortBy, setSortBy] = useState<"updatedAt" | "title">("title");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   // Drill-down State (null = Course view; non-null = Script view inside course)
   const [selectedCourse, setSelectedCourse] = useState<CourseCardViewModel | null>(null);
@@ -142,6 +149,8 @@ function DashboardContent() {
   const handleSelectCourse = (course: CourseCardViewModel) => {
     setSelectedCourse(course);
     setSearchTerm("");
+    setSortBy("title");
+    setSortOrder("asc");
     router.push(`/dashboard?courseId=${course.id}`);
   };
 
@@ -188,7 +197,7 @@ function DashboardContent() {
     );
     result = [...result].sort((a, b) => {
       if (sortBy === "title") {
-        const cmp = (a.title || "").localeCompare(b.title || "");
+        const cmp = (a.title || "").localeCompare(b.title || "", "vi", { numeric: true, sensitivity: "base" });
         return sortOrder === "asc" ? cmp : -cmp;
       } else {
         const dateA = new Date(a.updatedAt || a.createdAt || 0).getTime();

@@ -261,7 +261,9 @@ export function DashboardAside({
                         {isExpanded && (
                           <div className="ml-4 pl-2.5 border-l border-slate-200 my-0.5 space-y-0.5 animate-in fade-in duration-150">
                             {course.scripts && course.scripts.length > 0 ? (
-                              course.scripts.map((script) => (
+                              [...course.scripts]
+                                .sort((a, b) => (a.title || "").localeCompare(b.title || "", "vi", { numeric: true, sensitivity: "base" }))
+                                .map((script) => (
                                 <button
                                   key={script.id}
                                   type="button"
