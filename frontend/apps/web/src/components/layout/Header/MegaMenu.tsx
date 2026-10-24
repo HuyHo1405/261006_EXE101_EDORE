@@ -12,9 +12,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ArrowRight, LogOut } from "@/components/ui/icons";
-import { SquareArrowRightEnter, SquareArrowDown } from "lucide-react";
+import { SquareArrowRightEnter, SquareArrowDown, SquarePlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface CourseMenuItem {
@@ -49,6 +50,7 @@ export interface MegaMenuProps {
   isLoadingSubjects?: boolean;
   isAuthenticated?: boolean;
   isAdmin?: boolean;
+  maxCourses?: number;
   onClose: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
@@ -79,6 +81,7 @@ export function MegaMenu({
   isLoadingSubjects,
   isAuthenticated = false,
   isAdmin = false,
+  maxCourses = 8,
   onClose,
   onMouseEnter,
   onMouseLeave,
@@ -159,7 +162,7 @@ export function MegaMenu({
             ) : courses.length === 0 ? (
               <EmptyState
                 message="Bạn chưa có khóa học nào"
-                cta={{ label: "Tạo khóa học ngay", href: "/dashboard?action=create-course" }}
+                cta={{ label: "Khóa học mới", href: "/dashboard?action=create-course" }}
                 onClose={onClose}
               />
             ) : (
@@ -180,6 +183,25 @@ export function MegaMenu({
                     </li>
                   );
                 })}
+
+                {/* Thẻ Khóa học mới khi danh sách chưa full — màu nhạt hơn, hover nổi bật */}
+                {courses.length < maxCourses && (
+                  <li>
+                    <Link
+                      href="/dashboard?action=create-course"
+                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-slate-400 rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-indigo-50/70 hover:text-[var(--color-primary-600)] hover:pl-4"
+                      onClick={onClose}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <SquarePlus className="w-4 h-4 text-slate-400 group-hover:text-[var(--color-primary-600)] group-hover:scale-110 transition-all shrink-0" />
+                        <span className="truncate font-medium text-slate-400 group-hover:text-[var(--color-primary-600)] transition-colors">
+                          Khóa học mới
+                        </span>
+                      </div>
+                      <NavHoverIcon href="/dashboard?action=create-course" pathname={pathname} />
+                    </Link>
+                  </li>
+                )}
               </ul>
             )}
           </div>
@@ -308,15 +330,26 @@ function EmptyState({
   onClose: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-2 py-2">
-      <p className="text-sm font-body text-[var(--color-neutral-500)]">{message}</p>
+    <div className="flex flex-col items-center justify-center text-center pt-6 pb-4 px-2 gap-3">
+      <div className="relative w-40 h-24 sm:w-48 sm:h-28 select-none pointer-events-none">
+        <Image
+          src="/illustrations/undraw_navigation_agc7.svg"
+          alt="Chưa có khóa học"
+          fill
+          className="object-contain"
+          priority
+        />
+      </div>
+      <p className="text-xs sm:text-sm font-body text-slate-500 font-medium max-w-[260px] mt-1">
+        {message}
+      </p>
       <Link
         href={cta.href}
         onClick={onClose}
-        className="inline-flex items-center gap-1 text-sm font-body font-semibold text-[var(--color-primary-500)] hover:underline"
+        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-white bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] rounded-lg shadow-xs transition-all duration-200 active:scale-95 mt-0.5"
       >
+        <SquarePlus className="w-3.5 h-3.5" />
         <span>{cta.label}</span>
-        <ArrowRight className="w-4 h-4" />
       </Link>
     </div>
   );
