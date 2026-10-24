@@ -66,8 +66,8 @@ export function TimelineOverviewView({
 
   return (
     <>
-      <main className="col-span-12 lg:col-span-8 border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-sm">
-        <div className="p-5 bg-white border-b border-[var(--color-neutral-200)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <main className="col-span-12 lg:col-span-8 border border-slate-200/90 rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-xs">
+        <div className="p-5 bg-white border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
             <span className="font-mono text-[10px] font-bold text-[var(--color-primary-600)] uppercase tracking-wider">
               TỔNG QUAN KỊCH BẢN
@@ -158,8 +158,8 @@ export function TimelineOverviewView({
 
       {/* Overview Sidebar */}
       <aside className="col-span-12 lg:col-span-4 space-y-4 sticky top-[108px] self-start">
-        <div className="border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] bg-white overflow-hidden shadow-sm">
-          <div className="p-4 bg-[var(--color-neutral-100)] border-b border-[var(--color-neutral-200)] space-y-1">
+        <div className="border border-slate-200/90 rounded-[var(--radius-xl)] bg-white overflow-hidden shadow-xs">
+          <div className="p-4 bg-slate-50 border-b border-slate-200/80 space-y-1">
             {lessonMeta?.chapter ? (
               <span
                 title={lessonMeta.chapter}

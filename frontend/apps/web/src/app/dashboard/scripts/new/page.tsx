@@ -225,7 +225,7 @@ function NewScriptContent() {
           />
 
           {/* Main Content Area */}
-          <main className="flex-1 min-w-0 w-full bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-6 flex flex-col justify-between self-stretch min-h-[580px]">
+          <main className="dashboard-mesh-card flex-1 min-w-0 w-full border border-slate-200/90 shadow-2xl rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-6 flex flex-col justify-between self-stretch min-h-[580px]">
             <div key={stage} className={`flex-1 flex flex-col h-full ${isExiting ? 'stage-exit' : 'stage-enter'}`}>
               {stage === 'input' && (
                 <div className="flex flex-col h-full space-y-3.5">
@@ -279,7 +279,7 @@ function NewScriptContent() {
                   </div>
 
                   {/* 3. MAIN CONTAINER (GRADE TABS & 2-COLUMN CURRICULUM VIEW) */}
-                  <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-4 sm:p-5 rounded-2xl md:rounded-3xl shadow-sm flex flex-col flex-1 justify-between space-y-4 min-w-0 w-full">
+                  <div className="bg-slate-100/70 backdrop-blur-sm border border-slate-200/80 p-4 sm:p-5 rounded-2xl md:rounded-3xl shadow-xs flex flex-col flex-1 justify-between space-y-4 min-w-0 w-full">
                     <div className="flex-1 min-w-0 w-full">
                       <LessonGrid
                         lessons={allLessons}

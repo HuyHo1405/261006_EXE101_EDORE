@@ -262,7 +262,7 @@ export default function TimelineEditor({
       {/* ─── Main Content Grid ─── */}
       <div className="grid grid-cols-12 gap-6 flex-1 items-start relative min-h-[500px]">
         {isNavigating && activeIdx === -1 ? (
-          <div className="col-span-12 border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-sm p-6 sm:p-8 space-y-8 min-h-[600px]">
+          <div className="col-span-12 border border-slate-200/90 rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-xs p-6 sm:p-8 space-y-8 min-h-[600px]">
             <div className="h-10 w-1/3 bg-slate-200 rounded-lg animate-pulse" />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div className="h-32 bg-slate-100 rounded-xl animate-pulse" />
@@ -278,7 +278,7 @@ export default function TimelineEditor({
           </div>
         ) : isNavigating && activeIdx !== -1 ? (
           <>
-            <main className={`col-span-12 ${isSidebarOpen ? 'lg:col-span-8' : ''} border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-sm p-6 space-y-5 min-h-[600px] transition-all`}>
+            <main className={`col-span-12 ${isSidebarOpen ? 'lg:col-span-8' : ''} border border-slate-200/90 rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-xs p-6 space-y-5 min-h-[600px] transition-all`}>
               <div className="flex gap-2">
                 <div className="h-6 w-32 bg-slate-200 rounded-full animate-pulse" />
                 <div className="h-6 w-16 bg-slate-200 rounded-full animate-pulse" />
@@ -326,7 +326,7 @@ export default function TimelineEditor({
           />
         ) : (
           <>
-            <main className={`col-span-12 ${isSidebarOpen ? 'lg:col-span-8' : ''} border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-sm p-6 space-y-5 transition-all`}>
+            <main className={`col-span-12 ${isSidebarOpen ? 'lg:col-span-8' : ''} border border-slate-200/90 rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-xs p-6 space-y-5 transition-all`}>
               {/* Top Chips Bar */}
               <div className="flex flex-wrap gap-2 items-center justify-between">
                 <div className="flex items-center gap-2">

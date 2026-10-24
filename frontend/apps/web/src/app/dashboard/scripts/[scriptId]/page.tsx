@@ -195,7 +195,7 @@ function ScriptEditContent() {
             onClose={() => setIsMenuOpen(false)}
           />
           {/* Main Content Area: Timeline Editor */}
-          <main className="flex-1 min-w-0 w-full bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 flex flex-col self-stretch min-h-[580px]">
+          <main className="dashboard-mesh-card flex-1 min-w-0 w-full border border-slate-200/90 shadow-2xl rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 flex flex-col self-stretch min-h-[580px]">
             {isLoaded ? (
               <TimelineEditor
                 steps={timelineSteps}
