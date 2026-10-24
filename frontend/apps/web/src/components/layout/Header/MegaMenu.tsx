@@ -141,7 +141,7 @@ export function MegaMenu({
       {/* Floating Panel Container — Slide Down khi Hover & Slide Up khi Unhover */}
       <div
         className={cn(
-          "absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 max-w-[1400px] w-[calc(100%-48px)] z-25 bg-white/98 backdrop-blur-xl border border-[var(--color-neutral-200)] rounded-2xl shadow-2xl overflow-hidden origin-top transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[transform,opacity]",
+          "absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 max-w-[1400px] w-[calc(100%-48px)] z-25 dashboard-mesh-card backdrop-blur-xl border border-slate-200/90 rounded-2xl shadow-2xl overflow-hidden origin-top transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[transform,opacity]",
           isAnimatingIn
             ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
             : "opacity-0 -translate-y-6 scale-95 pointer-events-none"
@@ -153,8 +153,8 @@ export function MegaMenu({
       >
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-6 flex flex-col md:flex-row gap-6 md:gap-0">
           {/* ── Cột 1: Khóa học của tôi (Gắn trực tiếp vào các course hiện có) ─ */}
-          <div className="flex-[1.4] min-w-0 px-0 md:px-6 first:pl-0 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] pb-4 md:pb-0">
-            <p className="font-body text-xs font-bold uppercase tracking-wider text-[var(--color-neutral-500)] mb-3">
+          <div className="flex-[1.4] min-w-0 px-0 md:px-6 first:pl-0 border-b md:border-b-0 md:border-r border-slate-200/80 pb-4 md:pb-0">
+            <p className="font-body text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
               Khóa học của tôi
             </p>
             {isLoading ? (
@@ -173,7 +173,7 @@ export function MegaMenu({
                     <li key={c.id}>
                       <Link
                         href={c.href}
-                        className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-3.5"
+                        className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-slate-700 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 hover:text-[var(--color-primary-600)] hover:pl-3.5"
                         onClick={onClose}
                         title={label}
                       >
@@ -189,7 +189,7 @@ export function MegaMenu({
                   <li>
                     <Link
                       href="/dashboard?action=create-course"
-                      className="group flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-body text-slate-400 rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-indigo-50/70 hover:text-[var(--color-primary-600)] hover:pl-4"
+                      className="group flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-body text-slate-400 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 hover:text-[var(--color-primary-600)] hover:pl-4"
                       onClick={onClose}
                     >
                       <SquarePlus className="w-4 h-4 text-slate-400 group-hover:text-[var(--color-primary-600)] group-hover:scale-110 transition-all shrink-0" />
@@ -204,8 +204,8 @@ export function MegaMenu({
           </div>
 
           {/* ── Cột 2: Công cụ giảng dạy (1 cột) ───────────────────────── */}
-          <div className="flex-1 min-w-0 px-0 md:px-6 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] pb-4 md:pb-0">
-            <p className="font-body text-xs font-bold uppercase tracking-wider text-[var(--color-neutral-500)] mb-3">
+          <div className="flex-1 min-w-0 px-0 md:px-6 border-b md:border-b-0 md:border-r border-slate-200/80 pb-4 md:pb-0">
+            <p className="font-body text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
               Công cụ giảng dạy
             </p>
             <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
@@ -216,7 +216,7 @@ export function MegaMenu({
                   <li key={t.id}>
                     <Link
                       href={t.href}
-                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-3.5"
+                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-slate-700 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 hover:text-[var(--color-primary-600)] hover:pl-3.5"
                       onClick={onClose}
                     >
                       <span className="truncate">{label}</span>
@@ -234,7 +234,7 @@ export function MegaMenu({
 
           {/* ── Cột 3: Tài khoản ───────────────────────────── */}
           <div className="flex-1 min-w-0 px-0 md:px-6 last:pr-0">
-            <p className="font-body text-xs font-bold uppercase tracking-wider text-[var(--color-neutral-500)] mb-3">
+            <p className="font-body text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
               Tài khoản
             </p>
             <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
@@ -243,7 +243,7 @@ export function MegaMenu({
                     <li key={link.id}>
                       <Link
                         href={link.href}
-                        className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-3.5"
+                        className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-slate-700 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 hover:text-[var(--color-primary-600)] hover:pl-3.5"
                         onClick={onClose}
                       >
                         <span className="truncate">{link.label}</span>
@@ -255,7 +255,7 @@ export function MegaMenu({
                   <li>
                     <Link
                       href="/login"
-                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-header font-bold uppercase tracking-[-0.01em] text-[var(--color-primary-500)] rounded-[var(--radius-sm)] hover:bg-[var(--color-primary-50)] hover:pl-3.5 transition-all duration-200"
+                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-header font-bold uppercase tracking-[-0.01em] text-[var(--color-primary-500)] rounded-xl hover:bg-slate-200/60 hover:pl-3.5 transition-all duration-200"
                       onClick={onClose}
                     >
                       <span>Đăng nhập</span>
@@ -271,7 +271,7 @@ export function MegaMenu({
                       onClose();
                       onLogout?.();
                     }}
-                    className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-body text-red-500 rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-red-50 hover:text-red-600 hover:pl-4 cursor-pointer"
+                    className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-body text-red-500 rounded-xl transition-all duration-200 ease-out hover:bg-rose-100/60 hover:text-red-600 hover:pl-4 cursor-pointer"
                   >
                     <LogOut className="w-4 h-4" />
                     Đăng xuất
