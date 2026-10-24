@@ -8,6 +8,7 @@ import com.edore.backend.features.classConfig.model.StudentDeviceOption;
 import com.edore.backend.features.classroom.entity.ClassConfig;
 import com.edore.backend.features.course.entity.Course;
 import com.edore.backend.features.script.entity.NodeType;
+import com.edore.backend.features.script.model.NodeTypeEnum;
 import com.edore.backend.features.vector.dto.GroundingLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -48,7 +49,7 @@ public class AiPromptBuilder {
                   "nodes": [
                     {
                       "node_type": "string — Bắt buộc phải là một trong: %s",
-                      "title": "string — TIÊU ĐỀ SIÊU NGẮN (chỉ từ 1 đến 3 từ, tối đa ≤ 20 ký tự, ví dụ: 'Khởi động', 'Tìm hiểu Phục hưng', 'Luyện tập', 'Vận dụng')",
+                      "title": "string — TIÊU ĐỀ SIÊU NGẮN (chỉ từ 1 đến 3 từ, tối đa ≤ 20 ký tự, ví dụ: 'Khởi động', 'Tìm hiểu Phục hưng', 'Khám phá')",
                       "node_intent": "string — Mục tiêu sư phạm của node",
                       "mapped_knowledge": ["string"],
                       "node_content": ["string — Nội dung kiến thức tổng quan của node, dạng Markdown, giữ nguyên 100%% số liệu từ file input"],
@@ -69,7 +70,7 @@ public class AiPromptBuilder {
             case NONE -> "Tài liệu đầu vào không thuộc ngân hàng chuẩn có sẵn. Được phép sáng tạo cấu trúc bài giảng dựa trên nội dung được cung cấp.";
         };
 
-        return """
+        String prompt = """
                 Bạn là AI Sư phạm chuyên nghiệp, thiết kế kịch bản giảng dạy bám sát thực tế lớp học.
                 Nhiệm vụ: Tạo TOÀN BỘ kịch bản giảng dạy cho %d node theo thứ tự: %s.
 
@@ -86,34 +87,27 @@ public class AiPromptBuilder {
                 NGUYÊN TẮC PHỤ THUỘC GIỮA CÁC FIELD (DEPENDENCY CONSISTENCY):
                 Nhiều field trong schema không độc lập — field này ĐẶT RA yêu cầu, field kia BẮT BUỘC phải trả lời đúng cấu trúc của yêu cầu đó. Trước khi sinh nội dung, LUÔN xác định rõ field nào là "câu hỏi/khung" và field nào là "câu trả lời", rồi đối chiếu để đảm bảo khớp nhau. TUYỆT ĐỐI KHÔNG viết 2 field này như thể chúng độc lập với nhau.
 
-                1. title: BẮT BUỘC SIÊU NGẮN CHỈ TỪ 1 ĐẾN 3 TỪ (≤ 20 ký tự). Dùng làm nhãn Stepper Navigation trên UI.
+                1. title: BẮT BUỘC SIÊU NGẮN CHỈ TỪ 1 ĐẾN 3 TỪ (≤ 20 ký tự). Dùng làm nhãn Stepper Navigation trên UI (VD: 'Khởi động', 'Khám phá').
                 2. applied_activity: BẮT BUỘC giữ nguyên 100%% tên phương pháp gốc từ gợi ý. Tuy nhiên, RIÊNG HINH_THANH_KIEN_THUC BẮT BUỘC trả về null cho cả `applied_activity` và `applied_activity_code` vì nút này dạy học linh hoạt không gò bó.
                 3. interaction_flow: Khi chọn phương pháp từ gợi ý DB (is_custom_activity = false), BẮT BUỘC bám theo khung các bước 'step_template' của phương pháp đó.
-                4. materials_needed: BẮT BUỘC bao gồm đồ dùng mặc định ('default_materials') của phương pháp, NHƯNG phải lọc bỏ các thiết bị hạ tầng cơ bản (như máy chiếu, bảng phấn, màn hình TV).
+                4. materials_needed: CHỈ liệt kê học liệu đặc thù cần chuẩn bị: giữ các món đặc thù trong 'default_materials' của phương pháp (nếu có) và bỏ mọi thiết bị hạ tầng/cơ bản (máy chiếu, bảng phấn, TV, wifi, thiết bị cá nhân của học sinh). Mỗi phần tử là MỘT món, viết ngắn gọn, không chứa dấu phẩy ngăn cách nhiều món. Nếu không có học liệu đặc thù thì trả mảng rỗng.
                 5. is_custom_activity: Trả về false khi chọn phương pháp từ gợi ý DB, trả về true nếu tự thiết kế phương pháp hoàn toàn mới.
                 6. node_type trong mỗi object PHẢI KHỚP CHÍNH XÁC theo template — không tự sửa hay dịch tên node.
                 7. Chỉ trả về một JSON object duy nhất, trong đó CÓ ĐÚNG MỘT KHÓA `nodes`. Mảng `nodes` BẮT BUỘC sinh đủ số lượng nodes như yêu cầu. KHÔNG TRẢ VỀ `lesson_meta`.
                 8. node_payload PHẢI đúng 100%% cấu trúc field đã quy định cho enumType của node đó — không thêm/bớt field, không dùng shape của node khác.
-                9. Với HINH_THANH_KIEN_THUC: BẮT BUỘC chia tài liệu gốc thành nhiều knowledge_units theo từng đề mục/ý chính (I, II, III... hoặc heading trong file input), KHÔNG gộp toàn bộ tài liệu vào 1 unit trừ khi tài liệu thực sự chỉ có 1 ý.
-                10. Với LUYEN_TAP: exercises phải là đề bài cụ thể trích/dựa theo phần "Luyện tập" của tài liệu gốc nếu có, answer phải là đáp án xác định, không mô tả hoạt động.
-                11. Với VAN_DUNG: scenario phải là tình huống MỚI hoặc bài tập mở rộng, không lặp lại nguyên văn ví dụ đã dạy ở knowledge_units.
-                12. MẢNG JSON BẮT BUỘC PHẢI SINH 'Hình thành kiến thức' TRƯỚC 'Khởi động' (dù cấu trúc học là Khởi động trước).
-                13. KHOI_DONG: BẮT BUỘC map `activity_type` dựa trên `pedagogical_approach` của HINH_THANH_KIEN_THUC theo bảng: INDUCTIVE -> QUESTION_BASED, DEDUCTIVE -> VISUAL_TEASER, PROBLEM_BASED -> PROBLEM_SITUATION. ĐỒNG THỜI, BẮT BUỘC phải thiết kế câu dẫn dắt (hook) tạo bối cảnh hấp dẫn ngay từ đầu, KHÔNG nhảy bổ vào yêu cầu học sinh nhận diện/trả lời khi chưa được cung cấp ngữ cảnh. Hoạt động Khởi động là để khơi gợi tò mò, KHÔNG được biến thành bài kiểm tra kiến thức mới mà học sinh chưa học.
-                14. HINH_THANH_KIEN_THUC: BẮT BUỘC các phần tử trong mảng knowledge_units không được trùng lặp visual_example.item, visual_example.title, hay core_content giữa các unit. Trước khi sinh unit thứ N, liệt kê lại (trong đầu) các hiện vật/thao tác đã dùng ở unit 1..N-1 và BẮT BUỘC chọn hiện vật và thao tác hoàn toàn khác. NẾU 2 UNIT CÓ THAO TÁC HOẶC HIỆN VẬT GIỐNG NHAU, ĐÓ LÀ LỖI NGHIÊM TRỌNG!
-                15. ĐẢM BẢO JSON HỢP LỆ: TUYỆT ĐỐI KHÔNG xuống dòng thực sự (bấm Enter) bên trong nội dung của các chuỗi (string) trong JSON. Phải sử dụng ký tự escape `\\n` nếu muốn xuống dòng (ví dụ trong `core_content`). Nếu vi phạm, chuỗi JSON sẽ bị lỗi cú pháp!
-                16. HINH_THANH_KIEN_THUC: BẮT BUỘC chọn `pedagogical_approach` theo cây quyết định sau:
-                    - Nếu nội dung là khái niệm/định nghĩa trừu tượng, sự kiện lịch sử tuần tự cần giải thích trước -> DEDUCTIVE
-                    - Nếu nội dung có nhiều hiện tượng/ví dụ cụ thể để HS tự rút ra quy luật -> INDUCTIVE
-                    - Nếu nội dung chứa mâu thuẫn/tình huống/vấn đề cần giải quyết -> PROBLEM_BASED
-                17. HINH_THANH_KIEN_THUC: Nếu danh sách ảnh có sẵn, BẮT BUỘC mỗi knowledge_unit phải chọn ít nhất 1 ảnh phù hợp nhất (lấy ID đưa vào `used_image_ids`), trừ khi tuyệt đối không có ảnh nào liên quan.
-                18. HINH_THANH_KIEN_THUC: `teacher_explanation` NAY LÀ MỘT MẢNG CÁC ĐỐI TƯỢNG {label, content}. BẮT BUỘC phải chia nhỏ lời giải thích của giáo viên theo các khía cạnh logic. ĐỐI VỚI MÔN LỊCH SỬ, BẮT BUỘC sử dụng các nhãn (label) chuẩn mực như: "Nguyên nhân", "Diễn biến", "Kết quả/Ý nghĩa", "Tính chất/Đặc điểm" (nếu bài học có chứa nội dung tương ứng). Các môn khác có thể dùng "Khái niệm", "Đặc điểm", "Phân loại", "Ví dụ thực tế" để bám sát nội dung. KHÔNG viết thành một đoạn văn dài dòng.
-                19. KHOI_DONG: `quick_connection` PHẢI là câu trả lời/phản xạ SUY RA TRỰC TIẾP từ chính nội dung đã mô tả ở `visual_action` — không được là một thông tin mới không liên quan đến thứ vừa xem.
-                20. KHOI_DONG: `bridge_question` BẮT BUỘC phải dẫn thẳng đến đúng chủ đề cốt lõi sẽ được dạy trong `node_content` của HINH_THANH_KIEN_THUC tương ứng — không đặt câu hỏi chung chung.
-                21. LUYEN_TAP: Trước khi gán "level", BẮT BUỘC đối chiếu lại độ khó thực tế của "question". `nhan_biet`: chỉ nêu lại sự kiện có sẵn; `thong_hieu`: giải thích vì sao; `van_dung_thap`: áp dụng ngữ cảnh; `van_dung_cao`: tổng hợp/đánh giá. Đồng thời `exercises` PHẢI bao phủ đủ các ý trong `mapped_knowledge`.
-                22. VAN_DUNG: Nếu `task_requirement` chứa nhiều phần/câu hỏi con, `rubric` BẮT BUỘC có số tiêu chí tương ứng map 1-1. `scaffolding_hint` CHỈ được trỏ đến nội dung THỰC SỰ có trong `knowledge_units` đã sinh ở HINH_THANH_KIEN_THUC, TUYỆT ĐỐI không hallucination.
-                23. ĐỐI VỚI MÔN LỊCH SỬ / ĐỊA LÍ: BẮT BUỘC chèn thêm CÂU HỎI PHẢN BIỆN (Critical thinking) vào phần 'node_content' hoặc 'exercises' (Ví dụ: "Em có đồng ý với nhận định X không? Tại sao?", "Hãy so sánh...", "Liên hệ thực tế...").
-                24. Với node VAN_DUNG: Yêu cầu học sinh liên hệ kiến thức Lịch sử/Địa lí vừa học vào thực tiễn cuộc sống hiện nay.
+                9. Với HINH_THANH_KIEN_THUC: BẮT BUỘC chia tài liệu gốc thành nhiều knowledge_units theo từng đề mục/ý chính (I, II, III... hoặc heading trong tài liệu), KHÔNG gộp toàn bộ tài liệu vào 1 unit trừ khi bài học quá ngắn.
+                10. MẢNG JSON BẮT BUỘC PHẢI SINH 'Hình thành kiến thức' TRƯỚC 'Khởi động' (dù cấu trúc học là Khởi động trước).
+                11. KHOI_DONG: BẮT BUỘC map `activity_type` dựa trên `pedagogical_approach` của HINH_THANH_KIEN_THUC theo bảng: INDUCTIVE -> QUESTION_BASED, DEDUCTIVE -> VISUAL_TEASER, PROBLEM_BASED -> PROBLEM_SITUATION. Đồng thời thiết kế câu dẫn dắt (hook) tạo bối cảnh hấp dẫn, KHÔNG kiểm tra bài mới khi học sinh chưa học.
+                12. HINH_THANH_KIEN_THUC: BẮT BUỘC các phần tử trong mảng knowledge_units không được trùng lặp visual_example.item, visual_example.title, hay core_content giữa các unit.
+                13. ĐẢM BẢO JSON HỢP LỆ: TUYỆT ĐỐI KHÔNG bấm Enter xuống dòng thực sự trong chuỗi JSON, dùng escape `\\n`.
+                14. HINH_THANH_KIEN_THUC: BẮT BUỘC chọn `pedagogical_approach`: DEDUCTIVE (lý thuyết/khái niệm tuần tự), INDUCTIVE (nhiều ví dụ rút ra quy luật), PROBLEM_BASED (tình huống/mâu thuẫn cần giải quyết).
+                15. HINH_THANH_KIEN_THUC: Nếu danh sách ảnh có sẵn, mỗi knowledge_unit chọn ít nhất 1 ảnh phù hợp nhất đưa vào `used_image_ids`.
+                16. HINH_THANH_KIEN_THUC: `teacher_explanation` là mảng các đối tượng {label, content}. Với Lịch sử dùng các nhãn chuẩn: "Nguyên nhân", "Diễn biến", "Kết quả/Ý nghĩa", "Tính chất/Đặc điểm".
+                17. KHOI_DONG: `quick_connection` PHẢI là câu trả lời/phản xạ suy ra trực tiếp từ `visual_action`.
+                18. KHOI_DONG: `bridge_question` BẮT BUỘC dẫn thẳng vào chủ đề cốt lõi của bài học.
+                19. ĐỐI VỚI MÔN LỊCH SỬ / ĐỊA LÍ: BẮT BUỘC chèn thêm câu hỏi phản biện (Critical thinking) vào phần `node_content`.
                 """.formatted(nodes.size(), expectedStructure, groundingGuidance, schema, perNodeSchemas);
+        return prompt;
     }
 
     public String buildUserContent(List<NodeType> nodes, Map<String, String> contextPerNode,
@@ -150,7 +144,6 @@ public class AiPromptBuilder {
             sb.append(chapterContext).append("\n\n");
         }
 
-
         // Classroom context block
         sb.append("THÔNG TIN LỚP HỌC:\n");
         if (cfg.getDuration() != null) sb.append("- Thời lượng: ").append(cfg.getDuration().getDescription()).append("\n");
@@ -166,19 +159,24 @@ public class AiPromptBuilder {
         if (learningOutcome != null && !learningOutcome.isBlank())
             sb.append("- Mục tiêu bài học: ").append(learningOutcome).append("\n");
 
-        // Key facts anchor
-        if (keyFacts != null && !keyFacts.isBlank()) {
-            sb.append("\n").append(keyFacts).append("\n");
-        }
-
-        // Per-node context + activity hints
-        sb.append("\nCHI TIẾT CONTEXT & HOẠT ĐỘNG THEO TỪNG NODE:\n");
+        // Single shared lesson content (eliminates duplicate raw text per node)
+        String mainLessonContent = "";
         for (NodeType node : nodes) {
             String ctx = contextPerNode.getOrDefault(node.getCode(), "");
-            if (ctx.length() > MAX_CONTEXT_CHARS_PER_NODE) {
-                ctx = ctx.substring(0, MAX_CONTEXT_CHARS_PER_NODE);
+            if (ctx.length() > mainLessonContent.length()) {
+                mainLessonContent = ctx;
             }
+        }
+        if (mainLessonContent.length() > MAX_CONTEXT_CHARS_PER_NODE) {
+            mainLessonContent = mainLessonContent.substring(0, MAX_CONTEXT_CHARS_PER_NODE);
+        }
 
+        sb.append("\nNỘI DUNG TÀI LIỆU BÀI HỌC:\n");
+        sb.append(mainLessonContent).append("\n\n");
+
+        // Per-node intent & activity recommendations
+        sb.append("CHI TIẾT YÊU CẦU THEO TỪNG NODE:\n");
+        for (NodeType node : nodes) {
             List<Activity> topEntities = activityScoringService
                     .getTopActivityEntities(node, cfg, node.getDescription(), 5);
 
@@ -197,10 +195,11 @@ public class AiPromptBuilder {
                 }
             }
 
-            sb.append("\n=== CONTEXT FOR NODE '").append(node.getName()).append("' ===\n");
-            sb.append("MỤC TIÊU SƯ PHẠM: ").append(node.getDescription()).append("\n");
-            sb.append("DANH SÁCH KHUNG PHƯƠNG PHÁP DẠY HỌC GỢI Ý (RAG TEMPLATES):\n").append(hintsBuilder).append("\n");
-            sb.append("NỘI DUNG TÀI LIỆU GỐC:\n").append(ctx).append("\n");
+            sb.append("\n=== NODE '").append(node.getName()).append("' ===\n");
+            sb.append("- MỤC TIÊU SƯ PHẠM: ").append(node.getDescription()).append("\n");
+            if (!hintsBuilder.isEmpty()) {
+                sb.append("- DANH SÁCH KHUNG PHƯƠNG PHÁP GỢI Ý (RAG TEMPLATES):\n").append(hintsBuilder).append("\n");
+            }
         }
 
         sb.append("\nChỉ trả về một JSON object có khóa `nodes`. Mảng `nodes` chứa chính xác ")
