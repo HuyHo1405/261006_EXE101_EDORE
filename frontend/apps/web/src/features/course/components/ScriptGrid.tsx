@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { FileCode, Plus } from "lucide-react";
+import Image from "next/image";
+import { Plus } from "lucide-react";
 import type { ScriptResponseDTO } from "@edore/types";
 import { createScriptCardViewModel } from "../viewmodels/courseViewModel";
 import { ScriptCard } from "./ScriptCard";
@@ -49,20 +50,26 @@ export function ScriptGrid({
 
   if (scripts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--color-neutral-300)] bg-white/70 py-12 text-center min-h-[440px]">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-200 shadow-xs">
-          <FileCode className="h-8 w-8" />
+      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--color-neutral-300)] bg-white/70 py-10 px-4 text-center min-h-[440px]">
+        <div className="relative w-64 h-36 sm:w-72 sm:h-40 md:w-80 md:h-44 select-none pointer-events-none mb-3">
+          <Image
+            src="/illustrations/undraw_creative-drawing_8mni.svg"
+            alt="Chưa có kịch bản nào"
+            fill
+            className="object-contain"
+            priority
+          />
         </div>
-        <h3 className="mt-4 font-header font-bold text-2xl uppercase tracking-tight text-slate-900">
+        <h3 className="font-header font-bold text-2xl uppercase tracking-tight text-slate-900">
           Chưa có kịch bản nào
         </h3>
-        <p className="mt-1 max-w-sm text-xs font-body text-slate-600 leading-relaxed">
+        <p className="mt-1.5 max-w-sm text-xs font-body text-slate-600 leading-relaxed">
           Khóa học này chưa có kịch bản bài giảng. Hãy tạo kịch bản mới để bắt đầu soạn bài bằng AI.
         </p>
         <Button
           onClick={onCreateScript}
           disabled={isCreatingScript}
-          className="mt-6 gap-2 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-xs font-bold text-white shadow-md rounded-xl px-5 py-2.5 cursor-pointer"
+          className="mt-6 gap-2 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-xs font-bold text-white shadow-md rounded-xl px-5 py-2.5 cursor-pointer active:scale-95 transition-all"
         >
           <Plus className="h-4 w-4" />
           <span>Tạo kịch bản mới</span>
