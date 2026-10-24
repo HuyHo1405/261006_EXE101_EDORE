@@ -14,7 +14,7 @@ public record LlmChatResponse(
         Usage usage
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Choice(Message message) {}
+    public record Choice(Message message, @JsonProperty("finish_reason") String finishReason) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Message(String role, String content) {}
@@ -32,5 +32,11 @@ public record LlmChatResponse(
         Choice c = choices.get(0);
         if (c == null || c.message() == null) return null;
         return c.message().content();
+    }
+
+    /** Convenience: finish_reason of choices[0] ("stop", "length", ...), or null. */
+    public String firstFinishReason() {
+        if (choices == null || choices.isEmpty() || choices.get(0) == null) return null;
+        return choices.get(0).finishReason();
     }
 }

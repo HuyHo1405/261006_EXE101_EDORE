@@ -18,14 +18,9 @@ export function parseTeachingTools(
       return { name: t.name || '', purpose: t.purpose }
     }
     const str = String(t || '').trim()
-    if (str.includes(':')) {
-      const [n, ...rest] = str.split(':')
-      return { name: n.trim(), purpose: rest.join(':').trim() }
-    }
-    if (str.includes(' - ')) {
-      const [n, ...rest] = str.split(' - ')
-      return { name: n.trim(), purpose: rest.join(' - ').trim() }
-    }
+    // Chỉ tách ở ": " hoặc " – " / " — " đầu tiên (không tách " - " thường để khỏi cắt cụt tên)
+    const m = str.match(/^(.+?)\s*(?::\s+|\s[–—]\s)\s*(.+)$/)
+    if (m && m[2].trim()) return { name: m[1].trim(), purpose: m[2].trim() }
     return { name: str, purpose: undefined }
   })
 }

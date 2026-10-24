@@ -8,6 +8,7 @@ import TimelineEditor from '@/features/playground/components/TimelineEditor'
 import { useMyCourses, useScriptDetail, useCourseDetail, useScriptNodes, useUpdateScriptMutation } from '@/features/course/queries/courseQueries'
 import type { TimelineStep } from '@/lib/services/pipelineService'
 import { normalizeLessonMeta, mergeLessonMetaWithNodes } from '@/features/playground/types/lessonMeta'
+import { toMaterialList } from '@/features/playground/utils/stepText'
 import { MOCK_STEPS_LICHSU, MOCK_LESSON_META_LICHSU } from '@/features/playground/data/mockLessonLichSu'
 import { toast } from '@/components/ui/toast'
 import type { ScriptNodeResponseDTO } from '@edore/types'
@@ -38,7 +39,14 @@ function mapNodeDtoToTimelineStep(node: ScriptNodeResponseDTO, index: number): T
   const durationLabel = estMin ? `${estMin}'` : "10'"
 
   // 4. Pedagog Note / Materials Needed
-  const pedagogNote = settings.materials_needed ?? node.activityMaterials ?? settings.instructor_note ?? settings.pedagog_note ?? ''
+  // Ưu tiên danh sách KHÔNG RỖNG: LLM trả [] không được che mất đồ dùng mặc định của hoạt động
+  const materialList =
+    [settings.materials_needed, node.activityMaterials]
+      .map(toMaterialList)
+      .find(l => l.length > 0) ?? []
+  const pedagogNote: string[] | string = materialList.length > 0
+    ? materialList
+    : String(settings.instructor_note ?? settings.pedagog_note ?? '')
 
   return {
     time: `Phần ${node.orderIndex != null ? node.orderIndex + 1 : index + 1}`,
@@ -50,7 +58,7 @@ function mapNodeDtoToTimelineStep(node: ScriptNodeResponseDTO, index: number): T
     activityStepRoles: node.activityStepRoles ?? (settings.activity_step_roles as string[] | undefined),
     nodeTypeCode: node.nodeTypeCode,
     originalContent,
-    pedagogNote: Array.isArray(pedagogNote) ? pedagogNote.join(', ') : String(pedagogNote),
+    pedagogNote,
     warningContext: (settings.warning_context as string) || '',
     appliedActivity: node.activityTitle || (settings.applied_activity as string) || node.appliedActivityCode || (node as any).appliedActivity || '',
     nodePayload: settings.node_payload ?? settings.nodePayload ?? null,
@@ -148,7 +156,7 @@ function ScriptEditContent() {
       base,
       timelineSteps.map(s => ({
         teachingMethod: s.teachingMethod || s.appliedActivity,
-        materials: Array.isArray(s.pedagogNote) ? s.pedagogNote : String(s.pedagogNote || '').split(/,|\n/),
+        materials: toMaterialList(s.pedagogNote),
         knowledge: (s as any).mappedKnowledge || [],
         methodDetail: {
           name: s.appliedActivity || s.teachingMethod || s.title || 'Hoạt động',

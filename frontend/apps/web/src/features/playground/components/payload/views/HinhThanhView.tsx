@@ -10,7 +10,7 @@ import {
   Image as ImageIcon, BookOpen, Gamepad2, Zap, Play,
 } from 'lucide-react'
 import { AutoResizeTextarea } from '../StepEnrichmentRender'
-import { classifyMaterial, splitStepText } from '../../../utils/stepText'
+import { classifyMaterial, splitStepText, toMaterialList } from '../../../utils/stepText'
 import type { MaterialKind, ParsedMaterial } from '../../../utils/stepText'
 import { normalizeNodeType } from '../../../utils/stepEnrichment'
 import { parseTeachingTools } from '../../LessonOverviewPanel'
@@ -71,12 +71,8 @@ export function HinhThanhView({
 
   // Lấy danh sách dụng cụ thiết bị trực quan
   const mappedTools = (() => {
-    if (pedagogNote) {
-      const arr = Array.isArray(pedagogNote) ? pedagogNote : String(pedagogNote).split(',').map(s => s.trim()).filter(Boolean)
-      if (arr.length > 0) {
-        return parseTeachingTools(arr)
-      }
-    }
+    const fromNote = toMaterialList(pedagogNote)
+    if (fromNote.length > 0) return parseTeachingTools(fromNote)
     if (Array.isArray(teachingTools) && teachingTools.length > 0) {
       return parseTeachingTools(teachingTools)
     }

@@ -115,7 +115,16 @@ public class LlmApiClient {
                     throw new ApiException(CommonResponseCode.EXTERNAL_SERVICE_ERROR);
                 }
 
-                log.info("[LlmApiClient] Response received, content length={} chars", content.length());
+                String finishReason = response.firstFinishReason();
+                LlmChatResponse.Usage usage = response.usage();
+                log.info("[LlmApiClient] Response received, content length={} chars, finish_reason={}, tokens(prompt/completion/total)={}/{}/{}",
+                        content.length(), finishReason,
+                        usage != null ? usage.promptTokens() : -1,
+                        usage != null ? usage.completionTokens() : -1,
+                        usage != null ? usage.totalTokens() : -1);
+                if ("length".equalsIgnoreCase(finishReason)) {
+                    log.warn("[LlmApiClient] Output TRUNCATED by max_tokens={} — JSON will likely be invalid", maxTokens);
+                }
                 return content;
 
             } catch (ApiException e) {

@@ -10,7 +10,7 @@ import {
   Image as ImageIcon, BookOpen, Gamepad2, Zap, Play,
 } from 'lucide-react'
 import { AutoResizeTextarea } from '../StepEnrichmentRender'
-import { classifyMaterial, splitStepText } from '../../../utils/stepText'
+import { classifyMaterial, splitStepText, toMaterialList } from '../../../utils/stepText'
 import type { MaterialKind, ParsedMaterial } from '../../../utils/stepText'
 import { normalizeNodeType } from '../../../utils/stepEnrichment'
 import { parseTeachingTools } from '../../LessonOverviewPanel'
@@ -61,29 +61,12 @@ export function KhoiDongView({
     onChange({ ...p, [field]: val })
   }
 
+  // Nguồn dựng cụ: pedagogNote (mảng/chuỗi của node) -> teachingTools cấp bài. Không dùng dữ liệu giả.
   const mappedTools = (() => {
-    if (pedagogNote) {
-      const arr = Array.isArray(pedagogNote) ? pedagogNote : String(pedagogNote).split(',').map(s => s.trim()).filter(Boolean)
-      if (arr.length > 0) {
-        return parseTeachingTools(arr)
-      }
-    }
-    if (Array.isArray(teachingTools) && teachingTools.length > 0) {
-      const parsed = parseTeachingTools(teachingTools)
-      const matched = parsed.filter(t => /slide|ảnh|đồ vật|phản xạ|trò chơi|chiếu/i.test(t.name + ' ' + (t.purpose || '')))
-      if (matched.length > 0) return matched
-      return [parsed[0]]
-    }
-    return [
-      {
-        name: 'Slide 4 cặp hình ảnh đồ vật đời sống Xưa - Nay',
-        purpose: 'Chiếu lướt 5 giây mỗi hình cho học sinh phản xạ',
-      },
-      {
-        name: 'Đồng hồ đếm ngược 60 giây',
-        purpose: 'Tạo nhịp điệu nhanh và không khí hào hứng đầu giờ',
-      },
-    ]
+    const fromNote = toMaterialList(pedagogNote)
+    if (fromNote.length > 0) return parseTeachingTools(fromNote)
+    if (Array.isArray(teachingTools) && teachingTools.length > 0) return parseTeachingTools(teachingTools)
+    return []
   })()
 
   return (
@@ -146,7 +129,7 @@ export function KhoiDongView({
                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-200/80 text-slate-800 border border-slate-300 shadow-2xs"
                             title={tool.purpose || tool.name}
                           >
-                            {tool.name}
+                            {tool.purpose ? `${tool.name}: ${tool.purpose}` : tool.name}
                           </span>
                         ))}
                       </div>

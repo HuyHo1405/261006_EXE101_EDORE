@@ -57,15 +57,26 @@ export interface ParsedMaterial {
   desc: string
 }
 
+/**
+ * Chuẩn hóa danh sách học liệu về string[].
+ * Mảng giữ nguyên từng phần tử (KHÔNG tách theo dấu phẩy vì một món có thể chứa dấu phẩy);
+ * chuỗi chỉ tách theo xuống dòng / dấu chấm phẩy.
+ */
+export function toMaterialList(raw: unknown): string[] {
+  if (Array.isArray(raw)) return raw.map(x => String(x ?? '').trim()).filter(Boolean)
+  if (typeof raw === 'string') return raw.split(/\r?\n|;/).map(s => s.trim()).filter(Boolean)
+  return []
+}
+
 export function parseMaterials(raw: string | string[] | undefined | null): ParsedMaterial[] {
-  const text = Array.isArray(raw) ? raw.join('\n') : raw || ''
-  return text
-    .split('\n')
-    .map(l => l.replace(/^([-*+]\s*|\d+\.\s*|Chuẩn bị:\s*)/i, '').trim())
+  const lines = Array.isArray(raw) ? raw : (raw || '').split('\n')
+  return lines
+    .map(l => String(l ?? '').replace(/^([-*+]\s*|\d+\.\s*|Chuẩn bị:\s*)/i, '').trim())
     .filter(Boolean)
     .map(line => {
-      const parts = line.split(/\s*(?::|\s[–—-]\s)\s*(.*)/)
-      if (parts.length >= 2 && parts[1]?.trim()) return { title: parts[0].trim(), desc: parts[1].trim() }
+      // Chỉ tách ở ": " hoặc " – " / " — " đầu tiên; KHÔNG tách ở " - " thường (vd. "Think - Pair - Share")
+      const m = line.match(/^(.+?)\s*(?::\s+|\s[–—]\s)\s*(.+)$/)
+      if (m && m[2].trim()) return { title: m[1].trim(), desc: m[2].trim() }
       return { title: line, desc: '' }
     })
 }
