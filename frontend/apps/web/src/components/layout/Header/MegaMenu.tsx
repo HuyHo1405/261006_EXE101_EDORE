@@ -184,21 +184,18 @@ export function MegaMenu({
                   );
                 })}
 
-                {/* Thẻ Khóa học mới khi danh sách chưa full — màu nhạt hơn, hover nổi bật */}
+                {/* Thẻ Tạo khóa học mới khi danh sách chưa full — màu nhạt hơn, hover nổi bật, không hiện icon đuôi */}
                 {courses.length < maxCourses && (
                   <li>
                     <Link
                       href="/dashboard?action=create-course"
-                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-slate-400 rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-indigo-50/70 hover:text-[var(--color-primary-600)] hover:pl-4"
+                      className="group flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-body text-slate-400 rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-indigo-50/70 hover:text-[var(--color-primary-600)] hover:pl-4"
                       onClick={onClose}
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <SquarePlus className="w-4 h-4 text-slate-400 group-hover:text-[var(--color-primary-600)] group-hover:scale-110 transition-all shrink-0" />
-                        <span className="truncate font-medium text-slate-400 group-hover:text-[var(--color-primary-600)] transition-colors">
-                          Khóa học mới
-                        </span>
-                      </div>
-                      <NavHoverIcon href="/dashboard?action=create-course" pathname={pathname} />
+                      <SquarePlus className="w-4 h-4 text-slate-400 group-hover:text-[var(--color-primary-600)] group-hover:scale-110 transition-all shrink-0" />
+                      <span className="truncate font-medium text-slate-400 group-hover:text-[var(--color-primary-600)] transition-colors">
+                        Khóa học mới
+                      </span>
                     </Link>
                   </li>
                 )}
@@ -214,6 +211,7 @@ export function MegaMenu({
             <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
               {tools.map((t) => {
                 const label = t.name || t.title || "";
+                const isCreateCourse = t.id === "create-course" || t.href.includes("action=create-course");
                 return (
                   <li key={t.id}>
                     <Link
@@ -222,7 +220,7 @@ export function MegaMenu({
                       onClick={onClose}
                     >
                       <span className="truncate">{label}</span>
-                      <NavHoverIcon href={t.href} pathname={pathname} />
+                      {!isCreateCourse && <NavHoverIcon href={t.href} pathname={pathname} />}
                     </Link>
                   </li>
                 );
@@ -330,7 +328,7 @@ function EmptyState({
   onClose: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center text-center pt-6 pb-4 px-2 gap-3">
+    <div className="flex flex-col items-center justify-center text-center pt-10 sm:pt-12 pb-6 px-2 gap-3">
       <div className="relative w-40 h-24 sm:w-48 sm:h-28 select-none pointer-events-none">
         <Image
           src="/illustrations/undraw_navigation_agc7.svg"
