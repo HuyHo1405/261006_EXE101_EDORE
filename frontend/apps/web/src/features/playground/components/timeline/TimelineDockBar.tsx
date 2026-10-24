@@ -68,7 +68,6 @@ export function TimelineDockBar({
                   animationDelay: `${uIdx * 70}ms`
                 }}
               >
-                <span className="opacity-60 mr-1 font-mono">{uIdx + 1}.</span>
                 {u.unit_title || `Đơn vị ${uIdx + 1}`}
               </button>
             )
