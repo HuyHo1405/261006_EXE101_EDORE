@@ -109,7 +109,7 @@ export function DashboardHeader({
   );
 }
 
-{/* ── 3. ACTION ROW BELOW HEADER (LEFT: LINK-STYLE BACK BUTTON, RIGHT: SPLIT BUTTON) ── */}
+{/* ── 3. ACTION ROW BELOW HEADER (LEFT: LINK-STYLE BACK BUTTON, RIGHT: SPLIT BUTTON) ── */ }
 export function DashboardCourseActions({
   currentCourse,
   onBackToCourses,
@@ -241,7 +241,7 @@ export function DashboardToolbar({
   }, [categories]);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-[var(--color-neutral-300)] rounded-2xl p-2.5 shadow-xs overflow-visible">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-b from-white/95 via-slate-50/90 to-slate-100/70 border border-slate-200/90 rounded-2xl p-2.5 shadow-2xs overflow-visible">
       {/* START (LEFT): CATEGORY BUILDER SELECTORS (CHỈ HIỂN THỊ KHI Ở OUTSIDE COURSE) */}
       {!currentCourse && (
         <div className="flex items-center gap-2 flex-wrap py-0.5 overflow-visible">
@@ -255,7 +255,7 @@ export function DashboardToolbar({
                   onClick={() => onSelectCategory(isSelected ? null : group.option.id)}
                   className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap h-8 shrink-0 ${isSelected
                     ? "bg-[var(--color-primary-500)] text-white shadow-xs"
-                    : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-100"
+                    : "bg-white text-slate-700 border border-slate-200/90 hover:bg-slate-50 hover:text-slate-900 shadow-2xs"
                     }`}
                 >
                   {group.option.name}
@@ -272,9 +272,9 @@ export function DashboardToolbar({
                     const val = e.target.value;
                     onSelectCategory(val ? Number(val) : null);
                   }}
-                  className={`h-8 px-3 pr-7 rounded-xl text-xs font-bold transition-all cursor-pointer bg-white border border-slate-200/80 appearance-none focus:outline-none focus:ring-1 focus:ring-[var(--color-primary-400)] ${isGroupActive
+                  className={`h-8 px-3 pr-7 rounded-xl text-xs font-bold transition-all cursor-pointer bg-white border border-slate-200/90 appearance-none focus:outline-none focus:ring-1 focus:ring-[var(--color-primary-400)] shadow-2xs ${isGroupActive
                     ? "border-[var(--color-primary-500)] text-[var(--color-primary-600)] bg-[var(--color-primary-50)] shadow-xs"
-                    : "text-slate-700 hover:bg-slate-100"
+                    : "text-slate-700 hover:bg-slate-50"
                     }`}
                 >
                   <option value="">{group.typeLabel}</option>
@@ -303,7 +303,7 @@ export function DashboardToolbar({
             }
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="h-8 border-slate-200 bg-white pl-8.5 pr-3 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary-400)] focus:ring-1 focus:ring-[var(--color-primary-400)] rounded-xl w-full"
+            className="h-8 border-slate-200/90 bg-white/95 focus:bg-white pl-8.5 pr-3 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary-400)] focus:ring-1 focus:ring-[var(--color-primary-400)] rounded-xl w-full shadow-2xs"
           />
         </div>
 
@@ -314,7 +314,7 @@ export function DashboardToolbar({
               <select
                 value={sortBy}
                 onChange={(e) => onSortByChange?.(e.target.value as "updatedAt" | "title")}
-                className="h-8 px-3 pr-7 rounded-xl text-xs font-bold transition-all cursor-pointer bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-100 appearance-none focus:outline-none focus:ring-1 focus:ring-[var(--color-primary-400)]"
+                className="h-8 px-3 pr-7 rounded-xl text-xs font-bold transition-all cursor-pointer bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 appearance-none focus:outline-none focus:ring-1 focus:ring-[var(--color-primary-400)] shadow-2xs"
                 title="Sắp xếp theo"
               >
                 <option value="title">Theo tên (A-Z)</option>
@@ -326,7 +326,7 @@ export function DashboardToolbar({
             <button
               type="button"
               onClick={() => onSortOrderChange?.(sortOrder === "asc" ? "desc" : "asc")}
-              className="h-8 w-8 flex items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer shrink-0"
+              className="h-8 w-8 flex items-center justify-center rounded-xl border border-slate-200/90 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors cursor-pointer shrink-0 shadow-2xs"
               title={sortOrder === "asc" ? "Đang xếp: Tăng dần (ASC)" : "Đang xếp: Giảm dần (DESC)"}
             >
               <ArrowUpDown className={`h-3.5 w-3.5 transition-transform duration-200 ${sortOrder === "asc" ? "rotate-180 text-[var(--color-primary-600)]" : ""}`} />

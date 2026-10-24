@@ -353,7 +353,7 @@ export function DashboardAside({
   }
 
   return (
-    <aside className="relative w-16 shrink-0 bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl px-2.5 py-3 sm:py-4 md:py-6 flex flex-col items-center justify-between self-stretch min-h-[580px] font-sans z-30">
+    <aside className="dashboard-mesh-card relative w-16 shrink-0 border border-slate-200/90 shadow-2xl rounded-2xl md:rounded-3xl px-2.5 py-3 sm:py-4 md:py-6 flex flex-col items-center justify-between self-stretch min-h-[580px] font-sans z-30">
       {/* ── COMPACT SIDEBAR ICONS (DEFAULT MINIMIZED STATE - 0% LAYOUT REFLOW) ── */}
       <div className="w-full flex flex-col items-center space-y-4">
         {/* Maximize / Expand Toggle Button with Hover Transform & Scale Bouncing */}

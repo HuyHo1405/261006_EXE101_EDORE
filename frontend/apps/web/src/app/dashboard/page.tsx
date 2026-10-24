@@ -213,10 +213,10 @@ function DashboardContent() {
     <AuthGuard>
       {/* ── BASE PRIMARY BLUE BACKGROUND CANVAS (MÀU XANH PRIMARY BASE #034ce4) ────── */}
       <div className="w-full bg-[var(--color-primary-500)] min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body">
-        
+
         {/* ── LAYOUT 2 CONTAINER SONG SONG KHÔNG GIẬT LAYOUT KHI LOAD (UNIFIED MIN-H = 6 ITEMS) ───── */}
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-stretch gap-4 md:gap-6 min-h-[580px]">
-          
+
           {/* CONTAINER 1: ASIDE SIDEBAR */}
           <DashboardAside
             activeTab={activeTab}
@@ -246,10 +246,10 @@ function DashboardContent() {
             onClose={() => setIsMenuOpen(false)}
           />
 
-          {/* CONTAINER 2: MAIN SECTION */}
-          <main className="flex-1 min-w-0 w-full bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col justify-between self-stretch min-h-[580px]">
+          {/* CONTAINER 2: MAIN SECTION (DASHBOARD SLATE MESH GRADIENT DỊU MẮT) */}
+          <main className="dashboard-mesh-card flex-1 min-w-0 w-full border border-slate-200/90 shadow-2xl rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col justify-between self-stretch min-h-[580px]">
             <div className="flex flex-col h-full space-y-6">
-              
+
               {/* 1. TOP TITLE & BREADCRUMBS (OUTSIDE GRAY CONTAINER) */}
               <DashboardHeader
                 currentCourse={activeSelectedCourse}
@@ -267,9 +267,9 @@ function DashboardContent() {
                   onDeleteCourse={handleDeleteCourse}
                 />
 
-                {/* TIMELINE-EDITOR STYLE GRAY CONTAINER WRAPPING FROM FILTER DOWN TO GRID & PAGING */}
-                <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-5 sm:p-6 md:p-7 rounded-2xl md:rounded-3xl shadow-sm flex flex-col flex-1 justify-between space-y-6">
-                  
+                {/* TIMELINE-EDITOR STYLE SLATE CONTAINER WRAPPING FROM FILTER DOWN TO GRID & PAGING */}
+                <div className="bg-slate-100/70 backdrop-blur-sm border border-slate-200/80 p-5 sm:p-6 md:p-7 rounded-2xl md:rounded-3xl shadow-xs flex flex-col flex-1 justify-between space-y-6">
+
                   {/* SUB-HEADER TOOLBAR (FILTER SEARCH, SORT & ACTIONS) */}
                   <DashboardToolbar
                     currentCourse={activeSelectedCourse}

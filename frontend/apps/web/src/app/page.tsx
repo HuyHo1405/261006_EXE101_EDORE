@@ -108,8 +108,8 @@ export default function Home() {
     /* ── BASE PRIMARY BLUE BACKGROUND CANVAS (MÀU XANH PRIMARY BASE #034ce4) ────── */
     <div className="w-full bg-[var(--color-primary-500)] min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body">
 
-      {/* ── WHITE CONTAINER CARD VỚI BO GÓC BÊN TRONG (OVERFLOW VISIBLE CHO HÌNH VỜN QUA KHUNG) ───── */}
-      <div className="max-w-[1400px] mx-auto bg-white border border-white/20 shadow-2xl rounded-2xl md:rounded-3xl p-2.5 sm:p-3 md:p-4 space-y-8 md:space-y-12 relative">
+      {/* ── MESH GRADIENT CONTAINER CARD (TRẮNG THUẦN -> SLATE DỊU MẮT, ĐA TẦNG CHIỀU SÂU) ───── */}
+      <div className="landing-mesh-card max-w-[1400px] mx-auto border border-slate-200/70 shadow-2xl rounded-2xl md:rounded-3xl p-2.5 sm:p-3 md:p-4 space-y-8 md:space-y-12 relative">
 
         {/* ── SECTION 1: HERO (DOT-GRID MONO-PRIMARY + ILLUSTRATION OVERLAY) ─────── */}
         <section className="banner banner--hero shadow-md">
@@ -122,13 +122,13 @@ export default function Home() {
 
             <div className="cta-group flex flex-wrap items-center gap-3 md:gap-4 pt-1">
               {isAuthenticated ? (
-                <Button asChild size="lg" className="bg-white text-[var(--color-primary-600)] hover:bg-slate-100 font-bold shadow-md hover:scale-105 transition-all shrink-0 whitespace-nowrap">
+                <Button asChild size="lg" className="bg-slate-50 text-[var(--color-primary-600)] hover:bg-slate-100 font-bold shadow-md hover:scale-105 transition-all shrink-0 whitespace-nowrap">
                   <Link href="/dashboard" className="flex items-center gap-2">
                     Vào Thư viện bài giảng <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
               ) : (
-                <Button asChild size="lg" className="bg-white text-[var(--color-primary-600)] hover:bg-slate-100 font-bold shadow-md hover:scale-105 transition-all shrink-0 whitespace-nowrap">
+                <Button asChild size="lg" className="bg-slate-50 text-[var(--color-primary-600)] hover:bg-slate-100 font-bold shadow-md hover:scale-105 transition-all shrink-0 whitespace-nowrap">
                   <Link href="/register" className="flex items-center gap-2">
                     Bắt đầu ngay miễn phí <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -184,7 +184,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Feature 1 */}
             <AnimateOnScroll className="h-full">
-              <div className="group bg-slate-50/70 hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
+              <div className="group bg-white hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] flex items-center justify-center group-hover:bg-[var(--color-primary-500)] group-hover:text-white transition-colors">
                     <Sparkles className="w-6 h-6" />
@@ -204,7 +204,7 @@ export default function Home() {
 
             {/* Feature 2: PHÂN TÍCH AI TỪ BỘ DỮ LIỆU NỘI BỘ, KHÔNG CẦN TẢI FILE */}
             <AnimateOnScroll className="h-full">
-              <div className="group bg-slate-50/70 hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
+              <div className="group bg-white hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-xl bg-amber-50 text-[var(--color-secondary-600)] border border-amber-200 flex items-center justify-center group-hover:bg-[var(--color-secondary-500)] group-hover:text-white transition-colors">
                     <BookOpen className="w-6 h-6" />
@@ -224,7 +224,7 @@ export default function Home() {
 
             {/* Feature 3: BIÊN SOẠN DÒNG THỜI GIAN BÀI GIẢNG (ĐIỀU HƯỚNG /dashboard) */}
             <AnimateOnScroll className="h-full">
-              <div className="group bg-slate-50/70 hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
+              <div className="group bg-white hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                     <Users className="w-6 h-6" />
@@ -244,7 +244,7 @@ export default function Home() {
 
             {/* Feature 4: TIỆN ÍCH ĐI KÈM & TRẢ BÀI (LUCKY WHEEL, XUẤT CÂU HỎI, DOC, KAHOOT) */}
             <AnimateOnScroll className="h-full">
-              <div className="group bg-slate-50/70 hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
+              <div className="group bg-white hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 border border-purple-200 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors">
                     <BarChart3 className="w-6 h-6" />
@@ -350,12 +350,12 @@ export default function Home() {
           </div>
 
           {/* Wrapper nền xám nhạt bo góc lớn */}
-          <div className="bg-slate-50/80 border border-slate-200/80 rounded-3xl p-4 sm:p-6 md:p-8 space-y-6">
+          <div className="bg-slate-100/70 border border-slate-200/80 rounded-3xl p-4 sm:p-6 md:p-8 space-y-6">
 
-            {/* 1. HÀNG 3 THẺ TRẮNG Ở TRÊN (STARTER, PRO PLAN, TEAM PLAN) */}
+            {/* 1. HÀNG 3 THẺ Ở TRÊN (STARTER, PRO PLAN, TEAM PLAN) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch max-w-6xl mx-auto">
 
-              {/* TOP WHITE CARD 1: STARTER */}
+              {/* TOP CARD 1: STARTER */}
               <AnimateOnScroll className="h-full">
                 <div className="bg-white rounded-3xl p-6 md:p-7 shadow-sm border border-slate-200/80 flex flex-col justify-between h-full space-y-4 relative transition-elastic hover-elastic">
                   {isAuthenticated && user?.plan === "free" && (
@@ -397,7 +397,7 @@ export default function Home() {
                 </div>
               </AnimateOnScroll>
 
-              {/* TOP WHITE CARD 2: PRO PLAN (FEATURED FOCUS CARD VỚI ELASTIC POP EFFECT) */}
+              {/* TOP CARD 2: PRO PLAN (FEATURED FOCUS CARD VỚI ELASTIC POP EFFECT) */}
               <AnimateOnScroll className="h-full">
                 <div className="bg-white rounded-3xl p-6 md:p-7 shadow-md border-2 border-[var(--color-primary-300)] flex flex-col justify-between h-full space-y-4 relative transition-elastic hover-elastic">
                   {isAuthenticated && user?.plan === "pro" && (
@@ -439,7 +439,7 @@ export default function Home() {
                 </div>
               </AnimateOnScroll>
 
-              {/* TOP WHITE CARD 3: TEAM PLAN (ĐANG PHÁT TRIỂN) */}
+              {/* TOP CARD 3: TEAM PLAN (ĐANG PHÁT TRIỂN) */}
               <AnimateOnScroll className="h-full">
                 <div className="bg-white rounded-3xl p-6 md:p-7 shadow-sm border border-slate-200/80 flex flex-col justify-between h-full space-y-4 relative transition-elastic hover-elastic opacity-85">
                   <span className="absolute -top-3 right-6 px-3 py-0.5 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-xs">
@@ -579,13 +579,13 @@ export default function Home() {
 
             <div className="pt-1 flex justify-center">
               {isAuthenticated ? (
-                <Button asChild size="lg" className="bg-white text-[var(--color-primary-600)] hover:bg-slate-100 font-bold shadow-lg hover-elastic-button whitespace-nowrap">
+                <Button asChild size="lg" className="bg-slate-50 text-[var(--color-primary-600)] hover:bg-slate-100 font-bold shadow-lg hover-elastic-button whitespace-nowrap">
                   <Link href="/dashboard" className="flex items-center gap-2">
                     Trải nghiệm ngay <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
               ) : (
-                <Button asChild size="lg" className="bg-white text-[var(--color-primary-600)] hover:bg-slate-100 font-bold shadow-lg hover-elastic-button whitespace-nowrap">
+                <Button asChild size="lg" className="bg-slate-50 text-[var(--color-primary-600)] hover:bg-slate-100 font-bold shadow-lg hover-elastic-button whitespace-nowrap">
                   <Link href="/register" className="flex items-center gap-2">
                     Đăng ký ngay <ArrowRight className="w-4 h-4" />
                   </Link>
