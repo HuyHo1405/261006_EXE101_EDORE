@@ -220,7 +220,11 @@ export function MegaMenu({
                       onClick={onClose}
                     >
                       <span className="truncate">{label}</span>
-                      {!isCreateCourse && <NavHoverIcon href={t.href} pathname={pathname} />}
+                      {isCreateCourse ? (
+                        <SquarePlus className="w-4 h-4 text-[var(--color-primary-500)] shrink-0 opacity-0 -translate-x-1.5 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 ease-out pointer-events-none" />
+                      ) : (
+                        <NavHoverIcon href={t.href} pathname={pathname} />
+                      )}
                     </Link>
                   </li>
                 );
