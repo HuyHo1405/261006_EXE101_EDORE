@@ -7,59 +7,94 @@
  * - Hover mở: Slide down từ trên xuống mượt mà (translate-y-0 opacity-100).
  * - Hết hover (Close): Slide up ngược lên trên ( -translate-y-6 opacity-0 ) trước khi unmount.
  * - Sử dụng CSS Cubic-Bezier Spring curve `cubic-bezier(0.16, 1, 0.3, 1)` cho trải nghiệm tự nhiên.
+ * - Thiết kế tối giản, tập trung vào typographic clarity và hover transitions nhẹ nhàng.
  */
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowRight, LogOut } from "@/components/ui/icons";
+import { SquareArrowRightEnter, CornerRightDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface Subject {
+export interface CourseMenuItem {
   id: string;
   name: string;
   href: string;
+  title?: string;
+  scriptCount?: number;
 }
 
-export interface Classroom {
+export interface ToolMenuItem {
   id: string;
   name: string;
   href: string;
+  title?: string;
+  description?: string;
 }
+
+// Alias cho backwards compatibility
+export type Subject = CourseMenuItem;
+export type Classroom = ToolMenuItem;
 
 export interface MegaMenuProps {
   isOpen: boolean;
-  subjects: Subject[];
-  classrooms: Classroom[];
+  courses?: CourseMenuItem[];
+  tools?: ToolMenuItem[];
+  /** @deprecated use courses */
+  subjects?: CourseMenuItem[];
+  /** @deprecated use tools */
+  classrooms?: ToolMenuItem[];
+  isLoadingCourses?: boolean;
   isLoadingSubjects?: boolean;
-  isLoadingClassrooms?: boolean;
   isAuthenticated?: boolean;
+  isAdmin?: boolean;
   onClose: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
   onLogout?: () => void;
 }
 
+const DEFAULT_TOOLS: ToolMenuItem[] = [
+  { id: "lucky-wheel", name: "Vòng quay may mắn (Trả bài)", href: "/dashboard/tra-bai" },
+  { id: "create-course", name: "Tạo khóa học mới", href: "/dashboard?action=create-course" },
+  { id: "guide", name: "Cẩm nang hướng dẫn sử dụng", href: "/guide" },
+];
+
 const accountLinks = [
   { id: "dashboard-overview", label: "Tổng quan", href: "/dashboard" },
   { id: "pricing-plan", label: "Bảng giá dịch vụ", href: "/#pricing" },
-  { id: "account-info", label: "Thông tin tài khoản", href: "/dashboard/profile" },
+  { id: "account-info", label: "Thông tin tài khoản", href: "/dashboard/profile?tab=profile" },
   { id: "transaction-history", label: "Lịch sử giao dịch", href: "/dashboard/profile?tab=transactions" },
+  { id: "settings-info", label: "Cài đặt hệ thống", href: "/dashboard/profile?tab=settings" },
 ];
 
 export function MegaMenu({
   isOpen,
+  courses: propCourses,
+  tools: propTools,
   subjects,
   classrooms,
-  isLoadingSubjects = false,
-  isLoadingClassrooms = false,
+  isLoadingCourses,
+  isLoadingSubjects,
   isAuthenticated = false,
+  isAdmin = false,
   onClose,
   onMouseEnter,
   onMouseLeave,
   onLogout,
 }: MegaMenuProps) {
+  const pathname = usePathname();
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [isAnimatingIn, setIsAnimatingIn] = useState(false);
+
+  const courses = propCourses || subjects || [];
+  const isLoading = isLoadingCourses !== undefined ? isLoadingCourses : (isLoadingSubjects || false);
+
+  const baseTools = propTools || classrooms || DEFAULT_TOOLS;
+  const tools = isAdmin
+    ? [...baseTools, { id: "admin-panel", name: "Trang quản trị (Admin)", href: "/dashboard/admin" }]
+    : baseTools;
 
   useEffect(() => {
     let animTimer: NodeJS.Timeout;
@@ -114,64 +149,63 @@ export function MegaMenu({
         onMouseLeave={onMouseLeave}
       >
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-6 flex flex-col md:flex-row gap-6 md:gap-0">
-          {/* ── Cột 1: Danh mục Môn học ─────────────────────────────── */}
+          {/* ── Cột 1: Khóa học của tôi (Gắn trực tiếp vào các course hiện có) ─ */}
           <div className="flex-[1.4] min-w-0 px-0 md:px-6 first:pl-0 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] pb-4 md:pb-0">
             <p className="font-body text-xs font-bold uppercase tracking-wider text-[var(--color-neutral-500)] mb-3">
-              Danh mục Môn học
+              Khóa học của tôi
             </p>
-            {isLoadingSubjects ? (
+            {isLoading ? (
               <SkeletonList count={4} />
-            ) : subjects.length === 0 ? (
+            ) : courses.length === 0 ? (
               <EmptyState
-                message="Bạn chưa có môn học nào"
-                cta={{ label: "Vào Dashboard Thư viện", href: "/dashboard" }}
+                message="Bạn chưa có khóa học nào"
+                cta={{ label: "Tạo khóa học ngay", href: "/dashboard?action=create-course" }}
                 onClose={onClose}
               />
             ) : (
               <ul className="grid grid-cols-2 gap-x-2 gap-y-1 list-none p-0 m-0" role="list">
-                {subjects.map((s) => (
-                  <li key={s.id}>
-                    <Link
-                      href={s.href}
-                      className="block w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-4"
-                      onClick={onClose}
-                    >
-                      {s.name}
-                    </Link>
-                  </li>
-                ))}
+                {courses.map((c) => {
+                  const label = c.name || c.title || "";
+                  return (
+                    <li key={c.id}>
+                      <Link
+                        href={c.href}
+                        className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-3.5"
+                        onClick={onClose}
+                        title={label}
+                      >
+                        <span className="truncate">{label}</span>
+                        <NavHoverIcon href={c.href} pathname={pathname} />
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
 
-          {/* ── Cột 2: Khóa học & Phân loại ─────────────────────────────── */}
-          <div className="flex-[1.4] min-w-0 px-0 md:px-6 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] pb-4 md:pb-0">
+          {/* ── Cột 2: Công cụ giảng dạy (1 cột) ───────────────────────── */}
+          <div className="flex-1 min-w-0 px-0 md:px-6 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] pb-4 md:pb-0">
             <p className="font-body text-xs font-bold uppercase tracking-wider text-[var(--color-neutral-500)] mb-3">
-              Khóa học & Lớp học
+              Công cụ giảng dạy
             </p>
-            {isLoadingClassrooms ? (
-              <SkeletonList count={4} />
-            ) : classrooms.length === 0 ? (
-              <EmptyState
-                message="Bạn chưa có lớp học nào"
-                cta={{ label: "Vào Dashboard Thư viện", href: "/dashboard" }}
-                onClose={onClose}
-              />
-            ) : (
-              <ul className="grid grid-cols-2 gap-x-2 gap-y-1 list-none p-0 m-0" role="list">
-                {classrooms.map((c) => (
-                  <li key={c.id}>
+            <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
+              {tools.map((t) => {
+                const label = t.name || t.title || "";
+                return (
+                  <li key={t.id}>
                     <Link
-                      href={c.href}
-                      className="block w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-4"
+                      href={t.href}
+                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-3.5"
                       onClick={onClose}
                     >
-                      {c.name}
+                      <span className="truncate">{label}</span>
+                      <NavHoverIcon href={t.href} pathname={pathname} />
                     </Link>
                   </li>
-                ))}
-              </ul>
-            )}
+                );
+              })}
+            </ul>
           </div>
 
           {/* ── Cột 3: Tài khoản ───────────────────────────── */}
@@ -185,10 +219,11 @@ export function MegaMenu({
                     <li key={link.id}>
                       <Link
                         href={link.href}
-                        className="block w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-4"
+                        className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body text-[var(--color-neutral-800)] rounded-[var(--radius-sm)] transition-all duration-200 ease-out hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-600)] hover:pl-3.5"
                         onClick={onClose}
                       >
-                        {link.label}
+                        <span className="truncate">{link.label}</span>
+                        <NavHoverIcon href={link.href} pathname={pathname} />
                       </Link>
                     </li>
                   ))
@@ -196,10 +231,11 @@ export function MegaMenu({
                   <li>
                     <Link
                       href="/login"
-                      className="block w-full text-left px-3 py-2 text-sm font-header font-bold uppercase tracking-[-0.01em] text-[var(--color-primary-500)] rounded-[var(--radius-sm)] hover:bg-[var(--color-primary-50)] transition-all duration-200"
+                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-header font-bold uppercase tracking-[-0.01em] text-[var(--color-primary-500)] rounded-[var(--radius-sm)] hover:bg-[var(--color-primary-50)] hover:pl-3.5 transition-all duration-200"
                       onClick={onClose}
                     >
-                      Đăng nhập
+                      <span>Đăng nhập</span>
+                      <NavHoverIcon href="/login" pathname={pathname} />
                     </Link>
                   </li>
                 )}
@@ -228,12 +264,34 @@ export function MegaMenu({
 
 /* ── Helper components ─────────────────────────────────────────────────────── */
 
+function isLinkOnSamePage(href: string, currentPathname: string | null): boolean {
+  if (!currentPathname) return false;
+  if (href.startsWith("#")) return true;
+  if (currentPathname === "/" && href.startsWith("/#")) return true;
+  const urlPath = href.split("?")[0].split("#")[0];
+  return urlPath === currentPathname;
+}
+
+function NavHoverIcon({ href, pathname }: { href: string; pathname: string | null }) {
+  const isSamePage = isLinkOnSamePage(href, pathname);
+
+  if (isSamePage) {
+    return (
+      <CornerRightDown className="w-3.5 h-3.5 text-[var(--color-primary-500)] shrink-0 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 ease-out pointer-events-none" />
+    );
+  }
+
+  return (
+    <SquareArrowRightEnter className="w-4 h-4 text-[var(--color-primary-500)] shrink-0 opacity-0 -translate-x-1.5 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 ease-out pointer-events-none" />
+  );
+}
+
 function SkeletonList({ count }: { count: number }) {
   return (
     <ul className="flex flex-col gap-2 list-none p-0 m-0" role="list">
       {Array.from({ length: count }).map((_, i) => (
         <li key={i}>
-          <div className="h-3.5 animate-shimmer rounded-[var(--radius-xs)] my-2 w-[70%]" />
+          <div className="h-3.5 bg-slate-200/70 animate-pulse rounded-[var(--radius-xs)] my-2 w-[70%]" />
         </li>
       ))}
     </ul>

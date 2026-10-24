@@ -44,16 +44,39 @@ import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 
 type TabKey = "profile" | "transactions" | "settings";
 
+function normalizeTab(tab: string | null): TabKey {
+  if (!tab) return "profile";
+  const lower = tab.toLowerCase();
+  if (lower === "transactions" || lower === "transaction" || lower === "orders" || lower === "payments" || lower === "history") {
+    return "transactions";
+  }
+  if (lower === "settings") {
+    return "settings";
+  }
+  return "profile";
+}
+
 function UserProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const authUser = useAuthStore((s) => s.user);
   const authUserId = authUser?.userId;
 
-  const initialTab = (searchParams?.get("tab") as TabKey) || "profile";
-  const [activeTab, setActiveTab] = useState<TabKey>(
-    ["profile", "transactions", "settings"].includes(initialTab) ? initialTab : "profile"
-  );
+  const tabFromUrl = normalizeTab(searchParams?.get("tab"));
+  const [activeTab, setActiveTab] = useState<TabKey>(tabFromUrl);
+
+  // Sync activeTab whenever URL query params change (e.g. from MegaMenu navigation or browser history)
+  useEffect(() => {
+    const tab = normalizeTab(searchParams?.get("tab"));
+    setActiveTab(tab);
+  }, [searchParams]);
+
+  const handleTabChange = (newTab: TabKey) => {
+    setActiveTab(newTab);
+    const params = new URLSearchParams(searchParams?.toString() || "");
+    params.set("tab", newTab);
+    router.replace(`/dashboard/profile?${params.toString()}`, { scroll: false });
+  };
 
   // State
   const [profile, setProfile] = useState<UserProfileResponse | null>(null);
@@ -244,7 +267,7 @@ function UserProfileContent() {
           {/* Tab Navigation Menu Section */}
           <div className="bg-[var(--color-neutral-100,#f5f5f5)] p-2 flex flex-wrap gap-2 border-t border-[var(--color-neutral-200,#d9d9d9)]">
             <button
-              onClick={() => setActiveTab("profile")}
+              onClick={() => handleTabChange("profile")}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md,8px)] text-sm font-bold transition-all ${activeTab === "profile"
                 ? "bg-[var(--color-primary-500,#034ce4)] text-white shadow-sm"
                 : "text-gray-600 hover:bg-gray-200/60"
@@ -254,7 +277,7 @@ function UserProfileContent() {
             </button>
 
             <button
-              onClick={() => setActiveTab("transactions")}
+              onClick={() => handleTabChange("transactions")}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md,8px)] text-sm font-bold transition-all ${activeTab === "transactions"
                 ? "bg-[var(--color-primary-500,#034ce4)] text-white shadow-sm"
                 : "text-gray-600 hover:bg-gray-200/60"
@@ -264,7 +287,7 @@ function UserProfileContent() {
             </button>
 
             <button
-              onClick={() => setActiveTab("settings")}
+              onClick={() => handleTabChange("settings")}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md,8px)] text-sm font-bold transition-all ${activeTab === "settings"
                 ? "bg-[var(--color-primary-500,#034ce4)] text-white shadow-sm"
                 : "text-gray-600 hover:bg-gray-200/60"

@@ -84,8 +84,14 @@ export const courseQueryOptions = createCourseQueryOptions();
 
 // ── Custom Hooks ────────────────────────────────────────────────────────────
 
-export function useMyCourses(params?: CourseFilterParams) {
-  return useQuery(courseQueryOptions.list(params));
+export function useMyCourses(
+  params?: CourseFilterParams,
+  options?: { enabled?: boolean }
+) {
+  return useQuery({
+    ...courseQueryOptions.list(params),
+    ...options,
+  });
 }
 
 export function useCourseDetail(id: string) {

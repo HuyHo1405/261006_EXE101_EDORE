@@ -5,4 +5,4 @@ export { EdoreLogo } from "./EdoreLogo";
 export { UserAvatar } from "./UserAvatar";
 export type { UserAvatarProps } from "./UserAvatar";
 export { MegaMenu } from "./MegaMenu";
-export type { MegaMenuProps, Subject, Classroom } from "./MegaMenu";
+export type { MegaMenuProps, CourseMenuItem, ToolMenuItem, Subject, Classroom } from "./MegaMenu";

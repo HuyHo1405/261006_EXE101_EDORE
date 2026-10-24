@@ -6,29 +6,10 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { ChevronDown, Menu, X, Plus, Folder, LogOut } from "@/components/ui/icons";
 import { EdoreLogo } from "./EdoreLogo";
 import { UserAvatar } from "./UserAvatar";
-import { MegaMenu, Subject, Classroom } from "./MegaMenu";
+import { MegaMenu, CourseMenuItem } from "./MegaMenu";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
-
-const MOCK_SUBJECTS: Subject[] = [
-  { id: "1", name: "Toán học", href: "/dashboard?categoryId=1" },
-  { id: "2", name: "Vật lý", href: "/dashboard?categoryId=2" },
-  { id: "3", name: "Hóa học", href: "/dashboard?categoryId=3" },
-  { id: "4", name: "Sinh học", href: "/dashboard?categoryId=4" },
-  { id: "5", name: "Ngữ văn", href: "/dashboard?categoryId=5" },
-  { id: "6", name: "Tiếng Anh", href: "/dashboard?categoryId=6" },
-  { id: "7", name: "Lịch sử", href: "/dashboard?categoryId=7" },
-  { id: "8", name: "Địa lý", href: "/dashboard?categoryId=8" },
-  { id: "9", name: "Tin học", href: "/dashboard?categoryId=9" },
-  { id: "10", name: "Khoa học", href: "/dashboard?categoryId=10" },
-];
-
-const MOCK_CLASSROOMS: Classroom[] = [
-  { id: "1", name: "Tất cả bài giảng", href: "/dashboard" },
-  { id: "2", name: "Danh mục Khóa học", href: "/dashboard" },
-  { id: "3", name: "Kịch bản bài học (Scripts)", href: "/dashboard" },
-  { id: "4", name: "Cấu hình Lớp học", href: "/dashboard" },
-];
+import { useMyCourses } from "@/features/course/queries/courseQueries";
 
 interface User {
   name: string;
@@ -73,6 +54,21 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
   }, []);
 
   const user = (mounted && _hasHydrated) ? storeUser : initialUser;
+  const isAdmin = Boolean(storeUser?.roles?.some((r) => r.includes("ADMIN")));
+
+  // Fetch courses dynamically for MegaMenu column 1
+  const { data: coursesPage, isLoading: isLoadingCourses } = useMyCourses(
+    { pageSize: 8, sortBy: "updatedAt", ascending: false },
+    { enabled: Boolean(user) }
+  );
+
+  const courseMenuItems: CourseMenuItem[] = (coursesPage?.content || []).map((c) => ({
+    id: c.id,
+    name: c.title,
+    title: c.title,
+    href: `/dashboard?courseId=${c.id}`,
+    scriptCount: c.scriptCount,
+  }));
 
   // State & refs cho MegaMenu (Kích hoạt khi hover Logo / Wordmark EDORE)
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
@@ -350,9 +346,10 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
       {/* ── Mega Menu (kích hoạt khi hover vào Logo / Chữ EDORE) ── */}
       <MegaMenu
         isOpen={!!user && megaMenuOpen}
-        subjects={MOCK_SUBJECTS}
-        classrooms={MOCK_CLASSROOMS}
+        courses={courseMenuItems}
+        isLoadingCourses={isLoadingCourses}
         isAuthenticated={!!user}
+        isAdmin={isAdmin}
         onClose={closeMegaMenu}
         onMouseEnter={cancelCloseMegaMenu}
         onMouseLeave={scheduleCloseMegaMenu}
