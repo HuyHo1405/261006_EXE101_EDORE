@@ -351,7 +351,7 @@ export default function TimelineEditor({
                   value={cur.title ?? ''}
                   onChange={(e) => updateStep({ title: e.target.value })}
                   className="font-header font-extrabold text-2xl uppercase tracking-tight text-[var(--color-neutral-900)] bg-transparent border-b border-transparent hover:border-[var(--color-neutral-300)] focus:border-[var(--color-primary-500)] focus:outline-none w-full pb-1 transition-all placeholder:text-[var(--color-neutral-400)]"
-                  placeholder="NODE TITLE..."
+                  placeholder="Tên hoạt động bài giảng..."
                 />
               </div>
 

@@ -101,7 +101,7 @@ export function DashboardHeader({
           <p className="text-xs sm:text-sm text-slate-600 font-body leading-relaxed w-full">
             {currentCourse
               ? currentCourse.description
-              : "Quản lý các workspace giảng dạy và kịch bản bài giảng theo từng môn học"}
+              : "Quản lý không gian giảng dạy và kịch bản bài giảng theo từng môn học"}
           </p>
         </div>
       </div>
@@ -140,18 +140,18 @@ export function DashboardCourseActions({
         </button>
       </div>
 
-      {/* Right Column: Split Link-style Button [ Cấu hình lớp học | V ] */}
+      {/* Right Column: Split Link-style Button [ Thông tin lớp học | V ] */}
       {onEditCourse && (
         <div className="relative shrink-0 flex items-center gap-1.5">
-          {/* Left Action: Cấu hình lớp học */}
+          {/* Left Action: Thông tin lớp học */}
           <button
             type="button"
             onClick={() => onEditCourse(currentCourse.raw, 2)}
             className="group inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] transition-all duration-200 cursor-pointer py-1"
-            title="Sửa cấu hình lớp học (Class config)"
+            title="Xem và sửa thông tin lớp học (thời lượng, sĩ số, phòng học)"
           >
             <Users className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-            <span className="font-body whitespace-nowrap group-hover:underline">Cấu hình lớp học</span>
+            <span className="font-body whitespace-nowrap group-hover:underline">Thông tin lớp học</span>
           </button>
 
           {/* Vertical Divider */}

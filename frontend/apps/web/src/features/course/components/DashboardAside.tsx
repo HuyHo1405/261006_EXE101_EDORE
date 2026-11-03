@@ -117,7 +117,7 @@ export function DashboardAside({
           <button
             type="button"
             onClick={() => setIsOverlayOpen(false)}
-            title="Thu nhỏ Aside"
+            title="Thu gọn menu"
             className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 active:scale-95 px-2.5 py-1.5 rounded-xl transition-all duration-200 cursor-pointer border border-slate-200/60 shadow-xs"
           >
             <PanelLeftClose className="h-4 w-4 transform group-hover:-translate-x-0.5 transition-transform" />
@@ -321,10 +321,10 @@ export function DashboardAside({
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-sm">🎡</span>
-                    <span>Vòng quay may mắn</span>
+                    <span>Vòng quay gọi tên trả bài</span>
                   </div>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/60 text-amber-900 font-mono">
-                    HOT
+                    Nổi bật
                   </span>
                 </button>
               </div>
@@ -334,7 +334,7 @@ export function DashboardAside({
 
         {/* Footer Bottom Controls (Fixed at bottom) */}
         <div className="shrink-0 pt-3 mt-2 border-t border-slate-100 flex items-center justify-between">
-          <span className="text-[11px] text-slate-400 font-medium">Edore Workspace</span>
+          <span className="text-[11px] text-slate-400 font-medium">Không gian làm việc Edore</span>
           <button
             type="button"
             onClick={() => setIsOverlayOpen(false)}
@@ -360,7 +360,7 @@ export function DashboardAside({
         <button
           type="button"
           onClick={() => setIsOverlayOpen(true)}
-          title="Mở toàn bộ Aside Overlay"
+          title="Mở danh sách khóa học"
           className="h-11 w-11 flex items-center justify-center rounded-2xl bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/30 hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer mb-1 group shrink-0"
         >
           <PanelLeftOpen className="h-5 w-5 transform group-hover:rotate-12 transition-transform duration-300" />
@@ -376,7 +376,7 @@ export function DashboardAside({
             setIsCoursesExpanded(true);
             setIsOverlayOpen(true);
           }}
-          title="Khóa học của tôi (Mở Aside)"
+          title="Khóa học của tôi"
           className={`p-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-105 active:scale-95 ${activeTab === "courses"
             ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
             : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -389,7 +389,7 @@ export function DashboardAside({
         <button
           type="button"
           onClick={() => router.push("/dashboard/tra-bai")}
-          title="Vòng quay may mắn (Lucky Wheel)"
+          title="Vòng quay gọi tên trả bài đầu giờ"
           className="p-3 rounded-2xl text-amber-600 hover:bg-amber-50 hover:text-amber-700 transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-110 active:scale-95"
         >
           <span className="text-xl">🎡</span>
@@ -401,7 +401,7 @@ export function DashboardAside({
         <button
           type="button"
           onClick={() => setIsOverlayOpen(true)}
-          title="Mở rộng Sidebar"
+          title="Mở rộng menu"
           className="text-slate-400 hover:text-slate-900 p-2 cursor-pointer transform hover:translate-x-1 transition-all duration-200"
         >
           <ChevronRight className="h-4 w-4" />

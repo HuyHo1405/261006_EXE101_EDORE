@@ -234,7 +234,7 @@ export function SetupView({
           CÀI ĐẶT TRẢ BÀI
         </h1>
         <p className="text-xs sm:text-sm text-[var(--color-neutral-500)]">
-          Thiết lập sĩ số học sinh và câu hỏi trước khi bắt đầu vòng quay.
+          Chọn sĩ số học sinh và danh sách câu hỏi trước khi bắt đầu vòng quay.
         </p>
       </div>
 
@@ -516,7 +516,7 @@ export function SetupView({
               <div className="p-4 rounded-[var(--radius-md)] bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
                 <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <div className="space-y-0.5">
-                  <p className="font-bold">Chưa có câu hỏi trong ngân hàng dữ liệu cho mục này.</p>
+                  <p className="font-bold">Chưa có câu hỏi trong ngân hàng câu hỏi cho mục này.</p>
                   <p className="text-[11px] text-amber-700">
                     Bấm <strong>"Thêm câu hỏi"</strong> để tự nhập câu hỏi, hoặc chọn mục khác.
                   </p>

@@ -127,14 +127,14 @@ function NewScriptContent() {
     handleConfigChange(updatedCtx)
 
     if (!courseIdParam) {
-      toast.error('Vui lòng chọn khóa học trước khi sinh kịch bản AI.')
+      toast.error('Vui lòng chọn khóa học trước khi soạn kịch bản với AI.')
       return
     }
 
     setStage('processing')
     resetPipelineState()
 
-    toast.info(`Đang gửi yêu cầu sinh kịch bản cho bài "${lesson.title}"...`)
+    toast.info(`Đang chuẩn bị soạn kịch bản cho bài "${lesson.title}"...`)
 
     generateAiMutation.mutate(
       {
@@ -150,7 +150,7 @@ function NewScriptContent() {
           const scriptId = data?.scriptId || data?.id
 
           if (jobId) {
-            toast.success('Đã tiếp nhận yêu cầu, đang xử lý ngầm...')
+            toast.success('Đã tiếp nhận bài học, AI đang tiến hành soạn bài...')
 
             if (pollingRef.current) clearInterval(pollingRef.current)
             pollingRef.current = setInterval(async () => {
@@ -160,7 +160,7 @@ function NewScriptContent() {
                 if (statusData.status === 'COMPLETED') {
                   clearInterval(pollingRef.current!)
                   setProgress(100)
-                  toast.success('Sinh kịch bản AI thành công!')
+                  toast.success('AI đã soạn xong kịch bản bài giảng!')
                   const finalScriptId =
                     statusData.scriptId || statusData.result?.scriptId || statusData.result?.id
                   if (finalScriptId) {
@@ -171,7 +171,7 @@ function NewScriptContent() {
                 } else if (statusData.status === 'FAILED') {
                   clearInterval(pollingRef.current!)
                   setHasError(true)
-                  const msg = statusData.errorMessage || 'AI gặp lỗi trong quá trình sinh kịch bản.'
+                  const msg = statusData.errorMessage || 'AI gặp sự cố trong quá trình soạn bài. Vui lòng thử lại.'
                   setErrorMessage(msg)
                   toast.error(msg)
                 } else {
@@ -182,7 +182,7 @@ function NewScriptContent() {
               }
             }, 3000)
           } else if (scriptId) {
-            toast.success('Sinh và lưu kịch bản AI thành công!')
+            toast.success('Soạn và lưu kịch bản bài giảng thành công!')
             router.push(`/dashboard/scripts/${scriptId}?courseId=${courseIdParam}`)
           } else {
             toast.success('Kịch bản đã được khởi tạo!')
@@ -274,7 +274,7 @@ function NewScriptContent() {
                       className="group inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] transition-all duration-200 cursor-pointer py-0.5"
                     >
                       <Users className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-                      <span className="font-body whitespace-nowrap group-hover:underline">Cấu hình lớp học</span>
+                      <span className="font-body whitespace-nowrap group-hover:underline">Thông tin lớp học</span>
                     </button>
                   </div>
 

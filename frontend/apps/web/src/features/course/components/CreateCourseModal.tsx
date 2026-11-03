@@ -189,7 +189,7 @@ export function CreateCourseModal({
       payload.classConfigId = classConfigData.id;
     } else {
       payload.classConfigRequest = {
-        name: classConfigData.name?.trim() || `Cấu hình phòng học - ${title.trim()}`,
+        name: classConfigData.name?.trim() || `Phòng học chuẩn - ${title.trim()}`,
         duration: classConfigData.duration || "MIN_45",
         classSize: classConfigData.classSize || "MEDIUM",
         space: classConfigData.space || "STANDARD",
@@ -359,7 +359,7 @@ export function CreateCourseModal({
                         stage === 3 ? "text-[var(--color-primary-600)] font-extrabold" : "text-[var(--color-neutral-700)] font-bold group-hover:text-[var(--color-neutral-900)]"
                       }`}
                     >
-                      Cấu hình phòng học
+                      Điều kiện phòng học
                     </span>
                     <p className="font-body text-[11px] text-[var(--color-neutral-500)] mt-0.5 leading-snug">
                       Chọn mẫu hoặc tự tạo
@@ -672,8 +672,8 @@ export function CreateCourseModal({
                 <ClassConfigEditor
                   value={classConfigData}
                   onChange={(newVal) => setClassConfigData(newVal)}
-                  title="Cấu hình phòng học"
-                  subtitle="Chọn mẫu cấu hình sẵn để điền nhanh hoặc tự điều chỉnh các thông số bên dưới"
+                  title="Điều kiện phòng học"
+                  subtitle="Chọn mẫu phòng có sẵn để điền nhanh hoặc tự điều chỉnh theo thực tế của lớp"
                   showHeadings={true}
                 />
               </div>
@@ -751,7 +751,7 @@ export function CreateCourseModal({
                     }}
                     className="gap-2 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] px-6 text-xs font-bold text-white shadow-md rounded-[var(--radius-md)] cursor-pointer"
                   >
-                    <span>Sang Bước 3: Cấu hình phòng</span>
+                    <span>Sang Bước 3: Điều kiện phòng học</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>

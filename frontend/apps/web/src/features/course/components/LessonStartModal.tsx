@@ -126,7 +126,7 @@ export function LessonStartModal({
             </div>
 
             <p className="font-body text-[11px] text-[var(--color-neutral-500)] mt-0.5 leading-relaxed font-medium">
-              AI sẽ sử dụng toàn bộ nội dung giáo khoa và hệ thống tư liệu hình ảnh của bài học này để sinh kịch bản.
+              AI sẽ sử dụng toàn bộ nội dung sách giáo khoa và tư liệu hình ảnh của bài học này để soạn kịch bản.
             </p>
 
             {/* Lesson summary card */}
@@ -187,7 +187,7 @@ export function LessonStartModal({
           <div className="p-5 md:p-6 flex flex-col gap-4">
             <div className="border-b border-[var(--color-neutral-100)] pb-3">
               <h3 className="font-header font-extrabold text-lg uppercase tracking-tight text-[var(--color-neutral-900)]">
-                Thiết lập kịch bản giảng dạy
+                Yêu cầu kịch bản bài dạy
               </h3>
             </div>
 

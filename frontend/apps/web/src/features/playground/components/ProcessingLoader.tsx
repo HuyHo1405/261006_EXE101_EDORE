@@ -5,7 +5,7 @@ import { FileText, Sparkles, Brain, CheckCircle2, XCircle, X } from 'lucide-reac
 
 const LOADING_STEPS = [
   { Icon: FileText, label: 'Đang trích xuất nội dung tài liệu...' },
-  { Icon: Sparkles, label: 'Đang phân tích và chunk ngữ nghĩa...' },
+  { Icon: Sparkles, label: 'Đang phân tích kiến thức trọng tâm SGK...' },
   { Icon: Brain, label: 'AI đang tạo kịch bản bài học...' },
   { Icon: CheckCircle2, label: 'Hoàn thiện và sắp xếp kết quả...' },
 ]
@@ -92,7 +92,7 @@ export default function ProcessingLoader({ hasError = false, errorMessage = '', 
 
           <div className="text-center space-y-3">
             <h3 className="font-header text-xl font-extrabold uppercase tracking-tight text-[var(--color-neutral-900)]">
-              Hệ thống AI đang xử lý{dots}
+              AI đang soạn bài cho thầy cô{dots}
             </h3>
             <p key={activeStep} className="font-mono text-xs text-[var(--color-neutral-500)] animate-fade-slide-up">
               {LOADING_STEPS[activeStep].label}
@@ -126,7 +126,7 @@ export default function ProcessingLoader({ hasError = false, errorMessage = '', 
             className="font-body text-xs text-[var(--color-neutral-500)] hover:text-[var(--color-semantic-error)] transition-colors flex items-center gap-1 font-mono mt-2"
           >
             <X className="w-3.5 h-3.5" />
-            Hủy xử lý
+            Hủy thao tác
           </button>
         </>
       )}

@@ -179,8 +179,8 @@ export function TimelineOverviewView({
           <div className="p-4 space-y-4 bg-white">
             <div className="space-y-3 text-xs font-body text-[var(--color-neutral-700)]">
               <div className="flex justify-between items-center pb-2 border-b border-[var(--color-neutral-200)]">
-                <span>Tổng số phần (Nodes)</span>
-                <span className="font-mono font-bold text-sm text-[var(--color-neutral-900)]">{steps.length} phần</span>
+                <span>Số hoạt động bài học</span>
+                <span className="font-mono font-bold text-sm text-[var(--color-neutral-900)]">{steps.length} hoạt động</span>
               </div>
               <div className="flex justify-between items-center pb-2 border-b border-[var(--color-neutral-200)]">
                 <span>Tổng thời lượng bài học</span>
@@ -215,10 +215,10 @@ export function TimelineOverviewView({
                   type="button"
                   onClick={onOpenOralQuiz}
                   className="w-full py-2.5 px-3 rounded-[var(--radius-md)] border-2 border-amber-200 hover:border-amber-300 bg-amber-50/90 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
-                  title="Mở Vòng quay may mắn đầu giờ"
+                  title="Mở Vòng quay gọi tên trả bài đầu giờ"
                 >
                   <Sparkles className="w-4 h-4 text-amber-600" />
-                  <span>Vòng quay may mắn (Lucky Wheel)</span>
+                  <span>Vòng quay gọi tên trả bài</span>
                 </button>
               </div>
             )}

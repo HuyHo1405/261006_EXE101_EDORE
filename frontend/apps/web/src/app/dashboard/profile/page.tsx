@@ -443,10 +443,10 @@ function UserProfileContent() {
                     <div className="border-b border-gray-100 pb-4 flex flex-wrap items-center justify-between gap-4">
                       <div>
                         <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900">
-                          GÓI CƯỚC & HẠN NGẠCH DỊCH VỤ
+                          GÓI DỊCH VỤ & LƯỢT SỬ DỤNG
                         </h3>
                         <p className="text-xs text-gray-500">
-                          Chi tiết gói dịch vụ đang hoạt động và số lượng tài nguyên đã sử dụng.
+                          Chi tiết gói dịch vụ đang hoạt động và số lượt soạn bài đã sử dụng.
                         </p>
                       </div>
 
@@ -645,7 +645,7 @@ function UserProfileContent() {
                 <div className="space-y-6">
                   <div className="border-b border-gray-100 pb-4">
                     <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900">
-                      CÀI ĐẶT & CẤU HÌNH TÙY CHỌN
+                      CÀI ĐẶT & TÙY CHỌN HỆ THỐNG
                     </h3>
                     <p className="text-xs text-gray-500">Tùy chỉnh các tính năng hỗ trợ học thuật và giao diện người dùng.</p>
                   </div>
@@ -680,12 +680,12 @@ function UserProfileContent() {
                     <div className="p-4 rounded-[var(--radius-md,8px)] border border-gray-200 flex items-center justify-between bg-gray-50/50">
                       <div className="space-y-0.5">
                         <label className="text-sm font-bold text-gray-900 font-sans block">
-                          Giao diện nền (Theme)
+                          Giao diện hiển thị
                         </label>
-                        <p className="text-xs text-gray-500">Mặc định theo hệ thống Edore Light/Dark mode.</p>
+                        <p className="text-xs text-gray-500">Mặc định theo giao diện Sáng / Tối của hệ thống.</p>
                       </div>
                       <span className="text-xs font-mono font-bold text-gray-700 bg-white px-3 py-1.5 rounded-md border border-gray-200">
-                        {settings?.theme || "LIGHT (SÁNG)"}
+                        {settings?.theme === "DARK" ? "Giao diện Tối" : "Giao diện Sáng"}
                       </span>
                     </div>
                   </div>
@@ -751,7 +751,7 @@ function UserProfileContent() {
 
 export default function UserProfilePage() {
   return (
-    <Suspense fallback={<div className="p-12 text-center text-gray-500 font-mono text-sm">Đang tải cấu hình người dùng...</div>}>
+    <Suspense fallback={<div className="p-12 text-center text-gray-500 font-mono text-sm">Đang tải thông tin tài khoản...</div>}>
       <UserProfileContent />
     </Suspense>
   );

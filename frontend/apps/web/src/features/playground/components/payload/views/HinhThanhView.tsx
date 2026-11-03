@@ -166,13 +166,13 @@ export function HinhThanhView({
                 className="rounded-xl border border-slate-200/90 bg-[#F8FAFC] p-4 text-xs sm:text-sm text-slate-800 leading-relaxed shadow-2xs space-y-2.5 transition-all duration-300"
               >
                 <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-                  THAO TÁC CỦA GIÁO VIÊN (TRỰC QUAN HÓA &amp; NGỮ LIỆU)
+                  HOẠT ĐỘNG CỦA GIÁO VIÊN (TRỰC QUAN HÓA &amp; NGỮ LIỆU)
                 </div>
 
                 {/* Mô tả cách trình chiếu / quan sát */}
                 <div className="space-y-1">
                   <div className="text-[11px] font-bold text-slate-600">
-                    Mô tả thao tác của giáo viên:
+                    Hoạt động của giáo viên:
                   </div>
                   <AutoResizeTextarea
                     value={visualDesc}

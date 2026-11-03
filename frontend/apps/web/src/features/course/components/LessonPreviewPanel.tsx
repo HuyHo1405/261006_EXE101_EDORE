@@ -110,7 +110,7 @@ export function LessonPreviewPanel({
             onClick={() => onConfirmLesson(lesson)}
             className="w-full flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-bold text-sm shadow-md transition-all cursor-pointer active:scale-98"
           >
-            <span>Chọn bài này & Bắt đầu sinh kịch bản</span>
+            <span>Chọn bài này & Bắt đầu soạn kịch bản</span>
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>

@@ -83,7 +83,7 @@ export function KhoiDongView({
           </span>
           <div className="flex-1 min-w-0">
             <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-0.5">
-              OVERVIEW (MỤC TIÊU)
+              TỔNG QUAN & MỤC TIÊU
             </div>
             <AutoResizeTextarea
               value={intent || ''}
@@ -112,7 +112,7 @@ export function KhoiDongView({
                   className="rounded-xl border border-slate-200/90 bg-[#F8FAFC] p-4 text-xs sm:text-sm text-slate-800 leading-relaxed shadow-2xs space-y-2.5 transition-all duration-300"
                 >
                   <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-                    THAO TÁC CỦA GIÁO VIÊN &amp; TRIỂN KHAI HOẠT ĐỘNG
+                    HOẠT ĐỘNG CỦA GIÁO VIÊN &amp; TRIỂN KHAI
                   </div>
 
                   {/* Dòng dụng cụ */}
@@ -250,7 +250,7 @@ export function KhoiDongView({
                           type="button"
                           onClick={onGoToNextNode}
                           className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs sm:text-sm shadow-2xs hover:shadow-xs transition-all cursor-pointer select-none"
-                          title="Bấm để chuyển ngay sang node tiếp theo"
+                          title="Bấm để chuyển ngay sang hoạt động tiếp theo"
                         >
                           <span>{nextStepTitle ? `${nextStepTitle}` : 'Bài 1: Lịch sử là gì?'}</span>
                           <ArrowRight className="w-4 h-4 text-emerald-100 group-hover:translate-x-1 transition-transform" />

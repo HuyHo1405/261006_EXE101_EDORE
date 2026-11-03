@@ -23,7 +23,7 @@ import {
 
 const DEFAULT_STARTER_FEATURES = [
   "Khởi tạo tối đa 3 Khóa học & Lớp học",
-  "AI phân tích theo bộ dữ liệu nội bộ chuẩn hóa (không cần tải file)",
+  "AI phân tích theo kho học liệu SGK chuẩn hóa (không cần tải file)",
   "Biên soạn tiến trình kịch bản bài giảng cơ bản",
   "Xuất kịch bản bài học dạng văn bản",
   "Hỗ trợ kỹ thuật qua Email (dengocrong123@gmail.com)",
@@ -32,9 +32,9 @@ const DEFAULT_STARTER_FEATURES = [
 const DEFAULT_PRO_FEATURES = [
   "Không giới hạn số lượng Khóa học & Lớp học",
   "Khai thác toàn bộ kho dữ liệu nội bộ chuyên sâu đa môn học",
-  "Dòng thời gian tương tác & chuyển bước bài giảng đầy đủ",
-  "Trả bài sôi nổi: Vòng quay may mắn (Lucky Wheel)",
-  "Xuất file câu hỏi trắc nghiệm, doc bài giảng & mẫu Kahoot",
+  "Tiến trình bài dạy trực quan & chuyển hoạt động linh hoạt",
+  "Trả bài sôi nổi: Vòng quay gọi tên trả bài",
+  "Xuất file câu hỏi trắc nghiệm, bài giảng Word/PDF & mẫu Kahoot",
   "Lưu trữ và tái sử dụng ngân hàng kịch bản không giới hạn",
 ];
 
@@ -47,9 +47,11 @@ const formatFeatureText = (text: string): string => {
     .replace(/Sidebar Gợi ý Hoạt động Sư phạm cá nhân hóa/gi, "Bảng gợi ý hoạt động sư phạm cá nhân hóa")
     .replace(/Sidebar Gợi ý/gi, "Bảng gợi ý")
     .replace(/Sidebar/gi, "Bảng điều khiển")
-    .replace(/AI Phân tích tài liệu PDF\/Word \(tối đa 10 trang\)/gi, "AI phân tích theo bộ dữ liệu nội bộ chuẩn hóa")
-    .replace(/AI Phân tích tài liệu & bài trình chiếu nâng cao/gi, "Khai thác kho dữ liệu nội bộ chuyên sâu đa môn học")
-    .replace(/AI Phân tích tài liệu & Slide giảng dạy nâng cao/gi, "Khai thác kho dữ liệu nội bộ chuyên sâu đa môn học")
+    .replace(/AI Phân tích tài liệu PDF\/Word \(tối đa 10 trang\)/gi, "AI phân tích theo kho học liệu SGK chuẩn hóa")
+    .replace(/AI Phân tích tài liệu & bài trình chiếu nâng cao/gi, "Khai thác kho học liệu chuyên sâu đa môn học")
+    .replace(/AI Phân tích tài liệu & Slide giảng dạy nâng cao/gi, "Khai thác kho học liệu chuyên sâu đa môn học")
+    .replace(/Vòng quay may mắn \(Lucky Wheel\)/gi, "Vòng quay gọi tên trả bài")
+    .replace(/Lucky Wheel/gi, "Vòng quay gọi tên trả bài")
     .replace(/\(Text\)/gi, "")
     .replace(/Slide giảng dạy/gi, "Trang trình chiếu")
     .replace(/Slide/gi, "Trang trình chiếu")
@@ -177,7 +179,7 @@ export default function Home() {
               Công cụ soạn kịch bản & quản lý khóa học toàn diện
             </h2>
             <p className="text-sm md:text-base text-slate-600 font-body">
-              Edore cung cấp giải pháp tự động hóa kịch bản từ bộ dữ liệu nội bộ chuẩn hóa, tùy chỉnh dòng thời gian bài giảng và bộ công cụ đi kèm hỗ trợ lớp học trực quan.
+              Edore cung cấp giải pháp gợi ý kịch bản từ kho học liệu chuẩn SGK, tùy chỉnh tiến trình bài dạy và bộ công cụ tương tác trực quan trong lớp.
             </p>
           </div>
 
@@ -190,10 +192,10 @@ export default function Home() {
                     <Sparkles className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Cấu hình Khóa học & Lớp
+                    Quản Lý Môn Học & Lớp Học
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Thiết lập thông tin khóa học, chọn tham số thời lượng tiết học, sĩ số và bố trí không gian phòng học vật lý chuẩn hóa.
+                    Khai báo môn học, phân bổ thời lượng tiết dạy, sĩ số học sinh và bố trí không gian phòng học thực tế.
                   </p>
                 </div>
                 <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-[var(--color-primary-600)] group-hover:translate-x-1 transition-transform">
@@ -202,7 +204,7 @@ export default function Home() {
               </div>
             </AnimateOnScroll>
 
-            {/* Feature 2: PHÂN TÍCH AI TỪ BỘ DỮ LIỆU NỘI BỘ, KHÔNG CẦN TẢI FILE */}
+            {/* Feature 2: PHÂN TÍCH AI THEO KHO HỌC LIỆU CHUẨN SGK, KHÔNG CẦN TẢI FILE */}
             <AnimateOnScroll className="h-full">
               <div className="group bg-white hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
                 <div className="space-y-4">
@@ -210,10 +212,10 @@ export default function Home() {
                     <BookOpen className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Phân Tích AI Từ Dữ Liệu Nội Bộ
+                    Phân Tích AI Theo Kho Học Liệu Chuẩn SGK
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Tận dụng tri thức và chương trình giáo dục tích hợp sẵn trong bộ dữ liệu nội bộ chuẩn hóa của Edore để AI tự động trích xuất và tạo kịch bản bài học mà không cần tải file lên.
+                    Tận dụng tri thức và chương trình GDPT tích hợp sẵn trong kho học liệu SGK chuẩn hóa của Edore để AI tự động trích xuất kiến thức và gợi ý kịch bản bài học mà không cần tải file lên.
                   </p>
                 </div>
                 <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-[var(--color-secondary-600)] group-hover:translate-x-1 transition-transform">
@@ -230,10 +232,10 @@ export default function Home() {
                     <Users className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900">
-                    Biên Soạn Dòng Thời Gian Bài Giảng
+                    Xây Dựng Tiến Trình Tiết Dạy
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Trình biên soạn kịch bản dạng dòng thời gian trực quan, giúp sắp xếp thứ tự và chuyển bước bài giảng dễ dàng khi đứng lớp.
+                    Sắp xếp các hoạt động bài dạy theo thời lượng thực tế, giúp thầy cô phân bổ thời gian và chuyển bước bài giảng mạch lạc khi đứng lớp.
                   </p>
                 </div>
                 <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-emerald-600 group-hover:translate-x-1 transition-transform">
@@ -242,7 +244,7 @@ export default function Home() {
               </div>
             </AnimateOnScroll>
 
-            {/* Feature 4: TIỆN ÍCH ĐI KÈM & TRẢ BÀI (LUCKY WHEEL, XUẤT CÂU HỎI, DOC, KAHOOT) */}
+            {/* Feature 4: TIỆN ÍCH ĐI KÈM & TRẢ BÀI (VÒNG QUAY TRẢ BÀI, XUẤT CÂU HỎI, DOC, KAHOOT) */}
             <AnimateOnScroll className="h-full">
               <div className="group bg-white hover:bg-white border border-slate-200/80 hover:border-[var(--color-primary-300)] rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between h-full">
                 <div className="space-y-4">
@@ -253,7 +255,7 @@ export default function Home() {
                     Tiện Ích Đi Kèm & Trả Bài
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                    Tích hợp vòng quay may mắn (Lucky Wheel) trả bài tương tác sôi nổi; xuất dữ liệu câu hỏi trắc nghiệm, tài liệu bài giảng (Docx/PDF) và mẫu Kahoot dễ dàng.
+                    Tích hợp vòng quay gọi tên trả bài tương tác sôi nổi; xuất dữ liệu câu hỏi trắc nghiệm, tài liệu bài giảng (Word/PDF) và mẫu Kahoot dễ dàng.
                   </p>
                 </div>
                 <Link href="/dashboard/tra-bai" className="pt-4 flex items-center text-xs font-bold text-purple-600 group-hover:translate-x-1 transition-transform">

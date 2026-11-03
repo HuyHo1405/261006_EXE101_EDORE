@@ -144,10 +144,10 @@ export default function ClassroomConfigModal({ ctx, onChange, onClose }: Classro
             </div>
             <div>
               <h2 className="font-header text-base font-extrabold uppercase tracking-tight text-slate-900">
-                Cấu hình phòng học
+                Thông tin phòng học
               </h2>
               <p className="font-body text-xs text-slate-500">
-                Chọn mẫu có sẵn hoặc tùy chỉnh ngữ cảnh lớp học cho AI
+                Chọn mẫu có sẵn hoặc điều chỉnh bối cảnh lớp học thực tế
               </p>
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function ClassroomConfigModal({ ctx, onChange, onClose }: Classro
             className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
           >
             <Check className="w-4 h-4" />
-            <span>Áp dụng cấu hình</span>
+            <span>Áp dụng</span>
           </button>
         </div>
       </div>

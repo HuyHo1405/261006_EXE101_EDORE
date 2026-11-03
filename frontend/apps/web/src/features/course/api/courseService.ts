@@ -190,7 +190,7 @@ export function createCourseService(client: ApiClientFn = apiClient) {
       });
       if (!res.ok) {
         const text = await res.text().catch(() => "");
-        throw new Error(`Sinh kịch bản AI thất bại (${res.status}): ${text}`);
+        throw new Error(`Tạo kịch bản với AI thất bại (${res.status}): ${text}`);
       }
       const data = await res.json();
       return data.result || data.data; // Backend mới trả về ApiResponse.of(...)

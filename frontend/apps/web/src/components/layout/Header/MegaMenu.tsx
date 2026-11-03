@@ -58,7 +58,7 @@ export interface MegaMenuProps {
 }
 
 const DEFAULT_TOOLS: ToolMenuItem[] = [
-  { id: "lucky-wheel", name: "Vòng quay may mắn (Trả bài)", href: "/dashboard/tra-bai" },
+  { id: "lucky-wheel", name: "Vòng quay gọi tên trả bài", href: "/dashboard/tra-bai" },
   { id: "create-course", name: "Tạo khóa học mới", href: "/dashboard?action=create-course" },
   { id: "guide", name: "Cẩm nang hướng dẫn sử dụng", href: "/guide" },
 ];

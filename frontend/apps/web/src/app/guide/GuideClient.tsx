@@ -458,7 +458,7 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
 
   const tabs: Array<{ id: "overview" | "course" | "create-script" | "edit-script"; label: string }> = [
     { id: "overview", label: "1. Tổng quan" },
-    { id: "course", label: "2. Cấu hình Khóa học" },
+    { id: "course", label: "2. Quản lý Khóa học & Lớp học" },
     { id: "create-script", label: "3. Tạo Kịch bản" },
     { id: "edit-script", label: "4. Chỉnh sửa Kịch bản" },
   ];
@@ -581,7 +581,7 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
                   <span>
                     {currentTabIdx < tabs.length - 1 
                       ? `Bước tiếp theo: ${tabs[currentTabIdx + 1].label}` 
-                      : "Về lại Mục 1 (Overview)"}
+                      : "Về lại Mục 1 (Tổng quan)"}
                   </span>
                   <ArrowRight className="w-4 h-4" />
                 </button>

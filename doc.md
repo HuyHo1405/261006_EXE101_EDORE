@@ -2,7 +2,7 @@
 
 Chào mừng thầy cô đến với **EDORE** - Nền tảng hỗ trợ giáo viên chuẩn bị kịch bản giảng dạy thông minh. EDORE được xây dựng nhằm san sẻ thời gian và công sức soạn giáo án truyền thống của thầy cô, mang lại một quy trình chuẩn bị bài giảng nhẹ nhàng, trực quan và hiệu quả.
 
-Với EDORE, thầy cô trải nghiệm một quy trình liền mạch: **Khởi tạo khóa học và lớp học** -> **Chọn bài học từ Thư viện sách giáo khoa và thiết lập yêu cầu** -> **Trí tuệ nhân tạo (AI) tự động tạo kịch bản** -> **Tinh chỉnh kịch bản trong không gian soạn bài trực quan**.
+Với EDORE, thầy cô trải nghiệm một quy trình liền mạch: **Khởi tạo khóa học và lớp học** -> **Chọn bài học từ Thư viện sách giáo khoa và lựa chọn yêu cầu** -> **Trí tuệ nhân tạo (AI) tự động tạo kịch bản** -> **Tinh chỉnh kịch bản trong không gian soạn bài trực quan**.
 
 [IMAGE: Sơ đồ kiến trúc EDORE | Quy trình từ Khởi tạo khóa học -> Chọn bài từ Thư viện sách giáo khoa -> Trợ lý AI tạo kịch bản -> Tinh chỉnh kịch bản | /images/guide/fig1.1.png]
 
@@ -10,7 +10,7 @@ Hệ thống tích hợp sẵn **Thư viện bài học chuẩn sách giáo khoa
 
 ---
 
-## 2. Thiết lập khóa học và lớp học
+## 2. Quản lý khóa học và lớp học
 
 Bước đầu tiên là chuẩn bị không gian lớp học. Một bài giảng thành công không chỉ dựa vào kiến thức sách vở, mà còn cần phù hợp với bối cảnh thực tế của từng phòng học.
 
@@ -32,14 +32,14 @@ Tại đây, thầy cô nhập **Tên khóa học** (ví dụ: *"Toán 10 - Đ�
 [IMAGE: Giao diện Thông tin khóa học | Điền đầy đủ Tên khóa học và Mô tả chi tiết | /images/fig1_3.png]
 
 ### 4. Chuyển sang Bước 3: Thiết lập phòng học
-Khi đã điền đủ thông tin cơ bản, thầy cô nhấn nút **"Sang bước 3: Cấu hình phòng học"**.
+Khi đã điền đủ thông tin cơ bản, thầy cô nhấn nút **"Sang bước 3: Điều kiện phòng học"**.
 
-[IMAGE: Chuyển sang Bước 3 | Nhấn nút chuyển tiếp để sang phần thiết lập phòng học thực tế | /images/fig1_4.png]
+[IMAGE: Chuyển sang Bước 3 | Nhấn nút chuyển tiếp để sang phần khai báo điều kiện phòng học thực tế | /images/fig1_4.png]
 
 ### 5. Bước 3: Chọn mẫu phòng học
 Hệ thống cung cấp sẵn các mẫu phòng học phổ biến (Lớp học chuẩn, Phòng thực hành, Hội trường...) hoặc các mẫu thầy cô đã lưu trước đó.
 
-[IMAGE: Chọn mẫu phòng học | Lựa chọn giữa cấu hình chuẩn hoặc các mẫu phòng học thầy cô từng lưu | /images/fig1_5.png]
+[IMAGE: Chọn mẫu phòng học | Lựa chọn giữa mẫu phòng chuẩn hoặc các mẫu phòng học thầy cô từng lưu | /images/fig1_5.png]
 
 ### 6. Xem chi tiết thông số phòng học
 Khi chọn một mẫu, các thông số chi tiết (Thời lượng tiết học, Sĩ số học sinh, Không gian lớp, Bố trí bàn ghế) sẽ tự động hiển thị ở cột bên phải.
@@ -93,20 +93,20 @@ Ngay cạnh danh mục bài học, bảng bên phải sẽ hiển thị chi ti�
 
 [IMAGE: Xem Yêu cầu cần đạt và Xác nhận | Cột bên cạnh hiển thị mục tiêu cần đạt của bài và nút bấm xác nhận chọn bài | /images/fig2_5.png]
 
-### 6. Cửa sổ thiết lập kịch bản xuất hiện
-Sau khi xác nhận chọn bài, cửa sổ thiết lập kịch bản sẽ mở ra, gắn liền với tên bài học và khối lớp mà thầy cô vừa chọn.
+### 6. Cửa sổ yêu cầu kịch bản xuất hiện
+Sau khi xác nhận chọn bài, cửa sổ yêu cầu kịch bản sẽ mở ra, gắn liền với tên bài học và khối lớp mà thầy cô vừa chọn.
 
-[IMAGE: Cửa sổ thiết lập kịch bản | Bảng cấu hình kịch bản sư phạm xuất hiện gắn liền với bài học vừa được chọn | /images/fig2_6.png]
+[IMAGE: Cửa sổ kịch bản bài dạy | Bảng yêu cầu kịch bản sư phạm xuất hiện gắn liền với bài học vừa được chọn | /images/fig2_6.png]
 
 ### 7. Lựa chọn yêu cầu cho kịch bản mong muốn
-Tại bảng thiết lập, thầy cô chọn các tiêu chí theo ý muốn của mình:
+Tại đây, thầy cô chọn các tiêu chí theo ý muốn của mình:
 * **Thời lượng và Sĩ số:** Điều chỉnh thời gian dạy (45 phút, 90 phút...) và số lượng học sinh của lớp.
 * **Mẫu khung bài dạy:** Chọn khung bài học phù hợp (Khung 3 phần chuẩn: Khởi động - Kiến thức mới - Luyện tập; hoặc Khung 4 phần chuyên sâu có thêm Hoạt động vận dụng/dự án).
 * **Mục tiêu và phương pháp mong muốn:** Bổ sung các dặn dò riêng cho AI (ví dụ: tăng cường thảo luận nhóm, ứng dụng công nghệ thông tin, tạo trò chơi khởi động...).
 
 Sau khi chọn xong, thầy cô nhấn nút **"Tạo kịch bản với AI"**.
 
-[IMAGE: Điền yêu cầu kịch bản | Thiết lập các thông số thời lượng, sĩ số, khung bài học và mục tiêu mong muốn | /images/fig2_7.png]
+[IMAGE: Điền yêu cầu kịch bản | Khai báo các thông tin thời lượng, sĩ số, khung bài học và mục tiêu mong muốn | /images/fig2_7.png]
 
 ### 8. Hệ thống tiếp nhận và xử lý tự động
 Hệ thống tiếp nhận yêu cầu và AI bắt đầu phân tích tri thức bài học, phân bổ thời gian hợp lý cho từng phần. Thầy cô có thể theo dõi thanh tiến trình hiển thị trên màn hình.
@@ -141,10 +141,10 @@ Khi mở rộng menu bên trái, toàn bộ danh mục bài học và khóa họ
 
 [IMAGE: Đường dẫn phân cấp tiện lợi | Thanh chỉ dẫn giúp thầy cô quay về nhanh trang quản lý bài học hoặc khóa học | /images/fig3_3.png]
 
-### 4. Thanh dòng thời gian ở đáy màn hình
-Dưới đáy màn hình là thanh dòng thời gian cố định. Thanh này thể hiện thời lượng của từng phần bài dạy, giúp thầy cô dễ dàng chuyển qua lại giữa **Phần tổng quan** và **các phần nội dung** (Khởi động, Khám phá kiến thức, Luyện tập, Vận dụng).
+### 4. Thanh tiến trình bài dạy ở đáy màn hình
+Dưới đáy màn hình là thanh tiến trình bài dạy cố định. Thanh này thể hiện thời lượng của từng hoạt động bài dạy, giúp thầy cô dễ dàng chuyển qua lại giữa **Tổng quan bài học** và **các hoạt động dạy học** (Khởi động, Khám phá kiến thức, Luyện tập, Vận dụng).
 
-[IMAGE: Thanh dòng thời gian ở đáy màn hình | Thanh điều hướng ở đáy giúp xem thời lượng và chuyển nhanh giữa các phần bài dạy | /images/fig3_4.png]
+[IMAGE: Thanh tiến trình bài dạy ở đáy màn hình | Thanh điều hướng ở đáy giúp xem thời lượng và chuyển nhanh giữa các hoạt động bài dạy | /images/fig3_4.png]
 
 ### 5. Phần tổng quan: Mục Yêu cầu cần đạt
 Tại màn hình Tổng quan, mục **Yêu cầu cần đạt** tổng hợp rõ ràng những mốc kiến thức và kỹ năng cần rèn luyện cho học sinh trong suốt tiết học, giúp thầy cô luôn bám sát trọng tâm.

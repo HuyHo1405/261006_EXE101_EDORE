@@ -70,12 +70,12 @@ export default function FileStartModal({ fileName, ctx, onConfirm, onCancel }: F
                 Tạo kịch bản mới
               </span>
               <h2 className="text-base font-bold font-header uppercase tracking-tight text-[var(--color-neutral-900)] mt-0.5">
-                Thiết lập bài giảng
+                Thông tin bài giảng
               </h2>
             </div>
             
             <p className="font-body text-[11px] text-[var(--color-neutral-500)] mt-0.5 leading-relaxed font-medium">
-              Thiết lập các tham số cơ bản để AI tự động phân tích tài liệu và xây dựng kịch bản bài giảng tốt nhất.
+              Lựa chọn yêu cầu sư phạm để AI tự động phân tích tài liệu và gợi ý kịch bản bài giảng phù hợp nhất.
             </p>
 
             {/* Tài liệu tham chiếu (Aligned with right column inputs) */}

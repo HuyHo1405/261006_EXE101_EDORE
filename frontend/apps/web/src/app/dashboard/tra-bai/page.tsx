@@ -25,7 +25,7 @@ function TraBaiContent() {
 export default function TraBaiPage() {
   return (
     <AuthGuard>
-      <Suspense fallback={<div className="p-10 text-center text-[var(--color-neutral-500)] text-sm">Đang tải Vòng quay Trả bài...</div>}>
+      <Suspense fallback={<div className="p-10 text-center text-[var(--color-neutral-500)] text-sm">Đang tải Vòng quay gọi tên trả bài...</div>}>
         <TraBaiContent />
       </Suspense>
     </AuthGuard>

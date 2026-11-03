@@ -15,18 +15,18 @@ import {
 const FEATURES = [
   {
     Icon: Users,
-    title: 'Cấu hình lớp học',
-    desc: 'Thiết lập mục tiêu, đối tượng học sinh và trình độ để AI cá nhân hóa nội dung phù hợp nhất.',
+    title: 'Thông tin lớp học',
+    desc: 'Khai báo mục tiêu, sĩ số học sinh và đối tượng để AI cá nhân hóa nội dung phù hợp nhất.',
   },
   {
     Icon: FileText,
-    title: 'Thiết lập bài giảng',
+    title: 'Chọn bài giảng',
     desc: 'Tải tài liệu hoặc chọn bài từ SGK, AI sẽ nắm bắt cấu trúc và yêu cầu cốt lõi của bạn.',
   },
   {
     Icon: Brain,
-    title: 'Hệ thống AI xử lý',
-    desc: 'Công nghệ phân tích ngữ nghĩa tự động trích xuất kiến thức và soạn thảo kịch bản giảng dạy logic.',
+    title: 'Trợ lý AI soạn giảng',
+    desc: 'Tự động phân tích kiến thức trọng tâm SGK và đề xuất tiến trình bài giảng sư phạm tối ưu.',
   },
   {
     Icon: Pencil,
@@ -145,13 +145,13 @@ export default function ContentInput({
     if (classroomCtx?.duration) parts.push(`${classroomCtx.duration} phút`)
     if (classroomCtx?.studentCount) {
       parts.push(
-        classroomCtx.studentCount === '<=10' ? '≤10 HV'
-          : classroomCtx.studentCount === '>30' ? '31+ HV'
-          : '11–30 HV'
+        classroomCtx.studentCount === '<=10' ? '≤10 HS'
+          : classroomCtx.studentCount === '>30' ? '31+ HS'
+          : '11–30 HS'
       )
     }
     if (classroomCtx?.learningSpace) {
-      const spaceMap: Record<string, string> = { classroom: 'Lớp học', lab: 'Lab', outdoor: 'Ngoài trời', online: 'Online' }
+      const spaceMap: Record<string, string> = { classroom: 'Lớp học', lab: 'Phòng máy', outdoor: 'Ngoài trời', online: 'Trực tuyến' }
       parts.push(spaceMap[classroomCtx.learningSpace] || '')
     }
     return parts.filter(Boolean)
@@ -301,7 +301,7 @@ export default function ContentInput({
                 <span className="absolute inset-0 rounded-[var(--radius-md)] animate-ping bg-[var(--color-secondary-500)]/30 pointer-events-none" />
               )}
               <Users className="w-4 h-4" />
-              {hasConfig ? `✓ ${configSummary.join(' · ')}` : 'Cấu hình lớp học'}
+              {hasConfig ? `✓ ${configSummary.join(' · ')}` : 'Thông tin lớp học'}
             </button>
 
             <button
@@ -372,7 +372,7 @@ export default function ContentInput({
                   <span className="absolute inset-0 rounded-[var(--radius-md)] animate-ping bg-[var(--color-secondary-500)]/30 pointer-events-none" />
                 )}
                 <Users className="w-4 h-4" />
-                Cấu hình lớp học
+                Thông tin lớp học
               </button>
             </div>
             <input ref={fileInputRef} accept=".pdf,.doc,.docx,.txt,.md" className="hidden" type="file" onChange={handleFileChange} />

@@ -244,10 +244,10 @@ export function useGenerateScriptWithAiMutation() {
         queryClient.invalidateQueries({ queryKey: courseKeys.scripts(data.courseId) });
       }
       queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
-      toast.success(`AI đã sinh kịch bản "${data?.title || 'mới'}" thành công!`);
+      toast.success(`AI đã soạn xong kịch bản "${data?.title || 'mới'}" thành công!`);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Sinh kịch bản bằng AI thất bại.");
+      toast.error(err.message || "Tạo kịch bản với AI thất bại. Vui lòng thử lại.");
     },
   });
 }

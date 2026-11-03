@@ -35,8 +35,8 @@ interface ClassConfigEditorProps {
 export function ClassConfigEditor({
   value,
   onChange,
-  title = "Cấu hình phòng học",
-  subtitle = "Chọn mẫu cấu hình sẵn để điền nhanh hoặc tự điều chỉnh các thông số bên dưới",
+  title = "Điều kiện phòng học",
+  subtitle = "Chọn mẫu phòng có sẵn để điền nhanh hoặc tự điều chỉnh theo thực tế của lớp",
   showHeadings = true,
 }: ClassConfigEditorProps) {
   const [selectedPresetId, setSelectedPresetId] = useState<string>(value.id || "");
@@ -225,7 +225,7 @@ export function ClassConfigEditor({
             </div>
 
             <p className="text-[11px] text-[var(--color-neutral-500)] font-medium leading-relaxed italic px-1">
-              Mẹo: Chọn một mẫu có sẵn để AI tự động điền các thông số kỹ thuật tối ưu nhất.
+              Mẹo: Chọn mẫu có sẵn để AI tự động gợi ý điều kiện không gian và thời lượng phù hợp nhất.
             </p>
 
             {/* SEARCHABLE DROPDOWN MENU */}
@@ -240,7 +240,7 @@ export function ClassConfigEditor({
                       : "text-[var(--color-neutral-600)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-neutral-900)]"
                   }`}
                 >
-                  <span>Mẫu tuỳ chỉnh (Tự thiết lập)</span>
+                  <span>Mẫu tuỳ chỉnh (Tự điền thông tin)</span>
                   {!selectedPresetId && <Check className="h-4 w-4 text-[var(--color-primary-500)]" />}
                 </button>
 
@@ -304,7 +304,7 @@ export function ClassConfigEditor({
                 <div>
                   <h4 className="text-xs font-bold text-[var(--color-primary-600)] mb-1">Mẫu đã được áp dụng!</h4>
                   <p className="text-[11px] font-medium leading-relaxed text-[var(--color-primary-600)] opacity-80">
-                    Hệ thống AI sẽ tối ưu kịch bản bài giảng dựa trên các thông số kỹ thuật của phòng học này.
+                    Hệ thống AI sẽ tối ưu kịch bản bài giảng dựa trên điều kiện phòng học và sĩ số của lớp.
                   </p>
                 </div>
               </div>
@@ -316,7 +316,7 @@ export function ClassConfigEditor({
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div className="sm:col-span-2">
             <label className="mb-2 block text-[11px] font-bold text-[var(--color-neutral-500)] uppercase tracking-widest">
-              Tên cấu hình <span className="text-rose-500">*</span>
+              Tên mẫu phòng học <span className="text-rose-500">*</span>
             </label>
             <Input
               type="text"
