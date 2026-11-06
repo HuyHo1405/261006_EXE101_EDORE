@@ -211,7 +211,7 @@ export function OralQuizStage({
           <button
             type="button"
             onClick={() => setIsConfigured(false)}
-            className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-neutral-700)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] px-2.5 py-1.5 rounded-[var(--radius-md)] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-200 hover:text-[var(--color-neutral-900)] dark:hover:text-white bg-white dark:bg-slate-800 border border-[var(--color-neutral-200)] dark:border-slate-700 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-[var(--radius-md)] transition-colors cursor-pointer"
             title="Đổi bài học hoặc cài đặt"
           >
             <ChevronLeft className="w-4 h-4" /> Đổi bài học
@@ -219,7 +219,7 @@ export function OralQuizStage({
 
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-tertiary-500)]" />
-            <h1 className="font-header font-bold text-sm sm:text-base text-[var(--color-neutral-900)] uppercase truncate max-w-[240px] sm:max-w-md">
+            <h1 className="font-header font-bold text-sm sm:text-base text-[var(--color-neutral-900)] dark:text-slate-100 uppercase truncate max-w-[240px] sm:max-w-md">
               {lessonTitle || 'Trả bài miệng'}
             </h1>
           </div>
@@ -256,7 +256,7 @@ export function OralQuizStage({
           <button
             type="button"
             onClick={toggleFullscreen}
-            className="p-1.5 text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] rounded-[var(--radius-md)] transition-colors cursor-pointer"
+            className="p-1.5 text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-white bg-white dark:bg-slate-800 border border-[var(--color-neutral-200)] dark:border-slate-700 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 rounded-[var(--radius-md)] transition-colors cursor-pointer"
             title="Bật/Tắt Toàn màn hình"
           >
             {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -266,7 +266,7 @@ export function OralQuizStage({
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 text-[var(--color-neutral-600)] hover:text-rose-600 bg-white border border-[var(--color-neutral-200)] hover:bg-rose-50 rounded-[var(--radius-md)] transition-colors cursor-pointer"
+              className="p-1.5 text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-white dark:bg-slate-800 border border-[var(--color-neutral-200)] dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-[var(--radius-md)] transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>

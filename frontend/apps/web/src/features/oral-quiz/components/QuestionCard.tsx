@@ -130,11 +130,11 @@ export function QuestionCard({
         {/* Difficulty badge & question text */}
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-[var(--radius-xs)] text-[10px] sm:text-[11px] font-mono font-bold uppercase bg-[var(--color-neutral-100)] text-[var(--color-neutral-700)] border border-[var(--color-neutral-200)]">
+            <span className="px-2 py-0.5 rounded-[var(--radius-xs)] text-[10px] sm:text-[11px] font-mono font-bold uppercase bg-[var(--color-neutral-100)] dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-300 border border-[var(--color-neutral-200)] dark:border-slate-700">
               {question.difficulty || 'Trắc nghiệm'}
             </span>
             {question.stageTag && (
-              <span className="px-1.5 py-0.5 rounded-[var(--radius-xs)] text-[10px] font-mono text-[var(--color-neutral-500)]">
+              <span className="px-1.5 py-0.5 rounded-[var(--radius-xs)] text-[10px] font-mono text-[var(--color-neutral-500)] dark:text-slate-400">
                 {question.stageTag}
               </span>
             )}
@@ -265,7 +265,7 @@ export function QuestionCard({
         )}
 
         {/* Bottom Actions for Teacher (Compact) */}
-        <div className="pt-2 border-t border-[var(--color-neutral-200)] flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <div className="pt-2 border-t border-[var(--color-neutral-200)] dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-1.5">
             <button
               type="button"
@@ -283,7 +283,7 @@ export function QuestionCard({
             <button
               type="button"
               onClick={onChangeQuestion}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--radius-md)] font-medium text-xs text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)] hover:bg-[var(--color-neutral-100)] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--radius-md)] font-medium text-xs text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-white hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-800 rounded-[var(--radius-md)] transition-colors cursor-pointer"
               title="Đổi câu hỏi khác cho học sinh này"
             >
               <RotateCw className="w-3.5 h-3.5" />
