@@ -263,48 +263,48 @@ export default function TimelineEditor({
       <div className="grid grid-cols-12 gap-6 flex-1 items-start relative min-h-[500px]">
         {isNavigating && activeIdx === -1 ? (
           <div className="col-span-12 border border-slate-200/90 dark:border-slate-800 rounded-[var(--radius-xl)] flex flex-col bg-white dark:bg-slate-900 overflow-hidden shadow-xs p-6 sm:p-8 space-y-8 min-h-[600px]">
-            <div className="h-10 w-1/3 bg-slate-200 rounded-lg animate-pulse" />
+            <div className="h-10 w-1/3 bg-slate-200 dark:bg-slate-800 rounded-lg animate-pulse" />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="h-32 bg-slate-100 rounded-xl animate-pulse" />
-              <div className="h-32 bg-slate-100 rounded-xl animate-pulse" />
-              <div className="h-32 bg-slate-100 rounded-xl animate-pulse" />
+              <div className="h-32 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
+              <div className="h-32 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
+              <div className="h-32 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
             </div>
-            <div className="h-6 w-1/4 bg-slate-200 rounded-lg animate-pulse mt-4" />
+            <div className="h-6 w-1/4 bg-slate-200 dark:bg-slate-800 rounded-lg animate-pulse mt-4" />
             <div className="space-y-4">
-              <div className="h-24 bg-slate-100 rounded-xl animate-pulse" />
-              <div className="h-24 bg-slate-100 rounded-xl animate-pulse" />
-              <div className="h-24 bg-slate-100 rounded-xl animate-pulse" />
+              <div className="h-24 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
+              <div className="h-24 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
+              <div className="h-24 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
             </div>
           </div>
         ) : isNavigating && activeIdx !== -1 ? (
           <>
             <main className={`col-span-12 ${isSidebarOpen ? 'lg:col-span-8' : ''} border border-slate-200/90 dark:border-slate-800 rounded-[var(--radius-xl)] flex flex-col bg-white dark:bg-slate-900 overflow-hidden shadow-xs p-6 space-y-5 min-h-[600px] transition-all`}>
               <div className="flex gap-2">
-                <div className="h-6 w-32 bg-slate-200 rounded-full animate-pulse" />
-                <div className="h-6 w-16 bg-slate-200 rounded-full animate-pulse" />
+                <div className="h-6 w-32 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
+                <div className="h-6 w-16 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
               </div>
-              <div className="h-10 w-3/4 bg-slate-200 rounded-lg animate-pulse mt-2" />
+              <div className="h-10 w-3/4 bg-slate-200 dark:bg-slate-800 rounded-lg animate-pulse mt-2" />
               
               <div className="flex-1 space-y-4 mt-6">
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 bg-slate-200 rounded-full animate-pulse" />
-                  <div className="h-5 w-48 bg-slate-200 rounded animate-pulse" />
+                  <div className="w-5 h-5 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
+                  <div className="h-5 w-48 bg-slate-200 dark:bg-slate-800 rounded animate-pulse" />
                 </div>
                 <div className="space-y-4 pt-2">
-                  <div className="h-32 bg-slate-100 rounded-xl animate-pulse" />
-                  <div className="h-32 bg-slate-100 rounded-xl animate-pulse" />
-                  <div className="h-32 bg-slate-100 rounded-xl animate-pulse" />
+                  <div className="h-32 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
+                  <div className="h-32 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
+                  <div className="h-32 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
                 </div>
               </div>
             </main>
             
             {isSidebarOpen && (
               <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4">
-                <div className="bg-slate-100 border border-slate-200 p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3 min-h-[600px]">
-                  <div className="h-12 bg-slate-200 rounded-lg animate-pulse" />
-                  <div className="h-48 bg-white border border-slate-200 rounded-lg animate-pulse" />
-                  <div className="h-24 bg-white border border-slate-200 rounded-lg animate-pulse" />
-                  <div className="h-48 bg-white border border-slate-200 rounded-lg animate-pulse" />
+                <div className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3 min-h-[600px]">
+                  <div className="h-12 bg-slate-200 dark:bg-slate-800 rounded-lg animate-pulse" />
+                  <div className="h-48 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-lg animate-pulse" />
+                  <div className="h-24 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-lg animate-pulse" />
+                  <div className="h-48 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-lg animate-pulse" />
                 </div>
               </aside>
             )}
@@ -330,7 +330,7 @@ export default function TimelineEditor({
               {/* Top Chips Bar */}
               <div className="flex flex-wrap gap-2 items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-[var(--radius-full)] bg-[var(--color-primary-50)] text-[var(--color-primary-700)] font-body text-xs font-bold border border-[var(--color-primary-200)]">
+                  <span className="px-3 py-1 rounded-[var(--radius-full)] bg-[var(--color-primary-50)] dark:bg-blue-950/60 text-[var(--color-primary-700)] dark:text-blue-300 font-body text-xs font-bold border border-[var(--color-primary-200)] dark:border-blue-800">
                     {activeType}
                   </span>
 
@@ -338,7 +338,7 @@ export default function TimelineEditor({
                     type="text"
                     value={cur.duration ?? ''}
                     onChange={(e) => updateStep({ duration: e.target.value })}
-                    className="font-mono text-xs font-bold bg-[var(--color-neutral-100)] text-[var(--color-neutral-800)] px-3 py-1 rounded-[var(--radius-full)] border border-[var(--color-neutral-300)] w-16 text-center outline-none focus:border-[var(--color-primary-500)]"
+                    className="font-mono text-xs font-bold bg-[var(--color-neutral-100)] dark:bg-slate-800 text-[var(--color-neutral-800)] dark:text-slate-100 px-3 py-1 rounded-[var(--radius-full)] border border-[var(--color-neutral-300)] dark:border-slate-700 w-16 text-center outline-none focus:border-[var(--color-primary-500)] dark:focus:border-sky-500"
                     placeholder="10'"
                   />
                 </div>
@@ -350,7 +350,7 @@ export default function TimelineEditor({
                   type="text"
                   value={cur.title ?? ''}
                   onChange={(e) => updateStep({ title: e.target.value })}
-                  className="font-header font-extrabold text-2xl uppercase tracking-tight text-[var(--color-neutral-900)] bg-transparent border-b border-transparent hover:border-[var(--color-neutral-300)] focus:border-[var(--color-primary-500)] focus:outline-none w-full pb-1 transition-all placeholder:text-[var(--color-neutral-400)]"
+                  className="font-header font-extrabold text-2xl uppercase tracking-tight text-[var(--color-neutral-900)] dark:text-slate-100 bg-transparent border-b border-transparent hover:border-[var(--color-neutral-300)] dark:hover:border-slate-700 focus:border-[var(--color-primary-500)] dark:focus:border-sky-500 focus:outline-none w-full pb-1 transition-all placeholder:text-[var(--color-neutral-400)] dark:placeholder:text-slate-500"
                   placeholder="Tên hoạt động bài giảng..."
                 />
               </div>
@@ -358,16 +358,16 @@ export default function TimelineEditor({
               {/* Nội dung bài giảng */}
               <div className="flex-1 flex flex-col gap-4">
                 <div className="flex items-center gap-2 px-1">
-                  <BookOpen className="w-4.5 h-4.5 text-[var(--color-primary-600)]" />
-                  <h3 className="font-header text-sm uppercase tracking-wider font-extrabold text-[var(--color-neutral-900)]">
+                  <BookOpen className="w-4.5 h-4.5 text-[var(--color-primary-600)] dark:text-blue-400" />
+                  <h3 className="font-header text-sm uppercase tracking-wider font-extrabold text-[var(--color-neutral-900)] dark:text-slate-100">
                     NỘI DUNG BÀI GIẢNG
                   </h3>
                 </div>
 
                 {cur.isLoading ? (
-                  <div className="p-8 flex flex-col items-center justify-center gap-3 bg-[var(--color-neutral-50)] rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)]">
+                  <div className="p-8 flex flex-col items-center justify-center gap-3 bg-[var(--color-neutral-50)] dark:bg-slate-800/50 rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] dark:border-slate-800">
                     <span className="w-6 h-6 border-3 border-[var(--color-primary-500)] border-t-transparent rounded-full animate-spin" />
-                    <span className="font-body text-xs font-semibold text-[var(--color-neutral-600)]">
+                    <span className="font-body text-xs font-semibold text-[var(--color-neutral-600)] dark:text-slate-300">
                       Đang phân rã dữ liệu kịch bản bài giảng...
                     </span>
                   </div>
@@ -406,11 +406,11 @@ export default function TimelineEditor({
               </div>
 
               {/* Nút điều hướng qua phần khác (dạng Link) */}
-              <div className="flex items-center justify-between pt-4 border-t border-[var(--color-neutral-200)] mt-4">
+              <div className="flex items-center justify-between pt-4 border-t border-[var(--color-neutral-200)] dark:border-slate-800 mt-4">
                 <button
                   onClick={handleGoPrev}
                   disabled={activeIdx <= -1}
-                  className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] hover:underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed transition-colors cursor-pointer py-1 px-2 rounded-[var(--radius-md)] hover:bg-[var(--color-primary-50)]"
+                  className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] dark:text-blue-400 hover:text-[var(--color-primary-800)] dark:hover:text-blue-300 hover:underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed transition-colors cursor-pointer py-1 px-2 rounded-[var(--radius-md)] hover:bg-[var(--color-primary-50)] dark:hover:bg-slate-800/60"
                   title="Phần trước"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -419,7 +419,7 @@ export default function TimelineEditor({
                 <button
                   onClick={handleGoNext}
                   disabled={activeIdx >= steps.length - 1 && (!knowledgeUnits.length || (activeUnitIdx ?? 0) >= knowledgeUnits.length - 1)}
-                  className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] hover:underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed transition-colors cursor-pointer py-1 px-2 rounded-[var(--radius-md)] hover:bg-[var(--color-primary-50)]"
+                  className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] dark:text-blue-400 hover:text-[var(--color-primary-800)] dark:hover:text-blue-300 hover:underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed transition-colors cursor-pointer py-1 px-2 rounded-[var(--radius-md)] hover:bg-[var(--color-primary-50)] dark:hover:bg-slate-800/60"
                   title="Phần tiếp theo"
                 >
                   Phần tiếp

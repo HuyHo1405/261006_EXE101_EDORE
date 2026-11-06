@@ -34,7 +34,7 @@ export function TimelineDockBar({
     (!knowledgeUnits.length || (activeUnitIdx ?? 0) >= knowledgeUnits.length - 1)
 
   return (
-    <div className="sticky bottom-0 z-10 w-full mt-2 pt-3 pb-2 bg-gradient-to-t from-white via-white/95 to-transparent backdrop-blur-md flex flex-col items-start gap-1.5">
+    <div className="sticky bottom-0 z-10 w-full mt-2 pt-3 pb-2 bg-gradient-to-t from-white via-white/95 to-transparent dark:from-slate-950 dark:via-slate-950/95 dark:to-transparent backdrop-blur-md flex flex-col items-start gap-1.5">
       <style>{`
         @keyframes chipPopUp {
           0% {
@@ -61,8 +61,8 @@ export function TimelineDockBar({
                 title={u.unit_title || `Đơn vị ${uIdx + 1}`}
                 className={`px-3 py-1 text-[11px] font-bold rounded-full transition-all whitespace-nowrap cursor-pointer shadow-sm border shrink-0 chip-animate opacity-0 ${
                   isUnitActive
-                    ? 'bg-sky-50 text-sky-700 border-sky-200 ring-2 ring-sky-400/20'
-                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-800'
+                    ? 'bg-sky-50 text-sky-700 border-sky-200 ring-2 ring-sky-400/20 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-800 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200'
                 }`}
                 style={{ 
                   animationDelay: `${uIdx * 70}ms`
@@ -101,7 +101,7 @@ export function TimelineDockBar({
                 className={`font-body px-4 py-2 rounded-[var(--radius-lg)] flex items-center gap-2 transition-all font-bold text-xs shadow-xs border shrink-0 whitespace-nowrap cursor-pointer ${
                   isActive
                     ? 'bg-[var(--color-primary-500)] text-white border-[var(--color-primary-500)] shadow-md'
-                    : 'bg-white hover:bg-[var(--color-neutral-100)] text-[var(--color-neutral-800)] border border-[var(--color-neutral-300)]'
+                    : 'bg-white dark:bg-slate-800 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 text-[var(--color-neutral-800)] dark:text-slate-200 border border-[var(--color-neutral-300)] dark:border-slate-700'
                 }`}
               >
                 {step.isLoading ? (
@@ -109,7 +109,7 @@ export function TimelineDockBar({
                 ) : (
                   <span
                     className={`font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-[var(--radius-xs)] ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-[var(--color-neutral-100)] text-[var(--color-neutral-700)]'
+                      isActive ? 'bg-white/20 text-white' : 'bg-[var(--color-neutral-100)] dark:bg-slate-700 text-[var(--color-neutral-700)] dark:text-slate-300'
                     }`}
                   >
                     {(step.duration || '').endsWith("'") ? step.duration : `${step.duration}'`}
@@ -122,11 +122,11 @@ export function TimelineDockBar({
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2 ml-auto shrink-0 border-l border-[var(--color-neutral-300)] pl-3">
+        <div className="flex items-center gap-2 ml-auto shrink-0 border-l border-[var(--color-neutral-300)] dark:border-slate-700 pl-3">
           <button
             onClick={onGoPrev}
             disabled={isPrevDisabled}
-            className="w-9 h-9 flex items-center justify-center bg-white hover:bg-[var(--color-neutral-100)] text-[var(--color-neutral-700)] border border-[var(--color-neutral-300)] rounded-[var(--radius-lg)] transition-colors shadow-xs disabled:opacity-40 cursor-pointer"
+            className="w-9 h-9 flex items-center justify-center bg-white dark:bg-slate-800 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 text-[var(--color-neutral-700)] dark:text-slate-200 border border-[var(--color-neutral-300)] dark:border-slate-700 rounded-[var(--radius-lg)] transition-colors shadow-xs disabled:opacity-40 cursor-pointer"
             title="Phần trước"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -134,7 +134,7 @@ export function TimelineDockBar({
           <button
             onClick={onGoNext}
             disabled={isNextDisabled}
-            className="w-9 h-9 flex items-center justify-center bg-white hover:bg-[var(--color-neutral-100)] text-[var(--color-neutral-700)] border border-[var(--color-neutral-300)] rounded-[var(--radius-lg)] transition-colors shadow-xs disabled:opacity-40 cursor-pointer"
+            className="w-9 h-9 flex items-center justify-center bg-white dark:bg-slate-800 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 text-[var(--color-neutral-700)] dark:text-slate-200 border border-[var(--color-neutral-300)] dark:border-slate-700 rounded-[var(--radius-lg)] transition-colors shadow-xs disabled:opacity-40 cursor-pointer"
             title="Phần tiếp theo"
           >
             <ChevronRight className="w-4 h-4" />

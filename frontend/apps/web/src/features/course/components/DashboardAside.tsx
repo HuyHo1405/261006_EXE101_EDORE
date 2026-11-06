@@ -150,7 +150,7 @@ export function DashboardAside({
               <button
                 type="button"
                 onClick={() => setIsCoursesExpanded(!isCoursesExpanded)}
-                className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 active:scale-90 transition-all cursor-pointer"
+                className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-90 transition-all cursor-pointer"
                 title="Mở rộng / Thu gọn cây thư mục"
               >
                 <ChevronDown
@@ -353,7 +353,7 @@ export function DashboardAside({
   }
 
   return (
-    <aside className="dashboard-mesh-card relative w-16 shrink-0 border border-slate-200/90 shadow-2xl rounded-2xl md:rounded-3xl px-2.5 py-3 sm:py-4 md:py-6 flex flex-col items-center justify-between self-stretch min-h-[580px] font-sans z-30">
+    <aside className="dashboard-mesh-card relative w-16 shrink-0 border border-slate-200/90 dark:border-slate-800 shadow-2xl rounded-2xl md:rounded-3xl px-2.5 py-3 sm:py-4 md:py-6 flex flex-col items-center justify-between self-stretch min-h-[580px] font-sans z-30">
       {/* ── COMPACT SIDEBAR ICONS (DEFAULT MINIMIZED STATE - 0% LAYOUT REFLOW) ── */}
       <div className="w-full flex flex-col items-center space-y-4">
         {/* Maximize / Expand Toggle Button with Hover Transform & Scale Bouncing */}
@@ -402,7 +402,7 @@ export function DashboardAside({
           type="button"
           onClick={() => setIsOverlayOpen(true)}
           title="Mở rộng menu"
-          className="text-slate-400 hover:text-slate-900 p-2 cursor-pointer transform hover:translate-x-1 transition-all duration-200"
+          className="text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 p-2 cursor-pointer transform hover:translate-x-1 transition-all duration-200"
         >
           <ChevronRight className="h-4 w-4" />
         </button>

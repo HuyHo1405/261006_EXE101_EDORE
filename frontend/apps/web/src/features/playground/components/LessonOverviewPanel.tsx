@@ -98,7 +98,7 @@ export function LessonOverviewPanel({
               </h2>
 
               {contentSummary && (
-                <p className="font-body text-sm text-[var(--color-neutral-700)] leading-relaxed italic">
+                <p className="font-body text-sm text-[var(--color-neutral-700)] dark:text-slate-300 leading-relaxed italic">
                   {contentSummary}
                 </p>
               )}
@@ -131,7 +131,7 @@ export function LessonOverviewPanel({
       {hasMethodSection && (
         <div className="space-y-3">
           {/* Tiêu đề bên ngoài card: Giữ icon */}
-          <h3 className="font-header font-extrabold text-sm uppercase tracking-wider text-slate-900 flex items-center gap-2">
+          <h3 className="font-header font-extrabold text-sm uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[var(--color-primary-600)] shrink-0" />
             <span>Đề xuất phương pháp & phương tiện dạy học</span>
           </h3>
@@ -139,7 +139,7 @@ export function LessonOverviewPanel({
           <div className="space-y-4">
             {/* KHỐI 1: PHƯƠNG PHÁP DẠY HỌC (MÀU XANH DƯƠNG - BLUE RÕ RÀNG ĐỂ TẬP TRUNG KIỂM CHỨNG) */}
             <div className="p-5 rounded-[var(--radius-lg)] bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 shadow-xs space-y-4">
-              <div className="space-y-1.5 pb-2.5 border-b border-blue-200/80">
+              <div className="space-y-1.5 pb-2.5 border-b border-blue-200/80 dark:border-blue-800/80">
                 <h4 className="font-header font-extrabold text-sm uppercase tracking-wider text-blue-950 dark:text-blue-300">
                   Phương pháp: {methodTitle}
                 </h4>
@@ -176,15 +176,15 @@ export function LessonOverviewPanel({
                         onClick={() => toggleTool(idx)}
                         className={`p-3 rounded-lg border transition-all flex items-start gap-2.5 cursor-pointer select-none ${
                           isDone
-                            ? 'bg-amber-100/50 border-amber-300/60 opacity-60'
-                            : 'bg-white border-amber-200/90 hover:border-amber-400 hover:shadow-2xs'
+                            ? 'bg-amber-100/50 dark:bg-amber-950/20 border-amber-300/60 dark:border-amber-900/40 opacity-60'
+                            : 'bg-white dark:bg-slate-900 border-amber-200/90 dark:border-amber-800/80 hover:border-amber-400 dark:hover:border-amber-600 hover:shadow-2xs'
                         }`}
                       >
                         <div
                           className={`w-4 h-4 rounded border transition-all flex items-center justify-center shrink-0 mt-0.5 ${
                             isDone
                               ? 'bg-slate-900 border-slate-900 text-white'
-                              : 'bg-white border-slate-400'
+                              : 'bg-white dark:bg-slate-800 border-slate-400 dark:border-slate-600'
                           }`}
                         >
                           {isDone && <Check className="w-2.5 h-2.5 text-white stroke-[3]" />}
@@ -192,7 +192,7 @@ export function LessonOverviewPanel({
                         <div className="flex-1 min-w-0 space-y-1">
                           <strong
                             className={`font-bold text-xs block leading-snug break-words ${
-                              isDone ? 'text-slate-400 line-through' : 'text-slate-900'
+                              isDone ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-900 dark:text-slate-100'
                             }`}
                           >
                             {tool.name}
@@ -200,7 +200,7 @@ export function LessonOverviewPanel({
                           {tool.purpose && (
                             <p
                               className={`text-[11px] leading-snug break-words transition-colors ${
-                                isDone ? 'text-slate-400' : 'text-slate-600'
+                                isDone ? 'text-slate-400 dark:text-slate-500' : 'text-slate-600 dark:text-slate-300'
                               }`}
                             >
                               {tool.purpose}

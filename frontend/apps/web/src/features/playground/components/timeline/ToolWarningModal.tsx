@@ -23,28 +23,28 @@ export function ToolWarningModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl border border-slate-200 p-5 space-y-4 animate-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+      <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 animate-in zoom-in-95 duration-150">
         <div className="flex items-start gap-3">
-          <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
             <AlertTriangle className="w-5 h-5 stroke-[2.5]" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-header font-bold text-sm text-slate-900 leading-snug">
+            <h3 className="font-header font-bold text-sm text-slate-900 dark:text-slate-100 leading-snug">
               Chưa chuẩn bị đủ học liệu ({preparedToolsCount}/{totalToolsCount})
             </h3>
-            <p className="font-body text-xs text-slate-600 leading-relaxed">
+            <p className="font-body text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
               Còn {unpreparedTools.length} học liệu chưa được xác nhận. Bạn muốn chuẩn bị trước hay tiếp tục xem?
             </p>
           </div>
         </div>
 
         {/* 2 Lựa chọn thao tác: Bỏ qua / Chuẩn bị */}
-        <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
           <button
             type="button"
             onClick={onSkip}
-            className="font-body px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+            className="font-body px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
             Bỏ qua
           </button>

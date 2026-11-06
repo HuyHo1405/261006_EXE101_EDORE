@@ -259,7 +259,7 @@ function NewScriptContent() {
 
   return (
     <AuthGuard>
-      <div className="w-full bg-[var(--color-primary-500)] min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body">
+      <div className="w-full bg-[var(--color-primary-500)] dark:bg-slate-950 min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-stretch gap-4 md:gap-6 min-h-[580px]">
           {/* Aside Navigation */}
           <DashboardAside
@@ -275,7 +275,7 @@ function NewScriptContent() {
           />
 
           {/* Main Content Area */}
-          <main className="dashboard-mesh-card flex-1 min-w-0 w-full border border-slate-200/90 shadow-2xl rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-6 flex flex-col justify-between self-stretch min-h-[580px]">
+          <main className="dashboard-mesh-card flex-1 min-w-0 w-full border border-slate-200/90 dark:border-slate-800 shadow-2xl rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-6 flex flex-col justify-between self-stretch min-h-[580px]">
             <div key={stage} className={`flex-1 flex flex-col h-full ${isExiting ? 'stage-exit' : 'stage-enter'}`}>
               {stage === 'input' && (
                 <div className="flex flex-col h-full space-y-3.5">
@@ -295,10 +295,10 @@ function NewScriptContent() {
                     <div className="flex items-stretch gap-3 pt-0.5">
                       <div className="w-1.5 rounded-full shrink-0 self-stretch my-0.5 bg-[var(--color-primary-500)]" />
                       <div className="flex-1 min-w-0 space-y-0.5">
-                        <h1 className="font-header font-bold text-xl sm:text-2xl uppercase tracking-tight text-slate-900 leading-tight">
+                        <h1 className="font-header font-bold text-xl sm:text-2xl uppercase tracking-tight text-slate-900 dark:text-slate-100 leading-tight">
                           Thư viện bài học
                         </h1>
-                        <p className="text-xs text-slate-600 font-body leading-relaxed">
+                        <p className="text-xs text-slate-600 dark:text-slate-300 font-body leading-relaxed">
                           Chọn bài học từ chương trình chuẩn để AI phân tích cấu trúc, ngữ liệu và hình ảnh nhằm tự động soạn kịch bản.
                         </p>
                       </div>
@@ -329,7 +329,7 @@ function NewScriptContent() {
                   </div>
 
                   {/* 3. MAIN CONTAINER (GRADE TABS & 2-COLUMN CURRICULUM VIEW) */}
-                  <div className="bg-slate-100/70 backdrop-blur-sm border border-slate-200/80 p-4 sm:p-5 rounded-2xl md:rounded-3xl shadow-xs flex flex-col flex-1 justify-between space-y-4 min-w-0 w-full">
+                  <div className="bg-slate-100/70 dark:bg-slate-900/60 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800 p-4 sm:p-5 rounded-2xl md:rounded-3xl shadow-xs flex flex-col flex-1 justify-between space-y-4 min-w-0 w-full">
                     <div className="flex-1 min-w-0 w-full">
                       <LessonGrid
                         lessons={allLessons}
@@ -396,7 +396,7 @@ export default function NewScriptPage() {
   return (
     <Suspense
       fallback={
-        <div className="w-full bg-[var(--color-primary-500)] min-h-screen flex items-center justify-center">
+        <div className="w-full bg-[var(--color-primary-500)] dark:bg-slate-950 min-h-screen flex items-center justify-center">
           <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
         </div>
       }

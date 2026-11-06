@@ -181,7 +181,7 @@ function ScriptEditContent() {
 
   return (
     <AuthGuard>
-      <div className="w-full bg-[var(--color-primary-500)] min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body">
+      <div className="w-full bg-[var(--color-primary-500)] dark:bg-slate-950 min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-stretch gap-4 md:gap-6 min-h-[580px]">
           <DashboardAside
             activeTab="scripts"
@@ -195,7 +195,7 @@ function ScriptEditContent() {
             onClose={() => setIsMenuOpen(false)}
           />
           {/* Main Content Area: Timeline Editor */}
-          <main className="dashboard-mesh-card flex-1 min-w-0 w-full border border-slate-200/90 shadow-2xl rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 flex flex-col self-stretch min-h-[580px]">
+          <main className="dashboard-mesh-card flex-1 min-w-0 w-full border border-slate-200/90 dark:border-slate-800 shadow-2xl rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 flex flex-col self-stretch min-h-[580px]">
             {isLoaded ? (
               <TimelineEditor
                 steps={timelineSteps}
@@ -226,7 +226,7 @@ function ScriptEditContent() {
 export default function ScriptEditPage() {
   return (
     <Suspense fallback={
-      <div className="w-full bg-[var(--color-primary-500)] min-h-screen flex items-center justify-center">
+      <div className="w-full bg-[var(--color-primary-500)] dark:bg-slate-950 min-h-screen flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
       </div>
     }>

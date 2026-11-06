@@ -35,7 +35,7 @@ export function VanDungView({ payload, onChange }: { payload: any; onChange: (p:
   const rubric: any[] = Array.isArray(p.rubric) ? p.rubric : []
 
   return (
-    <div className="rounded-xl border-2 border-purple-200 bg-white p-4 space-y-5">
+    <div className="rounded-xl border-2 border-purple-200 dark:border-purple-900/60 bg-white dark:bg-slate-900 p-4 space-y-5">
       <Block n={1} label="Tình huống thực tế" tone="purple" icon={<MessageCircle className="w-3.5 h-3.5" />}>
         <AutoResizeTextarea value={p.scenario || ''} minRows={2} placeholder="Mô tả bối cảnh / tình huống thực tế..."
           onChange={v => onChange({ ...p, scenario: v })} className={fieldCls + ' italic'} />
@@ -49,30 +49,30 @@ export function VanDungView({ payload, onChange }: { payload: any; onChange: (p:
           onChange={v => onChange({ ...p, expected_output_form: v })} className={fieldCls} />
       </Block>
       <Block n={4} label="Tiêu chí đánh giá" tone="emerald" icon={<Award className="w-3.5 h-3.5" />}>
-        <div className="border border-slate-200 rounded-lg divide-y divide-slate-100 overflow-hidden">
+        <div className="border border-slate-200 dark:border-slate-800 rounded-lg divide-y divide-slate-100 dark:divide-slate-800 overflow-hidden">
           {rubric.map((r, i) => (
             <div key={i} className="flex gap-2 items-start p-2 group">
               <input value={r.criterion || ''} placeholder="Tiêu chí"
                 onChange={e => onChange({ ...p, rubric: rubric.map((x, j) => (j === i ? { ...x, criterion: e.target.value } : x)) })}
-                className="w-36 shrink-0 font-bold text-xs text-emerald-900 bg-transparent hover:bg-slate-50 focus:bg-slate-50 rounded p-1 outline-none border border-transparent focus:border-slate-300" />
+                className="w-36 shrink-0 font-bold text-xs text-emerald-900 dark:text-emerald-300 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 rounded p-1 outline-none border border-transparent focus:border-slate-300 dark:focus:border-slate-700" />
               <input value={r.description || ''} placeholder="Mô tả mức đạt"
                 onChange={e => onChange({ ...p, rubric: rubric.map((x, j) => (j === i ? { ...x, description: e.target.value } : x)) })}
-                className="flex-1 text-xs text-slate-700 bg-transparent hover:bg-slate-50 focus:bg-slate-50 rounded p-1 outline-none border border-transparent focus:border-slate-300" />
+                className="flex-1 text-xs text-slate-700 dark:text-slate-300 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 rounded p-1 outline-none border border-transparent focus:border-slate-300 dark:focus:border-slate-700" />
               <button type="button" onClick={() => onChange({ ...p, rubric: rubric.filter((_, j) => j !== i) })}
-                className="p-1 rounded text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                className="p-1 rounded text-slate-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
           ))}
           <button type="button" onClick={() => onChange({ ...p, rubric: [...rubric, { criterion: '', description: '' }] })}
-            className="w-full py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-50 flex items-center justify-center gap-1">
+            className="w-full py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 flex items-center justify-center gap-1 cursor-pointer">
             <Plus className="w-3.5 h-3.5" /> Thêm tiêu chí
           </button>
         </div>
       </Block>
       <Block n={5} label="Gợi ý hỗ trợ học sinh" tone="amber" icon={<Lightbulb className="w-3.5 h-3.5" />}>
         <AutoResizeTextarea value={p.scaffolding_hint || ''} minRows={2} placeholder="Gợi ý khi học sinh gặp khó khăn..."
-          onChange={v => onChange({ ...p, scaffolding_hint: v })} className={fieldCls + ' bg-amber-50/50 border-amber-200'} />
+          onChange={v => onChange({ ...p, scaffolding_hint: v })} className={fieldCls + ' bg-amber-50/50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800'} />
       </Block>
     </div>
   )

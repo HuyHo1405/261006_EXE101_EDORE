@@ -57,7 +57,7 @@ export function TimelineDetailSidebar({
       <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4 sticky top-6 self-start max-h-[calc(100vh-2rem)] overflow-y-auto no-scrollbar">
         <KhoiDongSidebarCard onOpenOralQuiz={onOpenOralQuiz} />
         {currentImageIds.length > 0 && (
-          <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3">
+          <div className="bg-[var(--color-neutral-200)] dark:bg-slate-900 border border-[var(--color-neutral-300)] dark:border-slate-800 p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3">
             <div className="bg-[var(--color-primary-500)] text-white p-3.5 rounded-[var(--radius-lg)] flex items-center justify-between shadow-sm">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[var(--color-primary-100)]" />
@@ -66,7 +66,7 @@ export function TimelineDetailSidebar({
                 </span>
               </div>
             </div>
-            <div className="bg-white border-[3px] border-[var(--color-primary-300)] p-3 rounded-[var(--radius-lg)] shadow-xs">
+            <div className="bg-white dark:bg-slate-950 border-[3px] border-[var(--color-primary-300)] dark:border-blue-900/60 p-3 rounded-[var(--radius-lg)] shadow-xs">
               <ImageGallery usedImageIds={currentImageIds} images={images} layout="stack" />
             </div>
           </div>
@@ -81,7 +81,7 @@ export function TimelineDetailSidebar({
       <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4 sticky top-6 self-start max-h-[calc(100vh-2rem)] overflow-y-auto no-scrollbar">
         <LuyenTapSidebarCard payload={p} onChange={onPayloadChange} />
         {currentImageIds.length > 0 && (
-          <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3">
+          <div className="bg-[var(--color-neutral-200)] dark:bg-slate-900 border border-[var(--color-neutral-300)] dark:border-slate-800 p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3">
             <div className="bg-[var(--color-primary-500)] text-white p-3.5 rounded-[var(--radius-lg)] flex items-center justify-between shadow-sm">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[var(--color-primary-100)]" />
@@ -90,7 +90,7 @@ export function TimelineDetailSidebar({
                 </span>
               </div>
             </div>
-            <div className="bg-white border-[3px] border-[var(--color-primary-300)] p-3 rounded-[var(--radius-lg)] shadow-xs">
+            <div className="bg-white dark:bg-slate-950 border-[3px] border-[var(--color-primary-300)] dark:border-blue-900/60 p-3 rounded-[var(--radius-lg)] shadow-xs">
               <ImageGallery usedImageIds={currentImageIds} images={images} layout="stack" />
             </div>
           </div>
@@ -103,7 +103,7 @@ export function TimelineDetailSidebar({
   if (!currentImageIds || currentImageIds.length === 0) {
     return (
       <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4 sticky top-6 self-start">
-        <div className="bg-slate-50 border border-slate-200 p-4 rounded-[var(--radius-xl)] flex items-center justify-center min-h-[100px]">
+        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-[var(--radius-xl)] flex items-center justify-center min-h-[100px]">
           <p className="text-xs text-slate-400 font-medium">Không có hình ảnh trực quan</p>
         </div>
       </aside>
@@ -112,7 +112,7 @@ export function TimelineDetailSidebar({
 
   return (
     <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4 sticky top-6 self-start max-h-[calc(100vh-2rem)] overflow-y-auto no-scrollbar">
-      <div className="bg-[var(--color-neutral-200)] border border-[var(--color-neutral-300)] p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3">
+      <div className="bg-[var(--color-neutral-200)] dark:bg-slate-900 border border-[var(--color-neutral-300)] dark:border-slate-800 p-4 sm:p-5 rounded-[var(--radius-xl)] shadow-sm flex flex-col gap-3">
 
         {/* Header */}
         <div className="bg-[var(--color-primary-500)] text-white p-3.5 rounded-[var(--radius-lg)] flex items-center justify-between shadow-sm">
@@ -125,7 +125,7 @@ export function TimelineDetailSidebar({
         </div>
 
         {/* Gallery Panel */}
-        <div className="bg-white border-[3px] border-[var(--color-primary-300)] p-3 rounded-[var(--radius-lg)] shadow-xs">
+        <div className="bg-white dark:bg-slate-950 border-[3px] border-[var(--color-primary-300)] dark:border-blue-900/60 p-3 rounded-[var(--radius-lg)] shadow-xs">
           <ImageGallery usedImageIds={currentImageIds} images={images} layout="stack" />
         </div>
       </div>

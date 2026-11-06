@@ -190,6 +190,7 @@ export function InlineEditor({
     <div className="relative group">
       <style>{`
         .inline-editor h3 { font-size: 0.95rem !important; font-weight: 700 !important; color: var(--color-neutral-900); margin: 0.75rem 0 0.35rem; }
+        .dark .inline-editor h3 { color: rgb(241 245 249) !important; }
         .inline-editor ul { list-style-type: disc !important; padding-left: 1.25rem !important; margin: 0.35rem 0 0.5rem; }
         .inline-editor ol { list-style-type: decimal !important; padding-left: 1.25rem !important; margin: 0.35rem 0 0.5rem; }
         .inline-editor li { margin: 0.2rem 0; }
@@ -197,11 +198,12 @@ export function InlineEditor({
         .inline-editor[contenteditable="true"] { cursor: text; }
         .inline-editor[contenteditable="true"]:focus { outline: none; }
         .inline-editor:empty:before { content: attr(data-placeholder); color: var(--color-neutral-400); font-style: italic; pointer-events: none; }
+        .dark .inline-editor:empty:before { color: rgb(148 163 184) !important; }
       `}</style>
 
       {/* Floating selection toolbar */}
       {isFocused && (
-        <div style={toolbarStyle} className="bg-[var(--color-neutral-900)] text-white rounded-[var(--radius-md)] shadow-xl px-2 py-1 flex items-center gap-1 z-50 select-none">
+        <div style={toolbarStyle} className="bg-[var(--color-neutral-900)] dark:bg-slate-800 text-white rounded-[var(--radius-md)] shadow-xl px-2 py-1 flex items-center gap-1 z-50 select-none border border-slate-700">
           <button type="button" onMouseDown={(e) => { e.preventDefault(); execCmd('bold') }} className="px-2 py-1 hover:bg-white/20 rounded text-xs font-bold transition-colors">B</button>
           <button type="button" onMouseDown={(e) => { e.preventDefault(); execCmd('italic') }} className="px-2 py-1 hover:bg-white/20 rounded text-xs italic transition-colors">I</button>
           <div className="w-px h-4 bg-white/20" />
@@ -217,10 +219,10 @@ export function InlineEditor({
         onBlur={handleBlur}
         onInput={handleInput}
         data-placeholder={placeholder}
-        className={`inline-editor prose max-w-none text-sm leading-relaxed text-[var(--color-neutral-900)] font-body rounded-[var(--radius-md)] transition-all duration-150 p-3 ${!readOnly && isFocused
-          ? 'bg-white ring-2 ring-[var(--color-primary-400)] shadow-xs'
+        className={`inline-editor prose max-w-none text-sm leading-relaxed text-[var(--color-neutral-900)] dark:text-slate-100 font-body rounded-[var(--radius-md)] transition-all duration-150 p-3 ${!readOnly && isFocused
+          ? 'bg-white dark:bg-slate-800 ring-2 ring-[var(--color-primary-400)] shadow-xs'
           : !readOnly
-            ? 'hover:bg-[var(--color-neutral-50)] cursor-text border border-transparent hover:border-[var(--color-neutral-200)]'
+            ? 'hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-800/50 cursor-text border border-transparent hover:border-[var(--color-neutral-200)] dark:hover:border-slate-700'
             : ''
           }`}
         suppressContentEditableWarning

@@ -72,7 +72,7 @@ export function TimelineOverviewView({
             <span className="font-mono text-[10px] font-bold text-[var(--color-primary-600)] uppercase tracking-wider">
               TỔNG QUAN KỊCH BẢN
             </span>
-            <h1 className="font-header font-extrabold text-2xl uppercase tracking-tight text-[var(--color-neutral-900)]">
+            <h1 className="font-header font-extrabold text-2xl uppercase tracking-tight text-[var(--color-neutral-900)] dark:text-slate-100">
               Cấu trúc tiến trình giảng dạy đề xuất
             </h1>
           </div>
@@ -81,10 +81,10 @@ export function TimelineOverviewView({
               <button
                 type="button"
                 onClick={onOpenOralQuiz}
-                className="shrink-0 flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-amber-300 hover:border-amber-400 bg-amber-50 hover:bg-amber-100/90 text-amber-900 text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
+                className="shrink-0 flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-amber-300 dark:border-amber-700/60 hover:border-amber-400 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100/90 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-300 text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
                 title="Mở Vòng quay may mắn để kiểm tra bài cũ / trả bài học sinh"
               >
-                <Sparkles className="w-4 h-4 text-amber-600" />
+                <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>Vòng quay may mắn</span>
               </button>
             )}
@@ -93,17 +93,17 @@ export function TimelineOverviewView({
               type="button"
               disabled={exportingDocx || !lessonDocument}
               onClick={exportLessonDocx}
-              className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-blue-200 hover:border-blue-300 bg-blue-50 text-blue-800 text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
+              className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-blue-200 dark:border-blue-800 hover:border-blue-300 bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/60 text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
               title="Tải bài giảng đầy đủ định dạng Word (.docx)"
             >
-              <FileText className="w-4 h-4 text-blue-600" />
+              <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>{exportingDocx ? 'Đang xuất Word…' : 'Tải bài giảng (.docx)'}</span>
-              {exportingDocx && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />}
+              {exportingDocx && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600 dark:text-blue-400" />}
             </button>
           </div>
         </div>
 
-        <div className="p-6 space-y-6 flex-1 overflow-y-auto bg-white">
+        <div className="p-6 space-y-6 flex-1 overflow-y-auto bg-white dark:bg-slate-900">
           <LessonOverviewPanel
             meta={lessonMeta || EMPTY_LESSON_META}
             contentSummary={contentSummary}
@@ -112,27 +112,27 @@ export function TimelineOverviewView({
           />
 
           <div className="space-y-3">
-            <h3 className="font-header font-extrabold text-sm uppercase tracking-wider text-slate-900 flex items-center gap-2">
+            <h3 className="font-header font-extrabold text-sm uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <LayoutList className="w-4 h-4 text-[var(--color-primary-600)] shrink-0" />
               <span>Danh sách các phần dạy học ({steps.length})</span>
             </h3>
-            <div className="divide-y divide-[var(--color-neutral-200)] border border-[var(--color-neutral-200)] rounded-[var(--radius-lg)] overflow-hidden shadow-xs bg-white">
+            <div className="divide-y divide-[var(--color-neutral-200)] dark:divide-slate-800 border border-[var(--color-neutral-200)] dark:border-slate-800 rounded-[var(--radius-lg)] overflow-hidden shadow-xs bg-white dark:bg-slate-900">
               {steps.map((step, idx) => (
                 <div
                   key={idx}
                   onClick={() => onNavigateToNode(idx)}
-                  className="p-4 hover:bg-[var(--color-primary-50)] cursor-pointer transition-all flex items-center justify-between group"
+                  className="p-4 hover:bg-[var(--color-primary-50)] dark:hover:bg-slate-800/60 cursor-pointer transition-all flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-3.5">
-                    <span className="w-7 h-7 rounded-[var(--radius-full)] bg-[var(--color-primary-100)] text-[var(--color-primary-700)] font-mono font-bold text-xs flex items-center justify-center border border-[var(--color-primary-200)] shadow-xs">
+                    <span className="w-7 h-7 rounded-[var(--radius-full)] bg-[var(--color-primary-100)] dark:bg-blue-950 text-[var(--color-primary-700)] dark:text-blue-300 font-mono font-bold text-xs flex items-center justify-center border border-[var(--color-primary-200)] dark:border-blue-800 shadow-xs">
                       {idx + 1}
                     </span>
                     <div>
-                      <h4 className="font-body font-bold text-sm text-[var(--color-neutral-900)] group-hover:text-[var(--color-primary-600)] transition-colors">
+                      <h4 className="font-body font-bold text-sm text-[var(--color-neutral-900)] dark:text-slate-100 group-hover:text-[var(--color-primary-600)] dark:group-hover:text-blue-400 transition-colors">
                         {step.isLoading ? `Đang khởi tạo phần ${idx + 1}...` : step.title || `Phần ${idx + 1}`}
                       </h4>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="font-body text-[11px] font-semibold text-[var(--color-primary-700)] bg-[var(--color-primary-50)] px-2.5 py-0.5 rounded-[var(--radius-full)] border border-[var(--color-primary-200)]">
+                        <span className="font-body text-[11px] font-semibold text-[var(--color-primary-700)] dark:text-blue-300 bg-[var(--color-primary-50)] dark:bg-blue-950/60 px-2.5 py-0.5 rounded-[var(--radius-full)] border border-[var(--color-primary-200)] dark:border-blue-800">
                           {step.type || 'Hoạt động'}
                         </span>
                       </div>
@@ -143,11 +143,11 @@ export function TimelineOverviewView({
                     {step.isLoading ? (
                       <span className="w-4 h-4 border-2 border-[var(--color-primary-500)] border-t-transparent rounded-full animate-spin" />
                     ) : (
-                      <span className="font-mono text-xs bg-[var(--color-neutral-100)] text-[var(--color-neutral-800)] px-3 py-1 rounded-[var(--radius-full)] font-bold border border-[var(--color-neutral-300)]">
+                      <span className="font-mono text-xs bg-[var(--color-neutral-100)] dark:bg-slate-800 text-[var(--color-neutral-800)] dark:text-slate-200 px-3 py-1 rounded-[var(--radius-full)] font-bold border border-[var(--color-neutral-300)] dark:border-slate-700">
                         {(step.duration || '').endsWith("'") ? step.duration : `${step.duration}'`}
                       </span>
                     )}
-                    <ChevronRight className="w-4 h-4 text-[var(--color-neutral-400)] group-hover:text-[var(--color-primary-500)] transition-colors" />
+                    <ChevronRight className="w-4 h-4 text-[var(--color-neutral-400)] dark:text-slate-500 group-hover:text-[var(--color-primary-500)] dark:group-hover:text-blue-400 transition-colors" />
                   </div>
                 </div>
               ))}
@@ -158,8 +158,8 @@ export function TimelineOverviewView({
 
       {/* Overview Sidebar */}
       <aside className="col-span-12 lg:col-span-4 space-y-4 sticky top-[108px] self-start">
-        <div className="border border-slate-200/90 rounded-[var(--radius-xl)] bg-white overflow-hidden shadow-xs">
-          <div className="p-4 bg-slate-50 border-b border-slate-200/80 space-y-1">
+        <div className="border border-slate-200/90 dark:border-slate-800 rounded-[var(--radius-xl)] bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
+          <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/80 dark:border-slate-800 space-y-1">
             {lessonMeta?.chapter ? (
               <span
                 title={lessonMeta.chapter}
@@ -172,25 +172,25 @@ export function TimelineOverviewView({
                 Thông tin bài học
               </span>
             )}
-            <h4 className="font-header text-sm font-extrabold uppercase tracking-wide text-[var(--color-neutral-900)] leading-snug">
+            <h4 className="font-header text-sm font-extrabold uppercase tracking-wide text-[var(--color-neutral-900)] dark:text-slate-100 leading-snug">
               {lessonHeading}
             </h4>
           </div>
-          <div className="p-4 space-y-4 bg-white">
-            <div className="space-y-3 text-xs font-body text-[var(--color-neutral-700)]">
-              <div className="flex justify-between items-center pb-2 border-b border-[var(--color-neutral-200)]">
+          <div className="p-4 space-y-4 bg-white dark:bg-slate-900">
+            <div className="space-y-3 text-xs font-body text-[var(--color-neutral-700)] dark:text-slate-300">
+              <div className="flex justify-between items-center pb-2 border-b border-[var(--color-neutral-200)] dark:border-slate-800">
                 <span>Số hoạt động bài học</span>
-                <span className="font-mono font-bold text-sm text-[var(--color-neutral-900)]">{steps.length} hoạt động</span>
+                <span className="font-mono font-bold text-sm text-[var(--color-neutral-900)] dark:text-slate-100">{steps.length} hoạt động</span>
               </div>
-              <div className="flex justify-between items-center pb-2 border-b border-[var(--color-neutral-200)]">
+              <div className="flex justify-between items-center pb-2 border-b border-[var(--color-neutral-200)] dark:border-slate-800">
                 <span>Tổng thời lượng bài học</span>
-                <span className="font-mono font-bold text-sm text-[var(--color-primary-600)]">{totalDuration} phút</span>
+                <span className="font-mono font-bold text-sm text-[var(--color-primary-600)] dark:text-blue-400">{totalDuration} phút</span>
               </div>
               {totalToolsCount > 0 && (
-                <div className="flex justify-between items-center pb-2 border-b border-[var(--color-neutral-200)]">
+                <div className="flex justify-between items-center pb-2 border-b border-[var(--color-neutral-200)] dark:border-slate-800">
                   <span>Học liệu đã chuẩn bị</span>
                   <span
-                    className={`font-mono font-bold text-sm ${isToolsIncomplete ? 'text-amber-600' : 'text-emerald-600'
+                    className={`font-mono font-bold text-sm ${isToolsIncomplete ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
                       }`}
                   >
                     {preparedToolsCount}/{totalToolsCount}
@@ -210,32 +210,32 @@ export function TimelineOverviewView({
             )}
 
             {onOpenOralQuiz && (
-              <div className="pt-2 border-t border-[var(--color-neutral-200)]">
+              <div className="pt-2 border-t border-[var(--color-neutral-200)] dark:border-slate-800">
                 <button
                   type="button"
                   onClick={onOpenOralQuiz}
-                  className="w-full py-2.5 px-3 rounded-[var(--radius-md)] border-2 border-amber-200 hover:border-amber-300 bg-amber-50/90 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
+                  className="w-full py-2.5 px-3 rounded-[var(--radius-md)] border-2 border-amber-200 dark:border-amber-700/60 hover:border-amber-300 bg-amber-50/90 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-300 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
                   title="Mở Vòng quay gọi tên trả bài đầu giờ"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   <span>Vòng quay gọi tên trả bài</span>
                 </button>
               </div>
             )}
 
-            <div className="pt-2 border-t border-[var(--color-neutral-200)] space-y-1.5">
+            <div className="pt-2 border-t border-[var(--color-neutral-200)] dark:border-slate-800 space-y-1.5">
               <button
                 type="button"
                 disabled={exportingDocx || !lessonDocument}
                 onClick={exportLessonDocx}
-                className="w-full py-2.5 px-3 rounded-[var(--radius-md)] border-2 border-blue-200 hover:border-blue-300 bg-blue-50/80 hover:bg-blue-100/80 text-blue-800 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
+                className="w-full py-2.5 px-3 rounded-[var(--radius-md)] border-2 border-blue-200 dark:border-blue-800 hover:border-blue-300 bg-blue-50/80 dark:bg-blue-950/50 hover:bg-blue-100/80 dark:hover:bg-blue-900/60 text-blue-800 dark:text-blue-300 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
               >
-                <FileText className="w-4 h-4 text-blue-600" />
+                <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 <span>{exportingDocx ? 'Đang xuất bài giảng…' : 'Tải bài giảng (Word .docx)'}</span>
-                {exportingDocx && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />}
+                {exportingDocx && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600 dark:text-blue-400" />}
               </button>
               {exportError && (
-                <p className="text-[11px] text-red-600 text-center font-medium">{exportError}</p>
+                <p className="text-[11px] text-red-600 dark:text-red-400 text-center font-medium">{exportError}</p>
               )}
             </div>
           </div>

@@ -36,7 +36,7 @@ export function SectionLabel({ icon, children, tone = 'slate' }: { icon: ReactNo
 }
 
 export const fieldCls =
-  'font-body text-sm leading-relaxed text-slate-800 bg-white hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-sky-400 rounded-lg p-2.5 outline-none transition-all'
+  'font-body text-sm leading-relaxed text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-sky-400 dark:focus:border-sky-500 rounded-lg p-2.5 outline-none transition-all'
 
 /** Danh sách chuỗi có thể sửa / thêm / xóa */
 export function EditableList({
@@ -64,7 +64,7 @@ export function EditableList({
           <button
             type="button"
             onClick={() => onChange(list.filter((_, j) => j !== i))}
-            className="mt-1.5 p-1 rounded text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+            className="mt-1.5 p-1 rounded text-slate-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
             title="Xóa"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -74,7 +74,7 @@ export function EditableList({
       <button
         type="button"
         onClick={() => onChange([...list, ''])}
-        className="flex items-center gap-1 text-xs font-bold text-sky-600 hover:text-sky-800 px-1 py-1 cursor-pointer"
+        className="flex items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 px-1 py-1 cursor-pointer"
       >
         <Plus className="w-3.5 h-3.5" /> {addLabel}
       </button>
@@ -84,10 +84,10 @@ export function EditableList({
 
 // ─── Materials ────────────────────────────────────────────────────────────────
 const KIND_STYLE: Record<MaterialKind, { icon: ReactNode; tile: string; tag: string }> = {
-  device: { icon: <Monitor className="w-4 h-4" />, tile: 'bg-sky-100 text-sky-700 border-sky-200', tag: 'bg-sky-50 text-sky-700 border-sky-200' },
-  tool: { icon: <Ruler className="w-4 h-4" />, tile: 'bg-amber-100 text-amber-700 border-amber-200', tag: 'bg-amber-50 text-amber-700 border-amber-200' },
-  document: { icon: <FileText className="w-4 h-4" />, tile: 'bg-emerald-100 text-emerald-700 border-emerald-200', tag: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  other: { icon: <Package className="w-4 h-4" />, tile: 'bg-slate-100 text-slate-600 border-slate-200', tag: 'bg-slate-50 text-slate-600 border-slate-200' },
+  device: { icon: <Monitor className="w-4 h-4" />, tile: 'bg-sky-100 text-sky-700 border-sky-200 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800', tag: 'bg-sky-50 text-sky-700 border-sky-200' },
+  tool: { icon: <Ruler className="w-4 h-4" />, tile: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800', tag: 'bg-amber-50 text-amber-700 border-amber-200' },
+  document: { icon: <FileText className="w-4 h-4" />, tile: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800', tag: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  other: { icon: <Package className="w-4 h-4" />, tile: 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700', tag: 'bg-slate-50 text-slate-600 border-slate-200' },
 }
 
 export function MaterialList({
@@ -97,7 +97,7 @@ export function MaterialList({
   compact?: boolean
   emptyText?: string
 }) {
-  if (!materials.length) return <p className="text-xs italic text-slate-500">{emptyText}</p>
+  if (!materials.length) return <p className="text-xs italic text-slate-500 dark:text-slate-400">{emptyText}</p>
   return (
     <ul className="flex flex-col gap-1.5">
       {materials.map((m, i) => {
@@ -106,13 +106,13 @@ export function MaterialList({
         return (
           <li
             key={i}
-            className="flex items-center gap-2.5 bg-white border border-slate-200/90 rounded-lg p-2 hover:border-slate-300 transition-colors shadow-2xs"
+            className="flex items-center gap-2.5 bg-white dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 rounded-lg p-2 hover:border-slate-300 dark:hover:border-slate-600 transition-colors shadow-2xs"
             title={m.desc || m.title}
           >
             <span className={`w-7 h-7 rounded-md border flex items-center justify-center shrink-0 ${st.tile}`}>
               {st.icon}
             </span>
-            <span className="font-body text-xs font-bold text-slate-900 min-w-0 flex-1 leading-snug break-words">
+            <span className="font-body text-xs font-bold text-slate-900 dark:text-slate-100 min-w-0 flex-1 leading-snug break-words">
               {m.title}
             </span>
           </li>
@@ -142,20 +142,20 @@ export function StepList({
           return (
             <li key={idx} className="flex gap-3">
               <div className="flex flex-col items-center">
-                <span className="w-6 h-6 rounded-full bg-sky-100 text-sky-700 border border-sky-200 font-mono text-[11px] font-bold flex items-center justify-center shrink-0">
+                <span className="w-6 h-6 rounded-full bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 font-mono text-[11px] font-bold flex items-center justify-center shrink-0">
                   {idx + 1}
                 </span>
-                {idx < steps.length - 1 && <span className="flex-1 w-px bg-slate-200 mt-1" />}
+                {idx < steps.length - 1 && <span className="flex-1 w-px bg-slate-200 dark:bg-slate-800 mt-1" />}
               </div>
               <div className="flex-1 pb-2 min-w-0">
-                <p className="font-body text-sm font-bold text-slate-900 leading-snug">{t}</p>
-                {desc && <p className="font-body text-xs text-slate-600 leading-relaxed mt-0.5">{desc}</p>}
+                <p className="font-body text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug">{t}</p>
+                {desc && <p className="font-body text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-0.5">{desc}</p>}
                 {renderNote && (
                   <>
                     <button
                       type="button"
                       onClick={() => setOpenNote(noteOpen ? null : idx)}
-                      className="mt-1 flex items-center gap-1 text-[11px] font-bold text-slate-400 hover:text-sky-600 transition-colors"
+                      className="mt-1 flex items-center gap-1 text-[11px] font-bold text-slate-400 dark:text-slate-500 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
                     >
                       <Pencil className="w-3 h-3" /> {noteOpen ? 'Ẩn ghi chú' : 'Ghi chú'}
                     </button>
@@ -200,24 +200,24 @@ export function ImageGallery({
           <div 
             key={idx} 
             onClick={() => { if (img.url) setSelectedImage(img) }}
-            className="relative group rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video flex flex-col items-center justify-center cursor-pointer shadow-xs hover:shadow-md transition-shadow"
+            className="relative group rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 aspect-video flex flex-col items-center justify-center cursor-pointer shadow-xs hover:shadow-md transition-shadow"
           >
             {img.url ? (
               <>
                 {loadingMap[img.id] !== false && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-slate-100 animate-pulse">
-                    <Loader2 className="w-6 h-6 text-slate-300 animate-spin" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-slate-800 animate-pulse">
+                    <Loader2 className="w-6 h-6 text-slate-300 dark:text-slate-600 animate-spin" />
                   </div>
                 )}
                 <img 
                   src={img.url} 
                   alt={img.title || img.name || 'Ảnh trực quan'} 
                   onLoad={() => setLoadingMap(prev => ({ ...prev, [img.id]: false }))}
-                  className={`w-full h-full object-contain bg-white transition-all duration-300 ${loadingMap[img.id] !== false ? 'opacity-0 scale-95' : 'opacity-100 scale-100 group-hover:scale-105'}`} 
+                  className={`w-full h-full object-contain bg-white dark:bg-slate-950 transition-all duration-300 ${loadingMap[img.id] !== false ? 'opacity-0 scale-95' : 'opacity-100 scale-100 group-hover:scale-105'}`} 
                 />
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center p-2 text-slate-400">
+              <div className="flex flex-col items-center justify-center p-2 text-slate-400 dark:text-slate-500">
                 <ImageIcon className="w-6 h-6 mb-1 opacity-50" />
                 <span className="text-[10px] font-mono text-center break-all px-2 line-clamp-2">{img.id}</span>
               </div>

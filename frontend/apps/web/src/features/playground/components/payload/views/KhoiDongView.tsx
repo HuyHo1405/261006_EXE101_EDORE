@@ -74,15 +74,15 @@ export function KhoiDongView({
 
       <div
         id="khoidong-card"
-        className="rounded-2xl border border-slate-200/90 bg-white shadow-sm overflow-hidden transition-all duration-300"
+        className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition-all duration-300"
       >
         {/* Header */}
-        <div className="bg-slate-50/80 border-b border-slate-200/90 px-5 sm:px-6 py-4 flex items-center gap-3.5">
+        <div className="bg-slate-50/80 dark:bg-slate-800/60 border-b border-slate-200/90 dark:border-slate-800 px-5 sm:px-6 py-4 flex items-center gap-3.5">
           <span className="w-10 h-10 rounded-full bg-indigo-900 text-white font-mono font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs">
             1
           </span>
           <div className="flex-1 min-w-0">
-            <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-0.5">
+            <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">
               TỔNG QUAN & MỤC TIÊU
             </div>
             <AutoResizeTextarea
@@ -90,7 +90,7 @@ export function KhoiDongView({
               minRows={1}
               placeholder="Nhập tổng quan/mục tiêu phần khởi động..."
               onChange={v => onIntentChange?.(v)}
-              className="w-full font-header font-black text-sm sm:text-base text-slate-800 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 resize-none leading-snug"
+              className="w-full font-header font-black text-sm sm:text-base text-slate-800 dark:text-slate-100 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 resize-none leading-snug"
             />
           </div>
         </div>
@@ -101,32 +101,32 @@ export function KhoiDongView({
             {/* Bước 1: THAO TÁC CỦA GIÁO VIÊN & LUẬT CHƠI (KHUẤY ĐỘNG 2 PHÚT) */}
             <div className="flex items-stretch gap-4 relative">
               <div className="w-10 flex flex-col items-center shrink-0">
-                <div className="w-10 h-10 rounded-full bg-white border border-indigo-300 flex items-center justify-center shrink-0 z-10 shadow-2xs">
-                  <Gamepad2 className="w-4.5 h-4.5 text-indigo-600" />
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-900 border border-indigo-300 dark:border-indigo-700 flex items-center justify-center shrink-0 z-10 shadow-2xs">
+                  <Gamepad2 className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <div className="w-[2px] flex-1 bg-slate-200 my-1" />
+                <div className="w-[2px] flex-1 bg-slate-200 dark:bg-slate-800 my-1" />
               </div>
               <div className="flex-1 min-w-0 pb-5">
                 <div
                   id="khoidong-step-1"
-                  className="rounded-xl border border-slate-200/90 bg-[#F8FAFC] p-4 text-xs sm:text-sm text-slate-800 leading-relaxed shadow-2xs space-y-2.5 transition-all duration-300"
+                  className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-800/50 p-4 text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed shadow-2xs space-y-2.5 transition-all duration-300"
                 >
-                  <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+                  <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     HOẠT ĐỘNG CỦA GIÁO VIÊN &amp; TRIỂN KHAI
                   </div>
 
                   {/* Dòng dụng cụ */}
                   {mappedTools.length > 0 && (
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                        <Package className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                        <Package className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 shrink-0" />
                         <span>Dụng cụ:</span>
                       </span>
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {mappedTools.map((tool, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-200/80 text-slate-800 border border-slate-300 shadow-2xs"
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-200/80 dark:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-600 shadow-2xs"
                             title={tool.purpose || tool.name}
                           >
                             {tool.purpose ? `${tool.name}: ${tool.purpose}` : tool.name}
@@ -138,20 +138,20 @@ export function KhoiDongView({
 
                   {/* Tên hoạt động */}
                   <div className="space-y-1">
-                    <div className="text-[11px] font-bold text-slate-600">
+                    <div className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
                       Tên hoạt động:
                     </div>
                     <input
                       value={activityName}
                       onChange={e => updateField('activity_name', e.target.value)}
                       placeholder="Nhập tên hoạt động..."
-                      className="w-full text-xs sm:text-sm font-bold text-slate-900 bg-white border border-slate-300 rounded-lg px-3 py-1.5 outline-none shadow-2xs"
+                      className="w-full text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 outline-none shadow-2xs"
                     />
                   </div>
 
                   {/* Mô tả thao tác GV & Triển khai */}
                   <div className="space-y-1">
-                    <div className="text-[11px] font-bold text-slate-600">
+                    <div className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
                       Cách tổ chức &amp; Triển khai:
                     </div>
                     <AutoResizeTextarea
@@ -159,7 +159,7 @@ export function KhoiDongView({
                       minRows={2}
                       placeholder="Mô tả cách thức triển khai hoạt động..."
                       onChange={v => updateField('visual_action', v)}
-                      className="w-full text-xs sm:text-sm text-slate-800 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 leading-relaxed resize-none font-medium"
+                      className="w-full text-xs sm:text-sm text-slate-800 dark:text-slate-200 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 leading-relaxed resize-none font-medium"
                     />
                   </div>
                 </div>
@@ -169,19 +169,19 @@ export function KhoiDongView({
             {/* Bước 2: HỌC SINH PHẢN XẠ & KẾT NỐI GẦN GŨI (1 PHÚT - KHÔNG HỎI PHÂN TÍCH) */}
             <div className="flex items-stretch gap-4 relative">
               <div className="w-10 flex flex-col items-center shrink-0">
-                <div className="w-10 h-10 rounded-full bg-white border-2 border-indigo-400 flex items-center justify-center shrink-0 z-10 shadow-2xs">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-900 border-2 border-indigo-400 dark:border-indigo-600 flex items-center justify-center shrink-0 z-10 shadow-2xs">
                   <Zap className="w-4.5 h-4.5 text-indigo-500 fill-indigo-500" />
                 </div>
-                <div className="w-[2px] flex-1 bg-slate-200 my-1" />
+                <div className="w-[2px] flex-1 bg-slate-200 dark:bg-slate-800 my-1" />
               </div>
               <div className="flex-1 min-w-0 pb-5">
                 <div
                   id="khoidong-step-2"
-                  className="rounded-2xl border-2 border-indigo-300 bg-[#F5F3FF] p-4.5 sm:p-5 shadow-xs space-y-3 transition-all duration-300"
+                  className="rounded-2xl border-2 border-indigo-300 dark:border-indigo-800 bg-[#F5F3FF] dark:bg-indigo-950/30 p-4.5 sm:p-5 shadow-xs space-y-3 transition-all duration-300"
                 >
-                  <div className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-900 flex items-center justify-between">
+                  <div className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-900 dark:text-indigo-300 flex items-center justify-between">
                     <span>HỌC SINH THỰC HIỆN KẾT NỐI &amp; TƯƠNG TÁC</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-200 text-indigo-900 font-bold lowercase">
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-200 dark:bg-indigo-900/60 text-indigo-900 dark:text-indigo-200 font-bold lowercase">
                       không mổ xẻ sâu
                     </span>
                   </div>
@@ -191,10 +191,10 @@ export function KhoiDongView({
                     minRows={2}
                     placeholder="Học sinh tương tác và phản hồi nhanh..."
                     onChange={v => updateField('quick_connection', v)}
-                    className="w-full font-bold text-sm sm:text-base text-indigo-950 leading-relaxed bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 resize-none"
+                    className="w-full font-bold text-sm sm:text-base text-indigo-950 dark:text-indigo-200 leading-relaxed bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 resize-none"
                   />
 
-                  <p className="text-[11px] text-indigo-800/80 italic leading-snug pt-1 border-t border-indigo-200/60">
+                  <p className="text-[11px] text-indigo-800/80 dark:text-indigo-300/80 italic leading-snug pt-1 border-t border-indigo-200/60 dark:border-indigo-800/60">
                     💡 <strong>Lưu ý sư phạm:</strong> Học sinh chia sẻ nhanh, GV lắng nghe và ghi nhận tạo tâm thế vui vẻ. Tuyệt đối không dừng lại mổ xẻ phân tích nguyên lý vì sẽ để dành cho học sinh tự khám phá ở phần Hình thành kiến thức phía sau!
                   </p>
                 </div>
@@ -204,18 +204,18 @@ export function KhoiDongView({
             {/* Bước 3: BẮC CẦU TÂM THẾ VÀO BÀI HỌC (CHUYỂN TIẾP MƯỢT MÀ) */}
             <div className="flex items-start gap-4 relative">
               <div className="w-10 flex flex-col items-center shrink-0">
-                <div className="w-10 h-10 rounded-full bg-white border-2 border-emerald-500 flex items-center justify-center shrink-0 z-10 shadow-2xs">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-900 border-2 border-emerald-500 flex items-center justify-center shrink-0 z-10 shadow-2xs">
                   <ArrowRight className="w-5 h-5 text-emerald-600 stroke-[2.5]" />
                 </div>
               </div>
               <div className="flex-1 min-w-0">
                 <div
                   id="khoidong-step-3"
-                  className="rounded-xl border border-slate-300 bg-slate-100/90 p-4 sm:p-4.5 text-xs sm:text-sm text-slate-950 leading-relaxed shadow-2xs space-y-3 transition-all duration-300"
+                  className="rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-800/60 p-4 sm:p-4.5 text-xs sm:text-sm text-slate-950 dark:text-slate-100 leading-relaxed shadow-2xs space-y-3 transition-all duration-300"
                 >
                   {/* Lời khen ngợi & đúc kết cảm xúc */}
                   <div>
-                    <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">
+                    <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
                       LỜI KHEN NGỢI &amp; ĐÚC KẾT CẢM XÚC (TẠO HỨNG THÚ)
                     </div>
                     <AutoResizeTextarea
@@ -223,13 +223,13 @@ export function KhoiDongView({
                       minRows={1}
                       placeholder="Lời động viên tạo hứng thú..."
                       onChange={v => updateField('conclusion', v)}
-                      className="w-full font-bold text-xs sm:text-sm text-slate-950 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 leading-relaxed resize-none"
+                      className="w-full font-bold text-xs sm:text-sm text-slate-950 dark:text-slate-100 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 leading-relaxed resize-none"
                     />
                   </div>
 
                   {/* Mũi tên dẫn vào bài mới */}
-                  <div className="pt-3 border-t border-slate-200/90 flex items-start gap-2.5">
-                    <div className="w-5.5 h-5.5 rounded-md bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5 text-emerald-700 shadow-2xs">
+                  <div className="pt-3 border-t border-slate-200/90 dark:border-slate-700 flex items-start gap-2.5">
+                    <div className="w-5.5 h-5.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center shrink-0 mt-0.5 text-emerald-700 dark:text-emerald-300 shadow-2xs">
                       <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                     </div>
                     <div className="flex-1 min-w-0 space-y-2">
@@ -238,12 +238,12 @@ export function KhoiDongView({
                         minRows={1}
                         placeholder="Lời dẫn chuyển tiếp mời học sinh vào quan sát các tư liệu lịch sử..."
                         onChange={v => updateField('bridge_question', v)}
-                        className="w-full font-black text-xs sm:text-sm text-[#044E36] bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 leading-relaxed resize-none"
+                        className="w-full font-black text-xs sm:text-sm text-[#044E36] dark:text-emerald-300 bg-transparent border-0 p-0 outline-none focus:outline-none focus:ring-0 leading-relaxed resize-none"
                       />
 
                       {/* Nút bấm chuyển qua Hình thành kiến thức */}
                       <div className="pt-1.5 flex items-center justify-between flex-wrap gap-2">
-                        <span className="text-[11px] text-slate-500 font-medium">
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                           Bắt đầu tiến trình Quy nạp tư liệu:
                         </span>
                         <button
@@ -267,11 +267,11 @@ export function KhoiDongView({
 
         {/* Footer ghi chú thêm */}
         {renderNote && (
-          <div className="border-t border-slate-100 p-3 bg-slate-50/60">
+          <div className="border-t border-slate-100 dark:border-slate-800 p-3 bg-slate-50/60 dark:bg-slate-800/40">
             <button
               type="button"
               onClick={() => setOpenNote(!openNote)}
-              className="flex items-center gap-1 text-[11px] font-bold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer"
+              className="flex items-center gap-1 text-[11px] font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
             >
               <Pencil className="w-3 h-3" /> {openNote ? 'Ẩn ghi chú sư phạm' : 'Ghi chú thêm cho trò chơi khởi động'}
             </button>

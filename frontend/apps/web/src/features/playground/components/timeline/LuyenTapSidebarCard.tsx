@@ -105,17 +105,17 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
   return (
     <div className="flex flex-col gap-4">
       {/* Card 1: Xuất bản & Tích hợp */}
-      <div className="bg-white border-[3px] border-[var(--color-primary-500)] p-4 rounded-[var(--radius-xl)] shadow-xs flex flex-col gap-3.5">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+      <div className="bg-white dark:bg-slate-900 border-[3px] border-[var(--color-primary-500)] dark:border-blue-600 p-4 rounded-[var(--radius-xl)] shadow-xs flex flex-col gap-3.5">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-[var(--color-primary-50)] text-[var(--color-primary-600)]">
+            <div className="p-1.5 rounded-lg bg-[var(--color-primary-50)] dark:bg-blue-950/60 text-[var(--color-primary-600)] dark:text-blue-400">
               <Download className="w-4 h-4" />
             </div>
-            <span className="font-header text-xs font-extrabold uppercase tracking-wider text-slate-800">
+            <span className="font-header text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-100">
               Xuất bản & Tích hợp
             </span>
           </div>
-          <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+          <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
             {exercises.length} câu hỏi
           </span>
         </div>
@@ -123,11 +123,11 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
         {/* Nhóm 1: Nền tảng ngoài (Kahoot) */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700 flex items-center gap-1.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
               Nền tảng tương tác ngoài
             </span>
-            <span className="text-[10px] font-medium text-slate-400">Trò chơi trắc nghiệm</span>
+            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">Trò chơi trắc nghiệm</span>
           </div>
           <button
             type="button"
@@ -151,13 +151,13 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
         </div>
 
         {/* Nhóm 2: Tài liệu Word giảng dạy */}
-        <div className="space-y-2 pt-2 border-t border-slate-100">
+        <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700 flex items-center gap-1.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />
               Tài liệu in ấn &amp; Giảng dạy (.docx)
             </span>
-            <span className="text-[10px] font-medium text-slate-400">Giáo viên sử dụng</span>
+            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">Giáo viên sử dụng</span>
           </div>
 
           <div className="space-y-2">
@@ -165,107 +165,107 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
               type="button"
               disabled={exportingDocx !== null || !lessonDocument?.questions.length}
               onClick={() => exportDocument('questions/student')}
-              className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-emerald-200 hover:border-emerald-300 bg-emerald-50 text-emerald-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
+              className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 hover:border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-900/50 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
             >
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-600" />
+                <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <div className="text-left">
                   <div>{exportingDocx === 'questions/student' ? 'Đang xuất phiếu học sinh…' : 'Phiếu câu hỏi — Học sinh'}</div>
                   <div className="text-[10px] font-normal mt-0.5">Không đáp án, có dòng kẻ để làm bài</div>
                 </div>
               </div>
               {exportingDocx === 'questions/student' ? (
-                <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                <Loader2 className="w-4 h-4 animate-spin text-emerald-600 dark:text-emerald-400" />
               ) : (
-                <Download className="w-4 h-4 text-emerald-600 group-hover:translate-y-0.5 transition-transform" />
+                <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:translate-y-0.5 transition-transform" />
               )}
             </button>
             <button
               type="button"
               disabled={exportingDocx !== null || !lessonDocument?.questions.length}
               onClick={() => exportDocument('questions/teacher')}
-              className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-purple-200 hover:border-purple-300 bg-purple-50 text-purple-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
+              className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-purple-200 dark:border-purple-800 hover:border-purple-300 bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 dark:hover:bg-purple-900/50 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
             >
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-purple-600" />
+                <FileText className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                 <div className="text-left">
                   <div>{exportingDocx === 'questions/teacher' ? 'Đang xuất bản giáo viên…' : 'Đáp án chi tiết — Giáo viên'}</div>
                   <div className="text-[10px] font-normal mt-0.5">Kèm đáp án đúng và hướng dẫn giải</div>
                 </div>
               </div>
               {exportingDocx === 'questions/teacher' ? (
-                <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
+                <Loader2 className="w-4 h-4 animate-spin text-purple-600 dark:text-purple-400" />
               ) : (
-                <Download className="w-4 h-4 text-purple-600 group-hover:translate-y-0.5 transition-transform" />
+                <Download className="w-4 h-4 text-purple-600 dark:text-purple-400 group-hover:translate-y-0.5 transition-transform" />
               )}
             </button>
           </div>
         </div>
 
         {/* Nhóm 3: Tương tác lớp học — Vòng quay trả bài */}
-        <div className="space-y-2 pt-2 border-t border-slate-100">
+        <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
               Tương tác lớp học
             </span>
-            <span className="text-[10px] font-medium text-slate-400">Gọi tên ngẫu nhiên</span>
+            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">Gọi tên ngẫu nhiên</span>
           </div>
 
           <button
             type="button"
             disabled={!exercises.length}
             onClick={() => setIsOralQuizOpen(true)}
-            className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-amber-200 hover:border-amber-300 bg-amber-50 text-amber-800 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
+            className="w-full flex items-center justify-between p-2.5 rounded-xl border-2 border-amber-200 dark:border-amber-800 hover:border-amber-300 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 dark:hover:bg-amber-900/50 font-body text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer group"
           >
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+              <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
               <div className="text-left">
                 <div className="leading-tight">Vòng quay gọi tên trả bài</div>
-                <div className="text-[10px] text-amber-700/80 font-normal mt-0.5">
+                <div className="text-[10px] text-amber-700/80 dark:text-amber-400/80 font-normal mt-0.5">
                   Quay chọn học sinh theo STT &amp; hiện câu hỏi
                 </div>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-amber-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            <ArrowRight className="w-4 h-4 text-amber-600 dark:text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
           </button>
         </div>
 
         {/* Cảnh báo lỗi nếu có */}
         {exportError && (
-          <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-600">
+          <div className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-xs text-red-600 dark:text-red-400">
             {exportError}
           </div>
         )}
       </div>
 
       {/* Card 2: Điều hướng câu hỏi nhanh (Grid N câu) & Thống kê */}
-      <div className="bg-white border border-slate-200 p-4 rounded-[var(--radius-xl)] shadow-xs space-y-3.5">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-          <span className="font-header text-xs font-bold uppercase tracking-wider text-slate-700">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-[var(--radius-xl)] shadow-xs space-y-3.5">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+          <span className="font-header text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
             Điều hướng câu hỏi
           </span>
-          <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+          <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
             {exercises.length} câu
           </span>
         </div>
 
         {/* Grid bấm nhanh các câu hỏi */}
         <div className="space-y-2">
-          <div className="text-xs text-slate-600 font-medium">
+          <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">
             Bấm để nhảy nhanh:
           </div>
 
           {exercises.length > 0 ? (
-            <div className="grid grid-cols-5 gap-2 p-1.5 bg-slate-50/80 rounded-xl border border-slate-200">
+            <div className="grid grid-cols-5 gap-2 p-1.5 bg-slate-50/80 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
               {exercises.map((ex, i) => {
                 const isFilled = !!ex.question?.trim()
                 const lv = LEVELS.find(l => l.key === ex.level)
                 const isActive = activeExerciseIdx === i
 
-                let btnCls = 'bg-white text-slate-700 border-slate-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 shadow-2xs'
+                let btnCls = 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:border-blue-300 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-300 shadow-2xs'
                 if (!isFilled) {
-                  btnCls = 'bg-slate-100 text-slate-400 border-dashed border-slate-300'
+                  btnCls = 'bg-slate-100 dark:bg-slate-800/40 text-slate-400 dark:text-slate-600 border-dashed border-slate-300 dark:border-slate-700'
                 }
 
                 return (
@@ -288,8 +288,8 @@ export function LuyenTapSidebarCard({ payload, onChange }: LuyenTapSidebarCardPr
         </div>
 
         {/* Phân bố mức độ nhận thức */}
-        <div className="space-y-1.5 pt-1 border-t border-slate-100">
-          <div className="text-[11px] font-semibold text-slate-500">Mức độ nhận thức:</div>
+        <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+          <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Mức độ nhận thức:</div>
           <div className="flex flex-wrap gap-1.5">
             {counts.length > 0 ? (
               counts.map(c => (

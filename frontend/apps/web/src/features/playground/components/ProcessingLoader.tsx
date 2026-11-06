@@ -51,10 +51,10 @@ export default function ProcessingLoader({ hasError = false, errorMessage = '', 
             <XCircle className="w-10 h-10 text-[var(--color-semantic-error)]" />
           </div>
           <div className="space-y-1.5">
-            <h3 className="font-header text-lg font-extrabold uppercase tracking-tight text-[var(--color-neutral-900)]">
+            <h3 className="font-header text-lg font-extrabold uppercase tracking-tight text-[var(--color-neutral-900)] dark:text-slate-100">
               Đã xảy ra lỗi
             </h3>
-            <p className="font-mono text-xs text-[var(--color-semantic-error)] leading-relaxed bg-red-50 border border-red-100 rounded-[var(--radius-lg)] px-4 py-3">
+            <p className="font-mono text-xs text-[var(--color-semantic-error)] leading-relaxed bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900/50 rounded-[var(--radius-lg)] px-4 py-3">
               {errorMessage || 'Không thể xử lý tài liệu. Vui lòng thử lại.'}
             </p>
           </div>
@@ -85,16 +85,16 @@ export default function ProcessingLoader({ hasError = false, errorMessage = '', 
               <circle cx="64" cy="64" r="42" fill="none" stroke="var(--color-primary-300)" strokeWidth="3" strokeLinecap="round" strokeDasharray="40 224" strokeOpacity="0.5" />
             </svg>
 
-            <div className="relative z-10 w-14 h-14 rounded-[var(--radius-full)] bg-white shadow-lg border border-[var(--color-neutral-200)] flex items-center justify-center">
+            <div className="relative z-10 w-14 h-14 rounded-[var(--radius-full)] bg-white dark:bg-slate-800 shadow-lg border border-[var(--color-neutral-200)] dark:border-slate-700 flex items-center justify-center">
               <ActiveIcon key={activeStep} className="w-7 h-7 text-[var(--color-primary-500)] animate-fade-in" />
             </div>
           </div>
 
           <div className="text-center space-y-3">
-            <h3 className="font-header text-xl font-extrabold uppercase tracking-tight text-[var(--color-neutral-900)]">
+            <h3 className="font-header text-xl font-extrabold uppercase tracking-tight text-[var(--color-neutral-900)] dark:text-slate-100">
               AI đang soạn bài cho thầy cô{dots}
             </h3>
-            <p key={activeStep} className="font-mono text-xs text-[var(--color-neutral-500)] animate-fade-slide-up">
+            <p key={activeStep} className="font-mono text-xs text-[var(--color-neutral-500)] dark:text-slate-400 animate-fade-slide-up">
               {LOADING_STEPS[activeStep].label}
             </p>
           </div>
@@ -105,25 +105,25 @@ export default function ProcessingLoader({ hasError = false, errorMessage = '', 
               <div key={i} className={`rounded-[var(--radius-full)] transition-all duration-500 ${
                 i === activeStep ? 'w-6 h-2 bg-[var(--color-primary-500)]'
                 : i < activeStep ? 'w-2 h-2 bg-[var(--color-primary-200)]'
-                : 'w-2 h-2 bg-[var(--color-neutral-200)]'
+                : 'w-2 h-2 bg-[var(--color-neutral-200)] dark:bg-slate-700'
               }`} />
             ))}
           </div>
           
           {/* Progress Bar */}
-          <div className="w-64 h-2 bg-[var(--color-neutral-100)] rounded-full overflow-hidden mt-2 relative">
+          <div className="w-64 h-2 bg-[var(--color-neutral-100)] dark:bg-slate-800 rounded-full overflow-hidden mt-2 relative">
              <div 
                className="h-full bg-[var(--color-primary-500)] transition-all duration-700 ease-out" 
                style={{ width: `${progress}%` }}
              />
           </div>
-          <div className="font-mono text-xs font-bold text-[var(--color-primary-600)]">
+          <div className="font-mono text-xs font-bold text-[var(--color-primary-600)] dark:text-blue-400">
              {progress}%
           </div>
 
           <button
             onClick={onCancel}
-            className="font-body text-xs text-[var(--color-neutral-500)] hover:text-[var(--color-semantic-error)] transition-colors flex items-center gap-1 font-mono mt-2"
+            className="font-body text-xs text-[var(--color-neutral-500)] dark:text-slate-400 hover:text-[var(--color-semantic-error)] dark:hover:text-red-400 transition-colors flex items-center gap-1 font-mono mt-2"
           >
             <X className="w-3.5 h-3.5" />
             Hủy thao tác

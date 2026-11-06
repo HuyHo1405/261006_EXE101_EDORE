@@ -44,29 +44,29 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
           <div
             key={i}
             id={`luyentap-exercise-${i}`}
-            className="rounded-xl border-2 border-slate-200 hover:border-blue-300 bg-white p-3.5 space-y-2.5 transition-all duration-300 group"
+            className="rounded-xl border-2 border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 bg-white dark:bg-slate-900 p-3.5 space-y-2.5 transition-all duration-300 group"
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="font-header font-extrabold text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-md px-2 py-0.5">
+                <span className="font-header font-extrabold text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 rounded-md px-2 py-0.5">
                   Câu {i + 1}
                 </span>
                 <select
                   value={ex.level || ''}
                   onChange={e => update(i, { level: e.target.value })}
-                  className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded border outline-none cursor-pointer ${lv?.cls || 'bg-slate-100 text-slate-700 border-slate-200'}`}
+                  className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded border outline-none cursor-pointer ${lv?.cls || 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'}`}
                 >
                   <option value="">Mức độ…</option>
                   {LEVELS.map(l => <option key={l.key} value={l.key}>{l.label}</option>)}
                 </select>
                 {ex.format && (
-                  <span className="font-mono text-[10px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">{ex.format}</span>
+                  <span className="font-mono text-[10px] text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">{ex.format}</span>
                 )}
               </div>
               <button
                 type="button"
                 onClick={() => onChange({ ...p, exercises: exercises.filter((_, j) => j !== i) })}
-                className="p-1 rounded text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
+                className="p-1 rounded text-slate-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 opacity-0 group-hover:opacity-100 transition-all"
                 title="Xóa câu hỏi"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -82,7 +82,7 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
             {Array.isArray(ex.options) && (
               <div className="space-y-2">
                 {ex.options.map((option: string, j: number) => (
-                  <label key={j} className="flex items-center gap-2">
+                  <label key={j} className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
                     <input type="radio" name={`${radioGroup}-correct-${i}`} checked={ex.correct_answer === j + 1}
                       aria-label={`Đáp án ${String.fromCharCode(65 + j)} đúng cho câu ${i + 1}`}
                       onChange={() => update(i, { correct_answer: j + 1, answer: ex.options[j] })} />
@@ -94,9 +94,9 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
                       })} className={fieldCls} />
                   </label>
                 ))}
-                <label className="text-xs text-slate-600 flex items-center gap-2">Thời gian trả lời
+                <label className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-2">Thời gian trả lời
                   <select value={ex.time_limit ?? 20} onChange={e => update(i, { time_limit: Number(e.target.value) })}
-                    className="border rounded p-1">
+                    className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded p-1">
                     {[5, 10, 20, 30, 60, 120].map(t => <option key={t} value={t}>{t} giây</option>)}
                   </select>
                 </label>
@@ -105,7 +105,7 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
             <button
               type="button"
               onClick={() => setShown(s => ({ ...s, [i]: !s[i] }))}
-              className="flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-900"
+              className="flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300"
             >
               {reveal ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
               {reveal ? 'Ẩn đáp án' : 'Xem đáp án / hướng dẫn giải'}
@@ -116,11 +116,11 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
                 minRows={2}
                 placeholder="Nhập đáp án hoặc gợi ý giải..."
                 onChange={v => update(i, { answer: v })}
-                className={fieldCls + ' bg-emerald-50/60 border-emerald-200 focus:border-emerald-500 text-[13px]'}
+                className={fieldCls + ' bg-emerald-50/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 focus:border-emerald-500 text-[13px]'}
               />
             )}
             {reveal && Array.isArray(ex.options) && (
-              <div className="rounded-lg bg-emerald-50 p-3 space-y-2 text-sm">
+              <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-3 space-y-2 text-sm text-emerald-950 dark:text-emerald-200">
                 <p>Đáp án đúng: {ex.correct_answer ? `${String.fromCharCode(64 + ex.correct_answer)}. ${ex.options[ex.correct_answer - 1] || ''}` : 'Chưa chọn'}</p>
                 <AutoResizeTextarea value={ex.explanation || ''} minRows={1} placeholder="Giải thích đáp án…"
                   onChange={value => update(i, { explanation: value })} className={fieldCls} />
@@ -133,11 +133,11 @@ export function LuyenTapView({ payload, onChange }: { payload: any; onChange: (p
       <button
         type="button"
         onClick={() => onChange({ ...p, exercises: [...exercises, { question: '', level: 'thong_hieu', answer: '', options: ['', '', '', ''], correct_answer: 1, time_limit: 20 }] })}
-        className="w-full py-2 rounded-xl border-2 border-dashed border-slate-300 text-xs font-bold text-slate-500 hover:text-blue-600 hover:border-blue-400 transition-colors flex items-center justify-center gap-1"
+        className="w-full py-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-400 dark:hover:border-blue-600 transition-colors flex items-center justify-center gap-1"
       >
         <Plus className="w-3.5 h-3.5" /> Thêm câu hỏi
       </button>
-      {!exercises.length && <p className="text-sm text-slate-600">Bài học chưa có câu hỏi luyện tập. Thêm câu hỏi để bắt đầu.</p>}
+      {!exercises.length && <p className="text-sm text-slate-600 dark:text-slate-400">Bài học chưa có câu hỏi luyện tập. Thêm câu hỏi để bắt đầu.</p>}
     </div>
   )
 }

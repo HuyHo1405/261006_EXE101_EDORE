@@ -100,11 +100,11 @@ function StationRotationView({
 }) {
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between pb-1.5 border-b border-blue-200/70">
-        <span className="font-header font-bold text-xs uppercase tracking-wider text-blue-950">
+      <div className="flex items-center justify-between pb-1.5 border-b border-blue-200/70 dark:border-blue-800/70">
+        <span className="font-header font-bold text-xs uppercase tracking-wider text-blue-950 dark:text-blue-300">
           Tiến trình các trạm học tập
         </span>
-        <span className="text-xs text-blue-800 font-medium">
+        <span className="text-xs text-blue-800 dark:text-blue-400 font-medium">
           Luân chuyển 5 - 7 phút / trạm
         </span>
       </div>
@@ -122,12 +122,12 @@ function StationRotationView({
         {steps.map((st, i) => (
           <div
             key={i}
-            className="bg-white p-3.5 rounded-lg border border-blue-200/80 shadow-2xs space-y-1.5 flex flex-col justify-between hover:border-blue-400 transition-colors"
+            className="bg-white dark:bg-slate-900 p-3.5 rounded-lg border border-blue-200/80 dark:border-blue-800/80 shadow-2xs space-y-1.5 flex flex-col justify-between hover:border-blue-400 dark:hover:border-blue-600 transition-colors"
           >
-            <span className="font-header font-bold text-xs uppercase tracking-wide text-blue-900">
+            <span className="font-header font-bold text-xs uppercase tracking-wide text-blue-900 dark:text-blue-300">
               {st.tag}{st.title ? ` • ${st.title}` : ''}
             </span>
-            <p className="font-body text-xs text-slate-700 leading-relaxed">
+            <p className="font-body text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
               {st.desc}
             </p>
           </div>
@@ -136,8 +136,8 @@ function StationRotationView({
 
       {/* Khâu tổng kết / Sơ đồ tư duy */}
       {secondaryMethod && (
-        <div className="bg-white/90 p-3 rounded-lg border border-blue-200/80 flex items-start gap-2 text-xs text-slate-700">
-          <strong className="font-bold text-blue-950 shrink-0">
+        <div className="bg-white/90 dark:bg-slate-900/90 p-3 rounded-lg border border-blue-200/80 dark:border-blue-800/80 flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
+          <strong className="font-bold text-blue-950 dark:text-blue-300 shrink-0">
             {secondaryMethod.name}:
           </strong>
           <span className="leading-relaxed">
@@ -159,11 +159,11 @@ function InquiryWorkflowView({
 }) {
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between pb-1.5 border-b border-blue-200/70">
-        <span className="font-header font-bold text-xs uppercase tracking-wider text-blue-950">
+      <div className="flex items-center justify-between pb-1.5 border-b border-blue-200/70 dark:border-blue-800/70">
+        <span className="font-header font-bold text-xs uppercase tracking-wider text-blue-950 dark:text-blue-300">
           Tiến trình khám phá & giải quyết vấn đề
         </span>
-        <span className="text-xs text-blue-800 font-medium">
+        <span className="text-xs text-blue-800 dark:text-blue-400 font-medium">
           {steps.length} giai đoạn khoa học
         </span>
       </div>
@@ -182,17 +182,17 @@ function InquiryWorkflowView({
         {steps.map((st, i) => (
           <div
             key={i}
-            className="bg-white p-3.5 rounded-lg border border-blue-200/80 shadow-2xs space-y-1"
+            className="bg-white dark:bg-slate-900 p-3.5 rounded-lg border border-blue-200/80 dark:border-blue-800/80 shadow-2xs space-y-1"
           >
             <div className="flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded-full bg-blue-100 text-blue-800 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
+              <span className="w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
                 {i + 1}
               </span>
-              <span className="font-header font-bold text-xs uppercase text-blue-950 truncate">
+              <span className="font-header font-bold text-xs uppercase text-blue-950 dark:text-blue-300 truncate">
                 {st.title || st.tag}
               </span>
             </div>
-            <p className="font-body text-xs text-slate-700 leading-relaxed pt-0.5">
+            <p className="font-body text-xs text-slate-700 dark:text-slate-300 leading-relaxed pt-0.5">
               {st.desc}
             </p>
           </div>
@@ -200,8 +200,8 @@ function InquiryWorkflowView({
       </div>
 
       {secondaryMethod && (
-        <div className="bg-white/90 p-3 rounded-lg border border-blue-200/80 text-xs text-slate-700 flex items-start gap-2">
-          <strong className="font-bold text-blue-950 shrink-0">{secondaryMethod.name}:</strong>
+        <div className="bg-white/90 dark:bg-slate-900/90 p-3 rounded-lg border border-blue-200/80 dark:border-blue-800/80 text-xs text-slate-700 dark:text-slate-300 flex items-start gap-2">
+          <strong className="font-bold text-blue-950 dark:text-blue-300 shrink-0">{secondaryMethod.name}:</strong>
           <span className="leading-relaxed">{secondaryMethod.description}</span>
         </div>
       )}
@@ -219,22 +219,22 @@ function JigsawWorkflowView({
 }) {
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between pb-1.5 border-b border-blue-200/70">
-        <span className="font-header font-bold text-xs uppercase tracking-wider text-blue-950">
+      <div className="flex items-center justify-between pb-1.5 border-b border-blue-200/70 dark:border-blue-800/70">
+        <span className="font-header font-bold text-xs uppercase tracking-wider text-blue-950 dark:text-blue-300">
           Quy trình thảo luận tương tác (Kĩ thuật Mảnh ghép)
         </span>
-        <span className="text-xs text-blue-800 font-medium">
+        <span className="text-xs text-blue-800 dark:text-blue-400 font-medium">
           2 vòng hoạt động
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
         {steps.map((st, i) => (
-          <div key={i} className="bg-white p-3.5 rounded-lg border border-blue-200/80 shadow-2xs space-y-1.5">
-            <span className="font-header font-bold text-xs uppercase tracking-wide text-blue-900 block">
+          <div key={i} className="bg-white dark:bg-slate-900 p-3.5 rounded-lg border border-blue-200/80 dark:border-blue-800/80 shadow-2xs space-y-1.5">
+            <span className="font-header font-bold text-xs uppercase tracking-wide text-blue-900 dark:text-blue-300 block">
               {st.tag}{st.title ? ` • ${st.title}` : ''}
             </span>
-            <p className="font-body text-xs text-slate-700 leading-relaxed">
+            <p className="font-body text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
               {st.desc}
             </p>
           </div>
@@ -242,8 +242,8 @@ function JigsawWorkflowView({
       </div>
 
       {secondaryMethod && (
-        <div className="bg-white/90 p-3 rounded-lg border border-blue-200/80 text-xs text-slate-700 flex items-start gap-2">
-          <strong className="font-bold text-blue-950 shrink-0">{secondaryMethod.name}:</strong>
+        <div className="bg-white/90 dark:bg-slate-900/90 p-3 rounded-lg border border-blue-200/80 dark:border-blue-800/80 text-xs text-slate-700 dark:text-slate-300 flex items-start gap-2">
+          <strong className="font-bold text-blue-950 dark:text-blue-300 shrink-0">{secondaryMethod.name}:</strong>
           <span className="leading-relaxed">{secondaryMethod.description}</span>
         </div>
       )}
@@ -261,11 +261,11 @@ function GeneralWorkflowView({
 }) {
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between pb-1.5 border-b border-blue-200/70">
-        <span className="font-header font-bold text-xs uppercase tracking-wider text-blue-950">
+      <div className="flex items-center justify-between pb-1.5 border-b border-blue-200/70 dark:border-blue-800/70">
+        <span className="font-header font-bold text-xs uppercase tracking-wider text-blue-950 dark:text-blue-300">
           Tiến trình các bước hoạt động
         </span>
-        <span className="text-xs text-blue-800 font-medium">
+        <span className="text-xs text-blue-800 dark:text-blue-400 font-medium">
           {steps.length} bước triển khai
         </span>
       </div>
@@ -282,11 +282,11 @@ function GeneralWorkflowView({
         } gap-2.5`}
       >
         {steps.map((st, i) => (
-          <div key={i} className="bg-white p-3.5 rounded-lg border border-blue-200/80 shadow-2xs space-y-1">
-            <span className="font-header font-bold text-xs uppercase tracking-wide text-blue-900 block">
+          <div key={i} className="bg-white dark:bg-slate-900 p-3.5 rounded-lg border border-blue-200/80 dark:border-blue-800/80 shadow-2xs space-y-1">
+            <span className="font-header font-bold text-xs uppercase tracking-wide text-blue-900 dark:text-blue-300 block">
               {st.tag}{st.title ? ` • ${st.title}` : ''}
             </span>
-            <p className="font-body text-xs text-slate-700 leading-relaxed">
+            <p className="font-body text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
               {st.desc}
             </p>
           </div>
@@ -294,8 +294,8 @@ function GeneralWorkflowView({
       </div>
 
       {secondaryMethod && (
-        <div className="bg-white/90 p-3 rounded-lg border border-blue-200/80 text-xs text-slate-700 flex items-start gap-2">
-          <strong className="font-bold text-blue-950 shrink-0">{secondaryMethod.name}:</strong>
+        <div className="bg-white/90 dark:bg-slate-900/90 p-3 rounded-lg border border-blue-200/80 dark:border-blue-800/80 text-xs text-slate-700 dark:text-slate-300 flex items-start gap-2">
+          <strong className="font-bold text-blue-950 dark:text-blue-300 shrink-0">{secondaryMethod.name}:</strong>
           <span className="leading-relaxed">{secondaryMethod.description}</span>
         </div>
       )}
