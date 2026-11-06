@@ -108,7 +108,7 @@ Sau khi xác nhận chọn bài, cửa sổ yêu cầu kịch bản sẽ mở ra
 ### 7. Lựa chọn yêu cầu cho kịch bản mong muốn
 Tại đây, thầy cô chọn các tiêu chí theo ý muốn của mình:
 * **Thời lượng và Sĩ số:** Điều chỉnh thời gian dạy (45 phút, 90 phút...) và số lượng học sinh của lớp.
-* **Mẫu khung bài dạy:** Chọn khung bài học phù hợp (Khung 3 phần chuẩn: Khởi động - Kiến thức mới - Luyện tập; hoặc Khung 4 phần chuyên sâu có thêm Hoạt động vận dụng/dự án).
+* **Mẫu khung bài dạy:** Khung 3 phần chuẩn (Khởi động - Kiến thức mới - Luyện tập/Vận dụng).
 * **Mục tiêu và phương pháp mong muốn:** Bổ sung các dặn dò riêng cho AI (ví dụ: tăng cường thảo luận nhóm, ứng dụng công nghệ thông tin, tạo trò chơi khởi động...).
 
 Sau khi chọn xong, thầy cô nhấn nút **"Tạo kịch bản với AI"**.

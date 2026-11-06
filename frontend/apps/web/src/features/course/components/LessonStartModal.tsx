@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import {
   School,
-  BrainCircuit,
   Check,
   ArrowLeft,
   ArrowRight,
@@ -25,14 +24,6 @@ const templateOptions = [
     tags: ["Phổ biến", "45 phút"],
     Icon: School,
     disabled: false,
-  },
-  {
-    value: "2",
-    label: "Khung 4 phần",
-    description: "Khởi động → Hình thành kiến thức → Luyện tập → Vận dụng",
-    tags: ["Chuyên sâu", "90 phút+"],
-    Icon: BrainCircuit,
-    disabled: true,
   },
 ];
 
@@ -247,8 +238,8 @@ export function LessonStartModal({
                           ${isDisabled
                             ? "border-slate-200 bg-slate-50/70 opacity-60 cursor-not-allowed select-none"
                             : isSelected
-                            ? "border-[var(--color-primary-300)] bg-[var(--color-primary-50)] shadow-md ring-4 ring-[var(--color-primary-50)] cursor-pointer"
-                            : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)] hover:bg-[var(--color-neutral-50)] cursor-pointer"
+                              ? "border-[var(--color-primary-300)] bg-[var(--color-primary-50)] shadow-md ring-4 ring-[var(--color-primary-50)] cursor-pointer"
+                              : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)] hover:bg-[var(--color-neutral-50)] cursor-pointer"
                           }`}
                       >
                         {isDisabled ? (
@@ -270,26 +261,24 @@ export function LessonStartModal({
                         )}
 
                         <div
-                          className={`p-2.5 rounded-[var(--radius-full)] transition-colors ${
-                            isDisabled
+                          className={`p-2.5 rounded-[var(--radius-full)] transition-colors ${isDisabled
                               ? "bg-slate-200 text-slate-400"
                               : isSelected
-                              ? "bg-[var(--color-primary-100)] text-[var(--color-primary-600)]"
-                              : "bg-[var(--color-neutral-100)] text-[var(--color-neutral-500)]"
-                          }`}
+                                ? "bg-[var(--color-primary-100)] text-[var(--color-primary-600)]"
+                                : "bg-[var(--color-neutral-100)] text-[var(--color-neutral-500)]"
+                            }`}
                         >
                           <Icon className="w-5 h-5" />
                         </div>
 
                         <div>
                           <p
-                            className={`font-header text-xs uppercase tracking-tight font-extrabold ${
-                              isDisabled
+                            className={`font-header text-xs uppercase tracking-tight font-extrabold ${isDisabled
                                 ? "text-slate-500"
                                 : isSelected
-                                ? "text-[var(--color-primary-700)]"
-                                : "text-[var(--color-neutral-800)]"
-                            }`}
+                                  ? "text-[var(--color-primary-700)]"
+                                  : "text-[var(--color-neutral-800)]"
+                              }`}
                           >
                             {opt.label}
                           </p>
