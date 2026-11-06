@@ -66,6 +66,7 @@ test('profile settles after one load even when subscription plan or same-user de
     'next/link': { default: () => null },
     'lucide-react': new Proxy({}, { get: () => () => null }),
     '@/components/layout/Header/UserAvatar': { UserAvatar: () => null },
+    '@/components/ui/ThemeToggle': { ThemeToggle: () => null },
     '@/features/user/api/userService': { userService },
     '@/features/subscription/api/subscriptionService': { subscriptionService },
     '@/features/auth/stores/useAuthStore': { useAuthStore: store },
