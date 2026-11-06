@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect, useRef, useCallback } from 'react'
-import { Play } from 'lucide-react'
+import React, { useEffect, useRef, useCallback, useState } from 'react'
+import { Play, Volume2, VolumeX } from 'lucide-react'
 
 interface LuckyWheelProps {
   totalStudents: number
@@ -39,50 +39,107 @@ export function LuckyWheel({
   const angleRef = useRef<number>(0)
   const isSpinningRef = useRef<boolean>(false)
 
-  // Web Audio sound generator (synthesized tick & victory chime)
-  const playTickSound = useCallback(() => {
+  // Sound mute state & AudioContext singleton
+  const [isMuted, setIsMuted] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    try {
+      return localStorage.getItem('edore_wheel_muted') === 'true'
+    } catch {
+      return false
+    }
+  })
+  const isMutedRef = useRef<boolean>(isMuted)
+  isMutedRef.current = isMuted
+
+  const audioCtxRef = useRef<AudioContext | null>(null)
+
+  // Lazily get or create shared AudioContext and ensure it is resumed
+  const getAudioContext = useCallback((): AudioContext | null => {
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
-      if (!AudioCtx) return
-      const ctx = new AudioCtx()
-      const osc = ctx.createOscillator()
-      const gain = ctx.createGain()
-      osc.type = 'triangle'
-      osc.frequency.setValueAtTime(560, ctx.currentTime)
-      osc.frequency.exponentialRampToValueAtTime(140, ctx.currentTime + 0.04)
-      gain.gain.setValueAtTime(0.1, ctx.currentTime)
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04)
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.start()
-      osc.stop(ctx.currentTime + 0.05)
+      if (!AudioCtx) return null
+
+      if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
+        audioCtxRef.current = new AudioCtx()
+      }
+
+      if (audioCtxRef.current.state === 'suspended') {
+        audioCtxRef.current.resume().catch(() => {})
+      }
+
+      return audioCtxRef.current
     } catch {
-      // AudioContext muted/unsupported
+      return null
     }
   }, [])
 
-  const playWinSound = useCallback(() => {
+  // Web Audio sound generator (reusing single AudioContext safely)
+  const playTickSound = useCallback(() => {
+    if (isMutedRef.current) return
     try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
-      if (!AudioCtx) return
-      const ctx = new AudioCtx()
-      const notes = [523.25, 659.25, 783.99, 1046.5] // C5, E5, G5, C6
+      const ctx = getAudioContext()
+      if (!ctx) return
+
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {})
+      }
+
+      const now = ctx.currentTime
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+
+      // Crisp mechanical ratchet click
+      osc.type = 'triangle'
+      osc.frequency.setValueAtTime(640, now)
+      osc.frequency.exponentialRampToValueAtTime(140, now + 0.035)
+
+      gain.gain.setValueAtTime(0.14, now)
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+
+      osc.start(now)
+      osc.stop(now + 0.04)
+    } catch {
+      // AudioContext muted/unsupported
+    }
+  }, [getAudioContext])
+
+  const playWinSound = useCallback(() => {
+    if (isMutedRef.current) return
+    try {
+      const ctx = getAudioContext()
+      if (!ctx) return
+
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {})
+      }
+
+      const now = ctx.currentTime
+      // Fanfare arpeggio: C5, E5, G5, C6
+      const notes = [523.25, 659.25, 783.99, 1046.5]
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator()
         const gain = ctx.createGain()
+        const noteTime = now + idx * 0.085
+
         osc.type = 'sine'
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1)
-        gain.gain.setValueAtTime(0.18, ctx.currentTime + idx * 0.1)
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.35)
+        osc.frequency.setValueAtTime(freq, noteTime)
+
+        gain.gain.setValueAtTime(0.22, noteTime)
+        gain.gain.exponentialRampToValueAtTime(0.0001, noteTime + 0.35)
+
         osc.connect(gain)
         gain.connect(ctx.destination)
-        osc.start(ctx.currentTime + idx * 0.1)
-        osc.stop(ctx.currentTime + idx * 0.1 + 0.4)
+
+        osc.start(noteTime)
+        osc.stop(noteTime + 0.4)
       })
     } catch {
       // AudioContext muted/unsupported
     }
-  }, [])
+  }, [getAudioContext])
 
   // Calculate available numbers
   const availableNumbers = React.useMemo(() => {
@@ -296,6 +353,7 @@ export function LuckyWheel({
     const duration = 5000
     const startTime = performance.now()
     let lastTickSlice = -1
+    let lastTickTime = 0
 
     const animate = (now: number) => {
       const elapsed = now - startTime
@@ -306,12 +364,16 @@ export function LuckyWheel({
       const current = startAngle + totalRotation * ease
       angleRef.current = current
 
-      // Check for slice passage to play tick sound
+      // Check for slice passage to play tick sound (throttled to >= 28ms to prevent audio jitter)
       const normalizedAngle = (-angleRef.current + 2 * Math.PI) % (2 * Math.PI)
       const currentSlice = Math.floor(normalizedAngle / sliceAngle)
       if (currentSlice !== lastTickSlice && progress < 0.96) {
         lastTickSlice = currentSlice
-        playTickSound()
+        const timeSinceLastTick = now - lastTickTime
+        if (timeSinceLastTick >= 28) {
+          lastTickTime = now
+          playTickSound()
+        }
       }
 
       drawWheel()
@@ -331,24 +393,50 @@ export function LuckyWheel({
   // Trigger spin when `isSpinning` becomes true
   useEffect(() => {
     if (isSpinning && !isSpinningRef.current) {
+      getAudioContext()
       const randomWinner = availableNumbers[Math.floor(Math.random() * availableNumbers.length)]
       spinToWinner(randomWinner)
     }
-  }, [isSpinning, availableNumbers, spinToWinner])
+  }, [isSpinning, availableNumbers, spinToWinner, getAudioContext])
 
-  // Cleanup on unmount
+  // Cleanup on unmount (cancel animation & close AudioContext to release hardware)
   useEffect(() => {
     return () => {
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current)
       }
+      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
+        audioCtxRef.current.close().catch(() => {})
+        audioCtxRef.current = null
+      }
     }
   }, [])
+
+  // User click trigger (actively unlocks Web Audio on user gesture)
+  const handleUserTrigger = () => {
+    if (isSpinning || availableNumbers.length === 0) return
+    getAudioContext()
+    onSpinStart()
+  }
+
+  // Toggle sound mute/unmute
+  const toggleMute = () => {
+    setIsMuted(prev => {
+      const next = !prev
+      try {
+        localStorage.setItem('edore_wheel_muted', String(next))
+      } catch {
+        // Ignore storage errors
+      }
+      return next
+    })
+    getAudioContext()
+  }
 
   return (
     <div className="flex flex-col items-center justify-center p-1 sm:p-2">
       {/* Canvas Wheel container with subtle radial glow */}
-      <div className="relative group cursor-pointer" onClick={() => !isSpinning && onSpinStart()}>
+      <div className="relative group cursor-pointer" onClick={handleUserTrigger}>
         <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-amber-500/15 rounded-full blur-md opacity-70 group-hover:opacity-100 transition-opacity pointer-events-none" />
         <canvas
           ref={canvasRef}
@@ -358,12 +446,12 @@ export function LuckyWheel({
         />
       </div>
 
-      {/* Control button */}
-      <div className="mt-3 flex items-center gap-3">
+      {/* Control buttons & Sound toggle */}
+      <div className="mt-3 flex items-center gap-2.5">
         <button
-          onClick={onSpinStart}
+          onClick={handleUserTrigger}
           disabled={isSpinning || availableNumbers.length === 0}
-          className={`group flex items-center gap-2.5 px-7 py-2.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 cursor-pointer ${
+          className={`group flex items-center gap-2.5 px-6 sm:px-7 py-2.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 cursor-pointer ${
             isSpinning
               ? 'bg-[var(--color-neutral-100)] text-[var(--color-neutral-400)] cursor-not-allowed shadow-none'
               : 'bg-gradient-to-r from-[var(--color-primary-500)] to-indigo-600 hover:from-[#023ec0] hover:to-indigo-700 text-white shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]'
@@ -371,6 +459,19 @@ export function LuckyWheel({
         >
           <Play className={`w-4 h-4 fill-current transition-transform ${isSpinning ? 'animate-spin' : 'group-hover:scale-110'}`} />
           <span>{isSpinning ? 'Đang quay số...' : 'QUAY CHỌN HỌC SINH'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={toggleMute}
+          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
+          title={isMuted ? 'Bật âm thanh vòng quay' : 'Tắt âm thanh vòng quay'}
+        >
+          {isMuted ? (
+            <VolumeX className="w-4 h-4 text-rose-500" />
+          ) : (
+            <Volume2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          )}
         </button>
       </div>
 
