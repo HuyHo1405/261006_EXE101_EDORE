@@ -108,15 +108,15 @@ export function LessonStartModal({
         <div className="w-full md:w-72 bg-[var(--color-neutral-100)] dark:bg-slate-950 text-[var(--color-neutral-900)] dark:text-slate-100 p-5 md:p-6 flex flex-col justify-between shrink-0 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] dark:border-slate-800">
           <div>
             <div className="mb-4">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--color-neutral-500)] font-bold">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--color-neutral-500)] dark:text-slate-400 font-bold">
                 Tạo kịch bản mới
               </span>
-              <h2 className="text-base font-bold font-header uppercase tracking-tight text-[var(--color-neutral-900)] mt-0.5">
+              <h2 className="text-base font-bold font-header uppercase tracking-tight text-[var(--color-neutral-900)] dark:text-slate-100 mt-0.5">
                 Bài học đã chọn
               </h2>
             </div>
 
-            <p className="font-body text-[11px] text-[var(--color-neutral-500)] mt-0.5 leading-relaxed font-medium">
+            <p className="font-body text-[11px] text-[var(--color-neutral-500)] dark:text-slate-400 mt-0.5 leading-relaxed font-medium">
               AI sẽ sử dụng toàn bộ nội dung sách giáo khoa và tư liệu hình ảnh của bài học này để soạn kịch bản.
             </p>
 
@@ -140,7 +140,7 @@ export function LessonStartModal({
                     {displayTitle}
                   </h4>
                   {lesson.chapterTitle && (
-                    <p className="text-[10px] text-slate-500 mt-1 flex items-center gap-1 line-clamp-2">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1 line-clamp-2">
                       <Bookmark className="w-3 h-3 shrink-0 text-slate-400" />
                       <span>{lesson.chapterTitle}</span>
                     </p>
@@ -148,7 +148,7 @@ export function LessonStartModal({
                 </div>
               </div>
 
-              <div className="border-t border-slate-100 pt-2 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+              <div className="border-t border-slate-100 dark:border-slate-700 pt-2 flex items-center justify-between text-[10px] text-slate-400 font-mono">
                 <span>Mã: {lesson.code}</span>
                 <span>Bài {lesson.orderInChapter || 1}</span>
               </div>
@@ -170,22 +170,22 @@ export function LessonStartModal({
           <button
             type="button"
             onClick={onCancel}
-            className="absolute top-6 right-6 flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-neutral-400)] hover:bg-[var(--color-neutral-100)] hover:text-[var(--color-neutral-800)] transition-colors cursor-pointer z-10"
+            className="absolute top-6 right-6 flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-neutral-400)] hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-800 hover:text-[var(--color-neutral-800)] dark:hover:text-slate-200 transition-colors cursor-pointer z-10"
           >
             <X className="h-5 w-5" />
           </button>
 
           <div className="p-5 md:p-6 flex flex-col gap-4">
-            <div className="border-b border-[var(--color-neutral-100)] pb-3">
-              <h3 className="font-header font-extrabold text-lg uppercase tracking-tight text-[var(--color-neutral-900)]">
+            <div className="border-b border-[var(--color-neutral-100)] dark:border-slate-800 pb-3">
+              <h3 className="font-header font-extrabold text-lg uppercase tracking-tight text-[var(--color-neutral-900)] dark:text-slate-100">
                 Yêu cầu kịch bản bài dạy
               </h3>
             </div>
 
-            <div className="bg-[var(--color-neutral-100)] rounded-[var(--radius-xl)] p-4 md:p-5 border border-[var(--color-neutral-200)] space-y-5 shadow-sm">
+            <div className="bg-[var(--color-neutral-100)] dark:bg-slate-800/60 rounded-[var(--radius-xl)] p-4 md:p-5 border border-[var(--color-neutral-200)] dark:border-slate-700 space-y-5 shadow-sm">
               {/* Tên kịch bản & Mục tiêu */}
               <div>
-                <label className="mb-2 flex items-center gap-2 text-[11px] font-bold text-[var(--color-neutral-500)] uppercase tracking-widest">
+                <label className="mb-2 flex items-center gap-2 text-[11px] font-bold text-[var(--color-neutral-500)] dark:text-slate-400 uppercase tracking-widest">
                   Thông tin cơ bản <span className="text-[var(--color-secondary-500)]">*</span>
                 </label>
 
@@ -217,8 +217,8 @@ export function LessonStartModal({
 
               {/* Khung bài học */}
               <div>
-                <label className="mb-2 flex items-center gap-2 text-[11px] font-bold text-[var(--color-neutral-500)] uppercase tracking-widest">
-                  <div className="p-1 rounded bg-[var(--color-neutral-200)] text-[var(--color-neutral-600)]">
+                <label className="mb-2 flex items-center gap-2 text-[11px] font-bold text-[var(--color-neutral-500)] dark:text-slate-400 uppercase tracking-widest">
+                  <div className="p-1 rounded bg-[var(--color-neutral-200)] dark:bg-slate-700 text-[var(--color-neutral-600)] dark:text-slate-300">
                     <Layers className="w-3 h-3" />
                   </div>
                   Khung bài học (Template)
@@ -236,9 +236,9 @@ export function LessonStartModal({
                         onClick={() => !isDisabled && setTemplateId(opt.value)}
                         className={`relative w-full p-3.5 rounded-[var(--radius-lg)] border transition-all flex flex-col items-center text-center gap-2
                           ${isDisabled
-                            ? "border-slate-200 bg-slate-50/70 opacity-60 cursor-not-allowed select-none"
+                            ? "border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/50 opacity-60 cursor-not-allowed select-none"
                             : isSelected
-                            ? "border-[var(--color-primary-300)] bg-[var(--color-primary-50)] shadow-md ring-4 ring-[var(--color-primary-50)] cursor-pointer"
+                            ? "border-[var(--color-primary-300)] dark:border-blue-500 bg-[var(--color-primary-50)] dark:bg-blue-950/40 shadow-md ring-4 ring-[var(--color-primary-50)] dark:ring-blue-900/30 cursor-pointer"
                             : "border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[var(--color-neutral-300)] dark:hover:border-slate-600 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700 cursor-pointer"
                           }`}
                       >
@@ -251,7 +251,7 @@ export function LessonStartModal({
                             className={`absolute top-3 right-3 w-4 h-4 rounded-[var(--radius-full)] border-2 flex items-center justify-center shrink-0 transition-all
                               ${isSelected
                                 ? "border-[var(--color-primary-500)] bg-[var(--color-primary-500)]"
-                                : "border-[var(--color-neutral-300)]"
+                                : "border-[var(--color-neutral-300)] dark:border-slate-600"
                               }`}
                           >
                             {isSelected && (
@@ -263,10 +263,10 @@ export function LessonStartModal({
                         <div
                           className={`p-2.5 rounded-[var(--radius-full)] transition-colors ${
                             isDisabled
-                              ? "bg-slate-200 text-slate-400"
+                              ? "bg-slate-200 dark:bg-slate-700 text-slate-400"
                               : isSelected
-                              ? "bg-[var(--color-primary-100)] text-[var(--color-primary-600)]"
-                              : "bg-[var(--color-neutral-100)] text-[var(--color-neutral-500)]"
+                              ? "bg-[var(--color-primary-100)] dark:bg-blue-900/60 text-[var(--color-primary-600)] dark:text-blue-300"
+                              : "bg-[var(--color-neutral-100)] dark:bg-slate-700 text-[var(--color-neutral-500)] dark:text-slate-300"
                           }`}
                         >
                           <Icon className="w-5 h-5" />
@@ -278,13 +278,13 @@ export function LessonStartModal({
                               isDisabled
                                 ? "text-slate-500"
                                 : isSelected
-                                ? "text-[var(--color-primary-700)]"
-                                : "text-[var(--color-neutral-800)]"
+                                ? "text-[var(--color-primary-700)] dark:text-blue-300"
+                                : "text-[var(--color-neutral-800)] dark:text-slate-200"
                             }`}
                           >
                             {opt.label}
                           </p>
-                          <p className="text-[10px] text-[var(--color-neutral-500)] mt-0.5 font-medium leading-tight">
+                          <p className="text-[10px] text-[var(--color-neutral-500)] dark:text-slate-400 mt-0.5 font-medium leading-tight">
                             {opt.description}
                           </p>
                         </div>
@@ -297,7 +297,7 @@ export function LessonStartModal({
           </div>
 
           {/* ── FOOTER ACTIONS ── */}
-          <div className="border-t border-[var(--color-neutral-100)] bg-[var(--color-neutral-50)] px-6 md:px-8 py-5 flex items-center justify-end gap-3">
+          <div className="border-t border-[var(--color-neutral-100)] dark:border-slate-800 bg-[var(--color-neutral-50)] dark:bg-slate-900/80 px-6 md:px-8 py-5 flex items-center justify-end gap-3">
             <button
               onClick={handleConfirm}
               disabled={!scriptTitle.trim()}

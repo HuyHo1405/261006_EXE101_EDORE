@@ -241,7 +241,7 @@ export function DashboardToolbar({
   }, [categories]);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-b from-white/95 via-slate-50/90 to-slate-100/70 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-850/70 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-2.5 shadow-2xs overflow-visible">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-b from-white/95 via-slate-50/90 to-slate-100/70 dark:bg-none dark:bg-slate-900/90 dark:from-transparent dark:via-transparent dark:to-transparent border border-slate-200/90 dark:border-slate-800 rounded-2xl p-2.5 shadow-2xs overflow-visible">
       {/* START (LEFT): CATEGORY BUILDER SELECTORS (CHỈ HIỂN THỊ KHI Ở OUTSIDE COURSE) */}
       {!currentCourse && (
         <div className="flex items-center gap-2 flex-wrap py-0.5 overflow-visible">

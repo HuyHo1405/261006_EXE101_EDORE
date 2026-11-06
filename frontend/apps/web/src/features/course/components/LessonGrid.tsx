@@ -212,10 +212,10 @@ export function LessonGrid({
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-6 space-y-4 animate-pulse">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 space-y-4 animate-pulse">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 min-h-[460px]">
-          <div className="md:col-span-7 bg-slate-100 rounded-xl" />
-          <div className="md:col-span-5 bg-slate-100 rounded-xl" />
+          <div className="md:col-span-7 bg-slate-100 dark:bg-slate-800 rounded-xl" />
+          <div className="md:col-span-5 bg-slate-100 dark:bg-slate-800 rounded-xl" />
         </div>
       </div>
     );
@@ -236,13 +236,13 @@ export function LessonGrid({
   return (
     <div className="w-full min-w-0 space-y-4 overflow-visible">
       {/* ── 2. MAIN 2-COLUMN VIEW CONTAINER ── */}
-      <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200/90 shadow-xs grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-slate-200 min-h-[500px] overflow-visible">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-800 min-h-[500px] overflow-visible">
         {/* ══════════════════════════════════════════════════════════════
             CỘT 1: PHÂN CẤP HỌC KỲ > CHƯƠNG > BÀI (~58% width)
            ══════════════════════════════════════════════════════════════ */}
         <div className="md:col-span-7 flex flex-col min-w-0 overflow-visible">
           {/* Subheader: Lọc theo Học kỳ */}
-          <div className="border-b border-slate-100 px-4 md:px-6 py-3 bg-slate-50/50 flex items-center justify-between text-xs font-bold gap-3 flex-wrap min-w-0">
+          <div className="border-b border-slate-100 dark:border-slate-800 px-4 md:px-6 py-3 bg-slate-50/50 dark:bg-slate-950/40 flex items-center justify-between text-xs font-bold gap-3 flex-wrap min-w-0">
             <div className="relative inline-flex items-center min-w-0">
               <GraduationCap className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-primary-500)] pointer-events-none" />
               <select
@@ -250,7 +250,7 @@ export function LessonGrid({
                 onChange={(e) => handleTabChange(e.target.value)}
                 title="Chọn khối lớp"
                 aria-label="Chọn khối lớp"
-                className="h-8 pl-8 pr-8 rounded-xl text-sm font-header font-bold text-slate-900 bg-white border border-slate-200 shadow-2xs appearance-none cursor-pointer hover:border-[var(--color-primary-400)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary-400)] transition-colors"
+                className="h-8 pl-8 pr-8 rounded-xl text-sm font-header font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs appearance-none cursor-pointer hover:border-[var(--color-primary-400)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary-400)] transition-colors"
               >
                 {grades.map((g) => (
                   <option key={g.value} value={g.value}>
@@ -262,7 +262,7 @@ export function LessonGrid({
             </div>
 
             {/* Quick semester switcher */}
-            <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs shrink-0">
+            <div className="flex items-center gap-1 bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs shrink-0">
               <button
                 type="button"
                 onClick={() => setOpenSemester(1)}
@@ -270,7 +270,7 @@ export function LessonGrid({
                   "px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
                   openSemester === 1
                     ? "bg-[var(--color-primary-500)] text-white shadow-2xs"
-                    : "text-slate-600 hover:bg-slate-100"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                 )}
               >
                 <span>Học kỳ I</span>
@@ -282,7 +282,7 @@ export function LessonGrid({
                   "px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
                   openSemester === 2
                     ? "bg-[var(--color-primary-500)] text-white shadow-2xs"
-                    : "text-slate-600 hover:bg-slate-100"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                 )}
               >
                 <span>Học kỳ II</span>
@@ -293,7 +293,7 @@ export function LessonGrid({
           {/* Danh sách phân cấp dạng Accordion Dropdown: Chỉ 1 học kỳ mở lên tại một thời điểm */}
           <div className="flex-1 px-5 md:px-6 py-5 space-y-4 overflow-visible">
             {tabLessons.length === 0 ? (
-              <div className="py-14 text-center text-sm text-slate-400">
+              <div className="py-14 text-center text-sm text-slate-400 dark:text-slate-500">
                 Chưa có dữ liệu bài học cho khối {activeGradeLabel}.
               </div>
             ) : (

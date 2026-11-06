@@ -59,14 +59,14 @@ export function LessonPreviewPanel({
   }
 
   return (
-    <div className="md:col-span-5 bg-slate-50/60 flex flex-col min-h-[500px] md:sticky md:top-4 self-start rounded-b-2xl md:rounded-b-none md:rounded-r-3xl">
+    <div className="md:col-span-5 bg-slate-50/60 dark:bg-slate-900/60 flex flex-col min-h-[500px] md:sticky md:top-4 self-start rounded-b-2xl md:rounded-b-none md:rounded-r-3xl">
       <div className="flex flex-col h-full flex-1 min-h-0">
         {/* Nội dung preview */}
         <div className="p-6 space-y-4 flex-1">
           {/* Tiêu đề: Chương ở trên (với badge số chương), Bài học ở dưới */}
           <div className="space-y-2">
             {lesson.chapterTitle && (
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[var(--color-primary-100)] border border-[var(--color-primary-200)] text-[var(--color-primary-800)] text-xs font-header font-bold uppercase tracking-wider max-w-full">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[var(--color-primary-100)] dark:bg-blue-950/70 border border-[var(--color-primary-200)] dark:border-blue-800 text-[var(--color-primary-800)] dark:text-blue-300 text-xs font-header font-bold uppercase tracking-wider max-w-full">
                 <span className="truncate">
                   {lesson.chapterOrder && !/^chương\s*\d+/i.test(lesson.chapterTitle)
                     ? `Chương ${lesson.chapterOrder}: ${lesson.chapterTitle}`
@@ -93,7 +93,7 @@ export function LessonPreviewPanel({
                   key={idx}
                   className="flex gap-2.5 font-body text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed items-start"
                 >
-                  <span className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                  <span className="w-5 h-5 rounded-full bg-slate-900 dark:bg-emerald-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                     <Check className="w-3 h-3 text-white stroke-[2.5]" />
                   </span>
                   <span className="font-medium text-slate-900 dark:text-slate-100">{outcome}</span>

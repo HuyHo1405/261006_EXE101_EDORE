@@ -134,19 +134,19 @@ export default function ClassroomConfigModal({ ctx, onChange, onClose }: Classro
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-3xl w-full max-w-3xl border border-[var(--color-neutral-200)] shadow-2xl flex flex-col animate-scale-up my-8 sm:my-auto overflow-hidden cursor-default"
+        className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-3xl border border-[var(--color-neutral-200)] dark:border-slate-800 shadow-2xl flex flex-col animate-scale-up my-8 sm:my-auto overflow-hidden cursor-default"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-100">
+        <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[var(--color-primary-50)] text-[var(--color-primary-600)]">
+            <div className="p-2 rounded-xl bg-[var(--color-primary-50)] dark:bg-blue-950/60 text-[var(--color-primary-600)] dark:text-blue-400">
               <Settings className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-header text-base font-extrabold uppercase tracking-tight text-slate-900">
+              <h2 className="font-header text-base font-extrabold uppercase tracking-tight text-slate-900 dark:text-slate-100">
                 Thông tin phòng học
               </h2>
-              <p className="font-body text-xs text-slate-500">
+              <p className="font-body text-xs text-slate-500 dark:text-slate-400">
                 Chọn mẫu có sẵn hoặc điều chỉnh bối cảnh lớp học thực tế
               </p>
             </div>
@@ -154,7 +154,7 @@ export default function ClassroomConfigModal({ ctx, onChange, onClose }: Classro
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+            className="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -170,7 +170,7 @@ export default function ClassroomConfigModal({ ctx, onChange, onClose }: Classro
         </div>
 
         {/* Footer */}
-        <div className="p-4 px-6 border-t border-slate-100 bg-slate-50/80 flex justify-end items-center">
+        <div className="p-4 px-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 flex justify-end items-center">
           <button
             type="button"
             onClick={onClose}

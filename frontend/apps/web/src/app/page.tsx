@@ -443,29 +443,34 @@ export default function Home() {
                 </div>
               </AnimateOnScroll>
 
-              {/* TOP CARD 3: TEAM PLAN (ĐANG PHÁT TRIỂN) */}
+              {/* TOP CARD 3: TEAM PLAN (ĐANG PHÁT TRIỂN - DISABLED STATE) */}
               <AnimateOnScroll className="h-full">
-                <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-7 shadow-sm border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between h-full space-y-4 relative transition-elastic hover-elastic opacity-85">
-                  <span className="absolute -top-3 right-6 px-3 py-0.5 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-xs">
+                <div className="bg-slate-100/70 dark:bg-slate-900/40 rounded-3xl p-6 md:p-7 border-2 border-dashed border-slate-300/90 dark:border-slate-800 flex flex-col justify-between h-full space-y-4 relative opacity-55 cursor-not-allowed select-none transition-opacity hover:opacity-65">
+                  <span className="absolute -top-3 right-6 px-3 py-0.5 bg-slate-400 dark:bg-slate-700 text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-xs border border-slate-300 dark:border-slate-600">
                     Đang phát triển
                   </span>
 
                   <div className="space-y-2">
-                    <h3 className="font-header font-bold text-2xl tracking-tight text-slate-900 dark:text-slate-100">
-                      Gói Đội Ngũ
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-300 leading-relaxed font-body">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-header font-bold text-2xl tracking-tight text-slate-600 dark:text-slate-400">
+                        Gói Đội Ngũ
+                      </h3>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-semibold">
+                        Chưa khả dụng
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed font-body">
                       {teamPlan?.description || "Giải pháp dành cho tổ bộ môn & nhà trường. Quản lý tập trung, chia sẻ tài nguyên bài giảng."}
                     </p>
                   </div>
 
                   <div className="space-y-4 pt-2">
-                    <div className="flex items-baseline gap-1 font-header font-bold text-3xl md:text-4xl tracking-tight text-slate-400 dark:text-slate-300">
-                      499.000đ <span className="text-sm font-normal text-slate-400 dark:text-slate-400 font-body">/Tháng</span>
+                    <div className="flex items-baseline gap-1 font-header font-bold text-3xl md:text-4xl tracking-tight text-slate-400 dark:text-slate-600">
+                      499.000đ <span className="text-sm font-normal text-slate-400 dark:text-slate-600 font-body">/Tháng</span>
                     </div>
 
-                    <button disabled className="w-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 font-bold py-3 px-4 rounded-full text-xs md:text-sm cursor-not-allowed flex items-center justify-center gap-2">
-                      Đang phát triển
+                    <button disabled className="w-full bg-slate-200/80 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 font-bold py-3 px-4 rounded-full text-xs md:text-sm cursor-not-allowed border border-slate-300/80 dark:border-slate-700/80 flex items-center justify-center gap-2">
+                      Tạm khóa (Đang phát triển)
                     </button>
                   </div>
                 </div>
@@ -535,12 +540,12 @@ export default function Home() {
               </div>
 
               {/* TÍNH NĂNG CỘT 3: TEAM PLAN (ĐANG PHÁT TRIỂN) */}
-              <div className="px-2 space-y-3">
-                <span className="text-[11px] font-bold tracking-wider text-slate-400 dark:text-slate-400 uppercase block">
-                  THÔNG TIN GÓI ĐỘI NGŨ
+              <div className="px-2 space-y-3 opacity-75">
+                <span className="text-[11px] font-bold tracking-wider text-slate-400 dark:text-slate-500 uppercase block">
+                  THÔNG TIN GÓI ĐỘI NGŨ (CHƯA KHẢ DỤNG)
                 </span>
 
-                <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-900/80 border border-dashed border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 space-y-2">
+                <div className="p-4 rounded-2xl bg-slate-100/70 dark:bg-slate-900/60 border-2 border-dashed border-slate-300/80 dark:border-slate-800 text-slate-600 dark:text-slate-400 space-y-2">
                   <p className="text-xs md:text-sm font-medium leading-relaxed font-body text-slate-700 dark:text-slate-200">
                     Tính năng đang trong lộ trình phát triển &amp; thử nghiệm cùng các nhà trường.
                   </p>
