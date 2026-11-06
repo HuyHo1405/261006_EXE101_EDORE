@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useCallback, Suspense, useMemo } from 'react'
+import React, { useState, useRef, useCallback, Suspense, useMemo, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AuthGuard } from '@/features/auth/components/AuthGuard'
 import { DashboardAside } from '@/features/course/components/DashboardAside'
@@ -11,11 +11,14 @@ import { LessonStartModal } from '@/features/course/components/LessonStartModal'
 import { useStageTransition } from '@/lib/hooks/useStageTransition'
 import {
   useMyCourses,
+  useCourseDetail,
+  useCategories,
   useLessons,
   useCurriculum,
   useGenerateScriptWithAiMutation,
 } from '@/features/course/queries/courseQueries'
 import { courseService } from '@/features/course/api/courseService'
+import { extractGradeFromCourse } from '@/features/course/data/standardLessons'
 import type { ClassroomCtx } from '@/features/playground/components/ClassroomConfigModal'
 import type { LessonSummaryDTO } from '@edore/types'
 import { toast } from '@/components/ui/toast'
@@ -41,9 +44,16 @@ function NewScriptContent() {
     pageSize: 20,
   })
 
+  const { data: courseDetail } = useCourseDetail(courseIdParam)
+  const { data: allCategories = [] } = useCategories()
+
   const currentCourse = useMemo(() => {
-    return coursePage?.content?.find((c) => c?.id === courseIdParam)
-  }, [coursePage?.content, courseIdParam])
+    return courseDetail || coursePage?.content?.find((c) => c?.id === courseIdParam)
+  }, [courseDetail, coursePage?.content, courseIdParam])
+
+  const detectedGrade = useMemo(() => {
+    return extractGradeFromCourse(currentCourse, allCategories)
+  }, [currentCourse, allCategories])
 
   const generateAiMutation = useGenerateScriptWithAiMutation()
 
@@ -55,10 +65,50 @@ function NewScriptContent() {
 
   // ── Search & Filter State for Lessons ──────────────────────────────────────────
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedGrade, setSelectedGrade] = useState('6')
+  const [selectedGrade, setSelectedGrade] = useState(() => detectedGrade || '6')
   const [selectedTextbook, setSelectedTextbook] = useState('')
   const [sortBy, setSortBy] = useState('gradeCode')
   const [pageNumber, setPageNumber] = useState(0)
+
+  const userChangedGradeRef = useRef(false)
+  const prevCourseIdRef = useRef(courseIdParam)
+
+  // Reset manual override and sync when navigating to a different course
+  useEffect(() => {
+    if (courseIdParam !== prevCourseIdRef.current) {
+      prevCourseIdRef.current = courseIdParam
+      userChangedGradeRef.current = false
+      setSelectedGrade(detectedGrade || '6')
+    }
+  }, [courseIdParam, detectedGrade])
+
+  // Sync grade from course when currentCourse / categories load and user hasn't manually overridden
+  useEffect(() => {
+    if (!userChangedGradeRef.current) {
+      if (detectedGrade) {
+        setSelectedGrade(detectedGrade)
+      } else if (currentCourse) {
+        // Course loaded but has no grade category -> default to grade 6
+        setSelectedGrade('6')
+      }
+    }
+  }, [detectedGrade, currentCourse])
+
+  // Initialize classroom context from course classConfig if present
+  useEffect(() => {
+    const classConfig = courseDetail?.classConfig || (currentCourse as any)?.classConfig
+    if (classConfig) {
+      const cfg = classConfig as any
+      setClassroomCtx((prev) => ({
+        ...prev,
+        rawClassConfig: cfg,
+        classConfigId: cfg.id ? String(cfg.id) : prev.classConfigId,
+        configName: cfg.name || prev.configName,
+        duration: cfg.duration === 'MIN_45' ? 45 : cfg.duration === 'MIN_90' ? 90 : prev.duration,
+        studentCount: cfg.classSize || prev.studentCount,
+      }))
+    }
+  }, [courseDetail?.classConfig, currentCourse])
 
   // ── Fetch Curriculum Tree (Semester > Chapter > Lesson) ─────────────────────
   const { data: curriculumData, isLoading: isLoadingCurriculum } = useCurriculum({
@@ -288,6 +338,7 @@ function NewScriptContent() {
                         onSelectLesson={handleSelectLesson}
                         selectedGrade={selectedGrade}
                         onSelectGrade={(grade) => {
+                          userChangedGradeRef.current = true
                           setSelectedGrade(grade)
                           setPageNumber(0)
                         }}

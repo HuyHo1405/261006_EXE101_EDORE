@@ -34,7 +34,7 @@ Sau khi đã chọn xong các danh mục phù hợp, thầy cô nhấn nút **"S
 [IMAGE: Chuyển sang Bước 2 | Nhấn nút chuyển tiếp để chuyển sang khai báo tên và mô tả khóa học | /images/fig1_2.png]
 
 ### 3. Bước 2: Điền thông tin khóa học
-Tại đây, thầy cô nhập **Tên khóa học** (ví dụ: *"Toán 10 - Đại số và Giải tích"*) cùng một đoạn **Mô tả ngắn** giới thiệu về môn học.
+Tại đây, thầy cô nhập **Tên khóa học** (ví dụ: *"Lịch sử"*) cùng một đoạn **Mô tả ngắn** giới thiệu về môn học.
 
 [IMAGE: Giao diện Thông tin khóa học | Điền đầy đủ Tên khóa học và Mô tả chi tiết | /images/fig1_3.png]
 

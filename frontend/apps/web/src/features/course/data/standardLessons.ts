@@ -34,6 +34,50 @@ export function getSemesterForChapter(
   return 1;
 }
 
+/**
+ * Extract grade code (e.g. "6", "7", "8", "9") from a course's categories.
+ * If course has no grade category, returns null so caller can default to "6".
+ */
+export function extractGradeFromCourse(
+  course?: { categories?: Array<{ id: number; name?: string; type?: string; code?: string }> } | null,
+  allCategories?: Array<{ id: number; type?: string; code?: string; name?: string }>
+): string | null {
+  if (!course?.categories || course.categories.length === 0) {
+    return null;
+  }
+
+  // 1. Try matching with master categories list by ID and type === "GRADE"
+  if (allCategories && allCategories.length > 0) {
+    for (const cat of course.categories) {
+      const match = allCategories.find((c) => c.id === cat.id && c.type === "GRADE");
+      if (match?.code) {
+        const clean = match.code.replace(/\D+/g, "");
+        if (clean) return clean;
+      }
+    }
+  }
+
+  // 2. Try direct type === 'GRADE' if present on course.categories
+  for (const cat of course.categories) {
+    if (cat.type === "GRADE" && cat.code) {
+      const clean = String(cat.code).replace(/\D+/g, "");
+      if (clean) return clean;
+    }
+  }
+
+  // 3. Fallback: Parse number from category name (e.g. "Lớp 9", "Khối 9", "Grade 9", "Lớp 6")
+  for (const cat of course.categories) {
+    if (cat.name) {
+      const match = cat.name.match(/(?:lớp|khối|grade)?\s*([6-9]|1[0-2])\b/i);
+      if (match) {
+        return match[1];
+      }
+    }
+  }
+
+  return null;
+}
+
 export const STANDARD_CHAPTERS: ChapterInfo[] = [
   // ── LỚP 6 ────────────────────────────────────────────────────────────────
   {

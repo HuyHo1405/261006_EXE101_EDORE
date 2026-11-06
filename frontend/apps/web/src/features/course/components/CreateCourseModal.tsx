@@ -630,7 +630,7 @@ export function CreateCourseModal({
                   </label>
                   <Input
                     type="text"
-                    placeholder="VD: Toán 10 - Đại số & Giải tích"
+                    placeholder="Lịch sử"
                     value={title}
                     onChange={(e) => {
                       setTitle(e.target.value);

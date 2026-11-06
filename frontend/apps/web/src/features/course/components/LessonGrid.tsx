@@ -86,6 +86,13 @@ export function LessonGrid({
   // Preview lesson state for column 2
   const [previewLesson, setPreviewLesson] = useState<LessonSummaryDTO | null>(null);
 
+  // Sync internalTabGrade if selectedGrade changes from parent
+  useEffect(() => {
+    if (selectedGrade) {
+      setInternalTabGrade(selectedGrade);
+    }
+  }, [selectedGrade]);
+
   // Reset preview and default to semester 1 when active tab changes
   useEffect(() => {
     setPreviewLesson(null);
