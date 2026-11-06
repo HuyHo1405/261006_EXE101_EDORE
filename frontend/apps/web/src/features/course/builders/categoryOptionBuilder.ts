@@ -56,8 +56,8 @@ export class CategoryOptionBuilder {
       if (!cat) continue;
       const typeKey = cat.type || "OTHER";
 
-      // TEXTBOOK and SEMESTER belong exclusively to lessons/curriculum, not courses
-      if (typeKey === "TEXTBOOK" || typeKey === "SEMESTER") {
+      // SUBJECT (Môn học), TEXTBOOK and SEMESTER belong exclusively to lessons/curriculum or are preset, not shown as course filters
+      if (typeKey === "SUBJECT" || typeKey === "TEXTBOOK" || typeKey === "SEMESTER") {
         continue;
       }
 
@@ -74,8 +74,8 @@ export class CategoryOptionBuilder {
 
     const resultGroups: CategoryFilterGroup[] = [];
 
-    // Order of category types for courses
-    const typeOrder = ["SUBJECT", "GRADE", "PURPOSE", "OTHER"];
+    // Order of category types for courses (bỏ filter môn học)
+    const typeOrder = ["GRADE", "PURPOSE", "OTHER"];
     const allTypes = typeOrder.filter((t) => groupedMap.has(t));
 
     for (const typeKey of allTypes) {

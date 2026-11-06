@@ -84,16 +84,16 @@ export function LessonOverviewPanel({
       {hasHeader && (
         <div className="space-y-2">
           {chapter && (
-            <h3 className="font-header font-extrabold text-sm uppercase tracking-wider text-slate-900 flex items-center gap-2">
+            <h3 className="font-header font-extrabold text-sm uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-[var(--color-primary-600)] shrink-0" />
               <span>{chapter}</span>
             </h3>
           )}
 
-          <div className="p-5 rounded-[var(--radius-lg)] bg-white border border-[var(--color-neutral-200)] shadow-xs space-y-4">
+          <div className="p-5 rounded-[var(--radius-lg)] bg-white dark:bg-slate-900 border border-[var(--color-neutral-200)] dark:border-slate-800 shadow-xs space-y-4">
             {/* Tiêu đề bài học & Tóm tắt nội dung */}
             <div className="space-y-2">
-              <h2 className="font-header font-extrabold text-xl text-slate-900 leading-snug">
+              <h2 className="font-header font-extrabold text-xl text-slate-900 dark:text-slate-100 leading-snug">
                 {heading || 'Nội dung bài học'}
               </h2>
 
@@ -106,18 +106,18 @@ export function LessonOverviewPanel({
 
             {/* YÊU CẦU CẦN ĐẠT (MÀU XANH NGỌC - EMERALD RÕ RÀNG ĐỂ TẬP TRUNG KIỂM CHỨNG) */}
             {learningOutcomes.length > 0 && (
-              <div className="rounded-xl bg-emerald-50 border border-emerald-300 p-4 space-y-3">
-                <h3 className="font-header font-extrabold text-sm uppercase tracking-wider text-emerald-950">
+              <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 p-4 space-y-3">
+                <h3 className="font-header font-extrabold text-sm uppercase tracking-wider text-emerald-950 dark:text-emerald-300">
                   Yêu cầu cần đạt (Learning outcomes)
                 </h3>
 
                 <ul className="space-y-2.5">
                   {learningOutcomes.map((o, i) => (
-                    <li key={i} className="flex gap-2.5 font-body text-sm text-slate-800 leading-relaxed items-start">
+                    <li key={i} className="flex gap-2.5 font-body text-sm text-slate-800 dark:text-slate-200 leading-relaxed items-start">
                       <span className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                         <Check className="w-3 h-3 text-white stroke-[2.5]" />
                       </span>
-                      <span className="font-medium text-slate-900">{o}</span>
+                      <span className="font-medium text-slate-900 dark:text-slate-100">{o}</span>
                     </li>
                   ))}
                 </ul>
@@ -138,12 +138,12 @@ export function LessonOverviewPanel({
 
           <div className="space-y-4">
             {/* KHỐI 1: PHƯƠNG PHÁP DẠY HỌC (MÀU XANH DƯƠNG - BLUE RÕ RÀNG ĐỂ TẬP TRUNG KIỂM CHỨNG) */}
-            <div className="p-5 rounded-[var(--radius-lg)] bg-blue-50 border border-blue-200 shadow-xs space-y-4">
+            <div className="p-5 rounded-[var(--radius-lg)] bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 shadow-xs space-y-4">
               <div className="space-y-1.5 pb-2.5 border-b border-blue-200/80">
-                <h4 className="font-header font-extrabold text-sm uppercase tracking-wider text-blue-950">
+                <h4 className="font-header font-extrabold text-sm uppercase tracking-wider text-blue-950 dark:text-blue-300">
                   Phương pháp: {methodTitle}
                 </h4>
-                <p className="font-body text-sm text-slate-800 leading-relaxed">
+                <p className="font-body text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
                   {primaryMethod?.description ||
                     'Phương pháp sư phạm cốt lõi giúp học sinh chủ động nghiên cứu hồ sơ tư liệu, thảo luận nhóm và khái quát hóa bài học dưới sự dẫn dắt của giáo viên.'}
                 </p>
@@ -161,9 +161,9 @@ export function LessonOverviewPanel({
             {parsedTools.length > 0 && (
               <div
                 id="teaching-tools-section"
-                className="p-5 rounded-[var(--radius-lg)] bg-amber-50 border border-amber-200 shadow-xs space-y-3 scroll-mt-6"
+                className="p-5 rounded-[var(--radius-lg)] bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 shadow-xs space-y-3 scroll-mt-6"
               >
-                <h4 className="font-header font-extrabold text-sm uppercase tracking-wider text-amber-950">
+                <h4 className="font-header font-extrabold text-sm uppercase tracking-wider text-amber-950 dark:text-amber-300">
                   Phương tiện & học liệu cần chuẩn bị
                 </h4>
 

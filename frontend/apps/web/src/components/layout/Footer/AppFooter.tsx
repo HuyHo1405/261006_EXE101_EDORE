@@ -47,13 +47,13 @@ function TiktokIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 export function AppFooter() {
   return (
-    <footer className="w-full bg-white border-t border-[var(--color-neutral-200)] py-8 px-4 md:px-8 font-body">
+    <footer className="w-full bg-transparent dark:bg-slate-950 border-t border-[var(--color-neutral-200)] dark:border-slate-800 py-8 px-4 md:px-8 font-body transition-colors">
       {/* ── FOOTER CONTAINER CARD VỚI ĐỔ BÓNG NỔI BẬT RÕ NÉT NỀN TRẮNG ──────────────────────── */}
-      <div className="max-w-[1400px] mx-auto bg-white border border-[var(--color-neutral-200)] shadow-[0_12px_40px_-5px_rgba(0,0,0,0.12)] rounded-2xl md:rounded-3xl p-6 md:p-10 relative overflow-hidden">
+      <div className="max-w-[1400px] mx-auto bg-white dark:bg-slate-900 border border-[var(--color-neutral-200)] dark:border-slate-800 shadow-[0_12px_40px_-5px_rgba(0,0,0,0.12)] dark:shadow-none rounded-2xl md:rounded-3xl p-6 md:p-10 relative overflow-hidden">
 
         {/* ── 3 CỘT NỘI DUNG ─────────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-8 border-b border-[var(--color-neutral-200)]">
-          
+
           {/* Cột 1: Thương hiệu, Phone/Email + Các Nền tảng MXH (Span 7) */}
           <div className="md:col-span-7 space-y-3">
             <div className="flex items-center gap-3">
@@ -63,16 +63,16 @@ export function AppFooter() {
               </span>
             </div>
 
-            <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-body max-w-xl">
-              Nền tảng công nghệ giáo dục (Ed-Tech) giúp tự động hóa soạn thảo kịch bản giảng dạy, quản lý lớp học và cá nhân hóa trải nghiệm học tập.
+            <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-body max-w-xl">
+              Nền tảng công nghệ giáo dục (Ed-Tech) giúp tự động hóa soạn thảo kịch bản giảng dạy.
             </p>
 
             {/* Thông tin liên hệ */}
-            <div className="space-y-2 pt-1 text-xs text-slate-700">
+            <div className="space-y-2 pt-1 text-xs text-slate-700 dark:text-slate-300">
               <div className="flex items-center gap-2.5">
                 <MailIcon className="w-4 h-4 text-[var(--color-primary-500)] shrink-0" />
-                <span className="text-slate-600">
-                  Email hỗ trợ: <a href="mailto:dengocrong123@gmail.com" className="text-slate-900 font-semibold hover:underline">dengocrong123@gmail.com</a>
+                <span className="text-slate-600 dark:text-slate-400">
+                  Email hỗ trợ: <a href="mailto:dengocrong123@gmail.com" className="text-slate-900 dark:text-slate-200 font-semibold hover:underline">dengocrong123@gmail.com</a>
                 </span>
               </div>
             </div>
@@ -85,7 +85,7 @@ export function AppFooter() {
                 rel="noopener noreferrer"
                 aria-label="Facebook Edore"
                 title="Facebook Edore"
-                className="p-2.5 rounded-xl bg-slate-100 hover:bg-[#1877F2] hover:text-white transition-all text-slate-600 shadow-xs hover:scale-105"
+                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-[#1877F2] hover:text-white transition-all text-slate-600 dark:text-slate-300 shadow-xs hover:scale-105"
               >
                 <FacebookIcon className="w-4 h-4" />
               </a>
@@ -95,7 +95,7 @@ export function AppFooter() {
                 rel="noopener noreferrer"
                 aria-label="TikTok Edore"
                 title="TikTok Edore"
-                className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-900 hover:text-white transition-all text-slate-600 shadow-xs hover:scale-105"
+                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white transition-all text-slate-600 dark:text-slate-300 shadow-xs hover:scale-105"
               >
                 <TiktokIcon className="w-4 h-4" />
               </a>
@@ -105,10 +105,10 @@ export function AppFooter() {
           {/* Cột 2: Trang hệ thống (Span 5) */}
           <div className="md:col-span-5 md:flex md:flex-col md:items-end space-y-3">
             <div className="space-y-3">
-              <h4 className="font-header font-bold text-sm uppercase tracking-wider text-slate-900">
+              <h4 className="font-header font-bold text-sm uppercase tracking-wider text-slate-900 dark:text-slate-100">
                 Trang hệ thống
               </h4>
-              <ul className="space-y-2.5 text-xs list-none p-0 m-0 text-slate-600">
+              <ul className="space-y-2.5 text-xs list-none p-0 m-0 text-slate-600 dark:text-slate-400">
                 <li>
                   <Link href="/" className="hover:text-[var(--color-primary-600)] transition-colors block font-medium">
                     Trang chủ
@@ -131,8 +131,8 @@ export function AppFooter() {
         </div>
 
         {/* ── THANH BẢN QUYỀN CĂN GIỮA ───────────────────────── */}
-        <div className="pt-6 text-center text-xs text-slate-500">
-          © {new Date().getFullYear()} <strong className="text-slate-800 font-semibold">EDORE PLATFORM INC</strong>. Tất cả quyền được bảo lưu.
+        <div className="pt-6 text-center text-xs text-slate-500 dark:text-slate-400">
+          © {new Date().getFullYear()} <strong className="text-slate-800 dark:text-slate-200 font-semibold">EDORE PLATFORM INC</strong>. Tất cả quyền được bảo lưu.
         </div>
 
       </div>

@@ -75,7 +75,7 @@ export function TimelineDockBar({
         </div>
       )}
 
-      <nav className="w-full p-2.5 bg-white border-2 border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-xl flex flex-wrap items-center justify-between gap-3">
+      <nav className="w-full p-2.5 bg-white dark:bg-slate-900 border-2 border-[var(--color-neutral-200)] dark:border-slate-800 rounded-[var(--radius-xl)] shadow-xl flex flex-wrap items-center justify-between gap-3">
         {/* Left: Overview + Steps Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 max-w-[70vw] sm:max-w-none">
           {/* Overview Button */}
@@ -84,7 +84,7 @@ export function TimelineDockBar({
             className={`font-body px-4 py-2 rounded-[var(--radius-lg)] flex items-center gap-2 transition-all font-bold text-xs shadow-xs shrink-0 cursor-pointer ${
               activeIdx === -1
                 ? 'bg-[var(--color-primary-500)] text-white shadow-md'
-                : 'bg-white hover:bg-[var(--color-neutral-100)] text-[var(--color-neutral-800)] border border-[var(--color-neutral-300)]'
+                : 'bg-white dark:bg-slate-800 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 text-[var(--color-neutral-800)] dark:text-slate-200 border border-[var(--color-neutral-300)] dark:border-slate-700'
             }`}
           >
             <LayoutList className="w-3.5 h-3.5" />

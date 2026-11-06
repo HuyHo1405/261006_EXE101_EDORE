@@ -103,9 +103,9 @@ export function LessonStartModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-6 md:p-8 animate-in fade-in duration-200 font-body">
-      <div className="relative w-full max-w-5xl h-full max-h-[92vh] rounded-[var(--radius-xl)] border border-[var(--color-neutral-200)] bg-white shadow-2xl flex flex-col md:flex-row overflow-hidden">
+      <div className="relative w-full max-w-5xl h-full max-h-[92vh] rounded-[var(--radius-xl)] border border-[var(--color-neutral-200)] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl flex flex-col md:flex-row overflow-hidden">
         {/* ── LEFT COLUMN: LESSON INFO SIDEBAR ── */}
-        <div className="w-full md:w-72 bg-[var(--color-neutral-100)] text-[var(--color-neutral-900)] p-5 md:p-6 flex flex-col justify-between shrink-0 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)]">
+        <div className="w-full md:w-72 bg-[var(--color-neutral-100)] dark:bg-slate-950 text-[var(--color-neutral-900)] dark:text-slate-100 p-5 md:p-6 flex flex-col justify-between shrink-0 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] dark:border-slate-800">
           <div>
             <div className="mb-4">
               <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--color-neutral-500)] font-bold">
@@ -121,7 +121,7 @@ export function LessonStartModal({
             </p>
 
             {/* Lesson summary card */}
-            <div className="mt-5 bg-white p-4 rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] shadow-xs flex flex-col gap-3">
+            <div className="mt-5 bg-white dark:bg-slate-800 p-4 rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] dark:border-slate-700 shadow-xs flex flex-col gap-3">
               <div className="flex flex-wrap gap-1">
                 <span className="rounded-full px-2 py-0.5 text-[9px] font-bold bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)]">
                   {gradeLabel}
@@ -136,7 +136,7 @@ export function LessonStartModal({
                   <BookOpen className="w-4 h-4" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-xs font-bold font-header uppercase tracking-tight text-slate-900 leading-snug">
+                  <h4 className="text-xs font-bold font-header uppercase tracking-tight text-slate-900 dark:text-slate-100 leading-snug">
                     {displayTitle}
                   </h4>
                   {lesson.chapterTitle && (
@@ -158,7 +158,7 @@ export function LessonStartModal({
           <button
             type="button"
             onClick={onCancel}
-            className="w-full mt-6 md:mt-0 flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-[var(--color-neutral-50)] border border-[var(--color-neutral-200)] rounded-[var(--radius-md)] text-xs font-bold text-[var(--color-neutral-600)] transition-colors shadow-sm cursor-pointer"
+            className="w-full mt-6 md:mt-0 flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700 border border-[var(--color-neutral-200)] dark:border-slate-700 rounded-[var(--radius-md)] text-xs font-bold text-[var(--color-neutral-600)] dark:text-slate-300 transition-colors shadow-sm cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Chọn bài học khác
@@ -166,7 +166,7 @@ export function LessonStartModal({
         </div>
 
         {/* ── RIGHT COLUMN: CONFIGURATION ── */}
-        <div className="flex-1 bg-white flex flex-col justify-between overflow-y-auto relative">
+        <div className="flex-1 bg-white dark:bg-slate-900 flex flex-col justify-between overflow-y-auto relative">
           <button
             type="button"
             onClick={onCancel}
@@ -189,27 +189,27 @@ export function LessonStartModal({
                   Thông tin cơ bản <span className="text-[var(--color-secondary-500)]">*</span>
                 </label>
 
-                <div className="rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-white shadow-sm focus-within:border-[var(--color-primary-400)] focus-within:ring-4 focus-within:ring-[var(--color-primary-50)] transition-all overflow-hidden group">
+                <div className="rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm focus-within:border-[var(--color-primary-400)] focus-within:ring-4 focus-within:ring-[var(--color-primary-50)] dark:focus-within:ring-blue-950/60 transition-all overflow-hidden group">
                   {/* Tên kịch bản */}
-                  <div className="flex items-center px-4 border-b border-[var(--color-neutral-200)] bg-white group-focus-within:bg-white transition-colors">
+                  <div className="flex items-center px-4 border-b border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 group-focus-within:bg-white dark:group-focus-within:bg-slate-800 transition-colors">
                     <FileText className="w-4 h-4 text-[var(--color-neutral-400)] shrink-0" />
                     <input
                       type="text"
                       placeholder="Tên kịch bản"
                       value={scriptTitle}
                       onChange={(e) => setScriptTitle(e.target.value)}
-                      className="w-full h-11 bg-transparent px-3 text-sm font-bold text-[var(--color-neutral-800)] outline-none placeholder:text-[var(--color-neutral-400)] placeholder:font-medium"
+                      className="w-full h-11 bg-transparent px-3 text-sm font-bold text-[var(--color-neutral-800)] dark:text-slate-100 outline-none placeholder:text-[var(--color-neutral-400)] dark:placeholder:text-slate-500 placeholder:font-medium"
                     />
                   </div>
 
                   {/* Mục tiêu sư phạm */}
-                  <div className="flex items-start px-4 py-3 bg-white group-focus-within:bg-white transition-colors">
+                  <div className="flex items-start px-4 py-3 bg-white dark:bg-slate-800 group-focus-within:bg-white dark:group-focus-within:bg-slate-800 transition-colors">
                     <Target className="w-4 h-4 text-[var(--color-neutral-400)] shrink-0 mt-0.5" />
                     <textarea
                       value={learningOutcome}
                       onChange={(e) => setLearningOutcome(e.target.value)}
                       placeholder="Ghi chú mục tiêu bài giảng bổ sung cho AI (nếu để trống, AI sẽ dùng mục tiêu chuẩn từ sách giáo khoa)..."
-                      className="w-full h-16 bg-transparent px-3 text-xs font-medium text-[var(--color-neutral-700)] outline-none resize-none leading-relaxed placeholder:text-[var(--color-neutral-400)] placeholder:font-medium"
+                      className="w-full h-16 bg-transparent px-3 text-xs font-medium text-[var(--color-neutral-700)] dark:text-slate-200 outline-none resize-none leading-relaxed placeholder:text-[var(--color-neutral-400)] dark:placeholder:text-slate-500 placeholder:font-medium"
                     />
                   </div>
                 </div>
@@ -238,8 +238,8 @@ export function LessonStartModal({
                           ${isDisabled
                             ? "border-slate-200 bg-slate-50/70 opacity-60 cursor-not-allowed select-none"
                             : isSelected
-                              ? "border-[var(--color-primary-300)] bg-[var(--color-primary-50)] shadow-md ring-4 ring-[var(--color-primary-50)] cursor-pointer"
-                              : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)] hover:bg-[var(--color-neutral-50)] cursor-pointer"
+                            ? "border-[var(--color-primary-300)] bg-[var(--color-primary-50)] shadow-md ring-4 ring-[var(--color-primary-50)] cursor-pointer"
+                            : "border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[var(--color-neutral-300)] dark:hover:border-slate-600 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700 cursor-pointer"
                           }`}
                       >
                         {isDisabled ? (
@@ -261,24 +261,26 @@ export function LessonStartModal({
                         )}
 
                         <div
-                          className={`p-2.5 rounded-[var(--radius-full)] transition-colors ${isDisabled
+                          className={`p-2.5 rounded-[var(--radius-full)] transition-colors ${
+                            isDisabled
                               ? "bg-slate-200 text-slate-400"
                               : isSelected
-                                ? "bg-[var(--color-primary-100)] text-[var(--color-primary-600)]"
-                                : "bg-[var(--color-neutral-100)] text-[var(--color-neutral-500)]"
-                            }`}
+                              ? "bg-[var(--color-primary-100)] text-[var(--color-primary-600)]"
+                              : "bg-[var(--color-neutral-100)] text-[var(--color-neutral-500)]"
+                          }`}
                         >
                           <Icon className="w-5 h-5" />
                         </div>
 
                         <div>
                           <p
-                            className={`font-header text-xs uppercase tracking-tight font-extrabold ${isDisabled
+                            className={`font-header text-xs uppercase tracking-tight font-extrabold ${
+                              isDisabled
                                 ? "text-slate-500"
                                 : isSelected
-                                  ? "text-[var(--color-primary-700)]"
-                                  : "text-[var(--color-neutral-800)]"
-                              }`}
+                                ? "text-[var(--color-primary-700)]"
+                                : "text-[var(--color-neutral-800)]"
+                            }`}
                           >
                             {opt.label}
                           </p>

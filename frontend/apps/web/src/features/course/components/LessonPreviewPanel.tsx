@@ -40,16 +40,16 @@ export function LessonPreviewPanel({
 
   if (!lesson) {
     return (
-      <div className="md:col-span-5 bg-slate-50/60 flex flex-col min-h-[500px] md:sticky md:top-4 self-start rounded-b-2xl md:rounded-b-none md:rounded-r-3xl">
+      <div className="md:col-span-5 bg-slate-50/60 dark:bg-slate-900/60 flex flex-col min-h-[500px] md:sticky md:top-4 self-start rounded-b-2xl md:rounded-b-none md:rounded-r-3xl border-t md:border-t-0 md:border-l border-slate-200/80 dark:border-slate-800">
         <div className="flex flex-col items-center justify-center h-full text-center p-6 py-14 space-y-3 flex-1">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white border border-slate-200/90 text-slate-300 shadow-2xs">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 text-slate-300 shadow-2xs">
             <BookOpen className="h-7 w-7 text-slate-400" />
           </div>
           <div className="space-y-1 max-w-xs">
-            <h4 className="font-header font-bold text-sm text-slate-700">
+            <h4 className="font-header font-bold text-sm text-slate-700 dark:text-slate-300">
               Chưa chọn bài học
             </h4>
-            <p className="text-xs text-slate-500 leading-relaxed font-body">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-body">
               Vui lòng bấm vào một bài học ở danh sách bên trái để xem trước thông tin bài giảng và bắt đầu soạn kịch bản.
             </p>
           </div>
@@ -74,7 +74,7 @@ export function LessonPreviewPanel({
                 </span>
               </div>
             )}
-            <h2 className="font-header font-bold text-base md:text-lg text-slate-900 leading-snug">
+            <h2 className="font-header font-bold text-base md:text-lg text-slate-900 dark:text-slate-100 leading-snug">
               {lesson.orderInChapter
                 ? `Bài ${lesson.orderInChapter}: ${lesson.title}`
                 : lesson.title}
@@ -82,8 +82,8 @@ export function LessonPreviewPanel({
           </div>
 
           {/* YÊU CẦU CẦN ĐẠT (MÀU XANH NGỌC - EMERALD CHUẨN SCRIPT OUTCOME UI) */}
-          <div className="rounded-xl bg-emerald-50 border border-emerald-300 p-4 space-y-3 shadow-2xs">
-            <h3 className="font-header font-extrabold text-xs uppercase tracking-wider text-emerald-950">
+          <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 p-4 space-y-3 shadow-2xs">
+            <h3 className="font-header font-extrabold text-xs uppercase tracking-wider text-emerald-950 dark:text-emerald-300">
               Yêu cầu cần đạt (Learning outcomes)
             </h3>
 
@@ -91,12 +91,12 @@ export function LessonPreviewPanel({
               {outcomes.map((outcome, idx) => (
                 <li
                   key={idx}
-                  className="flex gap-2.5 font-body text-xs sm:text-sm text-slate-800 leading-relaxed items-start"
+                  className="flex gap-2.5 font-body text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed items-start"
                 >
                   <span className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                     <Check className="w-3 h-3 text-white stroke-[2.5]" />
                   </span>
-                  <span className="font-medium text-slate-900">{outcome}</span>
+                  <span className="font-medium text-slate-900 dark:text-slate-100">{outcome}</span>
                 </li>
               ))}
             </ul>
@@ -104,7 +104,7 @@ export function LessonPreviewPanel({
         </div>
 
         {/* Nút Action luôn nằm cố định ở DƯỚI CÙNG (Pinned Bottom Footer) */}
-        <div className="p-4 sm:p-5 bg-white border-t border-slate-200 mt-auto shrink-0 shadow-xs">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto shrink-0 shadow-xs">
           <button
             type="button"
             onClick={() => onConfirmLesson(lesson)}

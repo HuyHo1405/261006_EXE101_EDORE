@@ -8,6 +8,7 @@ import { EdoreLogo } from "./EdoreLogo";
 import { UserAvatar } from "./UserAvatar";
 import { MegaMenu, CourseMenuItem } from "./MegaMenu";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { useMyCourses } from "@/features/course/queries/courseQueries";
 
@@ -36,13 +37,6 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
     : `/dashboard?action=create-course`;
 
   const plusActionTitle = isInsideCourse ? "Tạo kịch bản mới" : "Tạo khóa học mới";
-
-  const handlePlusClick = (e: React.MouseEvent) => {
-    if (!isInsideCourse && pathname === "/dashboard") {
-      e.preventDefault();
-      router.push(`/dashboard?action=create-course&t=${Date.now()}`);
-    }
-  };
 
   const [mounted, setMounted] = useState(false);
   const storeUser = useAuthStore((state) => state.user);
@@ -157,6 +151,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
       if (e.key === "Escape") {
         closeMegaMenu();
         closeUserDropdown();
+        setMobileMenuOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -171,6 +166,11 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
       if (userCloseTimerRef.current) clearTimeout(userCloseTimerRef.current);
     };
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   const handleLogout = () => {
     logout();
@@ -193,7 +193,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
     : {};
 
   return (
-    <header className="sticky top-0 z-20 w-full bg-white border-b border-[var(--color-neutral-200)] shadow-xs px-2.5 sm:px-4 md:px-6">
+    <header className="sticky top-0 z-20 w-full bg-white dark:bg-slate-900/95 backdrop-blur-md border-b border-[var(--color-neutral-200)] dark:border-slate-800 shadow-xs px-2.5 sm:px-4 md:px-6 transition-colors duration-200">
       <div className="relative flex items-center justify-between h-[84px] max-w-[1400px] mx-auto w-full">
         {/* ── Logo (góc trái — căn giữa tâm theo cột w-16 của Aside) ── */}
         <div className="w-16 flex items-center justify-center shrink-0">
@@ -210,30 +210,30 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
         {/* ── Wordmark EDORE (căn giữa — hover mở MegaMenu khi đã đăng nhập) ── */}
         <Link
           href="/"
-          className="absolute left-1/2 -translate-x-1/2 font-header font-bold text-[30px] md:text-[43px] text-[var(--color-primary-500)] uppercase tracking-[-0.01em] select-none hover:text-[var(--color-primary-400)] transition-colors"
+          className="absolute left-1/2 -translate-x-1/2 font-header font-bold text-[30px] md:text-[43px] text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)] uppercase tracking-[-0.01em] select-none hover:text-[var(--color-primary-400)] dark:hover:text-[var(--color-primary-300)] transition-colors"
           aria-label="Edore — trang chủ"
           {...triggerProps}
         >
           EDORE
         </Link>
 
-        {/* ── Auth zone (góc phải — padding p-1, button 38px khớp 48px tổng) ─────────────────────────────────── */}
+        {/* ── Auth zone Desktop (góc phải) ─────────────────────────────────── */}
         <div className="hidden md:flex items-center gap-2 shrink-0">
           {user ? (
             <div className="flex items-center gap-2">
-              {/* Cụm công cụ dạng "Viên thuốc" xếp khít nhau (Pill Shape) 38px + 8px padding + 2px border = 48px */}
-              <div className="flex items-center p-1 gap-1 bg-[#F0F2F8] border border-[var(--color-neutral-300)]/60 rounded-xl shadow-inner overflow-hidden shrink-0">
+              {/* Cụm công cụ dạng "Viên thuốc" xếp khít nhau (Pill Shape) */}
+              <div className="flex items-center p-1 gap-1 bg-[#F0F2F8] dark:bg-slate-800/90 border border-[var(--color-neutral-300)]/60 dark:border-slate-700/80 rounded-xl shadow-inner overflow-hidden shrink-0">
                 {/* Nút Thư viện */}
                 <Link
                   href="/dashboard"
                   title="Thư viện của tôi"
                   aria-label="Thư viện của tôi"
-                  className="w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[var(--color-primary-500)] hover:bg-white hover:text-[var(--color-primary-600)] hover:shadow-xs transition-all duration-200 shrink-0"
+                  className="w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)] hover:bg-white dark:hover:bg-slate-700 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-300)] hover:shadow-xs transition-all duration-200 shrink-0"
                 >
                   <Folder className="w-5 h-5" />
                 </Link>
 
-                {/* Nút Tạo mới có chữ chuẩn như Dashboard (Tạo khóa học / Tạo kịch bản dựa trên ngữ cảnh) */}
+                {/* Nút Tạo mới có chữ chuẩn như Dashboard */}
                 <Link
                   href={plusActionHref}
                   title={plusActionTitle}
@@ -245,7 +245,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
                 </Link>
               </div>
 
-              {/* Gộp User Avatar + Nút Mũi tên (Giữ nguyên Avatar size 47px) */}
+              {/* Gộp User Avatar + Nút Mũi tên */}
               <div
                 className="relative shrink-0"
                 ref={userDropdownRef}
@@ -254,7 +254,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
               >
                 <button
                   type="button"
-                  className="group flex items-center h-[48px] p-0.5 pr-2.5 gap-1.5 rounded-xl hover:bg-[#E4E8F7] hover:shadow-xs outline-none cursor-pointer active:scale-95 transition-all shrink-0"
+                  className="group flex items-center h-[48px] p-0.5 pr-2.5 gap-1.5 rounded-xl hover:bg-[#E4E8F7] dark:hover:bg-slate-800 hover:shadow-xs outline-none cursor-pointer active:scale-95 transition-all shrink-0"
                   onClick={() => setUserDropdownOpen((prev) => !prev)}
                   aria-label={`Tài khoản của ${user.name}`}
                   aria-haspopup="true"
@@ -262,32 +262,32 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
                 >
                   <UserAvatar name={user.name} variant={user.plan} size={47} />
                   <ChevronDown
-                    className={`w-4 h-4 text-[var(--color-neutral-600)] group-hover:text-[var(--color-primary-600)] transition-all duration-200 ${userDropdownOpen ? "rotate-180" : ""
+                    className={`w-4 h-4 text-[var(--color-neutral-600)] dark:text-slate-400 group-hover:text-[var(--color-primary-600)] dark:group-hover:text-[var(--color-primary-400)] transition-all duration-200 ${userDropdownOpen ? "rotate-180" : ""
                       }`}
                   />
                 </button>
 
-                {/* Account Dropdown Menu (mt-2 = 8px khớp gap-2 của nút) */}
+                {/* Account Dropdown Menu */}
                 {userDropdownOpen && (
                   <div
-                    className="absolute right-0 top-full mt-2 w-64 bg-white border border-[var(--color-neutral-200)] shadow-2xl rounded-xl p-2 z-30 animate-in fade-in zoom-in-95 duration-150"
+                    className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-900 border border-[var(--color-neutral-200)] dark:border-slate-800 shadow-2xl rounded-2xl p-2.5 z-30 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-md"
                     onMouseEnter={cancelCloseUserDropdown}
                     onMouseLeave={scheduleCloseUserDropdown}
                   >
                     <Link
                       href="/dashboard/profile"
                       onClick={closeUserDropdown}
-                      className="block px-3 py-2.5 border-b border-[var(--color-neutral-100)] mb-1.5 hover:bg-slate-50 transition-colors group"
+                      className="block px-3 py-2.5 border-b border-[var(--color-neutral-100)] dark:border-slate-800 mb-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-lg transition-colors group"
                     >
-                      <p className="text-sm font-bold text-[var(--color-neutral-900)] truncate group-hover:text-[var(--color-primary-600)] transition-colors">
+                      <p className="text-sm font-bold text-[var(--color-neutral-900)] dark:text-slate-100 truncate group-hover:text-[var(--color-primary-600)] dark:group-hover:text-[var(--color-primary-400)] transition-colors">
                         {user.name}
                       </p>
                       {user.email && (
-                        <p className="text-xs text-[var(--color-neutral-500)] truncate mt-0.5">
+                        <p className="text-xs text-[var(--color-neutral-500)] dark:text-slate-400 truncate mt-0.5">
                           {user.email}
                         </p>
                       )}
-                      <span className="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)]">
+                      <span className="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-950)] text-[var(--color-primary-600)] dark:text-[var(--color-primary-400)] border border-[var(--color-primary-200)] dark:border-[var(--color-primary-800)]">
                         {user.plan === "pro" ? "Gói PRO" : "Gói Miễn phí"}
                       </span>
                     </Link>
@@ -295,27 +295,37 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
                     <Link
                       href="/dashboard"
                       onClick={closeUserDropdown}
-                      className="w-full px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] hover:bg-[#EAEFFD] hover:text-[var(--color-primary-700)] rounded-lg flex items-center gap-2.5 transition-all"
+                      className="w-full px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-300 hover:bg-[#EAEFFD] dark:hover:bg-slate-800 hover:text-[var(--color-primary-700)] dark:hover:text-[var(--color-primary-400)] rounded-lg flex items-center gap-2.5 transition-all"
                     >
-                      <Folder className="w-4 h-4 text-[var(--color-primary-500)]" />
+                      <Folder className="w-4 h-4 text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)]" />
                       Thư viện của tôi
                     </Link>
 
                     <Link
                       href={plusActionHref}
                       onClick={closeUserDropdown}
-                      className="w-full px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] hover:bg-[#EAEFFD] hover:text-[var(--color-primary-700)] rounded-lg flex items-center gap-2.5 transition-all"
+                      className="w-full px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-300 hover:bg-[#EAEFFD] dark:hover:bg-slate-800 hover:text-[var(--color-primary-700)] dark:hover:text-[var(--color-primary-400)] rounded-lg flex items-center gap-2.5 transition-all"
                     >
-                      <Plus className="w-4 h-4 text-[var(--color-primary-500)]" />
+                      <Plus className="w-4 h-4 text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)]" />
                       {plusActionTitle}
                     </Link>
+
+                    {/* Lựa chọn theme bên trong User Profile dropdown */}
+                    <div className="p-2 my-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1.5">
+                      <div className="flex items-center justify-between px-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                          Chế độ giao diện
+                        </span>
+                      </div>
+                      <ThemeToggle variant="segmented" className="w-full flex" />
+                    </div>
 
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="w-full text-left px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-100 rounded-lg flex items-center gap-2.5 transition-all mt-1 cursor-pointer"
+                      className="w-full text-left px-3 py-2 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg flex items-center gap-2.5 transition-all mt-1 cursor-pointer"
                     >
-                      <LogOut className="w-4 h-4 text-red-600" />
+                      <LogOut className="w-4 h-4 text-red-600 dark:text-red-400" />
                       Đăng xuất
                     </button>
                   </div>
@@ -324,24 +334,103 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
             </div>
           ) : (
             /* Guest — Nút ĐĂNG NHẬP dùng shadcn Button */
-            <Button asChild size="header">
-              <Link href="/login" id="header-login-btn">
-                Đăng nhập
-              </Link>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button asChild size="header">
+                <Link href="/login" id="header-login-btn">
+                  Đăng nhập
+                </Link>
+              </Button>
+            </div>
           )}
         </div>
 
-        {/* ── Hamburger (mobile only) ──────────────────────────────── */}
-        <button
-          className="flex md:hidden items-center justify-center w-10 h-10 p-2 rounded-[var(--radius-sm)] text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)] cursor-pointer"
-          aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
-          aria-expanded={mobileMenuOpen}
-          onClick={() => setMobileMenuOpen((prev) => !prev)}
-        >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* ── Mobile zone (Nút Hamburger) ─────────────────────────── */}
+        <div className="flex md:hidden items-center gap-1.5">
+          <button
+            className="flex items-center justify-center w-10 h-10 p-2 rounded-[var(--radius-sm)] text-[var(--color-neutral-700)] dark:text-slate-300 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-800 cursor-pointer transition-colors"
+            aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
+
+      {/* ── Mobile Menu Drawer ──────────────────────────────────────────────── */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-[var(--color-neutral-200)] dark:border-slate-800 py-4 px-4 bg-white dark:bg-slate-900 animate-in slide-in-from-top-2 duration-200">
+          <div className="space-y-3">
+            {user ? (
+              <>
+                <div className="flex items-center gap-3 pb-3 border-b border-[var(--color-neutral-200)] dark:border-slate-800">
+                  <UserAvatar name={user.name} variant={user.plan} size={42} />
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{user.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email || "Giáo viên Edore"}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                  >
+                    <Folder className="w-4 h-4 text-[var(--color-primary-500)]" />
+                    Thư viện bài giảng
+                  </Link>
+
+                  <Link
+                    href={plusActionHref}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-4 h-4 text-[var(--color-primary-500)]" />
+                    {plusActionTitle}
+                  </Link>
+
+                  <Link
+                    href="/dashboard/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                  >
+                    Thông tin tài khoản & Cài đặt
+                  </Link>
+                </div>
+
+                <div className="pt-2 border-t border-[var(--color-neutral-200)] dark:border-slate-800">
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">Chế độ giao diện:</span>
+                    <ThemeToggle variant="segmented" />
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full mt-2 text-left px-3 py-2 text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg flex items-center gap-2 transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4 text-red-600 dark:text-red-400" />
+                  Đăng xuất
+                </button>
+              </>
+            ) : (
+              <div className="space-y-3">
+                <Button asChild size="default" className="w-full">
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                    Đăng nhập
+                  </Link>
+                </Button>
+                <div className="flex items-center justify-between pt-2 border-t border-[var(--color-neutral-200)] dark:border-slate-800">
+                  <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">Giao diện:</span>
+                  <ThemeToggle variant="segmented" />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ── Mega Menu (kích hoạt khi hover vào Logo / Chữ EDORE) ── */}
       <MegaMenu
@@ -361,14 +450,14 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
 
 function HeaderFallbackShell() {
   return (
-    <header className="sticky top-0 z-20 w-full bg-white border-b border-[var(--color-neutral-200)] shadow-xs px-2.5 sm:px-4 md:px-6">
+    <header className="sticky top-0 z-20 w-full bg-white dark:bg-slate-900 border-b border-[var(--color-neutral-200)] dark:border-slate-800 shadow-xs px-2.5 sm:px-4 md:px-6">
       <div className="relative flex items-center justify-between h-[84px] max-w-[1400px] mx-auto w-full">
         <div className="w-16 flex items-center justify-center shrink-0">
           <Link href="/" className="flex items-center shrink-0">
             <EdoreLogo size={56} />
           </Link>
         </div>
-        <Link href="/" className="absolute left-1/2 -translate-x-1/2 font-header font-bold text-[30px] md:text-[43px] text-[var(--color-primary-500)] uppercase tracking-[-0.01em]">
+        <Link href="/" className="absolute left-1/2 -translate-x-1/2 font-header font-bold text-[30px] md:text-[43px] text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)] uppercase tracking-[-0.01em]">
           EDORE
         </Link>
         <div className="hidden md:flex items-center gap-2 shrink-0">
@@ -390,4 +479,3 @@ export function AppHeader(props: AppHeaderProps) {
     </Suspense>
   );
 }
-

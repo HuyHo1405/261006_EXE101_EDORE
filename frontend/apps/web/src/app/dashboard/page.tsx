@@ -212,7 +212,7 @@ function DashboardContent() {
   return (
     <AuthGuard>
       {/* ── BASE PRIMARY BLUE BACKGROUND CANVAS (MÀU XANH PRIMARY BASE #034ce4) ────── */}
-      <div className="w-full bg-[var(--color-primary-500)] min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body">
+      <div className="w-full bg-[var(--color-primary-500)] dark:bg-slate-950 min-h-screen py-4 md:py-6 px-2.5 sm:px-4 md:px-6 font-body transition-colors duration-200">
 
         {/* ── LAYOUT 2 CONTAINER SONG SONG KHÔNG GIẬT LAYOUT KHI LOAD (UNIFIED MIN-H = 6 ITEMS) ───── */}
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-stretch gap-4 md:gap-6 min-h-[580px]">
@@ -268,7 +268,7 @@ function DashboardContent() {
                 />
 
                 {/* TIMELINE-EDITOR STYLE SLATE CONTAINER WRAPPING FROM FILTER DOWN TO GRID & PAGING */}
-                <div className="bg-slate-100/70 backdrop-blur-sm border border-slate-200/80 p-5 sm:p-6 md:p-7 rounded-2xl md:rounded-3xl shadow-xs flex flex-col flex-1 justify-between space-y-6">
+                <div className="bg-slate-100/70 dark:bg-slate-900/60 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 md:p-7 rounded-2xl md:rounded-3xl shadow-xs flex flex-col flex-1 justify-between space-y-6">
 
                   {/* SUB-HEADER TOOLBAR (FILTER SEARCH, SORT & ACTIONS) */}
                   <DashboardToolbar
@@ -352,7 +352,7 @@ function DashboardContent() {
 export default function DashboardPage() {
   return (
     <Suspense fallback={
-      <div className="w-full bg-[var(--color-primary-500)] min-h-screen flex items-center justify-center">
+      <div className="w-full bg-[var(--color-primary-500)] dark:bg-slate-950 min-h-screen flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
       </div>
     }>

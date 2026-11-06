@@ -86,10 +86,10 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           </span>
         </Link>
         <div className="space-y-1">
-          <h2 className="text-sm md:text-base font-bold uppercase tracking-wide text-slate-800">
+          <h2 className="text-sm md:text-base font-bold uppercase tracking-wide text-slate-800 dark:text-slate-100">
             Đăng nhập hệ thống Edore
           </h2>
-          <p className="text-xs font-body text-slate-500 leading-snug max-w-xs mx-auto">
+          <p className="text-xs font-body text-slate-500 dark:text-slate-400 leading-snug max-w-xs mx-auto">
             Nhập thông tin tài khoản của bạn để tiếp tục.
           </p>
         </div>
@@ -98,7 +98,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       <form onSubmit={handleSubmit} className="space-y-3" noValidate>
         <div className="space-y-1 text-left">
           <div className="flex items-center justify-between">
-            <Label htmlFor="email" className="text-xs font-semibold text-slate-700">Email</Label>
+            <Label htmlFor="email" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Email</Label>
             {getFieldError("email") && (
               <span className="text-[11px] text-red-500 font-semibold animate-in fade-in">
                 {getFieldError("email")}
@@ -117,7 +117,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             disabled={loginMutation.isPending}
             className={getInputClassName(
               "email",
-              "w-full bg-slate-50/90 hover:bg-slate-100/70 focus:bg-white border-slate-200 focus:border-[var(--color-primary-500)] rounded-[var(--radius-sm)] py-1.5 px-3.5 text-sm transition-all"
+              "w-full bg-slate-50/90 dark:bg-slate-900 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 focus:bg-white dark:focus:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-[var(--color-primary-500)] text-slate-900 dark:text-slate-100 rounded-[var(--radius-sm)] py-1.5 px-3.5 text-sm transition-all"
             )}
             required
           />
@@ -125,7 +125,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
         <div className="space-y-1 text-left">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-xs font-semibold text-slate-700">Mật khẩu</Label>
+            <Label htmlFor="password" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Mật khẩu</Label>
             {getFieldError("password") && (
               <span className="text-[11px] text-red-500 font-semibold animate-in fade-in">
                 {getFieldError("password")}
@@ -145,7 +145,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               disabled={loginMutation.isPending}
               className={getInputClassName(
                 "password",
-                "w-full bg-slate-50/90 hover:bg-slate-100/70 focus:bg-white border-slate-200 focus:border-[var(--color-primary-500)] rounded-[var(--radius-sm)] py-1.5 px-3.5 pr-10 text-sm transition-all"
+                "w-full bg-slate-50/90 dark:bg-slate-900 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 focus:bg-white dark:focus:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-[var(--color-primary-500)] text-slate-900 dark:text-slate-100 rounded-[var(--radius-sm)] py-1.5 px-3.5 pr-10 text-sm transition-all"
               )}
               required
             />
@@ -163,7 +163,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             </button>
           </div>
           <div className="flex items-center justify-between pt-0.5">
-            <label htmlFor="rememberMe" className="inline-flex items-center gap-1.5 cursor-pointer select-none text-xs font-semibold text-slate-600 hover:text-slate-800">
+            <label htmlFor="rememberMe" className="inline-flex items-center gap-1.5 cursor-pointer select-none text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
               <input
                 id="rememberMe"
                 type="checkbox"
@@ -192,7 +192,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         </Button>
 
         <div className="text-center pt-1.5">
-          <p className="text-xs md:text-sm font-body text-slate-500">
+          <p className="text-xs md:text-sm font-body text-slate-500 dark:text-slate-400">
             Chưa có tài khoản?{" "}
             <Link
               href="/register"

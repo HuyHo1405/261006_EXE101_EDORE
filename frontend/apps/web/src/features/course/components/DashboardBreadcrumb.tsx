@@ -44,7 +44,7 @@ export function DashboardBreadcrumb({
   // 1. If explicit items array is provided, render items
   if (items && items.length > 0) {
     return (
-      <header className="flex items-center justify-between gap-4 border-b border-slate-100 pb-2 mb-1 font-sans">
+      <header className="flex items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-2 mb-1 font-sans">
         <div className="flex items-center gap-2 text-sm font-semibold flex-wrap">
           {items.map((item, idx) => {
             const isLast = idx === items.length - 1 || item.isCurrent;
@@ -63,7 +63,7 @@ export function DashboardBreadcrumb({
                 {idx > 0 && <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />}
 
                 {isLast ? (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] text-[var(--color-primary-700)] shadow-2xs">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-950)]/80 border border-[var(--color-primary-200)] dark:border-[var(--color-primary-800)] text-[var(--color-primary-700)] dark:text-[var(--color-primary-300)] shadow-2xs">
                     {iconElement || <FileText className="h-4 w-4 shrink-0 text-[var(--color-primary-600)]" />}
                     <span className="max-w-[200px] sm:max-w-[350px] truncate font-bold text-xs font-header uppercase tracking-wide">
                       {item.label}
@@ -72,7 +72,7 @@ export function DashboardBreadcrumb({
                 ) : item.href ? (
                   <Link
                     href={item.href}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200/80 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-700 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
                   >
                     {iconElement || <FolderOpen className="h-4 w-4 shrink-0 text-slate-500" />}
                     <span className="font-header uppercase tracking-wide text-xs font-bold whitespace-nowrap">
@@ -83,7 +83,7 @@ export function DashboardBreadcrumb({
                   <button
                     type="button"
                     onClick={item.onClick}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200/80 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-700 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
                   >
                     {iconElement || <FolderOpen className="h-4 w-4 shrink-0 text-slate-500" />}
                     <span className="font-header uppercase tracking-wide text-xs font-bold whitespace-nowrap">
@@ -103,7 +103,7 @@ export function DashboardBreadcrumb({
   const activeCourseTitle = currentCourse ? currentCourse.title : courseTitle;
 
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-slate-200/60 pb-3.5 mb-5 font-sans">
+    <header className="flex items-center justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800 pb-3.5 mb-5 font-sans">
       <div className="flex items-center gap-2 text-sm font-semibold flex-wrap">
         {onOpenMenu && (
           <button
@@ -117,7 +117,7 @@ export function DashboardBreadcrumb({
         )}
         {/* If no course selected (Root level) */}
         {!activeCourseTitle && !scriptTitle ? (
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-primary-50)] text-[var(--color-primary-700)] border border-[var(--color-primary-200)] shadow-2xs font-bold">
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-950)]/80 text-[var(--color-primary-700)] dark:text-[var(--color-primary-300)] border border-[var(--color-primary-200)] dark:border-[var(--color-primary-800)] shadow-2xs font-bold">
             <FolderOpen className="h-4 w-4 shrink-0 text-[var(--color-primary-600)]" />
             <span className="font-header uppercase tracking-wide text-xs font-bold whitespace-nowrap">
               Khóa học của tôi {totalCount !== undefined ? `(${totalCount})` : ""}
@@ -130,7 +130,7 @@ export function DashboardBreadcrumb({
               <button
                 type="button"
                 onClick={onBackToCourses}
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200/80 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-700 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
                 title="Quay lại danh sách khóa học của tôi"
               >
                 <FolderOpen className="h-4 w-4 shrink-0 text-slate-500" />
@@ -141,7 +141,7 @@ export function DashboardBreadcrumb({
             ) : (
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200/80 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-700 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
                 title="Về Dashboard"
               >
                 <FolderOpen className="h-4 w-4 shrink-0 text-slate-500" />
@@ -158,7 +158,7 @@ export function DashboardBreadcrumb({
                 {scriptTitle ? (
                   <Link
                     href={courseHref || "/dashboard"}
-                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200/80 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
+                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-700 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
                   >
                     <BookOpen className="h-4 w-4 shrink-0 text-slate-500" />
                     <span className="max-w-[150px] sm:max-w-[250px] truncate font-bold text-xs font-header uppercase tracking-wide">
@@ -166,7 +166,7 @@ export function DashboardBreadcrumb({
                     </span>
                   </Link>
                 ) : (
-                  <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] text-[var(--color-primary-700)] shadow-2xs">
+                  <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-950)]/80 border border-[var(--color-primary-200)] dark:border-[var(--color-primary-800)] text-[var(--color-primary-700)] dark:text-[var(--color-primary-300)] shadow-2xs">
                     <BookOpen className="h-4 w-4 shrink-0 text-[var(--color-primary-600)]" />
                     <span className="max-w-[200px] sm:max-w-[350px] truncate font-bold text-xs font-header uppercase tracking-wide">
                       {activeCourseTitle}
@@ -180,7 +180,7 @@ export function DashboardBreadcrumb({
             {scriptTitle && (
               <>
                 <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] text-[var(--color-primary-700)] shadow-2xs">
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-950)]/80 border border-[var(--color-primary-200)] dark:border-[var(--color-primary-800)] text-[var(--color-primary-700)] dark:text-[var(--color-primary-300)] shadow-2xs">
                   <FileText className="h-4 w-4 shrink-0 text-[var(--color-primary-600)]" />
                   <span className="max-w-[180px] sm:max-w-[320px] truncate font-bold text-xs font-header uppercase tracking-wide">
                     {scriptTitle}

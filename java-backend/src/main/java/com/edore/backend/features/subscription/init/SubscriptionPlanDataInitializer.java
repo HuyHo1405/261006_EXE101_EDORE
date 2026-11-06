@@ -31,9 +31,11 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
 
         // 1. Starter Plan
         List<String> starterFeatures = List.of(
-                "Khởi tạo tối đa 3 Khóa học & Lớp học",
+                "Khởi tạo tối đa 3 Khóa học",
                 "AI phân tích theo bộ dữ liệu nội bộ chuẩn hóa (không cần tải file)",
                 "Biên soạn tiến trình kịch bản bài giảng cơ bản",
+                "Trả bài sôi nổi: Vòng quay may mắn (Lucky Wheel)",
+                "Lưu trữ và tái sử dụng ngân hàng kịch bản (tối đa 5 kịch bản/khóa)",
                 "Xuất kịch bản bài học dạng văn bản",
                 "Hỗ trợ kỹ thuật qua Email (dengocrong123@gmail.com)"
         );
@@ -42,10 +44,9 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
 
         // 2. Pro Plan
         List<String> proFeatures = List.of(
-                "Không giới hạn số lượng Khóa học & Lớp học",
-                "Khai thác toàn bộ kho dữ liệu nội bộ chuyên sâu đa môn học",
+                "Không giới hạn số lượng Khóa học",
+                "Khai thác toàn bộ kho dữ liệu nội bộ chuyên sâu môn Lịch sử",
                 "Dòng thời gian tương tác & chuyển bước bài giảng đầy đủ",
-                "Trả bài sôi nổi: Vòng quay may mắn (Lucky Wheel)",
                 "Xuất file câu hỏi trắc nghiệm, doc bài giảng & mẫu Kahoot",
                 "Lưu trữ và tái sử dụng ngân hàng kịch bản không giới hạn"
         );

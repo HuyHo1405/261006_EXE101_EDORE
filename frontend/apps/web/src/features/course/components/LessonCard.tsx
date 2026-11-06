@@ -39,7 +39,7 @@ export function LessonCard({ lesson, onSelect }: LessonCardProps) {
       onClick={() => onSelect(lesson)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex flex-col justify-between rounded-2xl bg-white p-5 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer h-full min-h-[220px]"
+      className="group relative flex flex-col justify-between rounded-2xl bg-white dark:bg-slate-900 p-5 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer h-full min-h-[220px]"
       style={{
         borderTop: `4px solid ${displayColor}`,
         borderRight: `1.5px solid ${isHovered ? displayColor : `${displayColor}35`}`,
@@ -69,7 +69,7 @@ export function LessonCard({ lesson, onSelect }: LessonCardProps) {
               </span>
 
               {/* Textbook badge */}
-              <span className="rounded-full px-2.5 py-0.5 text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200 truncate max-w-[140px]" title={textbookLabel}>
+              <span className="rounded-full px-2.5 py-0.5 text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 truncate max-w-[140px]" title={textbookLabel}>
                 {textbookLabel}
               </span>
 
@@ -95,8 +95,8 @@ export function LessonCard({ lesson, onSelect }: LessonCardProps) {
                 <BookOpen className="h-4 w-4" />
               </div>
               <h3
-                className="line-clamp-2 font-header font-bold text-sm uppercase tracking-tight transition-colors duration-200 leading-snug min-h-[40px]"
-                style={{ color: isHovered ? displayColor : "#0f172a" }}
+                className="line-clamp-2 font-header font-bold text-sm uppercase tracking-tight text-slate-900 dark:text-slate-100 transition-colors duration-200 leading-snug min-h-[40px]"
+                style={{ color: isHovered ? displayColor : undefined }}
               >
                 {displayTitle}
               </h3>

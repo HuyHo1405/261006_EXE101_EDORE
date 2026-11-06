@@ -66,8 +66,8 @@ export function TimelineOverviewView({
 
   return (
     <>
-      <main className="col-span-12 lg:col-span-8 border border-slate-200/90 rounded-[var(--radius-xl)] flex flex-col bg-white overflow-hidden shadow-xs">
-        <div className="p-5 bg-white border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <main className="col-span-12 lg:col-span-8 border border-slate-200/90 dark:border-slate-800 rounded-[var(--radius-xl)] flex flex-col bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
+        <div className="p-5 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
             <span className="font-mono text-[10px] font-bold text-[var(--color-primary-600)] uppercase tracking-wider">
               TỔNG QUAN KỊCH BẢN

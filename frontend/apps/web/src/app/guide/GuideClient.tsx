@@ -38,13 +38,13 @@ function MarkdownRenderer({ content }: { content: string }) {
     if (listBuffer.length > 0 && listType) {
       if (listType === "ul") {
         renderedElements.push(
-          <ul key={`list-${keyPrefix}`} className="list-disc list-inside space-y-2 text-slate-700 text-xs sm:text-sm my-3 pl-2">
+          <ul key={`list-${keyPrefix}`} className="list-disc list-inside space-y-2 text-slate-700 dark:text-slate-300 text-xs sm:text-sm my-3 pl-2">
             {listBuffer}
           </ul>
         );
       } else {
         renderedElements.push(
-          <ol key={`list-${keyPrefix}`} className="list-decimal list-inside space-y-2 text-slate-700 text-xs sm:text-sm my-3 pl-2">
+          <ol key={`list-${keyPrefix}`} className="list-decimal list-inside space-y-2 text-slate-700 dark:text-slate-300 text-xs sm:text-sm my-3 pl-2">
             {listBuffer}
           </ol>
         );
@@ -59,10 +59,10 @@ function MarkdownRenderer({ content }: { content: string }) {
     const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
     return parts.map((part, idx) => {
       if (part.startsWith("**") && part.endsWith("**")) {
-        return <strong key={idx} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>;
+        return <strong key={idx} className="font-bold text-slate-900 dark:text-slate-100">{part.slice(2, -2)}</strong>;
       }
       if (part.startsWith("`") && part.endsWith("`")) {
-        return <code key={idx} className="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded text-[#034ce4] font-semibold">{part.slice(1, -1)}</code>;
+        return <code key={idx} className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-[#034ce4] dark:text-blue-400 font-semibold">{part.slice(1, -1)}</code>;
       }
       return part;
     });
@@ -228,10 +228,10 @@ function ImagePlaceholder({
       <div className="font-mono text-xs font-bold uppercase tracking-wider text-[#034ce4] bg-white px-2.5 py-1 rounded-md border border-[#034ce4]/20 mb-2">
         Hình minh họa ({dimensions})
       </div>
-      <h4 className="font-bold text-slate-900 text-sm sm:text-base mb-1">
+      <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base mb-1">
         {title}
       </h4>
-      <p className="text-xs text-slate-600 max-w-md">
+      <p className="text-xs text-slate-600 dark:text-slate-400 max-w-md">
         {description}
       </p>
     </div>
@@ -478,7 +478,7 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-[#1a1c1f] font-sans pt-6 pb-20">
+    <div className="min-h-screen bg-[#fafafa] dark:bg-slate-950 text-[#1a1c1f] dark:text-slate-100 font-sans pt-6 pb-20 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         
         {/* TOP HERO BANNER */}
@@ -517,8 +517,8 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
           
           {/* SIDEBAR NAVIGATION */}
           <aside className="lg:col-span-3 space-y-2">
-            <div className="bg-white border border-[#d9d9d9] rounded-xl p-3 shadow-xs sticky top-24">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 py-2 font-mono">
+            <div className="bg-white dark:bg-slate-900 border border-[#d9d9d9] dark:border-slate-800 rounded-xl p-3 shadow-xs sticky top-24">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 py-2 font-mono">
                 Danh mục bài viết
               </div>
               
@@ -532,7 +532,7 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
                       className={`w-full flex items-center px-3 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-left ${
                         isActive
                           ? "bg-[#034ce4] text-white shadow-xs"
-                          : "text-slate-700 hover:bg-[#edf0f2]"
+                          : "text-slate-700 dark:text-slate-300 hover:bg-[#edf0f2] dark:hover:bg-slate-800"
                       }`}
                     >
                       <span className="truncate">{tab.label}</span>
@@ -545,7 +545,7 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
 
           {/* MAIN TAB CONTENT PANEL */}
           <main ref={contentRef} className="lg:col-span-9 scroll-mt-28">
-            <div className="bg-white border border-[#d9d9d9] rounded-xl p-6 sm:p-8 shadow-xs flex flex-col justify-between min-h-[600px]">
+            <div className="bg-white dark:bg-slate-900 border border-[#d9d9d9] dark:border-slate-800 rounded-xl p-6 sm:p-8 shadow-xs flex flex-col justify-between min-h-[600px]">
               
               {isLoading ? (
                 <TabSkeleton />
@@ -557,14 +557,14 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
               )}
 
               {/* BOTTOM NAVIGATION */}
-              <div className="mt-10 pt-6 border-t border-[#d9d9d9] flex items-center justify-between gap-4">
+              <div className="mt-10 pt-6 border-t border-[#d9d9d9] dark:border-slate-800 flex items-center justify-between gap-4">
                 <button
                   onClick={goToPrevTab}
                   disabled={currentTabIdx === 0 || isLoading}
                   className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-bold text-xs sm:text-sm border transition-all ${
                     currentTabIdx === 0 || isLoading
                       ? "opacity-40 cursor-not-allowed bg-slate-100 text-slate-400 border-slate-200"
-                      : "bg-white text-slate-700 border-[#d9d9d9] hover:bg-[#edf0f2] active:scale-95 cursor-pointer"
+                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-[#d9d9d9] dark:border-slate-700 hover:bg-[#edf0f2] dark:hover:bg-slate-700 active:scale-95 cursor-pointer"
                   }`}
                 >
                   <ArrowLeft className="w-4 h-4" />

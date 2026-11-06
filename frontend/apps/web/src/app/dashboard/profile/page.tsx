@@ -29,6 +29,7 @@ import {
   X,
 } from "lucide-react";
 import { UserAvatar } from "@/components/layout/Header/UserAvatar";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { userService } from "@/features/user/api/userService";
 import { subscriptionService } from "@/features/subscription/api/subscriptionService";
 import {
@@ -226,12 +227,12 @@ function UserProfileContent() {
   );
 
   return (
-    <div className="min-h-screen bg-[var(--color-neutral-50,#fafafa)] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--color-neutral-50,#fafafa)] dark:bg-slate-950 py-8 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Unified Header & Tab Navigation */}
-        <div className="bg-white rounded-[var(--radius-lg,12px)] border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-[var(--radius-lg,12px)] border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
           {/* Compact Header Section */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border-b border-gray-100 dark:border-slate-800">
             <div className="flex items-center gap-4">
               <UserAvatar
                 name={profile?.fullName || authUser?.name || "E"}
@@ -240,7 +241,7 @@ function UserProfileContent() {
                 className="shadow-sm border-2 border-white ring-2 ring-gray-50"
               />
               <div>
-                <h1 className="text-2xl font-extrabold font-header text-gray-900 tracking-tight uppercase">
+                <h1 className="text-2xl font-extrabold font-header text-gray-900 dark:text-slate-100 tracking-tight uppercase">
                   {profile?.fullName || authUser?.name || "HỒ SƠ NGƯỜI DÙNG"}
                 </h1>
                 <div className="flex items-center gap-2 mt-1">
@@ -265,12 +266,12 @@ function UserProfileContent() {
           </div>
 
           {/* Tab Navigation Menu Section */}
-          <div className="bg-[var(--color-neutral-100,#f5f5f5)] p-2 flex flex-wrap gap-2 border-t border-[var(--color-neutral-200,#d9d9d9)]">
+          <div className="bg-[var(--color-neutral-100,#f5f5f5)] dark:bg-slate-800/60 p-2 flex flex-wrap gap-2 border-t border-[var(--color-neutral-200,#d9d9d9)] dark:border-slate-800">
             <button
               onClick={() => handleTabChange("profile")}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md,8px)] text-sm font-bold transition-all ${activeTab === "profile"
                 ? "bg-[var(--color-primary-500,#034ce4)] text-white shadow-sm"
-                : "text-gray-600 hover:bg-gray-200/60"
+                : "text-gray-600 dark:text-slate-300 hover:bg-gray-200/60 dark:hover:bg-slate-800/70"
                 }`}
             >
               <User className="w-4 h-4" /> Tổng quan tài khoản
@@ -280,7 +281,7 @@ function UserProfileContent() {
               onClick={() => handleTabChange("transactions")}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md,8px)] text-sm font-bold transition-all ${activeTab === "transactions"
                 ? "bg-[var(--color-primary-500,#034ce4)] text-white shadow-sm"
-                : "text-gray-600 hover:bg-gray-200/60"
+                : "text-gray-600 dark:text-slate-300 hover:bg-gray-200/60 dark:hover:bg-slate-800/70"
                 }`}
             >
               <CreditCard className="w-4 h-4" /> Lịch sử giao dịch
@@ -290,7 +291,7 @@ function UserProfileContent() {
               onClick={() => handleTabChange("settings")}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md,8px)] text-sm font-bold transition-all ${activeTab === "settings"
                 ? "bg-[var(--color-primary-500,#034ce4)] text-white shadow-sm"
-                : "text-gray-600 hover:bg-gray-200/60"
+                : "text-gray-600 dark:text-slate-300 hover:bg-gray-200/60 dark:hover:bg-slate-800/70"
                 }`}
             >
               <Settings className="w-4 h-4" /> Cài đặt hệ thống
@@ -311,9 +312,9 @@ function UserProfileContent() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                   {/* Left Column: Personal Info (col-span-5) */}
                   <div className="lg:col-span-5 space-y-6">
-                    <div className="border-b border-gray-100 pb-4 flex justify-between items-start">
+                    <div className="border-b border-gray-100 dark:border-slate-800 pb-4 flex justify-between items-start">
                       <div>
-                        <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900">
+                        <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900 dark:text-slate-100">
                           THÔNG TIN TÀI KHOẢN
                         </h3>
                         <p className="text-xs text-gray-500 mt-1">Cập nhật họ tên và số điện thoại liên hệ cá nhân.</p>
@@ -364,6 +365,17 @@ function UserProfileContent() {
                           <p className="text-sm font-semibold text-gray-900">
                             {phone || "Chưa cập nhật"}
                           </p>
+                        </div>
+
+                        {/* Tùy chỉnh chế độ giao diện trực tiếp trong User Profile */}
+                        <div className="pt-4 border-t border-gray-100 dark:border-slate-800 space-y-2">
+                          <label className="block text-[11px] font-mono uppercase font-bold text-gray-500 dark:text-slate-400">
+                            Chế độ giao diện (Dark / Light / System)
+                          </label>
+                          <p className="text-xs text-gray-500 dark:text-slate-400">
+                            Tự động đồng bộ theo thiết bị hoặc chọn cố định giao diện Sáng / Tối.
+                          </p>
+                          <ThemeToggle variant="segmented" className="w-full flex" />
                         </div>
                       </div>
                     ) : (
@@ -440,9 +452,9 @@ function UserProfileContent() {
 
                   {/* Right Column: Quotas & Limits (col-span-7) */}
                   <div className="lg:col-span-7 space-y-6 lg:pl-8 lg:border-l border-gray-100">
-                    <div className="border-b border-gray-100 pb-4 flex flex-wrap items-center justify-between gap-4">
+                    <div className="border-b border-gray-100 dark:border-slate-800 pb-4 flex flex-wrap items-center justify-between gap-4">
                       <div>
-                        <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900">
+                        <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900 dark:text-slate-100">
                           GÓI DỊCH VỤ & LƯỢT SỬ DỤNG
                         </h3>
                         <p className="text-xs text-gray-500">
@@ -474,10 +486,10 @@ function UserProfileContent() {
                         </div>
                       </div>
                     ) : (
-                      <div className="shadow-sm border border-gray-200 bg-white rounded-[var(--radius-lg,12px)] p-5 flex flex-col justify-center relative">
+                      <div className="shadow-sm border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-[var(--radius-lg,12px)] p-5 flex flex-col justify-center relative">
                         <div className="flex justify-between items-start">
                           <div>
-                            <h2 className="text-xl font-extrabold font-header uppercase text-gray-900 tracking-wide mb-1">
+                            <h2 className="text-xl font-extrabold font-header uppercase text-gray-900 dark:text-slate-100 tracking-wide mb-1">
                               {subStatus?.planName || "GÓI MIỄN PHÍ"}
                             </h2>
                             <p className="text-xs text-gray-500 mb-3 max-w-sm">
@@ -549,9 +561,9 @@ function UserProfileContent() {
               {/* ── TAB 3: LỊCH SỬ GIAO DỊCH ── */}
               {activeTab === "transactions" && (
                 <div className="space-y-6">
-                  <div className="border-b border-gray-100 pb-4 flex flex-wrap items-center justify-between gap-4">
+                  <div className="border-b border-gray-100 dark:border-slate-800 pb-4 flex flex-wrap items-center justify-between gap-4">
                     <div>
-                      <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900">
+                      <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900 dark:text-slate-100">
                         LỊCH SỬ GIAO DỊCH & ĐƠN HÀNG
                       </h3>
                       <p className="text-xs text-gray-500">
@@ -643,8 +655,8 @@ function UserProfileContent() {
               {/* ── TAB 4: CÀI ĐẶT HỆ THỐNG ── */}
               {activeTab === "settings" && (
                 <div className="space-y-6">
-                  <div className="border-b border-gray-100 pb-4">
-                    <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900">
+                  <div className="border-b border-gray-100 dark:border-slate-800 pb-4">
+                    <h3 className="text-xl font-bold font-header uppercase tracking-wide text-gray-900 dark:text-slate-100">
                       CÀI ĐẶT & TÙY CHỌN HỆ THỐNG
                     </h3>
                     <p className="text-xs text-gray-500">Tùy chỉnh các tính năng hỗ trợ học thuật và giao diện người dùng.</p>
@@ -652,9 +664,9 @@ function UserProfileContent() {
 
                   <div className="space-y-4 max-w-2xl">
                     {/* Toggle Fact Check */}
-                    <div className="p-4 rounded-[var(--radius-md,8px)] border border-gray-200 flex items-center justify-between bg-gray-50/50">
+                    <div className="p-4 rounded-[var(--radius-md,8px)] border border-gray-200 dark:border-slate-800 flex items-center justify-between bg-gray-50/50 dark:bg-slate-800/40">
                       <div className="space-y-0.5 pr-4">
-                        <label className="text-sm font-bold text-gray-900 font-sans block">
+                        <label className="text-sm font-bold text-gray-900 dark:text-slate-100 font-sans block">
                           Tự động Xác minh Fact-check (Fact-check Verification)
                         </label>
                         <p className="text-xs text-gray-500">
@@ -677,16 +689,16 @@ function UserProfileContent() {
                     </div>
 
                     {/* Theme option */}
-                    <div className="p-4 rounded-[var(--radius-md,8px)] border border-gray-200 flex items-center justify-between bg-gray-50/50">
+                    <div className="p-4 rounded-[var(--radius-md,8px)] border border-gray-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50/50 dark:bg-slate-800/40">
                       <div className="space-y-0.5">
-                        <label className="text-sm font-bold text-gray-900 font-sans block">
-                          Giao diện hiển thị
+                        <label className="text-sm font-bold text-gray-900 dark:text-slate-100 font-sans block">
+                          Giao diện hiển thị (Light / Dark / System)
                         </label>
-                        <p className="text-xs text-gray-500">Mặc định theo giao diện Sáng / Tối của hệ thống.</p>
+                        <p className="text-xs text-gray-500 dark:text-slate-400">
+                          Tự động đồng bộ theo hệ điều hành hoặc cố định giao diện Sáng / Tối.
+                        </p>
                       </div>
-                      <span className="text-xs font-mono font-bold text-gray-700 bg-white px-3 py-1.5 rounded-md border border-gray-200">
-                        {settings?.theme === "DARK" ? "Giao diện Tối" : "Giao diện Sáng"}
-                      </span>
+                      <ThemeToggle variant="segmented" />
                     </div>
                   </div>
                 </div>
@@ -700,8 +712,8 @@ function UserProfileContent() {
     {/* Modal View Order Detail */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-[var(--radius-xl,16px)] max-w-lg w-full p-6 space-y-4 shadow-2xl animate-scale-up">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div className="bg-white dark:bg-slate-900 rounded-[var(--radius-xl,16px)] max-w-lg w-full p-6 space-y-4 shadow-2xl animate-scale-up border border-gray-100 dark:border-slate-800 text-slate-900 dark:text-slate-100">
+            <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-800 pb-3">
               <h4 className="text-lg font-bold font-header uppercase text-gray-900">
                 CHI TIẾT ĐƠN HÀNG #{selectedOrder.gatewayOrderCode || selectedOrder.id.substring(0, 8)}
               </h4>

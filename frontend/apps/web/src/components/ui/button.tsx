@@ -11,9 +11,9 @@ const buttonVariants = cva(
         default:
           "bg-[var(--color-primary-500)] text-[#fafafa] hover:bg-[var(--color-primary-400)] shadow-sm active:scale-[0.97]",
         outline:
-          "border border-[var(--color-neutral-300)] bg-white hover:bg-[var(--color-neutral-100)] text-[var(--color-neutral-800)]",
+          "border border-[var(--color-neutral-300)] dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-800 text-[var(--color-neutral-800)] dark:text-slate-200",
         ghost:
-          "hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-500)] text-[var(--color-neutral-700)]",
+          "hover:bg-[var(--color-primary-50)] dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-500)] dark:hover:text-[var(--color-primary-400)] text-[var(--color-neutral-700)] dark:text-slate-300",
         danger:
           "bg-red-500 text-white hover:bg-red-600 active:scale-[0.97]",
       },

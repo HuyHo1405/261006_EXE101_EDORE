@@ -35,13 +35,13 @@ export function ScriptGrid({
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="h-[210px] rounded-2xl border border-slate-200/80 bg-white p-6 animate-pulse flex flex-col justify-between"
+            className="h-[210px] rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-6 animate-pulse flex flex-col justify-between"
           >
             <div className="space-y-3">
-              <div className="h-4 w-20 rounded bg-slate-200" />
-              <div className="h-6 w-3/4 rounded bg-slate-200" />
+              <div className="h-4 w-20 rounded bg-slate-200 dark:bg-slate-800" />
+              <div className="h-6 w-3/4 rounded bg-slate-200 dark:bg-slate-800" />
             </div>
-            <div className="h-3 w-1/3 rounded bg-slate-200" />
+            <div className="h-3 w-1/3 rounded bg-slate-200 dark:bg-slate-800" />
           </div>
         ))}
       </div>
@@ -50,7 +50,7 @@ export function ScriptGrid({
 
   if (scripts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--color-neutral-300)] bg-white/70 py-10 px-4 text-center min-h-[440px]">
+      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--color-neutral-300)] dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 py-10 px-4 text-center min-h-[440px]">
         <div className="relative w-64 h-36 sm:w-72 sm:h-40 md:w-80 md:h-44 select-none pointer-events-none mb-3">
           <Image
             src="/illustrations/undraw_creative-drawing_8mni.svg"
@@ -60,10 +60,10 @@ export function ScriptGrid({
             priority
           />
         </div>
-        <h3 className="font-header font-bold text-2xl uppercase tracking-tight text-slate-900">
+        <h3 className="font-header font-bold text-2xl uppercase tracking-tight text-slate-900 dark:text-slate-100">
           Chưa có kịch bản nào
         </h3>
-        <p className="mt-1.5 max-w-sm text-xs font-body text-slate-600 leading-relaxed">
+        <p className="mt-1.5 max-w-sm text-xs font-body text-slate-600 dark:text-slate-300 leading-relaxed">
           Khóa học này chưa có kịch bản bài giảng. Hãy tạo kịch bản mới để bắt đầu soạn bài bằng AI.
         </p>
         <Button

@@ -126,7 +126,7 @@ export function QuestionCard({
       </div>
 
       {/* ── QUESTION CARD BODY (Compact 2x2 grid to prevent scroll) ── */}
-      <div className="bg-white rounded-[var(--radius-lg)] p-3 sm:p-3.5 border border-[var(--color-neutral-200)] shadow-xs flex flex-col gap-2 sm:gap-2.5">
+      <div className="bg-white dark:bg-slate-900 rounded-[var(--radius-lg)] p-3 sm:p-3.5 border border-[var(--color-neutral-200)] dark:border-slate-800 shadow-xs flex flex-col gap-2 sm:gap-2.5">
         {/* Difficulty badge & question text */}
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ export function QuestionCard({
             )}
           </div>
 
-          <h3 className="text-sm sm:text-base font-header font-bold text-[var(--color-neutral-900)] leading-snug">
+          <h3 className="text-sm sm:text-base font-header font-bold text-[var(--color-neutral-900)] dark:text-slate-100 leading-snug">
             {question.questionText}
           </h3>
         </div>
@@ -160,9 +160,9 @@ export function QuestionCard({
 
               // Determine styling state based on selection & reveal
               let itemStyle =
-                'bg-[var(--color-neutral-50)] hover:bg-blue-50/60 border-[var(--color-neutral-200)] hover:border-[var(--color-primary-400)] text-[var(--color-neutral-800)]'
+                'bg-[var(--color-neutral-50)] dark:bg-slate-800/80 hover:bg-blue-50/60 dark:hover:bg-blue-950/40 border-[var(--color-neutral-200)] dark:border-slate-700 hover:border-[var(--color-primary-400)] dark:hover:border-blue-500 text-[var(--color-neutral-800)] dark:text-slate-200'
               let badgeStyle =
-                'bg-white text-[var(--color-primary-600)] border border-[var(--color-neutral-200)]'
+                'bg-white dark:bg-slate-700 text-[var(--color-primary-600)] dark:text-blue-400 border border-[var(--color-neutral-200)] dark:border-slate-600'
               let statusIndicator = null
 
               if (selectedOption !== null) {
@@ -273,7 +273,7 @@ export function QuestionCard({
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--radius-md)] font-bold text-xs border transition-all cursor-pointer ${
                 showAnswer
                   ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'bg-white text-[var(--color-neutral-700)] border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-50)]'
+                  : 'bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-300 border-[var(--color-neutral-200)] dark:border-slate-700 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700'
               }`}
             >
               {showAnswer ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}

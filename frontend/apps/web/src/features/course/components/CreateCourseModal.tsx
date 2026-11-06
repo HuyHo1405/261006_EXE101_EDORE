@@ -225,10 +225,10 @@ export function CreateCourseModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-6 md:p-8 animate-in fade-in duration-200 font-body">
-      <div className="relative w-full max-w-5xl h-full max-h-[92vh] rounded-[var(--radius-xl)] border border-[var(--color-neutral-200)] bg-white shadow-2xl flex flex-col md:flex-row overflow-hidden">
+      <div className="relative w-full max-w-5xl h-full max-h-[92vh] rounded-[var(--radius-xl)] border border-[var(--color-neutral-200)] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl flex flex-col md:flex-row overflow-hidden">
         
         {/* ── LEFT COLUMN: VERTICAL STEPS NAVIGATION SIDEBAR (SURFACE CARD COLORED --color-neutral-100 PER DESIGN TOKENS) ── */}
-        <div className="w-full md:w-64 bg-[var(--color-neutral-100)] text-[var(--color-neutral-900)] p-5 md:p-6 flex flex-col justify-between shrink-0 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)]">
+        <div className="w-full md:w-64 bg-[var(--color-neutral-100)] dark:bg-slate-950 text-[var(--color-neutral-900)] dark:text-slate-100 p-5 md:p-6 flex flex-col justify-between shrink-0 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] dark:border-slate-800">
           <div>
             <div className="mb-4">
               <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--color-neutral-500)] font-bold">
@@ -262,7 +262,7 @@ export function CreateCourseModal({
                         ? "bg-[var(--color-primary-500)] text-white shadow-sm ring-2 ring-[var(--color-primary-200)] scale-105"
                         : selectedCategoryIds.length > 0
                         ? "bg-[var(--color-primary-500)] text-white shadow-xs"
-                        : "bg-white text-[var(--color-neutral-600)] border border-[var(--color-neutral-300)] shadow-2xs group-hover:border-[var(--color-neutral-400)] group-hover:text-[var(--color-neutral-900)]"
+                        : "bg-white dark:bg-slate-800 text-[var(--color-neutral-600)] dark:text-slate-300 border border-[var(--color-neutral-300)] dark:border-slate-700 shadow-2xs group-hover:border-[var(--color-neutral-400)] dark:group-hover:border-slate-600 group-hover:text-[var(--color-neutral-900)] dark:group-hover:text-white"
                     }`}
                   >
                     {selectedCategoryIds.length > 0 ? (
@@ -307,7 +307,7 @@ export function CreateCourseModal({
                         ? "bg-[var(--color-primary-500)] text-white shadow-sm ring-2 ring-[var(--color-primary-200)] scale-105"
                         : title.trim()
                         ? "bg-[var(--color-primary-500)] text-white shadow-xs"
-                        : "bg-white text-[var(--color-neutral-600)] border border-[var(--color-neutral-300)] shadow-2xs group-hover:border-[var(--color-neutral-400)] group-hover:text-[var(--color-neutral-900)]"
+                        : "bg-white dark:bg-slate-800 text-[var(--color-neutral-600)] dark:text-slate-300 border border-[var(--color-neutral-300)] dark:border-slate-700 shadow-2xs group-hover:border-[var(--color-neutral-400)] dark:group-hover:border-slate-600 group-hover:text-[var(--color-neutral-900)] dark:group-hover:text-white"
                     }`}
                   >
                     {title.trim() ? (
@@ -344,7 +344,7 @@ export function CreateCourseModal({
                         ? "bg-[var(--color-primary-500)] text-white shadow-sm ring-2 ring-[var(--color-primary-200)] scale-105"
                         : classConfigData.name || classConfigData.id
                         ? "bg-[var(--color-primary-500)] text-white shadow-xs"
-                        : "bg-white text-[var(--color-neutral-600)] border border-[var(--color-neutral-300)] shadow-2xs group-hover:border-[var(--color-neutral-400)] group-hover:text-[var(--color-neutral-900)]"
+                        : "bg-white dark:bg-slate-800 text-[var(--color-neutral-600)] dark:text-slate-300 border border-[var(--color-neutral-300)] dark:border-slate-700 shadow-2xs group-hover:border-[var(--color-neutral-400)] dark:group-hover:border-slate-600 group-hover:text-[var(--color-neutral-900)] dark:group-hover:text-white"
                     }`}
                   >
                     {classConfigData.name || classConfigData.id ? (
@@ -387,7 +387,7 @@ export function CreateCourseModal({
         </div>
 
         {/* ── RIGHT COLUMN: MAIN STEP CONTENT AREA ── */}
-        <div className="flex-1 bg-white flex flex-col justify-between overflow-y-auto relative">
+        <div className="flex-1 bg-white dark:bg-slate-900 flex flex-col justify-between overflow-y-auto relative">
           
           {/* CLOSE BUTTON AT TOP RIGHT */}
           <button
@@ -444,7 +444,7 @@ export function CreateCourseModal({
                               className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${
                                 isSelected
                                   ? "bg-[var(--color-primary-500)] text-white border border-[var(--color-primary-600)] shadow-sm scale-105"
-                                  : "bg-white text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)] border border-[var(--color-neutral-200)]"
+                                  : "bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 border border-[var(--color-neutral-200)] dark:border-slate-700"
                               }`}
                             >
                               {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
@@ -488,7 +488,7 @@ export function CreateCourseModal({
                                   className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${
                                     isSelected
                                       ? "bg-[var(--color-primary-500)] text-white border border-[var(--color-primary-600)] shadow-sm scale-105"
-                                      : "bg-white text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)] border border-[var(--color-neutral-200)]"
+                                      : "bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 border border-[var(--color-neutral-200)] dark:border-slate-700"
                                   }`}
                                 >
                                   {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
@@ -529,7 +529,7 @@ export function CreateCourseModal({
                                   className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${
                                     isSelected
                                       ? "bg-[var(--color-primary-500)] text-white border border-[var(--color-primary-600)] shadow-sm scale-105"
-                                      : "bg-white text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)] border border-[var(--color-neutral-200)]"
+                                      : "bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 border border-[var(--color-neutral-200)] dark:border-slate-700"
                                   }`}
                                 >
                                   {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
@@ -563,7 +563,7 @@ export function CreateCourseModal({
                               className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${
                                 isSelected
                                   ? "bg-[var(--color-primary-500)] text-white border border-[var(--color-primary-600)] shadow-sm scale-105"
-                                  : "bg-white text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)] border border-[var(--color-neutral-200)]"
+                                  : "bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 border border-[var(--color-neutral-200)] dark:border-slate-700"
                               }`}
                             >
                               {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
@@ -616,16 +616,16 @@ export function CreateCourseModal({
                 )}
 
                 {errorMessage && (
-                  <div className="rounded-[var(--radius-md)] border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-600 flex items-center justify-between">
+                  <div className="rounded-[var(--radius-md)] border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 p-3.5 text-xs font-semibold text-rose-600 dark:text-rose-400 flex items-center justify-between">
                     <span>{errorMessage}</span>
-                    <button type="button" onClick={() => setErrorMessage(null)} className="text-rose-400 hover:text-rose-600">
+                    <button type="button" onClick={() => setErrorMessage(null)} className="text-rose-400 hover:text-rose-600 dark:hover:text-rose-300">
                       <X className="h-4 w-4" />
                     </button>
                   </div>
                 )}
 
                 <div>
-                  <label className="mb-2 block text-xs font-bold font-mono text-[var(--color-neutral-700)] uppercase tracking-wider">
+                  <label className="mb-2 block text-xs font-bold font-mono text-[var(--color-neutral-700)] dark:text-slate-300 uppercase tracking-wider">
                     Tên khóa học / Môn học <span className="text-rose-500">*</span>
                   </label>
                   <Input
@@ -638,12 +638,12 @@ export function CreateCourseModal({
                     }}
                     required
                     autoFocus
-                    className="h-10 border-[var(--color-neutral-200)] bg-white text-xs font-semibold text-[var(--color-neutral-900)] placeholder:text-[var(--color-neutral-400)] focus:border-[var(--color-primary-500)] rounded-[var(--radius-sm)]"
+                    className="h-10 border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-[var(--color-neutral-900)] dark:text-slate-100 placeholder:text-[var(--color-neutral-400)] dark:placeholder:text-slate-500 focus:border-[var(--color-primary-500)] rounded-[var(--radius-sm)]"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-xs font-bold font-mono text-[var(--color-neutral-700)] uppercase tracking-wider">
+                  <label className="mb-2 block text-xs font-bold font-mono text-[var(--color-neutral-700)] dark:text-slate-300 uppercase tracking-wider">
                     Mô tả ngắn
                   </label>
                   <textarea
@@ -651,7 +651,7 @@ export function CreateCourseModal({
                     placeholder="Nhập thông tin tổng quan về môn học, mục tiêu giảng dạy..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] bg-white p-3 text-xs font-medium text-[var(--color-neutral-900)] placeholder:text-[var(--color-neutral-400)] focus:border-[var(--color-primary-500)] focus:outline-none"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-xs font-medium text-[var(--color-neutral-900)] dark:text-slate-100 placeholder:text-[var(--color-neutral-400)] dark:placeholder:text-slate-500 focus:border-[var(--color-primary-500)] focus:outline-none"
                   />
                 </div>
               </div>
@@ -661,9 +661,9 @@ export function CreateCourseModal({
             {stage === 3 && (
               <div className="space-y-4 animate-in fade-in duration-150">
                 {errorMessage && (
-                  <div className="rounded-[var(--radius-md)] border border-rose-200 bg-rose-50 p-2.5 text-xs font-semibold text-rose-600 flex items-center justify-between mb-2">
+                  <div className="rounded-[var(--radius-md)] border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 p-2.5 text-xs font-semibold text-rose-600 dark:text-rose-400 flex items-center justify-between mb-2">
                     <span>{errorMessage}</span>
-                    <button type="button" onClick={() => setErrorMessage(null)} className="text-rose-400 hover:text-rose-600">
+                    <button type="button" onClick={() => setErrorMessage(null)} className="text-rose-400 hover:text-rose-600 dark:hover:text-rose-300">
                       <X className="h-4 w-4" />
                     </button>
                   </div>
@@ -688,7 +688,7 @@ export function CreateCourseModal({
                   type="button"
                   onClick={onClose}
                   variant="outline"
-                  className="border-[var(--color-neutral-200)] text-xs font-bold text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)] rounded-[var(--radius-md)] cursor-pointer"
+                  className="border-[var(--color-neutral-200)] dark:border-slate-700 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-800 rounded-[var(--radius-md)] cursor-pointer"
                 >
                   Hủy
                 </Button>
@@ -722,7 +722,7 @@ export function CreateCourseModal({
                   type="button"
                   onClick={() => setStage(1)}
                   variant="outline"
-                  className="gap-2 border-[var(--color-neutral-200)] text-xs font-bold text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)] rounded-[var(--radius-md)] cursor-pointer"
+                  className="gap-2 border-[var(--color-neutral-200)] dark:border-slate-700 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-800 rounded-[var(--radius-md)] cursor-pointer"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   <span>Quay lại Bước 1</span>
@@ -764,7 +764,7 @@ export function CreateCourseModal({
                   type="button"
                   onClick={() => setStage(2)}
                   variant="outline"
-                  className="gap-2 border-[var(--color-neutral-200)] text-xs font-bold text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)] rounded-[var(--radius-md)] cursor-pointer"
+                  className="gap-2 border-[var(--color-neutral-200)] dark:border-slate-700 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-800 rounded-[var(--radius-md)] cursor-pointer"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   <span>Quay lại Bước 2</span>

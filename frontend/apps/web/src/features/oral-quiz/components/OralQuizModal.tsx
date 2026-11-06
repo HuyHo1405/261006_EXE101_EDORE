@@ -11,6 +11,8 @@ interface OralQuizModalProps {
   lessonId?: string
   lessonTitle?: string
   questions?: LessonQuestionDTO[]
+  initialGrade?: string
+  courseId?: string
 }
 
 export function OralQuizModal({
@@ -19,6 +21,8 @@ export function OralQuizModal({
   lessonId,
   lessonTitle,
   questions,
+  initialGrade,
+  courseId,
 }: OralQuizModalProps) {
   const [mounted, setMounted] = useState(false)
 
@@ -34,6 +38,8 @@ export function OralQuizModal({
         initialLessonId={lessonId}
         initialLessonTitle={lessonTitle}
         initialQuestions={questions}
+        initialGrade={initialGrade}
+        courseId={courseId}
         onClose={onClose}
       />
     </div>,

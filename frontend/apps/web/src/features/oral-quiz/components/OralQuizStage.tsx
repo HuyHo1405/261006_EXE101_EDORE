@@ -20,6 +20,8 @@ interface OralQuizStageProps {
   initialLessonId?: string
   initialLessonTitle?: string
   initialQuestions?: LessonQuestionDTO[]
+  initialGrade?: string
+  courseId?: string
   onClose?: () => void
 }
 
@@ -27,6 +29,8 @@ export function OralQuizStage({
   initialLessonId,
   initialLessonTitle,
   initialQuestions,
+  initialGrade,
+  courseId,
   onClose,
 }: OralQuizStageProps) {
   // Session states
@@ -174,7 +178,7 @@ export function OralQuizStage({
   // If not configured, show SetupView
   if (!isConfigured) {
     return (
-      <div className="w-full max-w-xl mx-auto my-auto bg-white border border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-2xl overflow-hidden relative font-body text-[var(--color-neutral-900)]">
+      <div className="w-full max-w-xl mx-auto my-auto bg-white dark:bg-slate-900 border border-[var(--color-neutral-200)] dark:border-slate-800 rounded-[var(--radius-xl)] shadow-2xl overflow-hidden relative font-body text-[var(--color-neutral-900)] dark:text-slate-100">
         {onClose && (
           <button
             type="button"
@@ -191,6 +195,8 @@ export function OralQuizStage({
             initialLessonId={lessonId}
             initialLessonTitle={lessonTitle}
             initialQuestions={questions}
+            initialGrade={initialGrade}
+            courseId={courseId}
           />
         </div>
       </div>
@@ -198,9 +204,9 @@ export function OralQuizStage({
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto my-auto h-[540px] max-h-[92vh] flex flex-col bg-white border border-[var(--color-neutral-200)] rounded-[var(--radius-xl)] shadow-2xl overflow-hidden relative select-none font-body text-[var(--color-neutral-900)]">
+    <div className="w-full max-w-4xl mx-auto my-auto h-[540px] max-h-[92vh] flex flex-col bg-white dark:bg-slate-900 border border-[var(--color-neutral-200)] dark:border-slate-800 rounded-[var(--radius-xl)] shadow-2xl overflow-hidden relative select-none font-body text-[var(--color-neutral-900)] dark:text-slate-100">
       {/* ── TOP CLASSROOM BAR ── */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 bg-[var(--color-neutral-50)] border-b border-[var(--color-neutral-200)] shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 bg-[var(--color-neutral-50)] dark:bg-slate-950 border-b border-[var(--color-neutral-200)] dark:border-slate-800 shrink-0">
         <div className="flex items-center gap-2.5 sm:gap-3">
           <button
             type="button"
@@ -221,7 +227,7 @@ export function OralQuizStage({
 
         {/* Stats & Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-md)] bg-white border border-[var(--color-neutral-200)] text-xs font-mono font-bold text-[var(--color-neutral-700)]">
+          <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-md)] bg-white dark:bg-slate-800 border border-[var(--color-neutral-200)] dark:border-slate-700 text-xs font-mono font-bold text-[var(--color-neutral-700)] dark:text-slate-300">
             <Users className="w-3.5 h-3.5 text-[var(--color-primary-500)]" />
             <span>
               Đã gọi: {history.length}/{totalStudents}
@@ -231,7 +237,7 @@ export function OralQuizStage({
           <button
             type="button"
             onClick={() => setShowHistory(true)}
-            className="flex items-center gap-1 text-xs font-bold text-[var(--color-neutral-700)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] px-2.5 py-1.5 rounded-[var(--radius-md)] transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-300 hover:text-[var(--color-neutral-900)] dark:hover:text-white bg-white dark:bg-slate-800 border border-[var(--color-neutral-200)] dark:border-slate-700 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-[var(--radius-md)] transition-colors cursor-pointer"
             title="Lịch sử gọi học sinh"
           >
             <History className="w-3.5 h-3.5 text-[var(--color-primary-500)]" />
@@ -241,7 +247,7 @@ export function OralQuizStage({
           <button
             type="button"
             onClick={handleResetSession}
-            className="p-1.5 text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)] bg-white border border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-100)] rounded-[var(--radius-md)] transition-colors cursor-pointer"
+            className="p-1.5 text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-white bg-white dark:bg-slate-800 border border-[var(--color-neutral-200)] dark:border-slate-700 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 rounded-[var(--radius-md)] transition-colors cursor-pointer"
             title="Đặt lại lượt quay"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -269,7 +275,7 @@ export function OralQuizStage({
       </div>
 
       {/* ── MAIN SCREEN BODY (Unified height - No clipping & No layout shift) ── */}
-      <div className="flex-1 flex flex-col items-center justify-center p-2.5 sm:p-3 bg-white overflow-y-auto no-scrollbar">
+      <div className="flex-1 flex flex-col items-center justify-center p-2.5 sm:p-3 bg-white dark:bg-slate-900 overflow-y-auto no-scrollbar">
         {stage === 'wheel' ? (
           <div className="flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-200">
             {/* Stage Title */}
@@ -308,7 +314,7 @@ export function OralQuizStage({
 
       {/* ── HISTORY DRAWER ── */}
       {showHistory && (
-        <div className="absolute inset-y-0 right-0 w-80 bg-white border-l border-[var(--color-neutral-200)] p-5 shadow-lg z-40 flex flex-col gap-4 font-body">
+        <div className="absolute inset-y-0 right-0 w-80 bg-white dark:bg-slate-900 border-l border-[var(--color-neutral-200)] dark:border-slate-800 p-5 shadow-lg z-40 flex flex-col gap-4 font-body">
           <div className="flex items-center justify-between border-b border-[var(--color-neutral-200)] pb-3">
             <div className="flex items-center gap-2 font-bold text-sm text-[var(--color-neutral-900)]">
               <History className="w-4 h-4 text-[var(--color-primary-500)]" />

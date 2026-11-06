@@ -77,7 +77,7 @@ export function ScriptCard({ script, onDelete, onRename, courseId, displayColor 
       onClick={handleOpenEditor}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex flex-col justify-between rounded-2xl bg-white p-5 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer h-full min-h-[200px]"
+      className="group relative flex flex-col justify-between rounded-2xl bg-white dark:bg-slate-900 p-5 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer h-full min-h-[200px]"
       style={{
         borderTop: `4px solid ${accentColor}`,
         borderRight: `1.5px solid ${isHovered ? accentColor : `${accentColor}35`}`,
@@ -102,15 +102,15 @@ export function ScriptCard({ script, onDelete, onRename, courseId, displayColor 
           </div>
 
           <h3
-            className="line-clamp-2 font-header font-bold text-base uppercase tracking-tight transition-colors duration-200 leading-snug flex-1"
-            style={{ color: isHovered ? accentColor : "#0f172a" }}
+            className="line-clamp-2 font-header font-bold text-base uppercase tracking-tight text-slate-900 dark:text-slate-100 transition-colors duration-200 leading-snug flex-1"
+            style={{ color: isHovered ? accentColor : undefined }}
           >
             {script.title || "Kịch bản bài giảng"}
           </h3>
         </div>
 
         {/* Footer Info: Clock + Updated Time on Left, Action Menu on Right */}
-        <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs shrink-0">
+        <div className="mt-auto flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3 text-xs shrink-0">
           {/* Left: Clock Icon + Updated Time */}
           <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
             <Clock className="h-3.5 w-3.5 text-slate-400 shrink-0" />
@@ -145,7 +145,7 @@ export function ScriptCard({ script, onDelete, onRename, courseId, displayColor 
                     <button
                       type="button"
                       onClick={handleStartRename}
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                       <span>Đổi tên</span>
@@ -158,7 +158,7 @@ export function ScriptCard({ script, onDelete, onRename, courseId, displayColor 
                       setShowMenu(false);
                       onDelete(script.id);
                     }}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     <span>Xóa kịch bản</span>

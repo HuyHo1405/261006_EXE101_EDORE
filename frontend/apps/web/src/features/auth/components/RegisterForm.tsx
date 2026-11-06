@@ -104,10 +104,10 @@ export function RegisterForm() {
           </span>
         </Link>
         <div className="space-y-1">
-          <h2 className="text-sm md:text-base font-bold uppercase tracking-wide text-slate-800">
+          <h2 className="text-sm md:text-base font-bold uppercase tracking-wide text-slate-800 dark:text-slate-100">
             Đăng ký tài khoản Edore
           </h2>
-          <p className="text-xs font-body text-slate-500 leading-snug max-w-xs mx-auto">
+          <p className="text-xs font-body text-slate-500 dark:text-slate-400 leading-snug max-w-xs mx-auto">
             Tạo tài khoản mới để trải nghiệm nền tảng.
           </p>
         </div>
@@ -118,7 +118,7 @@ export function RegisterForm() {
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
           <div className="sm:col-span-7 space-y-1 text-left">
             <div className="flex items-center justify-between">
-              <Label htmlFor="email" className="text-xs font-semibold text-slate-700">Email</Label>
+              <Label htmlFor="email" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Email</Label>
               {getFieldError("email") && (
                 <span className="text-[11px] text-red-500 font-semibold animate-in fade-in truncate max-w-[60%] text-right">
                   {getFieldError("email")}
@@ -137,7 +137,7 @@ export function RegisterForm() {
               disabled={registerMutation.isPending}
               className={getInputClassName(
                 "email",
-                "w-full bg-slate-50/90 hover:bg-slate-100/70 focus:bg-white border-slate-200 focus:border-[var(--color-primary-500)] rounded-[var(--radius-sm)] py-1.5 px-3.5 text-sm transition-all"
+                "w-full bg-slate-50/90 dark:bg-slate-900 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 focus:bg-white dark:focus:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-[var(--color-primary-500)] text-slate-900 dark:text-slate-100 rounded-[var(--radius-sm)] py-1.5 px-3.5 text-sm transition-all"
               )}
               required
             />
@@ -145,7 +145,7 @@ export function RegisterForm() {
 
           <div className="sm:col-span-5 space-y-1 text-left">
             <div className="flex items-center justify-between">
-              <Label htmlFor="phone" className="text-xs font-semibold text-slate-700">Số điện thoại</Label>
+              <Label htmlFor="phone" className="text-xs font-semibold text-slate-700 dark:text-slate-300">Số điện thoại</Label>
               {getFieldError("phone") && (
                 <span className="text-[11px] text-red-500 font-semibold animate-in fade-in truncate max-w-[60%] text-right">
                   {getFieldError("phone")}
@@ -164,7 +164,7 @@ export function RegisterForm() {
               disabled={registerMutation.isPending}
               className={getInputClassName(
                 "phone",
-                "w-full bg-slate-50/90 hover:bg-slate-100/70 focus:bg-white border-slate-200 focus:border-[var(--color-primary-500)] rounded-[var(--radius-sm)] py-1.5 px-3.5 text-sm transition-all"
+                "w-full bg-slate-50/90 dark:bg-slate-900 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 focus:bg-white dark:focus:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-[var(--color-primary-500)] text-slate-900 dark:text-slate-100 rounded-[var(--radius-sm)] py-1.5 px-3.5 text-sm transition-all"
               )}
               required
             />
@@ -174,7 +174,7 @@ export function RegisterForm() {
         {/* Hàng 1 Mật khẩu */}
         <div className="space-y-1 text-left">
           <div className="flex items-center justify-between gap-2">
-            <Label htmlFor="password" className="text-xs font-semibold text-slate-700 shrink-0">Mật khẩu</Label>
+            <Label htmlFor="password" className="text-xs font-semibold text-slate-700 dark:text-slate-300 shrink-0">Mật khẩu</Label>
             {getFieldError("password") && (
               <span className="text-[11px] text-red-500 font-semibold animate-in fade-in truncate text-right">
                 {getFieldError("password")}
@@ -194,7 +194,7 @@ export function RegisterForm() {
               disabled={registerMutation.isPending}
               className={getInputClassName(
                 "password",
-                "w-full bg-slate-50/90 hover:bg-slate-100/70 focus:bg-white border-slate-200 focus:border-[var(--color-primary-500)] rounded-[var(--radius-sm)] py-1.5 px-3.5 pr-9 text-sm transition-all"
+                "w-full bg-slate-50/90 dark:bg-slate-900 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 focus:bg-white dark:focus:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-[var(--color-primary-500)] text-slate-900 dark:text-slate-100 rounded-[var(--radius-sm)] py-1.5 px-3.5 pr-9 text-sm transition-all"
               )}
               required
             />
@@ -221,7 +221,7 @@ export function RegisterForm() {
         {/* Hàng 2 Xác nhận mật khẩu */}
         <div className="space-y-1 text-left">
           <div className="flex items-center justify-between gap-2">
-            <Label htmlFor="confirmPassword" className="text-xs font-semibold text-slate-700 shrink-0">Xác nhận mật khẩu</Label>
+            <Label htmlFor="confirmPassword" className="text-xs font-semibold text-slate-700 dark:text-slate-300 shrink-0">Xác nhận mật khẩu</Label>
             {getFieldError("confirmPassword") && (
               <span className="text-[11px] text-red-500 font-semibold animate-in fade-in truncate text-right">
                 {getFieldError("confirmPassword")}

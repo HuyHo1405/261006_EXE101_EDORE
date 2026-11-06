@@ -28,7 +28,7 @@ export function CourseCard({ course, onSelect, onDelete, onEdit }: CourseCardPro
       onClick={() => onSelect(course)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex flex-col justify-between rounded-2xl bg-white p-5 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer h-full min-h-[220px]"
+      className="group relative flex flex-col justify-between rounded-2xl bg-white dark:bg-slate-900 p-5 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer h-full min-h-[220px]"
       style={{
         borderTop: `4px solid ${displayColor}`,
         borderRight: `1.5px solid ${isHovered ? displayColor : `${displayColor}35`}`,
@@ -81,7 +81,7 @@ export function CourseCard({ course, onSelect, onDelete, onEdit }: CourseCardPro
                       setShowMenu(false);
                     }}
                   />
-                  <div className="absolute right-0 top-9 z-30 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl space-y-0.5">
+                  <div className="absolute right-0 top-9 z-30 w-40 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-xl space-y-0.5">
                     {onEdit && (
                       <button
                         onClick={(e) => {
@@ -89,7 +89,7 @@ export function CourseCard({ course, onSelect, onDelete, onEdit }: CourseCardPro
                           setShowMenu(false);
                           onEdit(course.raw);
                         }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                       >
                         <Pencil className="h-3.5 w-3.5 text-slate-500" />
                         <span>Chỉnh sửa</span>
@@ -101,7 +101,7 @@ export function CourseCard({ course, onSelect, onDelete, onEdit }: CourseCardPro
                         setShowMenu(false);
                         onDelete(course.id);
                       }}
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       <span>Xóa khóa học</span>
@@ -125,20 +125,20 @@ export function CourseCard({ course, onSelect, onDelete, onEdit }: CourseCardPro
                 <BookOpen className="h-4 w-4" />
               </div>
               <h3
-                className="line-clamp-2 font-header font-bold text-base uppercase tracking-tight transition-colors duration-200 leading-snug min-h-[44px]"
-                style={{ color: isHovered ? displayColor : "#0f172a" }}
+                className="line-clamp-2 font-header font-bold text-base uppercase tracking-tight text-slate-900 dark:text-slate-100 transition-colors duration-200 leading-snug min-h-[44px]"
+                style={{ color: isHovered ? displayColor : undefined }}
               >
                 {title}
               </h3>
             </div>
-            <p className="line-clamp-2 text-xs text-slate-600 leading-relaxed font-body pt-1 min-h-[36px]">
+            <p className="line-clamp-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-body pt-1 min-h-[36px]">
               {description}
             </p>
           </div>
         </div>
 
         {/* Footer Info */}
-        <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-2.5 text-[11px] font-bold shrink-0">
+        <div className="mt-auto flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-2.5 text-[11px] font-bold shrink-0">
           <div className="flex items-center gap-1.5 transition-colors duration-200" style={{ color: displayColor }}>
             <FileText className="h-3.5 w-3.5" />
             <span>{scriptCount} kịch bản</span>

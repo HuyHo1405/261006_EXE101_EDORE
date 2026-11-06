@@ -5,7 +5,10 @@ import "@edore/tokens/build/css/tokens.css";
 import "./globals.css";
 import { LayoutShell } from "@/components/layout/LayoutShell";
 import { QueryProvider } from "@/lib/providers/query-provider";
+import { ThemeProvider } from "@/lib/providers/theme-provider";
 import NextTopLoader from 'nextjs-toploader';
+import { ToastContainer } from "@/components/ui/toast";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
 const sairaExtraCondensed = Saira_Extra_Condensed({
   subsets: ["latin", "vietnamese"],
@@ -64,27 +67,30 @@ export const metadata: Metadata = {
   },
 };
 
-import { ToastContainer } from "@/components/ui/toast";
-import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className={`${sairaExtraCondensed.variable} ${mulish.variable} ${ibmPlexMono.variable}`}>
+    <html
+      lang="vi"
+      suppressHydrationWarning
+      className={`${sairaExtraCondensed.variable} ${mulish.variable} ${ibmPlexMono.variable}`}
+    >
       <head>
         <link rel="icon" href="/EDORE_FAVICON.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/edore_logo.png" />
       </head>
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col min-h-screen bg-[var(--color-neutral-50)] text-[var(--color-neutral-900)] transition-colors duration-200">
         <GoogleAnalytics />
         <NextTopLoader color="#034ce4" showSpinner={false} shadow="0 0 10px #034ce4,0 0 5px #034ce4" height={3} />
-        <QueryProvider>
-          <ToastContainer />
-          <LayoutShell>{children}</LayoutShell>
-        </QueryProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <QueryProvider>
+            <ToastContainer />
+            <LayoutShell>{children}</LayoutShell>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

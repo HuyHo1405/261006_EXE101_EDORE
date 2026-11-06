@@ -9,6 +9,8 @@ function TraBaiContent() {
   const searchParams = useSearchParams()
   const lessonId = searchParams.get('lessonId') || undefined
   const lessonTitle = searchParams.get('lessonTitle') || undefined
+  const courseId = searchParams.get('courseId') || searchParams.get('course') || undefined
+  const grade = searchParams.get('grade') || undefined
 
   return (
     <div className="w-full min-h-screen bg-[var(--color-neutral-50)] p-3 sm:p-6 md:p-8 flex flex-col justify-center items-center font-body text-[var(--color-neutral-900)]">
@@ -16,6 +18,8 @@ function TraBaiContent() {
         <OralQuizStage
           initialLessonId={lessonId}
           initialLessonTitle={lessonTitle}
+          initialGrade={grade}
+          courseId={courseId}
         />
       </div>
     </div>

@@ -195,7 +195,7 @@ export function ClassConfigEditor({
                   setConfigSearchQuery(e.target.value);
                   if (!isConfigDropdownOpen) setIsConfigDropdownOpen(true);
                 }}
-                className="w-full rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-12 h-12 text-sm font-semibold text-[var(--color-neutral-800)] transition-all focus:border-[var(--color-primary-400)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-50)] hover:border-[var(--color-neutral-300)] shadow-sm"
+                className="w-full rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-12 h-12 text-sm font-semibold text-[var(--color-neutral-800)] transition-all focus:border-[var(--color-primary-400)] focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-[var(--color-primary-50)] hover:border-[var(--color-neutral-300)] shadow-sm"
               />
 
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 z-10">
@@ -230,14 +230,14 @@ export function ClassConfigEditor({
 
             {/* SEARCHABLE DROPDOWN MENU */}
             {isConfigDropdownOpen && (
-              <div className="absolute left-0 right-0 top-full mt-2 z-30 max-h-64 overflow-y-auto rounded-[var(--radius-lg)] border border-[var(--color-neutral-100)] bg-white p-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="absolute left-0 right-0 top-full mt-2 z-30 max-h-64 overflow-y-auto rounded-[var(--radius-lg)] border border-[var(--color-neutral-100)] dark:border-slate-700 bg-white dark:bg-slate-800 p-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
                 <button
                   type="button"
                   onClick={() => handlePresetSelect("")}
                   className={`w-full text-left px-4 py-2.5 rounded-[var(--radius-md)] text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
                     !selectedPresetId
-                      ? "bg-[var(--color-primary-50)] text-[var(--color-primary-500)]"
-                      : "text-[var(--color-neutral-600)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-neutral-900)]"
+                      ? "bg-[var(--color-primary-50)] dark:bg-blue-950/60 text-[var(--color-primary-500)] dark:text-blue-400"
+                      : "text-[var(--color-neutral-600)] dark:text-slate-300 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700 hover:text-[var(--color-neutral-900)] dark:hover:text-white"
                   }`}
                 >
                   <span>Mẫu tuỳ chỉnh (Tự điền thông tin)</span>
@@ -323,7 +323,7 @@ export function ClassConfigEditor({
               placeholder="VD: Lớp học máy tính nâng cao..."
               value={customName}
               onChange={(e) => updateField({ name: e.target.value })}
-              className="h-12 border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] text-sm font-bold text-[var(--color-neutral-800)] rounded-[var(--radius-lg)] focus:border-[var(--color-primary-400)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-50)] shadow-sm transition-all"
+              className="h-12 border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] text-sm font-bold text-[var(--color-neutral-800)] rounded-[var(--radius-lg)] focus:border-[var(--color-primary-400)] focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-[var(--color-primary-50)] shadow-sm transition-all"
             />
           </div>
 
@@ -336,7 +336,7 @@ export function ClassConfigEditor({
               <select
                 value={customDuration}
                 onChange={(e) => updateField({ duration: e.target.value })}
-                className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-10 h-11 text-xs font-bold text-[var(--color-neutral-700)] focus:border-[var(--color-primary-400)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-50)] cursor-pointer shadow-sm transition-all outline-none"
+                className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-10 h-11 text-xs font-bold text-[var(--color-neutral-700)] focus:border-[var(--color-primary-400)] focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-[var(--color-primary-50)] cursor-pointer shadow-sm transition-all outline-none"
               >
                 <option value="MIN_45">45 phút (1 tiết)</option>
                 <option value="MIN_60">60 phút</option>
@@ -360,7 +360,7 @@ export function ClassConfigEditor({
               <select
                 value={customClassSize}
                 onChange={(e) => updateField({ classSize: e.target.value })}
-                className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-10 h-11 text-xs font-bold text-[var(--color-neutral-700)] focus:border-[var(--color-primary-400)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-50)] cursor-pointer shadow-sm transition-all outline-none"
+                className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-10 h-11 text-xs font-bold text-[var(--color-neutral-700)] focus:border-[var(--color-primary-400)] focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-[var(--color-primary-50)] cursor-pointer shadow-sm transition-all outline-none"
               >
                 <option value="SMALL">Dưới 15 HS (Lớp nhỏ)</option>
                 <option value="MEDIUM">15 - 35 HS (Tiêu chuẩn)</option>
@@ -382,7 +382,7 @@ export function ClassConfigEditor({
               <select
                 value={customSpace}
                 onChange={(e) => updateField({ space: e.target.value })}
-                className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-10 h-11 text-xs font-bold text-[var(--color-neutral-700)] focus:border-[var(--color-primary-400)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-50)] cursor-pointer shadow-sm transition-all outline-none"
+                className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-10 h-11 text-xs font-bold text-[var(--color-neutral-700)] focus:border-[var(--color-primary-400)] focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-[var(--color-primary-50)] cursor-pointer shadow-sm transition-all outline-none"
               >
                 <option value="STANDARD">Phòng học tiêu chuẩn</option>
                 <option value="COMPUTER_LAB">Phòng máy tính</option>
@@ -405,7 +405,7 @@ export function ClassConfigEditor({
               <select
                 value={customSeatingLayout}
                 onChange={(e) => updateField({ seatingLayout: e.target.value })}
-                className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-10 h-11 text-xs font-bold text-[var(--color-neutral-700)] focus:border-[var(--color-primary-400)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-50)] cursor-pointer shadow-sm transition-all outline-none"
+                className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] pl-4 pr-10 h-11 text-xs font-bold text-[var(--color-neutral-700)] focus:border-[var(--color-primary-400)] focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-[var(--color-primary-50)] cursor-pointer shadow-sm transition-all outline-none"
               >
                 <option value="ROWS">Hàng ngang truyền thống</option>
                 <option value="U_SHAPE">Hình chữ U</option>

@@ -104,21 +104,21 @@ export function DashboardAside({
 
       {/* ── FULL ASIDE OVERLAY DRAWER (GPU-ACCELERATED FULL HORIZONTAL SLIDE DRAWER) ── */}
       <div
-        className={`fixed top-0 left-0 z-[110] w-72 sm:w-80 h-full bg-white border-r border-slate-200/80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.3)] p-3 sm:p-4 md:p-5 flex flex-col justify-between transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1) transform font-sans ${isOverlayOpen
+        className={`fixed top-0 left-0 z-[110] w-72 sm:w-80 h-full bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.3)] p-3 sm:p-4 md:p-5 flex flex-col justify-between transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1) transform font-sans ${isOverlayOpen
           ? "translate-x-0 opacity-100 pointer-events-auto"
           : "-translate-x-full opacity-0 pointer-events-none"
           }`}
       >
         {/* Header Bar: Minimalist Minimize Button (Fixed at top) */}
-        <div className="shrink-0 flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-          <span className="text-base font-bold font-header uppercase tracking-wide text-slate-900">
+        <div className="shrink-0 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
+          <span className="text-base font-bold font-header uppercase tracking-wide text-slate-900 dark:text-slate-100">
             Mục lục
           </span>
           <button
             type="button"
             onClick={() => setIsOverlayOpen(false)}
             title="Thu gọn menu"
-            className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 active:scale-95 px-2.5 py-1.5 rounded-xl transition-all duration-200 cursor-pointer border border-slate-200/60 shadow-xs"
+            className="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 px-2.5 py-1.5 rounded-xl transition-all duration-200 cursor-pointer border border-slate-200/60 dark:border-slate-700 shadow-xs"
           >
             <PanelLeftClose className="h-4 w-4 transform group-hover:-translate-x-0.5 transition-transform" />
             <span>Thu nhỏ</span>
@@ -136,7 +136,7 @@ export function DashboardAside({
                 onClick={handleGeneralCoursesSelect}
                 className={`flex-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-bold transition-all duration-200 cursor-pointer transform hover:translate-x-0.5 ${activeTab === "courses" && selectedCategoryId === null
                   ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
-                  : "text-slate-800 hover:bg-slate-100"
+                  : "text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
               >
                 <div className="flex items-center gap-2.5">
@@ -165,13 +165,13 @@ export function DashboardAside({
               className={`transition-all duration-300 ease-in-out ${isCoursesExpanded ? "opacity-100" : "hidden opacity-0"
                 }`}
             >
-              <div className="ml-4 pl-3 border-l-2 border-slate-200 space-y-1 pt-1.5 pb-1">
+              <div className="ml-4 pl-3 border-l-2 border-slate-200 dark:border-slate-700 space-y-1 pt-1.5 pb-1">
                 <button
                   type="button"
                   onClick={handleGeneralCoursesSelect}
                   className={`group flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer transform hover:translate-x-1 ${activeTab === "courses" && selectedCategoryId === null && !selectedCourseId
                     ? "bg-[var(--color-primary-50)] text-[var(--color-primary-700)] font-bold border border-[var(--color-primary-200)] shadow-xs"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
                     }`}
                 >
                   <div className="flex items-center gap-2">
@@ -203,7 +203,7 @@ export function DashboardAside({
                           }}
                           className={`group flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer transform hover:translate-x-0.5 ${isSelected
                             ? "bg-[var(--color-primary-50)] text-[var(--color-primary-700)] font-bold border border-[var(--color-primary-200)] shadow-xs"
-                            : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                            : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
                             }`}
                           title={course.title}
                         >
@@ -249,7 +249,7 @@ export function DashboardAside({
                                 }
                                 setIsOverlayOpen(false);
                               }}
-                              className="p-1 rounded-md text-slate-500 hover:text-[var(--color-primary-600)] hover:bg-white border border-transparent hover:border-slate-200 transition-all cursor-pointer"
+                              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:text-[var(--color-primary-600)] dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all cursor-pointer"
                               title="Thêm kịch bản cho khóa học này"
                             >
                               <Plus className="h-3 w-3" />
@@ -259,7 +259,7 @@ export function DashboardAside({
 
                         {/* NESTED SCRIPTS SUB-TREE LEVEL */}
                         {isExpanded && (
-                          <div className="ml-4 pl-2.5 border-l border-slate-200 my-0.5 space-y-0.5 animate-in fade-in duration-150">
+                          <div className="ml-4 pl-2.5 border-l border-slate-200 dark:border-slate-700 my-0.5 space-y-0.5 animate-in fade-in duration-150">
                             {course.scripts && course.scripts.length > 0 ? (
                               [...course.scripts]
                                 .sort((a, b) => (a.title || "").localeCompare(b.title || "", "vi", { numeric: true, sensitivity: "base" }))
@@ -275,7 +275,7 @@ export function DashboardAside({
                                     setIsOverlayOpen(false);
                                     router.push(`/dashboard/scripts/${script.id}?courseId=${course.id}`);
                                   }}
-                                  className="group/item flex w-full items-center gap-1.5 py-1 px-2 text-[11px] font-medium text-slate-500 hover:text-[var(--color-primary-700)] hover:bg-slate-100/80 rounded-md cursor-pointer transition-all duration-150 transform hover:translate-x-0.5"
+                                  className="group/item flex w-full items-center gap-1.5 py-1 px-2 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-[var(--color-primary-700)] dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 rounded-md cursor-pointer transition-all duration-150 transform hover:translate-x-0.5"
                                   title={script.title}
                                 >
                                   <FileText className="h-3 w-3 shrink-0 text-slate-400 group-hover/item:text-[var(--color-primary-600)] transition-colors" />
@@ -302,7 +302,7 @@ export function DashboardAside({
                 <button
                   type="button"
                   onClick={handleCreateCourseClick}
-                  className="group flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 cursor-pointer transform hover:translate-x-1"
+                  className="group flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 cursor-pointer transform hover:translate-x-1"
                 >
                   <div className="flex items-center gap-2">
                     <Plus className="h-3.5 w-3.5 text-slate-500 group-hover:text-[var(--color-primary-600)] transition-colors shrink-0" />
@@ -315,15 +315,15 @@ export function DashboardAside({
                   type="button"
                   onClick={() => {
                     setIsOverlayOpen(false);
-                    router.push("/dashboard/tra-bai");
+                    router.push(selectedCourseId ? `/dashboard/tra-bai?courseId=${selectedCourseId}` : "/dashboard/tra-bai");
                   }}
-                  className="group flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-700 bg-amber-50/70 hover:bg-amber-100/80 border border-amber-200/60 transition-all duration-200 cursor-pointer transform hover:translate-x-1 mt-1"
+                  className="group flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-50/70 dark:bg-amber-950/40 hover:bg-amber-100/80 dark:hover:bg-amber-900/50 border border-amber-200/60 dark:border-amber-800/60 transition-all duration-200 cursor-pointer transform hover:translate-x-1 mt-1"
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-sm">🎡</span>
                     <span>Vòng quay gọi tên trả bài</span>
                   </div>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/60 text-amber-900 font-mono">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/60 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 font-mono">
                     Nổi bật
                   </span>
                 </button>
@@ -333,12 +333,12 @@ export function DashboardAside({
         </div>
 
         {/* Footer Bottom Controls (Fixed at bottom) */}
-        <div className="shrink-0 pt-3 mt-2 border-t border-slate-100 flex items-center justify-between">
+        <div className="shrink-0 pt-3 mt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <span className="text-[11px] text-slate-400 font-medium">Không gian làm việc Edore</span>
           <button
             type="button"
             onClick={() => setIsOverlayOpen(false)}
-            className="text-xs font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1 cursor-pointer transform hover:translate-x-0.5 transition-transform"
+            className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 flex items-center gap-1 cursor-pointer transform hover:translate-x-0.5 transition-transform"
           >
             <PanelLeftClose className="h-3.5 w-3.5" />
             <span>Thu nhỏ</span>
@@ -366,7 +366,7 @@ export function DashboardAside({
           <PanelLeftOpen className="h-5 w-5 transform group-hover:rotate-12 transition-transform duration-300" />
         </button>
 
-        <div className="w-8 h-[1px] bg-slate-200/80 my-1" />
+        <div className="w-8 h-[1px] bg-slate-200/80 dark:bg-slate-700 my-1" />
 
         {/* Courses Icon Button */}
         <button
@@ -379,7 +379,7 @@ export function DashboardAside({
           title="Khóa học của tôi"
           className={`p-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-105 active:scale-95 ${activeTab === "courses"
             ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
-            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
             }`}
         >
           <FolderOpen className="h-5 w-5" />
@@ -388,7 +388,7 @@ export function DashboardAside({
         {/* Vòng quay trả bài Icon Button */}
         <button
           type="button"
-          onClick={() => router.push("/dashboard/tra-bai")}
+          onClick={() => router.push(selectedCourseId ? `/dashboard/tra-bai?courseId=${selectedCourseId}` : "/dashboard/tra-bai")}
           title="Vòng quay gọi tên trả bài đầu giờ"
           className="p-3 rounded-2xl text-amber-600 hover:bg-amber-50 hover:text-amber-700 transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-110 active:scale-95"
         >
@@ -397,7 +397,7 @@ export function DashboardAside({
       </div>
 
       {/* Bottom helper icon with hover slide animation */}
-      <div className="pt-4 border-t border-slate-100 w-full flex justify-center">
+      <div className="pt-4 border-t border-slate-100 dark:border-slate-800 w-full flex justify-center">
         <button
           type="button"
           onClick={() => setIsOverlayOpen(true)}

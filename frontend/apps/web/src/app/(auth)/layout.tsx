@@ -22,7 +22,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <GuestGuard>
       {/* Khóa vừa khít 100vh viewport, không có thanh cuộn (overflow-hidden) */}
-      <div className="h-screen max-h-screen w-full bg-white p-3 sm:p-4 lg:p-5 flex items-center justify-center font-body overflow-hidden">
+      <div className="h-screen max-h-screen w-full bg-white dark:bg-slate-950 p-3 sm:p-4 lg:p-5 flex items-center justify-center font-body overflow-hidden text-slate-900 dark:text-slate-100 transition-colors">
         <div className="w-full max-w-[1400px] h-full max-h-full grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-stretch overflow-hidden">
           
           {/* ── CỘT TRÁI (FORM SIDE): NỘI DUNG CĂN TỪ ĐỈNH GIỮ NGUYÊN VỊ TRÍ LOGO Y-AXIS ── */}

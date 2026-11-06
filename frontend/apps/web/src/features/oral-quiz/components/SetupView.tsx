@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import {
   BookOpen,
   Layers,
@@ -19,7 +19,10 @@ import {
   useLessonQuestions,
   useChapterQuestions,
   useCategories,
+  useMyCourses,
+  useCourseDetail,
 } from '@/features/course/queries/courseQueries'
+import { extractGradeFromCourse } from '@/features/course/data/standardLessons'
 import type { LessonQuestionDTO } from '../types/oralQuiz'
 import { MOCK_ORAL_CURRICULUM, getMockQuestions } from '../data/mockOralQuizData'
 
@@ -34,6 +37,8 @@ interface SetupViewProps {
   initialLessonId?: string
   initialLessonTitle?: string
   initialQuestions?: LessonQuestionDTO[]
+  initialGrade?: string
+  courseId?: string
 }
 
 const DEFAULT_GRADES = [
@@ -48,6 +53,8 @@ export function SetupView({
   initialLessonId,
   initialLessonTitle,
   initialQuestions,
+  initialGrade,
+  courseId,
 }: SetupViewProps) {
   // ── Flow Steps: 1. Nhập số học sinh -> 2. Chọn câu hỏi trả bài -> Bắt đầu ──
   const [currentStep, setCurrentStep] = useState<1 | 2>(1)
@@ -56,11 +63,74 @@ export function SetupView({
   const [totalStudents, setTotalStudents] = useState<number>(38)
   const [excludeCalled, setExcludeCalled] = useState<boolean>(true)
 
+  // ── Tự động nhận diện Khóa học & Khối lớp từ Category ──
+  const urlCourseId = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('courseId') || new URLSearchParams(window.location.search).get('course')
+    : null
+  const effectiveCourseId = courseId || urlCourseId || ''
+
+  const { data: myCourses } = useMyCourses({
+    pageNumber: 0,
+    pageSize: 20,
+  })
+
+  const { data: courseDetail } = useCourseDetail(effectiveCourseId)
+  const { data: allCategories = [] } = useCategories()
+
+  const currentCourse = useMemo(() => {
+    if (courseDetail) return courseDetail
+    if (effectiveCourseId && myCourses?.content) {
+      return myCourses.content.find((c) => c?.id === effectiveCourseId)
+    }
+    // Nếu không có courseId cụ thể, lấy khóa học đầu tiên/mới nhất của giáo viên
+    return myCourses?.content?.[0]
+  }, [courseDetail, effectiveCourseId, myCourses?.content])
+
+  const detectedGrade = useMemo(() => {
+    if (initialGrade) return initialGrade.replace(/\D+/g, '')
+    return extractGradeFromCourse(currentCourse, allCategories)
+  }, [initialGrade, currentCourse, allCategories])
+
   // ── Step 2 States: Hình thức & Nội dung kiểm tra ──
   const [mode, setMode] = useState<'lesson' | 'chapter'>('lesson')
-  const [selectedGrade, setSelectedGrade] = useState<string>('6')
+  const [selectedGrade, setSelectedGrade] = useState<string>(() => detectedGrade || '6')
   const [selectedLessonId, setSelectedLessonId] = useState<string>(initialLessonId || '')
   const [selectedChapterId, setSelectedChapterId] = useState<string>('')
+
+  const userChangedGradeRef = useRef(false)
+  const prevCourseIdRef = useRef(effectiveCourseId)
+
+  // Đồng bộ lại khi đổi sang khóa học khác
+  useEffect(() => {
+    if (effectiveCourseId !== prevCourseIdRef.current) {
+      prevCourseIdRef.current = effectiveCourseId
+      userChangedGradeRef.current = false
+      setSelectedGrade(detectedGrade || '6')
+    }
+  }, [effectiveCourseId, detectedGrade])
+
+  // Tự động gán category khối lớp từ khóa học nếu người dùng chưa chọn thủ công
+  useEffect(() => {
+    if (!userChangedGradeRef.current) {
+      if (detectedGrade) {
+        setSelectedGrade(detectedGrade)
+      } else if (currentCourse) {
+        setSelectedGrade('6')
+      }
+    }
+  }, [detectedGrade, currentCourse])
+
+  // Gợi ý sĩ số từ cấu hình lớp học nếu có
+  useEffect(() => {
+    const classConfig = courseDetail?.classConfig || (currentCourse as any)?.classConfig
+    if (classConfig) {
+      const cfg = classConfig as any
+      if (cfg.classSize === 'SMALL') setTotalStudents(15)
+      else if (cfg.classSize === 'MEDIUM') setTotalStudents(30)
+      else if (cfg.classSize === 'LARGE') setTotalStudents(40)
+      else if (cfg.classSize === 'VERY_LARGE') setTotalStudents(45)
+    }
+  }, [courseDetail?.classConfig, currentCourse])
 
   // ── Câu hỏi tự thêm (nếu DB rỗng) ──
   const [customQuestions, setCustomQuestions] = useState<LessonQuestionDTO[]>([])
@@ -416,6 +486,7 @@ export function SetupView({
                   <select
                     value={selectedGrade}
                     onChange={e => {
+                      userChangedGradeRef.current = true
                       setSelectedGrade(e.target.value)
                       setCustomQuestions([])
                     }}
