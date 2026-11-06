@@ -39,17 +39,19 @@ export function LuckyWheel({
   const angleRef = useRef<number>(0)
   const isSpinningRef = useRef<boolean>(false)
 
-  // Sound mute state & AudioContext singleton
-  const [isMuted, setIsMuted] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false
-    try {
-      return localStorage.getItem('edore_wheel_muted') === 'true'
-    } catch {
-      return false
-    }
-  })
-  const isMutedRef = useRef<boolean>(isMuted)
+  // Sound is ALWAYS ACTIVE on every spin by default
+  const [isMuted, setIsMuted] = useState<boolean>(false)
+  const isMutedRef = useRef<boolean>(false)
   isMutedRef.current = isMuted
+
+  // Remove any stale muted flag from previous sessions so audio is always loud & clear
+  useEffect(() => {
+    try {
+      localStorage.removeItem('edore_wheel_muted')
+    } catch {
+      // Ignore
+    }
+  }, [])
 
   const audioCtxRef = useRef<AudioContext | null>(null)
 
@@ -430,15 +432,7 @@ export function LuckyWheel({
 
   // Toggle sound mute/unmute
   const toggleMute = () => {
-    setIsMuted(prev => {
-      const next = !prev
-      try {
-        localStorage.setItem('edore_wheel_muted', String(next))
-      } catch {
-        // Ignore storage errors
-      }
-      return next
-    })
+    setIsMuted(prev => !prev)
     getAudioContext()
   }
 
@@ -473,13 +467,23 @@ export function LuckyWheel({
         <button
           type="button"
           onClick={toggleMute}
-          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
-          title={isMuted ? 'Bật âm thanh vòng quay' : 'Tắt âm thanh vòng quay'}
+          className={`px-3 py-2.5 rounded-xl border transition-colors shadow-2xs cursor-pointer flex items-center gap-1.5 text-xs font-semibold ${
+            isMuted
+              ? 'border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400'
+              : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'
+          }`}
+          title={isMuted ? 'Bật âm thanh' : 'Tắt âm thanh'}
         >
           {isMuted ? (
-            <VolumeX className="w-4 h-4 text-rose-500" />
+            <>
+              <VolumeX className="w-4 h-4 text-rose-500" />
+              <span className="text-[11px]">Tắt tiếng</span>
+            </>
           ) : (
-            <Volume2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <>
+              <Volume2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-[11px]">Bật tiếng</span>
+            </>
           )}
         </button>
       </div>

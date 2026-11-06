@@ -309,13 +309,13 @@ export function SetupView({
       </div>
 
       {/* ── STEPPER TABS / INDICATOR ── */}
-      <div className="grid grid-cols-2 gap-2 p-1.5 bg-[var(--color-neutral-100)] dark:bg-slate-800/80 rounded-[var(--radius-md)]">
+      <div className="grid grid-cols-2 gap-2 p-1.5 bg-[var(--color-neutral-100)] dark:bg-slate-950/80 border border-transparent dark:border-slate-800 rounded-[var(--radius-md)]">
         <button
           type="button"
           onClick={() => setCurrentStep(1)}
           className={`py-2.5 px-3 rounded-[var(--radius-sm)] text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${currentStep === 1
-            ? 'bg-white dark:bg-slate-900 text-[var(--color-primary-500)] dark:text-blue-400 shadow-xs'
-            : 'text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-slate-100'
+            ? 'bg-white dark:bg-slate-800 text-[var(--color-primary-600)] dark:text-blue-400 shadow-xs border border-slate-200/60 dark:border-slate-700'
+            : 'text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-slate-200'
             }`}
         >
           <span
@@ -333,8 +333,8 @@ export function SetupView({
           type="button"
           onClick={() => setCurrentStep(2)}
           className={`py-2.5 px-3 rounded-[var(--radius-sm)] text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${currentStep === 2
-            ? 'bg-white dark:bg-slate-900 text-[var(--color-primary-500)] dark:text-blue-400 shadow-xs'
-            : 'text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-slate-100'
+            ? 'bg-white dark:bg-slate-800 text-[var(--color-primary-600)] dark:text-blue-400 shadow-xs border border-slate-200/60 dark:border-slate-700'
+            : 'text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-slate-200'
             }`}
         >
           <span
@@ -379,7 +379,7 @@ export function SetupView({
                     onClick={() => setTotalStudents(cnt)}
                     className={`h-10 px-3 rounded-[var(--radius-md)] text-xs font-mono font-bold border transition-all cursor-pointer ${totalStudents === cnt
                       ? 'bg-[var(--color-primary-500)] text-white border-[var(--color-primary-500)] shadow-xs'
-                      : 'bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-300 border-[var(--color-neutral-200)] dark:border-slate-700 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700'
+                      : 'bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-200 border-[var(--color-neutral-200)] dark:border-slate-700 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700'
                       }`}
                   >
                     {cnt} HS
