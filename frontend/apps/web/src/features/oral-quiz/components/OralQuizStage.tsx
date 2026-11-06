@@ -183,7 +183,7 @@ export function OralQuizStage({
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 text-[var(--color-neutral-400)] hover:text-[var(--color-neutral-800)] hover:bg-[var(--color-neutral-100)] rounded-[var(--radius-md)] transition-colors cursor-pointer z-20"
+            className="absolute top-4 right-4 p-1.5 text-[var(--color-neutral-400)] dark:text-slate-400 hover:text-[var(--color-neutral-800)] dark:hover:text-slate-100 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-800 rounded-[var(--radius-md)] transition-colors cursor-pointer z-20"
             title="Đóng"
           >
             <X className="w-5 h-5" />
@@ -280,8 +280,8 @@ export function OralQuizStage({
           <div className="flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-200">
             {/* Stage Title */}
             <div className="text-center mb-1 flex flex-col items-center gap-1">
-              <p className="text-xs text-[var(--color-neutral-500)]">
-                Bấm <strong className="text-[var(--color-neutral-700)]">QUAY</strong> để chọn ngẫu nhiên học sinh lên bảng trả lời
+              <p className="text-xs text-[var(--color-neutral-500)] dark:text-slate-400">
+                Bấm <strong className="text-[var(--color-neutral-700)] dark:text-slate-200">QUAY</strong> để chọn ngẫu nhiên học sinh lên bảng trả lời
               </p>
             </div>
 
@@ -315,15 +315,15 @@ export function OralQuizStage({
       {/* ── HISTORY DRAWER ── */}
       {showHistory && (
         <div className="absolute inset-y-0 right-0 w-80 bg-white dark:bg-slate-900 border-l border-[var(--color-neutral-200)] dark:border-slate-800 p-5 shadow-lg z-40 flex flex-col gap-4 font-body">
-          <div className="flex items-center justify-between border-b border-[var(--color-neutral-200)] pb-3">
-            <div className="flex items-center gap-2 font-bold text-sm text-[var(--color-neutral-900)]">
-              <History className="w-4 h-4 text-[var(--color-primary-500)]" />
+          <div className="flex items-center justify-between border-b border-[var(--color-neutral-200)] dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2 font-bold text-sm text-[var(--color-neutral-900)] dark:text-slate-100">
+              <History className="w-4 h-4 text-[var(--color-primary-500)] dark:text-blue-400" />
               <span>Học sinh đã trả bài ({history.length})</span>
             </div>
             <button
               type="button"
               onClick={() => setShowHistory(false)}
-              className="p-1 text-[var(--color-neutral-500)] hover:text-[var(--color-neutral-900)] rounded-[var(--radius-xs)] cursor-pointer"
+              className="p-1 text-[var(--color-neutral-500)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-slate-100 rounded-[var(--radius-xs)] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -331,34 +331,34 @@ export function OralQuizStage({
 
           <div className="flex-1 overflow-y-auto space-y-2">
             {history.length === 0 ? (
-              <div className="text-xs text-[var(--color-neutral-500)] text-center py-8">
+              <div className="text-xs text-[var(--color-neutral-500)] dark:text-slate-400 text-center py-8">
                 Chưa có học sinh nào được gọi.
               </div>
             ) : (
               history.map((rec, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-2.5 rounded-[var(--radius-md)] bg-[var(--color-neutral-50)] border border-[var(--color-neutral-200)] text-xs"
+                  className="flex items-center justify-between p-2.5 rounded-[var(--radius-md)] bg-[var(--color-neutral-50)] dark:bg-slate-800/60 border border-[var(--color-neutral-200)] dark:border-slate-700 text-xs"
                 >
                   <div className="flex items-center gap-2.5">
                     <span className="w-6 h-6 rounded-[var(--radius-xs)] bg-[var(--color-primary-500)] text-white flex items-center justify-center font-mono font-bold">
                       {rec.stt}
                     </span>
-                    <span className="font-medium text-[var(--color-neutral-800)]">Học sinh số {rec.stt}</span>
+                    <span className="font-medium text-[var(--color-neutral-800)] dark:text-slate-200">Học sinh số {rec.stt}</span>
                   </div>
                   <div>
                     {rec.lastResult === 'correct' && (
-                      <span className="px-2 py-0.5 rounded-[var(--radius-xs)] bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
+                      <span className="px-2 py-0.5 rounded-[var(--radius-xs)] bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
                         Đạt
                       </span>
                     )}
                     {rec.lastResult === 'incorrect' && (
-                      <span className="px-2 py-0.5 rounded-[var(--radius-xs)] bg-rose-50 text-rose-700 font-bold border border-rose-200">
+                      <span className="px-2 py-0.5 rounded-[var(--radius-xs)] bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-800">
                         Chưa đạt
                       </span>
                     )}
                     {rec.lastResult === 'skipped' && (
-                      <span className="px-2 py-0.5 rounded-[var(--radius-xs)] bg-[var(--color-neutral-100)] text-[var(--color-neutral-600)] font-medium">
+                      <span className="px-2 py-0.5 rounded-[var(--radius-xs)] bg-[var(--color-neutral-100)] dark:bg-slate-700 text-[var(--color-neutral-600)] dark:text-slate-300 font-medium">
                         Đã gọi
                       </span>
                     )}

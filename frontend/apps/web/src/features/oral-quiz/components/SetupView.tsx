@@ -297,31 +297,31 @@ export function SetupView({
   }
 
   return (
-    <div className="w-full flex flex-col gap-5 sm:gap-6 font-body text-[var(--color-neutral-900)]">
+    <div className="w-full flex flex-col gap-5 sm:gap-6 font-body text-[var(--color-neutral-900)] dark:text-slate-100">
       {/* ── HEADER ── */}
-      <div className="border-b border-[var(--color-neutral-200)] pb-4 space-y-1">
-        <h1 className="font-header font-bold text-xl sm:text-2xl uppercase tracking-tight text-[var(--color-neutral-900)]">
+      <div className="border-b border-[var(--color-neutral-200)] dark:border-slate-800 pb-4 space-y-1">
+        <h1 className="font-header font-bold text-xl sm:text-2xl uppercase tracking-tight text-[var(--color-neutral-900)] dark:text-slate-100">
           CÀI ĐẶT TRẢ BÀI
         </h1>
-        <p className="text-xs sm:text-sm text-[var(--color-neutral-500)]">
+        <p className="text-xs sm:text-sm text-[var(--color-neutral-500)] dark:text-slate-400">
           Chọn sĩ số học sinh và danh sách câu hỏi trước khi bắt đầu vòng quay.
         </p>
       </div>
 
       {/* ── STEPPER TABS / INDICATOR ── */}
-      <div className="grid grid-cols-2 gap-2 p-1.5 bg-[var(--color-neutral-100)] rounded-[var(--radius-md)]">
+      <div className="grid grid-cols-2 gap-2 p-1.5 bg-[var(--color-neutral-100)] dark:bg-slate-800/80 rounded-[var(--radius-md)]">
         <button
           type="button"
           onClick={() => setCurrentStep(1)}
           className={`py-2.5 px-3 rounded-[var(--radius-sm)] text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${currentStep === 1
-            ? 'bg-white text-[var(--color-primary-500)] shadow-xs'
-            : 'text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)]'
+            ? 'bg-white dark:bg-slate-900 text-[var(--color-primary-500)] dark:text-blue-400 shadow-xs'
+            : 'text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-slate-100'
             }`}
         >
           <span
             className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold transition-colors ${currentStep === 1
               ? 'bg-[var(--color-primary-500)] text-white'
-              : 'bg-[var(--color-neutral-200)] text-[var(--color-neutral-700)]'
+              : 'bg-[var(--color-neutral-200)] dark:bg-slate-700 text-[var(--color-neutral-700)] dark:text-slate-300'
               }`}
           >
             1
@@ -333,14 +333,14 @@ export function SetupView({
           type="button"
           onClick={() => setCurrentStep(2)}
           className={`py-2.5 px-3 rounded-[var(--radius-sm)] text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${currentStep === 2
-            ? 'bg-white text-[var(--color-primary-500)] shadow-xs'
-            : 'text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)]'
+            ? 'bg-white dark:bg-slate-900 text-[var(--color-primary-500)] dark:text-blue-400 shadow-xs'
+            : 'text-[var(--color-neutral-600)] dark:text-slate-400 hover:text-[var(--color-neutral-900)] dark:hover:text-slate-100'
             }`}
         >
           <span
             className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold transition-colors ${currentStep === 2
               ? 'bg-[var(--color-primary-500)] text-white'
-              : 'bg-[var(--color-neutral-200)] text-[var(--color-neutral-700)]'
+              : 'bg-[var(--color-neutral-200)] dark:bg-slate-700 text-[var(--color-neutral-700)] dark:text-slate-300'
               }`}
           >
             2
@@ -356,9 +356,9 @@ export function SetupView({
         <div className="space-y-5 sm:space-y-6 animate-fadeIn">
           {/* Sĩ số học sinh */}
           <div className="space-y-3">
-            <label className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-neutral-700)] flex flex-wrap items-center justify-between gap-1">
+            <label className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-neutral-700)] dark:text-slate-300 flex flex-wrap items-center justify-between gap-1">
               <span>Sĩ số học sinh lớp (STT 1 → N)</span>
-              <span className="text-[var(--color-primary-500)] font-bold">{totalStudents} học sinh</span>
+              <span className="text-[var(--color-primary-500)] dark:text-blue-400 font-bold">{totalStudents} học sinh</span>
             </label>
 
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
@@ -368,7 +368,7 @@ export function SetupView({
                 max={80}
                 value={totalStudents}
                 onChange={e => setTotalStudents(Number(e.target.value) || 35)}
-                className="w-24 sm:w-28 h-10 px-3 rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] font-mono font-bold text-center text-sm sm:text-base focus:outline-none focus:border-[var(--color-primary-500)]"
+                className="w-24 sm:w-28 h-10 px-3 rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-mono font-bold text-center text-sm sm:text-base focus:outline-none focus:border-[var(--color-primary-500)]"
               />
 
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
@@ -379,7 +379,7 @@ export function SetupView({
                     onClick={() => setTotalStudents(cnt)}
                     className={`h-10 px-3 rounded-[var(--radius-md)] text-xs font-mono font-bold border transition-all cursor-pointer ${totalStudents === cnt
                       ? 'bg-[var(--color-primary-500)] text-white border-[var(--color-primary-500)] shadow-xs'
-                      : 'bg-white text-[var(--color-neutral-700)] border-[var(--color-neutral-200)] hover:bg-[var(--color-neutral-50)]'
+                      : 'bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-300 border-[var(--color-neutral-200)] dark:border-slate-700 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700'
                       }`}
                   >
                     {cnt} HS
@@ -388,23 +388,23 @@ export function SetupView({
               </div>
             </div>
 
-            <p className="text-xs text-[var(--color-neutral-500)]">
+            <p className="text-xs text-[var(--color-neutral-500)] dark:text-slate-400">
               Vòng quay may mắn sẽ được tạo với các ô số tương ứng từ <strong>1 đến {totalStudents}</strong>.
             </p>
           </div>
 
           {/* Cài đặt không gọi lại */}
-          <div className="p-3.5 sm:p-4 rounded-[var(--radius-md)] bg-[var(--color-neutral-50)] border border-[var(--color-neutral-200)] space-y-1">
-            <label className="flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-[var(--color-neutral-800)] select-none">
+          <div className="p-3.5 sm:p-4 rounded-[var(--radius-md)] bg-[var(--color-neutral-50)] dark:bg-slate-800/60 border border-[var(--color-neutral-200)] dark:border-slate-700 space-y-1">
+            <label className="flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-[var(--color-neutral-800)] dark:text-slate-200 select-none">
               <input
                 type="checkbox"
                 checked={excludeCalled}
                 onChange={e => setExcludeCalled(e.target.checked)}
-                className="w-4 h-4 rounded-[var(--radius-xs)] text-[var(--color-primary-500)] focus:ring-[var(--color-primary-500)] border-[var(--color-neutral-300)] cursor-pointer"
+                className="w-4 h-4 rounded-[var(--radius-xs)] text-[var(--color-primary-500)] focus:ring-[var(--color-primary-500)] border-[var(--color-neutral-300)] dark:border-slate-600 cursor-pointer"
               />
               <span>Không gọi lại học sinh đã trả bài trong buổi</span>
             </label>
-            <p className="text-[11px] text-[var(--color-neutral-500)] pl-6.5">
+            <p className="text-[11px] text-[var(--color-neutral-500)] dark:text-slate-400 pl-6.5">
               Học sinh đã được quay trúng sẽ được loại ra khỏi vòng quay ở các lượt tiếp theo.
             </p>
           </div>
@@ -427,15 +427,15 @@ export function SetupView({
       {currentStep === 2 && (
         <div className="space-y-5 sm:space-y-6 animate-fadeIn">
           {/* Badge tóm tắt bước 1 */}
-          <div className="flex items-center justify-between text-xs px-4 py-2.5 bg-[var(--color-neutral-50)] rounded-[var(--radius-md)] border border-[var(--color-neutral-200)]">
-            <div className="flex items-center gap-2 text-[var(--color-neutral-600)]">
-              <Users className="w-4 h-4 text-[var(--color-primary-500)]" />
-              <span>Sĩ số lớp: <strong className="text-[var(--color-neutral-900)] font-mono">{totalStudents} học sinh</strong></span>
+          <div className="flex items-center justify-between text-xs px-4 py-2.5 bg-[var(--color-neutral-50)] dark:bg-slate-800/60 rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] dark:border-slate-700">
+            <div className="flex items-center gap-2 text-[var(--color-neutral-600)] dark:text-slate-300">
+              <Users className="w-4 h-4 text-[var(--color-primary-500)] dark:text-blue-400" />
+              <span>Sĩ số lớp: <strong className="text-[var(--color-neutral-900)] dark:text-slate-100 font-mono">{totalStudents} học sinh</strong></span>
             </div>
             <button
               type="button"
               onClick={() => setCurrentStep(1)}
-              className="text-[var(--color-primary-500)] hover:underline font-bold text-[11px] cursor-pointer"
+              className="text-[var(--color-primary-500)] dark:text-blue-400 hover:underline font-bold text-[11px] cursor-pointer"
             >
               Đổi sĩ số
             </button>
@@ -443,30 +443,30 @@ export function SetupView({
 
           {/* 1. Hình thức kiểm tra (Radio) */}
           <div className="space-y-2.5 pt-1 sm:pt-2">
-            <label className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-neutral-700)]">
+            <label className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-neutral-700)] dark:text-slate-300">
               Hình thức kiểm tra
             </label>
             <div className="flex flex-wrap items-center gap-4 sm:gap-8 pt-0.5">
-              <label className="flex items-center gap-2.5 cursor-pointer text-xs sm:text-sm font-semibold text-[var(--color-neutral-800)] select-none">
+              <label className="flex items-center gap-2.5 cursor-pointer text-xs sm:text-sm font-semibold text-[var(--color-neutral-800)] dark:text-slate-200 select-none">
                 <input
                   type="radio"
                   name="quizMode"
                   value="lesson"
                   checked={mode === 'lesson'}
                   onChange={() => setMode('lesson')}
-                  className="w-4 h-4 text-[var(--color-primary-500)] focus:ring-[var(--color-primary-500)] border-[var(--color-neutral-300)] cursor-pointer"
+                  className="w-4 h-4 text-[var(--color-primary-500)] focus:ring-[var(--color-primary-500)] border-[var(--color-neutral-300)] dark:border-slate-600 cursor-pointer"
                 />
                 <span>Kiểm tra theo bài</span>
               </label>
 
-              <label className="flex items-center gap-2.5 cursor-pointer text-xs sm:text-sm font-semibold text-[var(--color-neutral-800)] select-none">
+              <label className="flex items-center gap-2.5 cursor-pointer text-xs sm:text-sm font-semibold text-[var(--color-neutral-800)] dark:text-slate-200 select-none">
                 <input
                   type="radio"
                   name="quizMode"
                   value="chapter"
                   checked={mode === 'chapter'}
                   onChange={() => setMode('chapter')}
-                  className="w-4 h-4 text-[var(--color-primary-500)] focus:ring-[var(--color-primary-500)] border-[var(--color-neutral-300)] cursor-pointer"
+                  className="w-4 h-4 text-[var(--color-primary-500)] focus:ring-[var(--color-primary-500)] border-[var(--color-neutral-300)] dark:border-slate-600 cursor-pointer"
                 />
                 <span>Kiểm tra theo chương</span>
               </label>
@@ -475,7 +475,7 @@ export function SetupView({
 
           {/* 2. Nội dung kiểm tra (2 selects cạnh nhau) */}
           <div className="space-y-2.5">
-            <label className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-neutral-700)]">
+            <label className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-neutral-700)] dark:text-slate-300">
               Nội dung kiểm tra
             </label>
 
@@ -490,7 +490,7 @@ export function SetupView({
                       setSelectedGrade(e.target.value)
                       setCustomQuestions([])
                     }}
-                    className="w-full h-11 appearance-none rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] bg-white pl-3.5 pr-8 text-xs sm:text-sm font-medium text-[var(--color-neutral-900)] hover:border-[var(--color-neutral-300)] focus:border-[var(--color-primary-500)] focus:outline-none cursor-pointer"
+                    className="w-full h-11 appearance-none rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 pl-3.5 pr-8 text-xs sm:text-sm font-medium text-[var(--color-neutral-900)] dark:text-slate-100 hover:border-[var(--color-neutral-300)] dark:hover:border-slate-600 focus:border-[var(--color-primary-500)] focus:outline-none cursor-pointer"
                   >
                     {gradeOptions.map(g => (
                       <option key={g.value} value={g.value}>
@@ -498,7 +498,7 @@ export function SetupView({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-[var(--color-neutral-500)] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-[var(--color-neutral-500)] dark:text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
 
@@ -514,7 +514,7 @@ export function SetupView({
                         setCustomQuestions([])
                       }}
                       disabled={isLoadingCurriculum}
-                      className="w-full h-11 appearance-none rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] bg-white pl-3.5 pr-8 text-xs sm:text-sm font-medium text-[var(--color-neutral-900)] hover:border-[var(--color-neutral-300)] focus:border-[var(--color-primary-500)] focus:outline-none cursor-pointer disabled:bg-[var(--color-neutral-50)] truncate"
+                      className="w-full h-11 appearance-none rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 pl-3.5 pr-8 text-xs sm:text-sm font-medium text-[var(--color-neutral-900)] dark:text-slate-100 hover:border-[var(--color-neutral-300)] dark:hover:border-slate-600 focus:border-[var(--color-primary-500)] focus:outline-none cursor-pointer disabled:bg-[var(--color-neutral-50)] dark:disabled:bg-slate-800/50 truncate"
                     >
                       {isLoadingCurriculum ? (
                         <option value="">Đang tải danh sách bài học...</option>
@@ -537,7 +537,7 @@ export function SetupView({
                         setCustomQuestions([])
                       }}
                       disabled={isLoadingCurriculum}
-                      className="w-full h-11 appearance-none rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] bg-white pl-3.5 pr-8 text-xs sm:text-sm font-medium text-[var(--color-neutral-900)] hover:border-[var(--color-neutral-300)] focus:border-[var(--color-primary-500)] focus:outline-none cursor-pointer disabled:bg-[var(--color-neutral-50)] truncate"
+                      className="w-full h-11 appearance-none rounded-[var(--radius-md)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 pl-3.5 pr-8 text-xs sm:text-sm font-medium text-[var(--color-neutral-900)] dark:text-slate-100 hover:border-[var(--color-neutral-300)] dark:hover:border-slate-600 focus:border-[var(--color-primary-500)] focus:outline-none cursor-pointer disabled:bg-[var(--color-neutral-50)] dark:disabled:bg-slate-800/50 truncate"
                     >
                       {isLoadingCurriculum ? (
                         <option value="">Đang tải danh sách chương...</option>
@@ -552,57 +552,57 @@ export function SetupView({
                       )}
                     </select>
                   )}
-                  <ChevronDown className="w-4 h-4 text-[var(--color-neutral-500)] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-[var(--color-neutral-500)] dark:text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
             </div>
 
             {mode === 'chapter' && (
-              <p className="text-[11px] text-[var(--color-neutral-500)] pt-1">
+              <p className="text-[11px] text-[var(--color-neutral-500)] dark:text-slate-400 pt-1">
                 Hệ thống tự động gộp tất cả câu hỏi của các bài trong chương đã chọn.
               </p>
             )}
           </div>
 
           {/* 3. Ngân hàng câu hỏi status */}
-          <div className="space-y-3 pt-4 border-t border-[var(--color-neutral-200)]">
+          <div className="space-y-3 pt-4 border-t border-[var(--color-neutral-200)] dark:border-slate-800">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-neutral-700)]">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-neutral-700)] dark:text-slate-300">
                 Ngân hàng câu hỏi
               </span>
               <button
                 type="button"
                 onClick={() => setShowAddCustomModal(true)}
-                className="text-xs font-bold text-[var(--color-primary-500)] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-bold text-[var(--color-primary-500)] dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" /> Thêm câu hỏi
               </button>
             </div>
 
             {isLoadingQuestions ? (
-              <div className="p-3.5 rounded-[var(--radius-md)] bg-[var(--color-neutral-100)] text-[var(--color-neutral-500)] text-xs text-center">
+              <div className="p-3.5 rounded-[var(--radius-md)] bg-[var(--color-neutral-100)] dark:bg-slate-800 text-[var(--color-neutral-500)] dark:text-slate-400 text-xs text-center">
                 Đang tải câu hỏi...
               </div>
             ) : effectiveQuestions.length === 0 ? (
-              <div className="p-4 rounded-[var(--radius-md)] bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-[var(--radius-md)] bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div className="space-y-0.5">
                   <p className="font-bold">Chưa có câu hỏi trong ngân hàng câu hỏi cho mục này.</p>
-                  <p className="text-[11px] text-amber-700">
+                  <p className="text-[11px] text-amber-700 dark:text-amber-300">
                     Bấm <strong>"Thêm câu hỏi"</strong> để tự nhập câu hỏi, hoặc chọn mục khác.
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="p-3.5 rounded-[var(--radius-md)] bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between">
+              <div className="p-3.5 rounded-[var(--radius-md)] bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>
                     Sẵn sàng <strong>{effectiveQuestions.length} câu hỏi</strong> cho phiên trả bài.
                   </span>
                 </div>
                 {customQuestions.length > 0 && (
-                  <span className="font-bold text-emerald-700">({customQuestions.length} tự thêm)</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-300">({customQuestions.length} tự thêm)</span>
                 )}
               </div>
             )}
@@ -613,7 +613,7 @@ export function SetupView({
             <button
               type="button"
               onClick={() => setCurrentStep(1)}
-              className="px-5 py-3.5 rounded-[var(--radius-md)] font-bold text-xs sm:text-sm border border-[var(--color-neutral-200)] text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-50)] flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+              className="px-5 py-3.5 rounded-[var(--radius-md)] font-bold text-xs sm:text-sm border border-[var(--color-neutral-200)] dark:border-slate-700 text-[var(--color-neutral-700)] dark:text-slate-300 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-800 flex items-center justify-center gap-1.5 cursor-pointer transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Quay lại</span>
@@ -624,7 +624,7 @@ export function SetupView({
               onClick={handleStart}
               disabled={effectiveQuestions.length === 0}
               className={`flex-1 py-3.5 rounded-[var(--radius-md)] font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${effectiveQuestions.length === 0
-                ? 'bg-[var(--color-neutral-200)] text-[var(--color-neutral-500)] cursor-not-allowed'
+                ? 'bg-[var(--color-neutral-200)] dark:bg-slate-800 text-[var(--color-neutral-500)] dark:text-slate-500 cursor-not-allowed'
                 : 'bg-[var(--color-primary-500)] hover:bg-[#023ec0] text-white shadow-xs active:scale-[0.98]'
                 }`}
             >
@@ -637,9 +637,9 @@ export function SetupView({
 
       {/* ── MODAL THÊM CÂU HỎI ── */}
       {showAddCustomModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[var(--radius-xl)] border border-[var(--color-neutral-200)] p-6 w-full max-w-md shadow-lg space-y-4">
-            <h3 className="font-header font-bold text-lg uppercase text-[var(--color-neutral-900)]">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-[var(--radius-xl)] border border-[var(--color-neutral-200)] dark:border-slate-800 p-6 w-full max-w-md shadow-2xl space-y-4">
+            <h3 className="font-header font-bold text-lg uppercase text-[var(--color-neutral-900)] dark:text-slate-100">
               Thêm câu hỏi trắc nghiệm
             </h3>
             <textarea
@@ -647,7 +647,7 @@ export function SetupView({
               value={newQuestionText}
               onChange={e => setNewQuestionText(e.target.value)}
               rows={3}
-              className="w-full p-2.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] text-xs focus:outline-none focus:border-[var(--color-primary-500)]"
+              className="w-full p-2.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:border-[var(--color-primary-500)]"
             />
             <div className="space-y-1.5">
               <input
@@ -655,51 +655,51 @@ export function SetupView({
                 placeholder="Phương án A"
                 value={newOpt1}
                 onChange={e => setNewOpt1(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] text-xs"
+                className="w-full px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs"
               />
               <input
                 type="text"
                 placeholder="Phương án B"
                 value={newOpt2}
                 onChange={e => setNewOpt2(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] text-xs"
+                className="w-full px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs"
               />
               <input
                 type="text"
                 placeholder="Phương án C"
                 value={newOpt3}
                 onChange={e => setNewOpt3(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] text-xs"
+                className="w-full px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs"
               />
               <input
                 type="text"
                 placeholder="Phương án D"
                 value={newOpt4}
                 onChange={e => setNewOpt4(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] text-xs"
+                className="w-full px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs"
               />
             </div>
-            <div className="flex items-center justify-between text-xs font-bold text-[var(--color-neutral-700)]">
+            <div className="flex items-center justify-between text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-300">
               <span>Đáp án đúng:</span>
               <div className="relative">
                 <select
                   value={newCorrect}
                   onChange={e => setNewCorrect(Number(e.target.value))}
-                  className="appearance-none pl-3 pr-7 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] text-xs cursor-pointer outline-none focus:border-[var(--color-primary-500)]"
+                  className="appearance-none pl-3 pr-7 py-1.5 rounded-[var(--radius-sm)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs cursor-pointer outline-none focus:border-[var(--color-primary-500)]"
                 >
                   <option value={1}>A</option>
                   <option value={2}>B</option>
                   <option value={3}>C</option>
                   <option value={4}>D</option>
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 text-[var(--color-neutral-500)] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <ChevronDown className="w-3.5 h-3.5 text-[var(--color-neutral-500)] dark:text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setShowAddCustomModal(false)}
-                className="px-3 py-1.5 rounded-[var(--radius-md)] text-xs font-bold text-[var(--color-neutral-600)] hover:bg-[var(--color-neutral-100)] cursor-pointer"
+                className="px-3 py-1.5 rounded-[var(--radius-md)] text-xs font-bold text-[var(--color-neutral-600)] dark:text-slate-400 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-800 cursor-pointer"
               >
                 Hủy
               </button>

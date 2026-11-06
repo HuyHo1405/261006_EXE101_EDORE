@@ -190,26 +190,26 @@ export function QuestionCard({
                   }
                 } else if (isCorrectAnswer) {
                   itemStyle =
-                    'bg-emerald-50/70 border-dashed border-emerald-500 text-emerald-900'
+                    'bg-emerald-50/70 dark:bg-emerald-950/40 border-dashed border-emerald-500 text-emerald-900 dark:text-emerald-200'
                   badgeStyle = 'bg-emerald-600 text-white'
                   statusIndicator = (
-                    <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs shrink-0">
+                    <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs shrink-0">
                       <CheckCircle2 className="w-4 h-4" />
                       <span className="hidden sm:inline">Đáp án</span>
                     </div>
                   )
                 } else {
                   itemStyle =
-                    'opacity-40 bg-[var(--color-neutral-50)] border-[var(--color-neutral-200)] text-[var(--color-neutral-500)]'
+                    'opacity-40 bg-[var(--color-neutral-50)] dark:bg-slate-800/40 border-[var(--color-neutral-200)] dark:border-slate-700 text-[var(--color-neutral-500)] dark:text-slate-400'
                   badgeStyle =
-                    'bg-white text-[var(--color-neutral-400)] border border-[var(--color-neutral-200)]'
+                    'bg-white dark:bg-slate-800 text-[var(--color-neutral-400)] dark:text-slate-500 border border-[var(--color-neutral-200)] dark:border-slate-700'
                 }
               } else if (showAnswer && isCorrectAnswer) {
                 itemStyle =
-                  'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-xs ring-1 ring-emerald-400'
+                  'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-950 dark:text-emerald-200 shadow-xs ring-1 ring-emerald-400'
                 badgeStyle = 'bg-[var(--color-tertiary-500)] text-white'
                 statusIndicator = (
-                  <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs shrink-0">
+                  <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs shrink-0">
                     <CheckCircle2 className="w-4 h-4" />
                     <span className="hidden sm:inline">Đáp án</span>
                   </div>
@@ -245,9 +245,9 @@ export function QuestionCard({
 
         {/* Answer & Explanation Box (Compact) */}
         {showAnswer && (
-          <div className="rounded-[var(--radius-md)] p-2 sm:p-2.5 bg-emerald-50/90 border border-emerald-200 space-y-0.5 text-xs">
-            <div className="flex items-center gap-1.5 text-emerald-900 font-bold">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+          <div className="rounded-[var(--radius-md)] p-2 sm:p-2.5 bg-emerald-50/90 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 space-y-0.5 text-xs">
+            <div className="flex items-center gap-1.5 text-emerald-900 dark:text-emerald-200 font-bold">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>
                 Đáp án đúng: Phương án{' '}
                 {OPTION_LABELS[question.correctAnswer - 1] || question.correctAnswer}
@@ -257,7 +257,7 @@ export function QuestionCard({
               </span>
             </div>
             {question.explanation && (
-              <p className="text-emerald-800 leading-normal pl-5 text-[11px]">
+              <p className="text-emerald-800 dark:text-emerald-300 leading-normal pl-5 text-[11px]">
                 <strong>Giải thích:</strong> {question.explanation}
               </p>
             )}
@@ -295,10 +295,10 @@ export function QuestionCard({
             <button
               type="button"
               onClick={() => onMarkResult(false)}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-[var(--radius-md)] font-bold text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 border transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-[var(--radius-md)] font-bold text-xs bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border transition-all cursor-pointer ${
                 selectedOption !== null && selectedOption !== question.correctAnswer
-                  ? 'border-rose-400 ring-1 ring-rose-300'
-                  : 'border-rose-200'
+                  ? 'border-rose-400 dark:border-rose-500 ring-1 ring-rose-300 dark:ring-rose-800'
+                  : 'border-rose-200 dark:border-rose-800'
               }`}
             >
               <XCircle className="w-3.5 h-3.5" />

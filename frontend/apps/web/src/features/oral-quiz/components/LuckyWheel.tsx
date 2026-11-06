@@ -84,23 +84,25 @@ export function LuckyWheel({
         ctx.resume().catch(() => {})
       }
 
-      const now = ctx.currentTime
+      // Schedule slightly in the future (+2ms) to avoid browser timing clamp
+      const t = ctx.currentTime + 0.002
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
 
-      // Crisp mechanical ratchet click
+      // Crisp mechanical ratchet click: 950Hz dropping to 320Hz over 35ms
       osc.type = 'triangle'
-      osc.frequency.setValueAtTime(640, now)
-      osc.frequency.exponentialRampToValueAtTime(140, now + 0.035)
+      osc.frequency.setValueAtTime(950, t)
+      osc.frequency.exponentialRampToValueAtTime(320, t + 0.035)
 
-      gain.gain.setValueAtTime(0.14, now)
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035)
+      // Solid, audible volume
+      gain.gain.setValueAtTime(0.4, t)
+      gain.gain.linearRampToValueAtTime(0.0001, t + 0.035)
 
       osc.connect(gain)
       gain.connect(ctx.destination)
 
-      osc.start(now)
-      osc.stop(now + 0.04)
+      osc.start(t)
+      osc.stop(t + 0.038)
     } catch {
       // AudioContext muted/unsupported
     }
@@ -116,25 +118,25 @@ export function LuckyWheel({
         ctx.resume().catch(() => {})
       }
 
-      const now = ctx.currentTime
+      const baseTime = ctx.currentTime + 0.005
       // Fanfare arpeggio: C5, E5, G5, C6
       const notes = [523.25, 659.25, 783.99, 1046.5]
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator()
         const gain = ctx.createGain()
-        const noteTime = now + idx * 0.085
+        const noteTime = baseTime + idx * 0.09
 
-        osc.type = 'sine'
+        osc.type = 'triangle'
         osc.frequency.setValueAtTime(freq, noteTime)
 
-        gain.gain.setValueAtTime(0.22, noteTime)
-        gain.gain.exponentialRampToValueAtTime(0.0001, noteTime + 0.35)
+        gain.gain.setValueAtTime(0.35, noteTime)
+        gain.gain.linearRampToValueAtTime(0.0001, noteTime + 0.32)
 
         osc.connect(gain)
         gain.connect(ctx.destination)
 
         osc.start(noteTime)
-        osc.stop(noteTime + 0.4)
+        osc.stop(noteTime + 0.35)
       })
     } catch {
       // AudioContext muted/unsupported
@@ -364,13 +366,12 @@ export function LuckyWheel({
       const current = startAngle + totalRotation * ease
       angleRef.current = current
 
-      // Check for slice passage to play tick sound (throttled to >= 28ms to prevent audio jitter)
-      const normalizedAngle = (-angleRef.current + 2 * Math.PI) % (2 * Math.PI)
-      const currentSlice = Math.floor(normalizedAngle / sliceAngle)
-      if (currentSlice !== lastTickSlice && progress < 0.96) {
-        lastTickSlice = currentSlice
+      // Check for slice passage to play tick sound (throttled to >= 25ms to prevent audio jitter)
+      const slicesRotated = Math.floor(Math.abs(current - startAngle) / sliceAngle)
+      if (slicesRotated !== lastTickSlice && progress < 0.98) {
+        lastTickSlice = slicesRotated
         const timeSinceLastTick = now - lastTickTime
-        if (timeSinceLastTick >= 28) {
+        if (timeSinceLastTick >= 25) {
           lastTickTime = now
           playTickSound()
         }
@@ -393,7 +394,10 @@ export function LuckyWheel({
   // Trigger spin when `isSpinning` becomes true
   useEffect(() => {
     if (isSpinning && !isSpinningRef.current) {
-      getAudioContext()
+      const ctx = getAudioContext()
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume().catch(() => {})
+      }
       const randomWinner = availableNumbers[Math.floor(Math.random() * availableNumbers.length)]
       spinToWinner(randomWinner)
     }
@@ -415,7 +419,12 @@ export function LuckyWheel({
   // User click trigger (actively unlocks Web Audio on user gesture)
   const handleUserTrigger = () => {
     if (isSpinning || availableNumbers.length === 0) return
-    getAudioContext()
+    const ctx = getAudioContext()
+    if (ctx && ctx.state === 'suspended') {
+      ctx.resume().catch(() => {})
+    }
+    // Prime audio during user gesture
+    playTickSound()
     onSpinStart()
   }
 
@@ -476,12 +485,12 @@ export function LuckyWheel({
       </div>
 
       {/* Available students badge */}
-      <div className="mt-1.5 text-xs text-[var(--color-neutral-500)] font-medium flex items-center gap-1.5 font-mono">
+      <div className="mt-1.5 text-xs text-[var(--color-neutral-500)] dark:text-slate-400 font-medium flex items-center gap-1.5 font-mono">
         <span>Còn lại:</span>
-        <strong className="text-[var(--color-primary-500)] font-bold">{availableNumbers.length}</strong>
+        <strong className="text-[var(--color-primary-500)] dark:text-blue-400 font-bold">{availableNumbers.length}</strong>
         <span>/ {totalStudents} học sinh</span>
         {excludedNumbers.length > 0 && (
-          <span className="text-[var(--color-neutral-400)]">({excludedNumbers.length} đã gọi)</span>
+          <span className="text-[var(--color-neutral-400)] dark:text-slate-500">({excludedNumbers.length} đã gọi)</span>
         )}
       </div>
     </div>
