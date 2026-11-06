@@ -59,21 +59,33 @@ export function CreateCourseModal({
   const groupedCategories = React.useMemo(() => {
     const map = new Map<string, typeof categories>();
     const order = ["SUBJECT", "GRADE", "PURPOSE", "OTHER"];
+    // Older taxonomy records can have different IDs/codes but the same label.
+    // Keep the selected record when editing so its existing ID is preserved.
+    const uniqueByLabel = new Map<string, (typeof categories)[number]>();
+    for (const cat of categories) {
+      if (!cat?.type) continue;
+      const label = cat.name.normalize("NFC").trim().replace(/\s+/g, " ").toLocaleLowerCase("vi");
+      const key = `${cat.type}:${label}`;
+      if (!uniqueByLabel.has(key) || selectedCategoryMap[cat.type] === cat.id) {
+        uniqueByLabel.set(key, cat);
+      }
+    }
+    const uniqueCategories = Array.from(uniqueByLabel.values());
 
     for (const key of order) {
-      const items = categories.filter((c) => c && c.type === key);
+      const items = uniqueCategories.filter((c) => c.type === key);
       if (items.length > 0) {
         map.set(key, items);
       }
     }
 
-    for (const cat of categories) {
+    for (const cat of uniqueCategories) {
       if (!cat || !cat.type || map.has(cat.type)) continue;
       if (cat.type === "TEXTBOOK" || cat.type === "SEMESTER") continue;
-      map.set(cat.type, categories.filter((c) => c.type === cat.type));
+      map.set(cat.type, uniqueCategories.filter((c) => c.type === cat.type));
     }
     return map;
-  }, [categories]);
+  }, [categories, selectedCategoryMap]);
 
   const hasInitializedRef = useRef(false);
 
