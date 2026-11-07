@@ -177,7 +177,7 @@ function NewScriptContent() {
     handleConfigChange(updatedCtx)
 
     if (!courseIdParam) {
-      toast.error('Vui lòng chọn khóa học trước khi soạn kịch bản với AI.')
+      toast.error('Vui lòng chọn bộ bài giảng trước khi soạn kịch bản với AI.')
       return
     }
 
@@ -314,7 +314,7 @@ function NewScriptContent() {
                         className="group inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] transition-all duration-200 cursor-pointer py-0.5"
                       >
                         <ArrowLeft className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
-                        <span className="font-body whitespace-nowrap group-hover:underline">Quay lại khóa học</span>
+                        <span className="font-body whitespace-nowrap group-hover:underline">Quay lại bộ bài giảng</span>
                       </button>
                     </div>
 

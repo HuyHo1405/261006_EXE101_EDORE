@@ -146,10 +146,10 @@ export function useCreateCourseMutation() {
     mutationFn: (payload: CourseCreatePayload) => courseService.createCourse(payload),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
-      toast.success(`Tạo khóa học "${data.title}" thành công!`);
+      toast.success(`Tạo bộ bài giảng "${data.title}" thành công!`);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Tạo khóa học thất bại.");
+      toast.error(err.message || "Tạo bộ bài giảng thất bại.");
     },
   });
 }
@@ -160,10 +160,10 @@ export function useDeleteCourseMutation() {
     mutationFn: (id: string) => courseService.deleteCourse(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
-      toast.success("Đã xóa khóa học thành công!");
+      toast.success("Đã xóa bộ bài giảng thành công!");
     },
     onError: (err: any) => {
-      toast.error(err.message || "Xóa khóa học thất bại.");
+      toast.error(err.message || "Xóa bộ bài giảng thất bại.");
     },
   });
 }
@@ -176,10 +176,10 @@ export function useUpdateCourseMutation() {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
       queryClient.invalidateQueries({ queryKey: courseKeys.detail(variables.id) });
-      toast.success(`Cập nhật khóa học "${data.title}" thành công!`);
+      toast.success(`Cập nhật bộ bài giảng "${data.title}" thành công!`);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Cập nhật khóa học thất bại.");
+      toast.error(err.message || "Cập nhật bộ bài giảng thất bại.");
     },
   });
 }

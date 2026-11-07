@@ -458,7 +458,7 @@ export function GuideClient({ markdownContent }: GuideClientProps) {
 
   const tabs: Array<{ id: "overview" | "course" | "create-script" | "edit-script"; label: string }> = [
     { id: "overview", label: "1. Tổng quan" },
-    { id: "course", label: "2. Quản lý Khóa học & Lớp học" },
+    { id: "course", label: "2. Quản lý Bộ bài giảng & Lớp học" },
     { id: "create-script", label: "3. Tạo Kịch bản" },
     { id: "edit-script", label: "4. Chỉnh sửa Kịch bản" },
   ];

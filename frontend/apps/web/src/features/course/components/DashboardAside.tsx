@@ -127,7 +127,7 @@ export function DashboardAside({
 
         {/* IDE Tree View Menu (Scrollable body without artificial max-h-260px or overflow-hidden clipping) */}
         <div className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-3 no-scrollbar">
-          {/* ── SECTION 1: KHÓA HỌC CỦA TÔI ── */}
+          {/* ── SECTION 1: BỘ BÀI GIẢNG CỦA TÔI ── */}
           <div className="space-y-1">
             {/* Top Level Item */}
             <div className="flex items-center justify-between gap-1">
@@ -142,7 +142,7 @@ export function DashboardAside({
                 <div className="flex items-center gap-2.5">
                   <FolderOpen className={`h-4 w-4 transition-colors ${activeTab === "courses" ? "text-white" : "text-[var(--color-primary-600)]"}`} />
                   <span className="font-header uppercase tracking-wide text-xs font-bold">
-                    Khóa học của tôi
+                    Bộ bài giảng của tôi
                   </span>
                 </div>
               </button>
@@ -176,7 +176,7 @@ export function DashboardAside({
                 >
                   <div className="flex items-center gap-2">
                     <FolderOpen className="h-3.5 w-3.5 text-[var(--color-primary-600)] shrink-0" />
-                    <span>Tổng quan khóa học</span>
+                    <span>Tổng quan bộ bài giảng</span>
                   </div>
                 </button>
 
@@ -250,7 +250,7 @@ export function DashboardAside({
                                 setIsOverlayOpen(false);
                               }}
                               className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:text-[var(--color-primary-600)] dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all cursor-pointer"
-                              title="Thêm kịch bản cho khóa học này"
+                              title="Thêm kịch bản cho bộ bài giảng này"
                             >
                               <Plus className="h-3 w-3" />
                             </button>
@@ -294,11 +294,11 @@ export function DashboardAside({
                   })
                 ) : (
                   <div className="px-2.5 py-1 text-[11px] italic text-slate-400">
-                    Chưa có khóa học nào
+                    Chưa có bộ bài giảng nào
                   </div>
                 )}
 
-                {/* Action Item: Thêm khóa học */}
+                {/* Action Item: Thêm bộ bài giảng */}
                 <button
                   type="button"
                   onClick={handleCreateCourseClick}
@@ -306,7 +306,7 @@ export function DashboardAside({
                 >
                   <div className="flex items-center gap-2">
                     <Plus className="h-3.5 w-3.5 text-slate-500 group-hover:text-[var(--color-primary-600)] transition-colors shrink-0" />
-                    <span>Thêm khóa học</span>
+                    <span>Thêm bộ bài giảng</span>
                   </div>
                 </button>
 
@@ -360,7 +360,7 @@ export function DashboardAside({
         <button
           type="button"
           onClick={() => setIsOverlayOpen(true)}
-          title="Mở danh sách khóa học"
+          title="Mở danh sách bộ bài giảng"
           className="h-11 w-11 flex items-center justify-center rounded-2xl bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/30 hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer mb-1 group shrink-0"
         >
           <PanelLeftOpen className="h-5 w-5 transform group-hover:rotate-12 transition-transform duration-300" />
@@ -376,7 +376,7 @@ export function DashboardAside({
             setIsCoursesExpanded(true);
             setIsOverlayOpen(true);
           }}
-          title="Khóa học của tôi"
+          title="Bộ bài giảng của tôi"
           className={`p-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center justify-center transform hover:scale-105 active:scale-95 ${activeTab === "courses"
             ? "bg-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/25"
             : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"

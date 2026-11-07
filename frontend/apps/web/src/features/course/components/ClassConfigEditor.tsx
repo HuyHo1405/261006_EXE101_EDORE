@@ -35,8 +35,8 @@ interface ClassConfigEditorProps {
 export function ClassConfigEditor({
   value,
   onChange,
-  title = "Điều kiện phòng học",
-  subtitle = "Chọn mẫu phòng có sẵn để điền nhanh hoặc tự điều chỉnh theo thực tế của lớp",
+  title = "Phòng học",
+  subtitle = "Chọn mẫu có sẵn hoặc điều chỉnh thông tin cho phù hợp với lớp học thực tế",
   showHeadings = true,
 }: ClassConfigEditorProps) {
   const [selectedPresetId, setSelectedPresetId] = useState<string>(value.id || "");
@@ -81,7 +81,7 @@ export function ClassConfigEditor({
           setClassConfigs(res.result.content);
         }
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setIsLoadingConfigs(false));
   }, []);
 
@@ -187,8 +187,8 @@ export function ClassConfigEditor({
                   isConfigDropdownOpen
                     ? configSearchQuery
                     : selectedPresetId
-                    ? classConfigs.find((c) => String(c.id) === String(selectedPresetId))?.name || configSearchQuery
-                    : configSearchQuery
+                      ? classConfigs.find((c) => String(c.id) === String(selectedPresetId))?.name || configSearchQuery
+                      : configSearchQuery
                 }
                 onFocus={() => setIsConfigDropdownOpen(true)}
                 onChange={(e) => {
@@ -225,7 +225,7 @@ export function ClassConfigEditor({
             </div>
 
             <p className="text-[11px] text-[var(--color-neutral-500)] dark:text-slate-400 font-medium leading-relaxed italic px-1">
-              Mẹo: Chọn mẫu có sẵn để AI tự động gợi ý điều kiện không gian và thời lượng phù hợp nhất.
+              Gợi ý: Chọn mẫu tiết dạy có sẵn để EDORE đề xuất thời lượng và cách tổ chức hoạt động phù hợp với lớp học.
             </p>
 
             {/* SEARCHABLE DROPDOWN MENU */}
@@ -234,11 +234,10 @@ export function ClassConfigEditor({
                 <button
                   type="button"
                   onClick={() => handlePresetSelect("")}
-                  className={`w-full text-left px-4 py-2.5 rounded-[var(--radius-md)] text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-                    !selectedPresetId
-                      ? "bg-[var(--color-primary-50)] dark:bg-blue-950/60 text-[var(--color-primary-500)] dark:text-blue-400"
-                      : "text-[var(--color-neutral-600)] dark:text-slate-300 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700 hover:text-[var(--color-neutral-900)] dark:hover:text-white"
-                  }`}
+                  className={`w-full text-left px-4 py-2.5 rounded-[var(--radius-md)] text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${!selectedPresetId
+                    ? "bg-[var(--color-primary-50)] dark:bg-blue-950/60 text-[var(--color-primary-500)] dark:text-blue-400"
+                    : "text-[var(--color-neutral-600)] dark:text-slate-300 hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700 hover:text-[var(--color-neutral-900)] dark:hover:text-white"
+                    }`}
                 >
                   <span>Mẫu tuỳ chỉnh (Tự điền thông tin)</span>
                   {!selectedPresetId && <Check className="h-4 w-4 text-[var(--color-primary-500)]" />}
@@ -264,11 +263,10 @@ export function ClassConfigEditor({
                           key={cfg.id}
                           type="button"
                           onClick={() => handlePresetSelect(String(cfg.id))}
-                          className={`w-full text-left px-4 py-3 rounded-[var(--radius-md)] text-xs transition-all flex items-center justify-between cursor-pointer group border ${
-                            isSelected
-                              ? "bg-[var(--color-primary-50)] dark:bg-blue-950/60 border-[var(--color-primary-300)] dark:border-blue-800 text-[var(--color-primary-500)] dark:text-blue-400"
-                              : "bg-transparent border-transparent hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700/60 hover:border-[var(--color-neutral-200)] dark:hover:border-slate-700 text-[var(--color-neutral-700)] dark:text-slate-300"
-                          }`}
+                          className={`w-full text-left px-4 py-3 rounded-[var(--radius-md)] text-xs transition-all flex items-center justify-between cursor-pointer group border ${isSelected
+                            ? "bg-[var(--color-primary-50)] dark:bg-blue-950/60 border-[var(--color-primary-300)] dark:border-blue-800 text-[var(--color-primary-500)] dark:text-blue-400"
+                            : "bg-transparent border-transparent hover:bg-[var(--color-neutral-50)] dark:hover:bg-slate-700/60 hover:border-[var(--color-neutral-200)] dark:hover:border-slate-700 text-[var(--color-neutral-700)] dark:text-slate-300"
+                            }`}
                         >
                           <div className="min-w-0 flex-1 pr-3">
                             <p className={`font-bold truncate text-sm mb-1 ${isSelected ? 'text-[var(--color-primary-600)] dark:text-blue-400' : 'text-[var(--color-neutral-800)] dark:text-slate-200'}`}>{cfg.name}</p>
@@ -320,7 +318,7 @@ export function ClassConfigEditor({
             </label>
             <Input
               type="text"
-              placeholder="VD: Lớp học máy tính nâng cao..."
+              placeholder="VD: Tiết ôn tập Lịch sử 6..."
               value={customName}
               onChange={(e) => updateField({ name: e.target.value })}
               className="h-12 border-[var(--color-neutral-200)] dark:border-slate-700 bg-[var(--color-neutral-50)] dark:bg-slate-800 text-sm font-bold text-[var(--color-neutral-800)] dark:text-slate-100 rounded-[var(--radius-lg)] focus:border-[var(--color-primary-400)] focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-[var(--color-primary-50)] dark:focus:ring-blue-950/50 shadow-sm transition-all"
@@ -376,7 +374,7 @@ export function ClassConfigEditor({
           <div className="group">
             <label className="mb-2 flex items-center gap-2 text-[11px] font-bold text-[var(--color-neutral-500)] dark:text-slate-400 uppercase tracking-widest">
               <div className="p-1 rounded bg-[var(--color-neutral-100)] dark:bg-slate-800 text-[var(--color-neutral-500)] dark:text-slate-400 group-hover:scale-110 transition-transform"><Monitor className="w-3 h-3" /></div>
-              Không gian
+              địa điểm giảng dạy
             </label>
             <div className="relative">
               <select
@@ -384,7 +382,7 @@ export function ClassConfigEditor({
                 onChange={(e) => updateField({ space: e.target.value })}
                 className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-neutral-200)] dark:border-slate-700 bg-[var(--color-neutral-50)] dark:bg-slate-800 pl-4 pr-10 h-11 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-200 focus:border-[var(--color-primary-400)] focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-[var(--color-primary-50)] dark:focus:ring-blue-950/50 cursor-pointer shadow-sm transition-all outline-none"
               >
-                <option value="STANDARD">Phòng học tiêu chuẩn</option>
+                <option value="STANDARD">Phòng học thông thường</option>
                 <option value="COMPUTER_LAB">Phòng máy tính</option>
                 <option value="AUDITORIUM">Hội trường</option>
                 <option value="OUTDOOR">Ngoài trời / Sân trường</option>
@@ -399,7 +397,7 @@ export function ClassConfigEditor({
           <div className="group">
             <label className="mb-2 flex items-center gap-2 text-[11px] font-bold text-[var(--color-neutral-500)] dark:text-slate-400 uppercase tracking-widest">
               <div className="p-1 rounded bg-[var(--color-neutral-100)] dark:bg-slate-800 text-[var(--color-neutral-500)] dark:text-slate-400 group-hover:scale-110 transition-transform"><Grid className="w-3 h-3" /></div>
-              Bố trí bàn ghế
+              Cách sắp xếp lớp học
             </label>
             <div className="relative">
               <select

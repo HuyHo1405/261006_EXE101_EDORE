@@ -120,7 +120,7 @@ export function DashboardBreadcrumb({
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-950)]/80 text-[var(--color-primary-700)] dark:text-[var(--color-primary-300)] border border-[var(--color-primary-200)] dark:border-[var(--color-primary-800)] shadow-2xs font-bold">
             <FolderOpen className="h-4 w-4 shrink-0 text-[var(--color-primary-600)]" />
             <span className="font-header uppercase tracking-wide text-xs font-bold whitespace-nowrap">
-              Khóa học của tôi {totalCount !== undefined ? `(${totalCount})` : ""}
+              Bộ bài giảng của tôi {totalCount !== undefined ? `(${totalCount})` : ""}
             </span>
           </div>
         ) : (
@@ -131,11 +131,11 @@ export function DashboardBreadcrumb({
                 type="button"
                 onClick={onBackToCourses}
                 className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-700 shadow-2xs active:scale-95 transition-all duration-200 cursor-pointer"
-                title="Quay lại danh sách khóa học của tôi"
+                title="Quay lại danh sách bộ bài giảng của tôi"
               >
                 <FolderOpen className="h-4 w-4 shrink-0 text-slate-500" />
                 <span className="font-header uppercase tracking-wide text-xs font-bold whitespace-nowrap">
-                  Khóa học của tôi
+                  Bộ bài giảng của tôi
                 </span>
               </button>
             ) : (
@@ -146,7 +146,7 @@ export function DashboardBreadcrumb({
               >
                 <FolderOpen className="h-4 w-4 shrink-0 text-slate-500" />
                 <span className="font-header uppercase tracking-wide text-xs font-bold whitespace-nowrap">
-                  Khóa học của tôi
+                  Bộ bài giảng của tôi
                 </span>
               </Link>
             )}

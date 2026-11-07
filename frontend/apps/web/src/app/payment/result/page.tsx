@@ -121,7 +121,7 @@ function PaymentResultContent() {
               {/* Actions */}
               <div className="flex flex-col gap-3 mt-4">
                 <Link
-                  href="/dashboard"
+                  href="/"
                   className="w-full py-3.5 rounded-[var(--radius-md,8px)] bg-[var(--color-primary-500,#034ce4)] hover:bg-[var(--color-primary-600,#0240c0)] text-white font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2"
                 >
                   <LayoutDashboard className="w-4 h-4 opacity-80" /> Về trang chủ
@@ -211,7 +211,7 @@ function PaymentResultContent() {
                   <CreditCard className="w-4 h-4 text-gray-600" /> Xem chi tiết
                 </Link>
                 <Link
-                  href="/dashboard"
+                  href="/"
                   className="w-full py-3.5 rounded-[var(--radius-md,8px)] bg-[var(--color-primary-500,#034ce4)] hover:bg-[var(--color-primary-600,#0240c0)] text-white font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2"
                 >
                   <LayoutDashboard className="w-4 h-4 opacity-80" /> Về trang chủ

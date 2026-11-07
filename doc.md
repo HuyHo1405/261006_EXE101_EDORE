@@ -2,34 +2,34 @@
 
 Chào mừng thầy cô đến với **EDORE** - Nền tảng hỗ trợ giáo viên chuẩn bị kịch bản giảng dạy thông minh. EDORE được xây dựng nhằm san sẻ thời gian và công sức soạn giáo án truyền thống của thầy cô, mang lại một quy trình chuẩn bị bài giảng nhẹ nhàng, trực quan và hiệu quả.
 
-Với EDORE, thầy cô trải nghiệm một quy trình liền mạch: **Khởi tạo khóa học và lớp học** -> **Chọn bài học từ Thư viện sách giáo khoa và lựa chọn yêu cầu** -> **Trí tuệ nhân tạo (AI) tự động tạo kịch bản** -> **Tinh chỉnh kịch bản trong không gian soạn bài trực quan**.
+Với EDORE, thầy cô trải nghiệm một quy trình liền mạch: **Khởi tạo bộ bài giảng và lớp học** -> **Chọn bài học từ Thư viện sách giáo khoa và lựa chọn yêu cầu** -> **Trí tuệ nhân tạo (AI) tự động tạo kịch bản** -> **Tinh chỉnh kịch bản trong không gian soạn bài trực quan**.
 
-[IMAGE: Sơ đồ kiến trúc EDORE | Quy trình từ Khởi tạo khóa học -> Chọn bài từ Thư viện sách giáo khoa -> Trợ lý AI tạo kịch bản -> Tinh chỉnh kịch bản | /images/guide/fig1.1.png]
+[IMAGE: Sơ đồ kiến trúc EDORE | Quy trình từ Khởi tạo bộ bài giảng -> Chọn bài từ Thư viện sách giáo khoa -> Trợ lý AI tạo kịch bản -> Tinh chỉnh kịch bản | /images/guide/fig1.1.png]
 
 Hệ thống tích hợp sẵn **Thư viện bài học chuẩn sách giáo khoa** được sắp xếp khoa học theo Khối lớp, Học kỳ, Chương và từng Bài học. Thầy cô không cần phải gõ lại từng dòng nội dung, mà có thể tận dụng ngay khả năng phân tích sư phạm của AI để xây dựng các hoạt động học tập phong phú, sinh động và bám sát chương trình.
 
 ---
 
-## 2. Quản lý khóa học và lớp học
+## 2. Quản lý bộ bài giảng và lớp học
 
 Bước đầu tiên là chuẩn bị không gian lớp học. Một bài giảng thành công không chỉ dựa vào kiến thức sách vở, mà còn cần phù hợp với bối cảnh thực tế của từng phòng học.
 
-Trong EDORE, việc tạo khóa học diễn ra nhanh chóng qua quy trình 3 bước rõ ràng:
+Trong EDORE, việc tạo bộ bài giảng diễn ra nhanh chóng qua quy trình 3 bước rõ ràng:
 
 ### 1. Bước 1: Phân loại môn học và khối lớp
-Thầy cô bắt đầu bằng việc chọn danh mục cho khóa học (Môn học, Khối lớp, Mục đích giảng dạy) để hệ thống nhận diện đúng chương trình phù hợp.
+Thầy cô bắt đầu bằng việc chọn danh mục cho bộ bài giảng (Môn học, Khối lớp, Mục đích giảng dạy) để hệ thống nhận diện đúng chương trình phù hợp.
 
-[IMAGE: Giao diện tạo khóa học - Chọn danh mục | Chọn các thẻ Môn học, Khối lớp và Mục đích giảng dạy cho khóa học | /images/fig1_1.png]
+[IMAGE: Giao diện tạo bộ bài giảng - Chọn danh mục | Chọn các thẻ Môn học, Khối lớp và Mục đích giảng dạy cho bộ bài giảng | /images/fig1_1.png]
 
-### 2. Chuyển sang Bước 2: Thông tin khóa học
-Sau khi đã chọn xong các danh mục phù hợp, thầy cô nhấn nút **"Sang bước 2: Thông tin khóa học"** ở góc dưới bên phải.
+### 2. Chuyển sang Bước 2: Thông tin bộ bài giảng
+Sau khi đã chọn xong các danh mục phù hợp, thầy cô nhấn nút **"Sang bước 2: Thông tin bộ bài giảng"** ở góc dưới bên phải.
 
-[IMAGE: Chuyển sang Bước 2 | Nhấn nút chuyển tiếp để chuyển sang khai báo tên và mô tả khóa học | /images/fig1_2.png]
+[IMAGE: Chuyển sang Bước 2 | Nhấn nút chuyển tiếp để chuyển sang khai báo tên và mô tả bộ bài giảng | /images/fig1_2.png]
 
-### 3. Bước 2: Điền thông tin khóa học
-Tại đây, thầy cô nhập **Tên khóa học** (ví dụ: *"Lịch sử"*) cùng một đoạn **Mô tả ngắn** giới thiệu về môn học.
+### 3. Bước 2: Điền thông tin bộ bài giảng
+Tại đây, thầy cô nhập **Tên bộ bài giảng** (ví dụ: *"Lịch sử"*) cùng một đoạn **Mô tả ngắn** giới thiệu về môn học.
 
-[IMAGE: Giao diện Thông tin khóa học | Điền đầy đủ Tên khóa học và Mô tả chi tiết | /images/fig1_3.png]
+[IMAGE: Giao diện Thông tin bộ bài giảng | Điền đầy đủ Tên bộ bài giảng và Mô tả chi tiết | /images/fig1_3.png]
 
 ### 4. Chuyển sang Bước 3: Thiết lập phòng học
 Khi đã điền đủ thông tin cơ bản, thầy cô nhấn nút **"Sang bước 3: Điều kiện phòng học"**.
@@ -52,15 +52,15 @@ Thầy cô hoàn toàn có thể điều chỉnh lại các con số này cho đ
 
 [IMAGE: Tùy chỉnh phòng học | Điều chỉnh thời lượng, sĩ số và cách sắp xếp bàn ghế theo đúng thực tế | /images/fig1_7.png]
 
-### 8. Khóa học hiển thị trên trang quản lý
-Sau khi nhấn *"Hoàn tất & Tạo khóa học"*, khóa học mới sẽ sẵn sàng và xuất hiện ngay trên trang quản lý của thầy cô.
+### 8. Bộ bài giảng hiển thị trên trang quản lý
+Sau khi nhấn *"Hoàn tất & Tạo bộ bài giảng"*, bộ bài giảng mới sẽ sẵn sàng và xuất hiện ngay trên trang quản lý của thầy cô.
 
-[IMAGE: Trang quản lý khóa học | Khóa học vừa tạo hiển thị trực quan dưới dạng thẻ trên trang quản lý | /images/fig1_8.png]
+[IMAGE: Trang quản lý bộ bài giảng | Bộ bài giảng vừa tạo hiển thị trực quan dưới dạng thẻ trên trang quản lý | /images/fig1_8.png]
 
-### 9. Chỉnh sửa thông tin khóa học khi cần
-Bất kỳ lúc nào thầy cô muốn cập nhật lại tên, mô tả hay thay đổi sĩ số, chỉ cần bấm vào **Nút ba chấm (Tùy chọn)** trên thẻ khóa học để chỉnh sửa lại.
+### 9. Chỉnh sửa thông tin bộ bài giảng khi cần
+Bất kỳ lúc nào thầy cô muốn cập nhật lại tên, mô tả hay thay đổi sĩ số, chỉ cần bấm vào **Nút ba chấm (Tùy chọn)** trên thẻ bộ bài giảng để chỉnh sửa lại.
 
-[IMAGE: Chỉnh sửa khóa học | Bấm nút ba chấm trên thẻ khóa học để cập nhật thông tin bất cứ lúc nào | /images/fig1_9.png]
+[IMAGE: Chỉnh sửa bộ bài giảng | Bấm nút ba chấm trên thẻ bộ bài giảng để cập nhật thông tin bất cứ lúc nào | /images/fig1_9.png]
 
 ---
 
@@ -68,10 +68,10 @@ Bất kỳ lúc nào thầy cô muốn cập nhật lại tên, mô tả hay tha
 
 Đây là phần trọng tâm của EDORE, nơi trí tuệ nhân tạo đồng hành cùng thầy cô để gợi ý kịch bản giảng dạy khoa học, hấp dẫn dựa trên chương trình chuẩn.
 
-### 1. Tạo bài học từ Khóa học
-Tại màn hình chi tiết của một Khóa học, thầy cô chỉ cần bấm nút **"Tạo kịch bản"** (hoặc **"Tạo bài học"**) để bắt đầu chuẩn bị một bài giảng mới.
+### 1. Tạo bài học từ Bộ bài giảng
+Tại màn hình chi tiết của một Bộ bài giảng, thầy cô chỉ cần bấm nút **"Tạo kịch bản"** (hoặc **"Tạo bài học"**) để bắt đầu chuẩn bị một bài giảng mới.
 
-[IMAGE: Tạo bài học | Bấm vào nút Tạo kịch bản từ giao diện khóa học để bắt đầu | /images/fig2_1.png]
+[IMAGE: Tạo bài học | Bấm vào nút Tạo kịch bản từ giao diện bộ bài giảng để bắt đầu | /images/fig2_1.png]
 
 ### 2. Vào Thư viện bài học và chọn khối lớp
 Hệ thống mở ra Thư viện bài học chuẩn sách giáo khoa. Thầy cô chọn khối lớp tương ứng (Lớp 6, Lớp 7, Lớp 8, Lớp 9...) ở thanh trên cùng để xem danh mục bài học của khối đó.
@@ -127,19 +127,19 @@ Sau khi AI hoàn thành, kịch bản được mở trong **không gian soạn b
 Không gian soạn bài được sắp xếp khoa học với các khu vực hỗ trợ:
 
 ### 1. Thanh menu bên trái giúp chuyển bài nhanh
-Ở cạnh trái màn hình có thanh điều hướng thu gọn. Thầy cô chỉ cần bấm vào để mở menu chuyển đổi nhanh sang các bài học khác trong cùng khóa hoặc chuyển sang khóa học khác mà không cần quay về trang chủ.
+Ở cạnh trái màn hình có thanh điều hướng thu gọn. Thầy cô chỉ cần bấm vào để mở menu chuyển đổi nhanh sang các bài học khác trong cùng bộ bài giảng hoặc chuyển sang bộ bài giảng khác mà không cần quay về trang chủ.
 
 [IMAGE: Thanh menu bên trái | Thanh điều hướng bên trái thu gọn hỗ trợ mở menu chuyển bài nhanh | /images/fig3_1.png]
 
-### 2. Danh sách bài học và khóa học mở rộng
-Khi mở rộng menu bên trái, toàn bộ danh mục bài học và khóa học sẽ hiện ra, giúp thầy cô đổi bài giảng ngay tức thì chỉ với một cú nhấp chuột.
+### 2. Danh sách bài học và bộ bài giảng mở rộng
+Khi mở rộng menu bên trái, toàn bộ danh mục bài học và bộ bài giảng sẽ hiện ra, giúp thầy cô đổi bài giảng ngay tức thì chỉ với một cú nhấp chuột.
 
-[IMAGE: Danh sách bài học và khóa học mở rộng | Danh sách bài học và khóa học hiển thị đầy đủ giúp chuyển đổi tức thì | /images/fig3_2.png]
+[IMAGE: Danh sách bài học và bộ bài giảng mở rộng | Danh sách bài học và bộ bài giảng hiển thị đầy đủ giúp chuyển đổi tức thì | /images/fig3_2.png]
 
 ### 3. Đường dẫn phân cấp tiện lợi
-Ở thanh trên cùng có sẵn dòng đường dẫn phân cấp (*Khóa học > Bài học > Kịch bản*). Thầy cô luôn biết mình đang ở đâu và có thể nhấp chuột để quay lại trang quản lý bài học bất kỳ lúc nào.
+Ở thanh trên cùng có sẵn dòng đường dẫn phân cấp (*Bộ bài giảng > Bài học > Kịch bản*). Thầy cô luôn biết mình đang ở đâu và có thể nhấp chuột để quay lại trang quản lý bài học bất kỳ lúc nào.
 
-[IMAGE: Đường dẫn phân cấp tiện lợi | Thanh chỉ dẫn giúp thầy cô quay về nhanh trang quản lý bài học hoặc khóa học | /images/fig3_3.png]
+[IMAGE: Đường dẫn phân cấp tiện lợi | Thanh chỉ dẫn giúp thầy cô quay về nhanh trang quản lý bài học hoặc bộ bài giảng | /images/fig3_3.png]
 
 ### 4. Thanh tiến trình bài dạy ở đáy màn hình
 Dưới đáy màn hình là thanh tiến trình bài dạy cố định. Thanh này thể hiện thời lượng của từng hoạt động bài dạy, giúp thầy cô dễ dàng chuyển qua lại giữa **Tổng quan bài học** và **các hoạt động dạy học** (Khởi động, Khám phá kiến thức, Luyện tập, Vận dụng).

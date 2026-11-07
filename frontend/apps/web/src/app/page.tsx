@@ -22,20 +22,20 @@ import {
 } from "@/components/ui/icons";
 
 const DEFAULT_STARTER_FEATURES = [
-  "Khởi tạo tối đa 3 Khóa học",
-  "AI phân tích theo kho học liệu SGK chuẩn hóa (không cần tải file)",
-  "Biên soạn tiến trình kịch bản bài giảng cơ bản",
-  "Trả bài sôi nổi: Vòng quay gọi tên trả bài",
-  "Lưu trữ và tái sử dụng ngân hàng kịch bản (tối đa 5 kịch bản/khóa)",
-  "Xuất kịch bản bài học dạng văn bản",
+  "Tạo tối đa 3 Bộ bài giảng",
+  "AI hỗ trợ soạn bài dựa trên nguồn tư liệu Lịch sử được chọn lọc sẵn (không cần tải file)",
+  "Gợi ý khung nội dung và các hoạt động trong bài học",
+  "Kiểm tra bài cũ thuận tiện: Vòng quay chọn học sinh",
+  "Lưu lại và sử dụng lại các kịch bản bài giảng (tối đa 5 kịch bản/bộ bài giảng)",
+  "Tải xuống nội dung bài giảng dưới dạng văn bản",
   "Hỗ trợ kỹ thuật qua Email (dengocrong123@gmail.com)",
 ];
 
 const DEFAULT_PRO_FEATURES = [
-  "Không giới hạn số lượng Khóa học",
+  "Không giới hạn số lượng Bộ bài giảng",
   "Khai thác toàn bộ kho dữ liệu nội bộ chuyên sâu môn Lịch sử",
-  "Tiến trình bài dạy trực quan & chuyển hoạt động linh hoạt",
-  "Xuất file câu hỏi trắc nghiệm, bài giảng Word/PDF & mẫu Kahoot",
+  "Theo dõi và điều khiển các hoạt động theo tiến trình bài học",
+  "Tải xuống bộ câu hỏi trắc nghiệm Word/PDF, nội dung bài giảng và mẫu trò chơi Kahoot",
   "Lưu trữ và tái sử dụng ngân hàng kịch bản không giới hạn",
 ];
 
@@ -43,7 +43,9 @@ const DEFAULT_PRO_FEATURES = [
 
 const formatFeatureText = (text: string): string => {
   return text
-    .replace(/Khóa học & Lớp học/gi, "Khóa học")
+    .replace(/Khóa học & Lớp học/gi, "Bộ bài giảng")
+    .replace(/Khóa học/gi, "Bộ bài giảng")
+    .replace(/khóa học/gi, "bộ bài giảng")
     .replace(/Studio Timeline/gi, "Dòng thời gian kịch bản")
     .replace(/Timeline/gi, "Tiến trình kịch bản")
     .replace(/Sidebar Gợi ý Hoạt động Sư phạm cá nhân hóa/gi, "Bảng gợi ý hoạt động sư phạm cá nhân hóa")
@@ -118,10 +120,10 @@ export default function Home() {
         {/* ── SECTION 1: HERO (DOT-GRID MONO-PRIMARY + ILLUSTRATION OVERLAY) ─────── */}
         <section className="banner banner--hero shadow-md">
           <div className="banner-inner">
-            <h2>Ý tưởng thành hành động</h2>
+            <h2>Từ ý tưởng thành hành động</h2>
 
             <p className="sub">
-              Biến quy trình soạn kịch bản giảng dạy rời rạc thành một luồng làm việc liền mạch, thông minh cho cả đội ngũ giáo viên và học sinh.
+              Hỗ trợ thầy cô soạn bài, xây dựng hoạt động và tổ chức tiết học Lịch sử hiệu quả hơn.
             </p>
 
             <div className="cta-group flex flex-wrap items-center gap-3 md:gap-4 pt-1">
@@ -146,7 +148,7 @@ export default function Home() {
                   className="text-xs md:text-sm font-bold text-white/95 hover:text-white hover:underline flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all backdrop-blur-xs whitespace-nowrap"
                 >
                   <CornerDownRight className="w-3.5 h-3.5 text-blue-200 shrink-0" />
-                  Các tính năng
+                  Các công cụ hỗ trợ
                 </Link>
 
                 <Link
@@ -154,7 +156,7 @@ export default function Home() {
                   className="text-xs md:text-sm font-bold text-white/95 hover:text-white hover:underline flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all backdrop-blur-xs whitespace-nowrap"
                 >
                   <CornerDownRight className="w-3.5 h-3.5 text-blue-200 shrink-0" />
-                  Cách sử dụng
+                  Cách hướng dẫn sử dụng
                 </Link>
 
                 <Link
@@ -162,7 +164,7 @@ export default function Home() {
                   className="text-xs md:text-sm font-bold text-white/95 hover:text-white hover:underline flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all backdrop-blur-xs whitespace-nowrap"
                 >
                   <CornerDownRight className="w-3.5 h-3.5 text-blue-200 shrink-0" />
-                  Giá dịch vụ
+                  Gói dịch vụ
                 </Link>
               </div>
             </div>
@@ -174,14 +176,14 @@ export default function Home() {
         </section>
 
 
-        {/* ── SECTION 2: FEATURES (CÁC TÍNH NĂNG NỔI BẬT THEO LUỒNG KHÓA HỌC) ─────────────────────────── */}
+        {/* ── SECTION 2: FEATURES (CÁC TÍNH NĂNG NỔI BẬT THEO LUỒNG BỘ BÀI GIẢNG) ─────────────────────────── */}
         <section id="features" className="space-y-8 pt-2 scroll-mt-20 md:scroll-mt-24">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <h2 className="font-header font-bold text-3xl md:text-4xl uppercase tracking-tight text-slate-900 dark:text-slate-100">
-              Công cụ soạn kịch bản & quản lý khóa học toàn diện
+              Các công cụ soạn kịch bản & quản lý bộ bài giảng toàn diện
             </h2>
             <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 font-body">
-              Edore cung cấp giải pháp gợi ý kịch bản từ kho học liệu chuẩn SGK, tùy chỉnh tiến trình bài dạy và bộ công cụ tương tác trực quan trong lớp.
+              EDORE đồng hành cùng thầy cô trong việc chuẩn bị bài giảng, xây dựng hoạt động học tập, quản lý lớp học và tổ chức các hoạt động tương tác trên lớp.
             </p>
           </div>
 
@@ -194,14 +196,14 @@ export default function Home() {
                     <Sparkles className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900 dark:text-slate-100">
-                    Quản Lý Môn Học & Lớp Học
+                    Tạo và quản lý bộ bài giảng
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Khai báo môn học, phân bổ thời lượng tiết dạy, sĩ số học sinh và bố trí không gian phòng học thực tế.
+                    Tạo và sắp xếp các bộ bài giảng Lịch sử theo khối lớp và mục đích giảng dạy. Thiết lập thời lượng, sĩ số và không gian lớp học.
                   </p>
                 </div>
                 <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-[var(--color-primary-600)] dark:text-blue-400 group-hover:translate-x-1 transition-transform">
-                  Vào Quản lý Khóa học <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  Vào Quản lý Bộ bài giảng <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </Link>
               </div>
             </AnimateOnScroll>
@@ -214,10 +216,10 @@ export default function Home() {
                     <BookOpen className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900 dark:text-slate-100">
-                    Phân Tích AI Theo Kho Học Liệu Chuẩn SGK
+                    AI hỗ trợ soạn kịch bản bài giảng
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Tận dụng tri thức và chương trình GDPT tích hợp sẵn trong kho học liệu SGK chuẩn hóa của Edore để AI tự động trích xuất kiến thức và gợi ý kịch bản bài học mà không cần tải file lên.
+                    Dựa trên nội dung sách giáo khoa được tích hợp, EDORE hỗ trợ phân tích kiến thức và gợi ý kịch bản bài giảng theo chương trình GDPT 2018.
                   </p>
                 </div>
                 <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-[var(--color-secondary-600)] dark:text-amber-400 group-hover:translate-x-1 transition-transform">
@@ -234,14 +236,14 @@ export default function Home() {
                     <Users className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900 dark:text-slate-100">
-                    Xây Dựng Tiến Trình Tiết Dạy
+                    Gợi ý kịch bản bài giảng
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Sắp xếp các hoạt động bài dạy theo thời lượng thực tế, giúp thầy cô phân bổ thời gian và chuyển bước bài giảng mạch lạc khi đứng lớp.
+                    EDORE hỗ trợ xây dựng các hoạt động dạy học theo từng bước, giúp giáo viên dễ dàng chuẩn bị nội dung và tổ chức tiết học.
                   </p>
                 </div>
                 <Link href="/dashboard" className="pt-4 flex items-center text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform">
-                  Mở trình soạn kịch bản <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  Trải nghiệm soạn bảng giảng <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </Link>
               </div>
             </AnimateOnScroll>
@@ -254,14 +256,14 @@ export default function Home() {
                     <BarChart3 className="w-6 h-6" />
                   </div>
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-slate-900 dark:text-slate-100">
-                    Tiện Ích Đi Kèm & Trả Bài
+                    Công cụ hỗ trợ giảng dạy
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Tích hợp vòng quay gọi tên trả bài tương tác sôi nổi; xuất dữ liệu câu hỏi trắc nghiệm, tài liệu bài giảng (Word/PDF) và mẫu Kahoot dễ dàng.
+                    Dựa trên nội dung sách giáo khoa được tích hợp, EDORE hỗ trợ phân tích kiến thức và gợi ý kịch bản bài giảng theo chương trình GDPT 2018.
                   </p>
                 </div>
                 <Link href="/dashboard/tra-bai" className="pt-4 flex items-center text-xs font-bold text-purple-600 dark:text-purple-400 group-hover:translate-x-1 transition-transform">
-                  Trải nghiệm trả bài tương tác <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  Khám phá công cụ giảng dạy <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </Link>
               </div>
             </AnimateOnScroll>

@@ -69,7 +69,7 @@ export function createCourseCardViewModel(dto: CourseResponseDTO): CourseCardVie
 
   return {
     id: safeDto.id || "",
-    title: safeDto.title || "Khóa học chưa đặt tên",
+    title: safeDto.title || "Bộ bài giảng chưa đặt tên",
     description: safeDto.description || "Chưa có mô tả",
     status: safeDto.status || "DRAFT",
     statusLabel: formatStatusLabel(safeDto.status),
@@ -87,7 +87,7 @@ export function createScriptCardViewModel(dto: ScriptResponseDTO): ScriptCardVie
   return {
     id: dto.id,
     courseId: dto.courseId,
-    courseTitle: dto.courseTitle || "Khóa học",
+    courseTitle: dto.courseTitle || "Bộ bài giảng",
     title: dto.title || "Kịch bản bài giảng",
     status: dto.status || "DRAFT",
     statusLabel: formatStatusLabel(dto.status),

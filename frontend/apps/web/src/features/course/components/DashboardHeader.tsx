@@ -94,7 +94,7 @@ export function DashboardHeader({
 
           {/* H1 Title */}
           <h1 className="font-header font-bold text-2xl sm:text-3xl md:text-[32px] uppercase tracking-tight text-slate-900 dark:text-slate-100 leading-tight w-full">
-            {currentCourse ? currentCourse.title : `Khóa học của tôi (${totalCount})`}
+            {currentCourse ? currentCourse.title : `Bộ bài giảng của tôi (${totalCount})`}
           </h1>
 
           {/* Subtitle / Description */}
@@ -133,7 +133,7 @@ export function DashboardCourseActions({
           type="button"
           onClick={onBackToCourses}
           className="group inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] transition-all duration-200 cursor-pointer py-1"
-          title="Quay lại danh sách khóa học"
+          title="Quay lại danh sách bộ bài giảng"
         >
           <ArrowLeft className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
           <span className="font-body whitespace-nowrap group-hover:underline">Quay lại danh sách</span>
@@ -184,7 +184,7 @@ export function DashboardCourseActions({
                   className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
                 >
                   <Pencil className="h-4 w-4 text-slate-500 shrink-0" />
-                  <span>Sửa thông tin khóa học</span>
+                  <span>Sửa thông tin bộ bài giảng</span>
                 </button>
 
                 {onDeleteCourse && (
@@ -197,7 +197,7 @@ export function DashboardCourseActions({
                     className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer"
                   >
                     <Trash2 className="h-4 w-4 text-rose-500 shrink-0" />
-                    <span>Xóa khóa học</span>
+                    <span>Xóa bộ bài giảng</span>
                   </button>
                 )}
               </div>
@@ -299,7 +299,7 @@ export function DashboardToolbar({
           <Input
             type="text"
             placeholder={
-              currentCourse ? "Tìm kiếm kịch bản..." : "Tìm kiếm khóa học..."
+              currentCourse ? "Tìm kiếm kịch bản..." : "Tìm kiếm bộ bài giảng..."
             }
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -341,7 +341,7 @@ export function DashboardToolbar({
           className="h-8 gap-1.5 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] px-3 text-xs font-bold text-white shadow-sm rounded-xl cursor-pointer shrink-0"
         >
           <Plus className="h-3.5 w-3.5" />
-          <span>{currentCourse ? "Tạo kịch bản" : "Tạo khóa học"}</span>
+          <span>{currentCourse ? "Tạo kịch bản" : "Tạo bộ bài giảng"}</span>
         </Button>
       </div>
     </div>

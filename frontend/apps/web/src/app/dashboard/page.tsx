@@ -170,7 +170,7 @@ function DashboardContent() {
   };
 
   const handleDeleteCourse = (id: string) => {
-    if (confirm("Bạn có chắc chắn muốn xóa khóa học này và tất cả kịch bản bên trong?")) {
+    if (confirm("Bạn có chắc chắn muốn xóa bộ bài giảng này và tất cả kịch bản bên trong?")) {
       deleteCourseMutation.mutate(id, {
         onSuccess: () => {
           if (activeSelectedCourse?.id === id) {

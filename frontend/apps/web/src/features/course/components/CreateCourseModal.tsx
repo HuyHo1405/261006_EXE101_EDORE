@@ -131,7 +131,7 @@ export function CreateCourseModal({
             });
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     } else {
       setTitle("");
       setDescription("");
@@ -175,7 +175,7 @@ export function CreateCourseModal({
     }
     if (targetStage === 3 && !title.trim()) {
       setStage(2);
-      setErrorMessage("Vui lòng nhập tên khóa học trước.");
+      setErrorMessage("Vui lòng nhập tên bộ bài giảng trước.");
       return;
     }
     setStage(targetStage);
@@ -185,7 +185,7 @@ export function CreateCourseModal({
     if (e) e.preventDefault();
     if (!title.trim()) {
       setStage(2);
-      setErrorMessage("Vui lòng nhập tên khóa học.");
+      setErrorMessage("Vui lòng nhập tên bộ bài giảng.");
       return;
     }
     setErrorMessage(null);
@@ -218,7 +218,7 @@ export function CreateCourseModal({
             onSuccess?.();
           },
           onError: (err: any) => {
-            setErrorMessage(err.message || "Cập nhật khóa học thất bại. Vui lòng thử lại.");
+            setErrorMessage(err.message || "Cập nhật bộ bài giảng thất bại. Vui lòng thử lại.");
           },
         }
       );
@@ -229,7 +229,7 @@ export function CreateCourseModal({
           onSuccess?.();
         },
         onError: (err: any) => {
-          setErrorMessage(err.message || "Tạo khóa học thất bại. Vui lòng thử lại.");
+          setErrorMessage(err.message || "Tạo bộ bài giảng thất bại. Vui lòng thử lại.");
         },
       });
     }
@@ -238,16 +238,16 @@ export function CreateCourseModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-6 md:p-8 animate-in fade-in duration-200 font-body">
       <div className="relative w-full max-w-5xl h-full max-h-[92vh] rounded-[var(--radius-xl)] border border-[var(--color-neutral-200)] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl flex flex-col md:flex-row overflow-hidden">
-        
+
         {/* ── LEFT COLUMN: VERTICAL STEPS NAVIGATION SIDEBAR (SURFACE CARD COLORED --color-neutral-100 PER DESIGN TOKENS) ── */}
         <div className="w-full md:w-64 bg-[var(--color-neutral-100)] dark:bg-slate-950 text-[var(--color-neutral-900)] dark:text-slate-100 p-5 md:p-6 flex flex-col justify-between shrink-0 border-b md:border-b-0 md:border-r border-[var(--color-neutral-200)] dark:border-slate-800">
           <div>
             <div className="mb-4">
               <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--color-neutral-500)] font-bold">
-                {isEditMode ? "Chỉnh sửa khóa học" : "Tạo khóa học mới"}
+                {isEditMode ? "Chỉnh sửa bộ bài giảng" : "Tạo bộ bài giảng mới"}
               </span>
               <h2 className="text-base font-bold font-header uppercase tracking-tight text-[var(--color-neutral-900)] truncate mt-0.5">
-                {isEditMode ? title || "Khóa học" : "Tạo khóa học"}
+                {isEditMode ? title || "Bộ bài giảng" : "Tạo bộ bài giảng"}
               </h2>
             </div>
 
@@ -256,11 +256,10 @@ export function CreateCourseModal({
               {/* STEP 1 ITEM */}
               <div className="relative flex items-start">
                 <div
-                  className={`absolute left-4 top-8 w-0.5 h-9 -ml-[1px] transition-colors duration-300 ${
-                    stage > 1 && selectedCategoryIds.length > 0
+                  className={`absolute left-4 top-8 w-0.5 h-9 -ml-[1px] transition-colors duration-300 ${stage > 1 && selectedCategoryIds.length > 0
                       ? "bg-[var(--color-primary-500)]"
                       : "bg-[var(--color-neutral-300)]"
-                  }`}
+                    }`}
                 />
 
                 <button
@@ -269,13 +268,12 @@ export function CreateCourseModal({
                   className="w-full text-left flex items-start gap-3.5 group cursor-pointer z-10"
                 >
                   <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] font-bold text-xs transition-all duration-200 ${
-                      stage === 1
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] font-bold text-xs transition-all duration-200 ${stage === 1
                         ? "bg-[var(--color-primary-500)] text-white shadow-sm ring-2 ring-[var(--color-primary-200)] scale-105"
                         : selectedCategoryIds.length > 0
-                        ? "bg-[var(--color-primary-500)] text-white shadow-xs"
-                        : "bg-white dark:bg-slate-800 text-[var(--color-neutral-600)] dark:text-slate-300 border border-[var(--color-neutral-300)] dark:border-slate-700 shadow-2xs group-hover:border-[var(--color-neutral-400)] dark:group-hover:border-slate-600 group-hover:text-[var(--color-neutral-900)] dark:group-hover:text-white"
-                    }`}
+                          ? "bg-[var(--color-primary-500)] text-white shadow-xs"
+                          : "bg-white dark:bg-slate-800 text-[var(--color-neutral-600)] dark:text-slate-300 border border-[var(--color-neutral-300)] dark:border-slate-700 shadow-2xs group-hover:border-[var(--color-neutral-400)] dark:group-hover:border-slate-600 group-hover:text-[var(--color-neutral-900)] dark:group-hover:text-white"
+                      }`}
                   >
                     {selectedCategoryIds.length > 0 ? (
                       <Check className="h-4 w-4" />
@@ -285,9 +283,8 @@ export function CreateCourseModal({
                   </div>
                   <div className="pt-0.5">
                     <span
-                      className={`font-header uppercase text-xs transition-colors ${
-                        stage === 1 ? "text-[var(--color-primary-600)] font-extrabold" : "text-[var(--color-neutral-700)] font-bold group-hover:text-[var(--color-neutral-900)]"
-                      }`}
+                      className={`font-header uppercase text-xs transition-colors ${stage === 1 ? "text-[var(--color-primary-600)] font-extrabold" : "text-[var(--color-neutral-700)] font-bold group-hover:text-[var(--color-neutral-900)]"
+                        }`}
                     >
                       Phân loại danh mục
                     </span>
@@ -301,11 +298,10 @@ export function CreateCourseModal({
               {/* STEP 2 ITEM */}
               <div className="relative flex items-start">
                 <div
-                  className={`absolute left-4 top-8 w-0.5 h-9 -ml-[1px] transition-colors duration-300 ${
-                    stage > 2 && title.trim()
+                  className={`absolute left-4 top-8 w-0.5 h-9 -ml-[1px] transition-colors duration-300 ${stage > 2 && title.trim()
                       ? "bg-[var(--color-primary-500)]"
                       : "bg-[var(--color-neutral-300)]"
-                  }`}
+                    }`}
                 />
 
                 <button
@@ -314,13 +310,12 @@ export function CreateCourseModal({
                   className="w-full text-left flex items-start gap-3.5 group cursor-pointer z-10"
                 >
                   <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] font-bold text-xs transition-all duration-200 ${
-                      stage === 2
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] font-bold text-xs transition-all duration-200 ${stage === 2
                         ? "bg-[var(--color-primary-500)] text-white shadow-sm ring-2 ring-[var(--color-primary-200)] scale-105"
                         : title.trim()
-                        ? "bg-[var(--color-primary-500)] text-white shadow-xs"
-                        : "bg-white dark:bg-slate-800 text-[var(--color-neutral-600)] dark:text-slate-300 border border-[var(--color-neutral-300)] dark:border-slate-700 shadow-2xs group-hover:border-[var(--color-neutral-400)] dark:group-hover:border-slate-600 group-hover:text-[var(--color-neutral-900)] dark:group-hover:text-white"
-                    }`}
+                          ? "bg-[var(--color-primary-500)] text-white shadow-xs"
+                          : "bg-white dark:bg-slate-800 text-[var(--color-neutral-600)] dark:text-slate-300 border border-[var(--color-neutral-300)] dark:border-slate-700 shadow-2xs group-hover:border-[var(--color-neutral-400)] dark:group-hover:border-slate-600 group-hover:text-[var(--color-neutral-900)] dark:group-hover:text-white"
+                      }`}
                   >
                     {title.trim() ? (
                       <Check className="h-4 w-4" />
@@ -330,14 +325,13 @@ export function CreateCourseModal({
                   </div>
                   <div className="pt-0.5">
                     <span
-                      className={`font-header uppercase text-xs transition-colors ${
-                        stage === 2 ? "text-[var(--color-primary-600)] font-extrabold" : "text-[var(--color-neutral-700)] font-bold group-hover:text-[var(--color-neutral-900)]"
-                      }`}
+                      className={`font-header uppercase text-xs transition-colors ${stage === 2 ? "text-[var(--color-primary-600)] font-extrabold" : "text-[var(--color-neutral-700)] font-bold group-hover:text-[var(--color-neutral-900)]"
+                        }`}
                     >
-                      Thông tin khóa học
+                      Thông tin bộ bài giảng
                     </span>
                     <p className="font-body text-[11px] text-[var(--color-neutral-500)] mt-0.5 leading-snug">
-                      Tên khóa học & mô tả
+                      Tên bộ bài giảng & mô tả
                     </p>
                   </div>
                 </button>
@@ -351,13 +345,12 @@ export function CreateCourseModal({
                   className="w-full text-left flex items-start gap-3.5 group cursor-pointer z-10"
                 >
                   <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] font-bold text-xs transition-all duration-200 ${
-                      stage === 3
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] font-bold text-xs transition-all duration-200 ${stage === 3
                         ? "bg-[var(--color-primary-500)] text-white shadow-sm ring-2 ring-[var(--color-primary-200)] scale-105"
                         : classConfigData.name || classConfigData.id
-                        ? "bg-[var(--color-primary-500)] text-white shadow-xs"
-                        : "bg-white dark:bg-slate-800 text-[var(--color-neutral-600)] dark:text-slate-300 border border-[var(--color-neutral-300)] dark:border-slate-700 shadow-2xs group-hover:border-[var(--color-neutral-400)] dark:group-hover:border-slate-600 group-hover:text-[var(--color-neutral-900)] dark:group-hover:text-white"
-                    }`}
+                          ? "bg-[var(--color-primary-500)] text-white shadow-xs"
+                          : "bg-white dark:bg-slate-800 text-[var(--color-neutral-600)] dark:text-slate-300 border border-[var(--color-neutral-300)] dark:border-slate-700 shadow-2xs group-hover:border-[var(--color-neutral-400)] dark:group-hover:border-slate-600 group-hover:text-[var(--color-neutral-900)] dark:group-hover:text-white"
+                      }`}
                   >
                     {classConfigData.name || classConfigData.id ? (
                       <Check className="h-4 w-4" />
@@ -367,14 +360,13 @@ export function CreateCourseModal({
                   </div>
                   <div className="pt-0.5">
                     <span
-                      className={`font-header uppercase text-xs transition-colors ${
-                        stage === 3 ? "text-[var(--color-primary-600)] font-extrabold" : "text-[var(--color-neutral-700)] font-bold group-hover:text-[var(--color-neutral-900)]"
-                      }`}
+                      className={`font-header uppercase text-xs transition-colors ${stage === 3 ? "text-[var(--color-primary-600)] font-extrabold" : "text-[var(--color-neutral-700)] font-bold group-hover:text-[var(--color-neutral-900)]"
+                        }`}
                     >
                       Điều kiện phòng học
                     </span>
                     <p className="font-body text-[11px] text-[var(--color-neutral-500)] mt-0.5 leading-snug">
-                      Chọn mẫu hoặc tự tạo
+                      Chọn mẫu có sẵn hoặc điều chỉnh theo lớp học
                     </p>
                   </div>
                 </button>
@@ -400,7 +392,7 @@ export function CreateCourseModal({
 
         {/* ── RIGHT COLUMN: MAIN STEP CONTENT AREA ── */}
         <div className="flex-1 bg-white dark:bg-slate-900 flex flex-col justify-between overflow-y-auto relative">
-          
+
           {/* CLOSE BUTTON AT TOP RIGHT */}
           <button
             type="button"
@@ -453,11 +445,10 @@ export function CreateCourseModal({
                                   return next;
                                 });
                               }}
-                              className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${
-                                isSelected
+                              className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${isSelected
                                   ? "bg-[var(--color-primary-500)] text-white border border-[var(--color-primary-600)] shadow-sm scale-105"
                                   : "bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 border border-[var(--color-neutral-200)] dark:border-slate-700"
-                              }`}
+                                }`}
                             >
                               {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
                               <span>{cat.name}</span>
@@ -497,11 +488,10 @@ export function CreateCourseModal({
                                       return next;
                                     });
                                   }}
-                                  className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${
-                                    isSelected
+                                  className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${isSelected
                                       ? "bg-[var(--color-primary-500)] text-white border border-[var(--color-primary-600)] shadow-sm scale-105"
                                       : "bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 border border-[var(--color-neutral-200)] dark:border-slate-700"
-                                  }`}
+                                    }`}
                                 >
                                   {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
                                   <span>{cat.name}</span>
@@ -538,11 +528,10 @@ export function CreateCourseModal({
                                       return next;
                                     });
                                   }}
-                                  className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${
-                                    isSelected
+                                  className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${isSelected
                                       ? "bg-[var(--color-primary-500)] text-white border border-[var(--color-primary-600)] shadow-sm scale-105"
                                       : "bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 border border-[var(--color-neutral-200)] dark:border-slate-700"
-                                  }`}
+                                    }`}
                                 >
                                   {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
                                   <span>{cat.name}</span>
@@ -572,11 +561,10 @@ export function CreateCourseModal({
                               onClick={() => {
                                 setSelectedCategoryMap(isSelected ? {} : { OTHER: cat.id });
                               }}
-                              className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${
-                                isSelected
+                              className={`px-4 py-2 rounded-[var(--radius-full)] text-xs font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-body transform active:scale-95 ${isSelected
                                   ? "bg-[var(--color-primary-500)] text-white border border-[var(--color-primary-600)] shadow-sm scale-105"
                                   : "bg-white dark:bg-slate-800 text-[var(--color-neutral-700)] dark:text-slate-200 hover:bg-[var(--color-neutral-100)] dark:hover:bg-slate-700 border border-[var(--color-neutral-200)] dark:border-slate-700"
-                              }`}
+                                }`}
                             >
                               {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
                               <span>{cat.name}</span>
@@ -595,10 +583,10 @@ export function CreateCourseModal({
               <div className="space-y-6 animate-in fade-in duration-150 font-body">
                 <div className="border-b border-[var(--color-neutral-200)] pb-4">
                   <h3 className="font-header font-bold text-xl uppercase tracking-tight text-[var(--color-neutral-900)]">
-                    Thông tin khóa học
+                    Thông tin bộ bài giảng
                   </h3>
                   <p className="font-body text-xs text-[var(--color-neutral-500)] mt-1">
-                    Nhập tên khóa học và mô tả tổng quan
+                    Nhập tên bộ bài giảng và mô tả tổng quan
                   </p>
                 </div>
 
@@ -638,7 +626,7 @@ export function CreateCourseModal({
 
                 <div>
                   <label className="mb-2 block text-xs font-bold font-mono text-[var(--color-neutral-700)] dark:text-slate-300 uppercase tracking-wider">
-                    Tên khóa học / Môn học <span className="text-rose-500">*</span>
+                    Tên bộ bài giảng / Môn học <span className="text-rose-500">*</span>
                   </label>
                   <Input
                     type="text"
@@ -684,8 +672,8 @@ export function CreateCourseModal({
                 <ClassConfigEditor
                   value={classConfigData}
                   onChange={(newVal) => setClassConfigData(newVal)}
-                  title="Điều kiện phòng học"
-                  subtitle="Chọn mẫu phòng có sẵn để điền nhanh hoặc tự điều chỉnh theo thực tế của lớp"
+                  title="Phòng học"
+                  subtitle="Chọn mẫu có sẵn hoặc điều chỉnh thông tin cho phù hợp với lớp học thực tế"
                   showHeadings={true}
                 />
               </div>
@@ -721,7 +709,7 @@ export function CreateCourseModal({
                     onClick={() => setStage(2)}
                     className="gap-2 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] px-6 text-xs font-bold text-white shadow-md rounded-[var(--radius-md)] cursor-pointer"
                   >
-                    <span>Sang Bước 2: Thông tin khóa học</span>
+                    <span>Sang Bước 2: Thông tin bộ bài giảng</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -755,7 +743,7 @@ export function CreateCourseModal({
                     type="button"
                     onClick={() => {
                       if (!title.trim()) {
-                        setErrorMessage("Vui lòng nhập tên khóa học.");
+                        setErrorMessage("Vui lòng nhập tên bộ bài giảng.");
                         return;
                       }
                       setErrorMessage(null);
@@ -790,12 +778,12 @@ export function CreateCourseModal({
                   {createCourseMutation.isPending || updateCourseMutation.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>{isEditMode ? "Đang lưu thay đổi..." : "Đang tạo khóa học..."}</span>
+                      <span>{isEditMode ? "Đang lưu thay đổi..." : "Đang tạo bộ bài giảng..."}</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="h-4 w-4" />
-                      <span>{isEditMode ? "Lưu thay đổi khóa học" : "Hoàn tất & Tạo khóa học"}</span>
+                      <span>{isEditMode ? "Lưu thay đổi bộ bài giảng" : "Hoàn tất & Tạo bộ bài giảng"}</span>
                     </>
                   )}
                 </Button>

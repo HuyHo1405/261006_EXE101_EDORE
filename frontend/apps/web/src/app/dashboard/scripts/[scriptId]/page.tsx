@@ -177,7 +177,7 @@ function ScriptEditContent() {
 
   // Derive course title dynamically for breadcrumbs:
   const matchedCourse = coursePage?.content.find(c => c.id === effectiveCourseId)
-  const courseTitle = realCourse?.title || realScript?.courseTitle || matchedCourse?.title || (effectiveCourseId ? 'Khóa học' : 'Khóa học của tôi')
+  const courseTitle = realCourse?.title || realScript?.courseTitle || matchedCourse?.title || (effectiveCourseId ? 'Bộ bài giảng' : 'Bộ bài giảng của tôi')
 
   return (
     <AuthGuard>

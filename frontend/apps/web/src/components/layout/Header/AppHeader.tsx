@@ -36,7 +36,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
     ? (courseId ? `/dashboard/scripts/new?courseId=${courseId}` : `/dashboard`)
     : `/dashboard?action=create-course`;
 
-  const plusActionTitle = isInsideCourse ? "Tạo kịch bản mới" : "Tạo khóa học mới";
+  const plusActionTitle = isInsideCourse ? "Tạo kịch bản mới" : "Tạo bộ bài giảng mới";
 
   const [mounted, setMounted] = useState(false);
   const storeUser = useAuthStore((state) => state.user);
@@ -241,7 +241,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
                   className="h-[38px] px-3 gap-1.5 rounded-lg bg-[var(--color-primary-500)] text-white flex items-center justify-center hover:bg-[var(--color-primary-600)] hover:shadow-sm active:scale-95 transition-all duration-200 shrink-0 font-bold text-xs whitespace-nowrap"
                 >
                   <Plus className="w-4 h-4 font-bold" />
-                  <span>{isInsideCourse ? "Tạo kịch bản" : "Tạo khóa học"}</span>
+                  <span>{isInsideCourse ? "Tạo kịch bản" : "Tạo bộ bài giảng"}</span>
                 </Link>
               </div>
 

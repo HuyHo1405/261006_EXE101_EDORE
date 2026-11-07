@@ -493,7 +493,7 @@ function UserProfileContent() {
                               {subStatus?.planName || "GÓI MIỄN PHÍ"}
                             </h2>
                             <p className="text-xs text-gray-500 mb-3 max-w-sm">
-                              {subStatus?.planDescription || "Gói cơ bản trải nghiệm tạo khóa học AI."}
+                              {subStatus?.planDescription || "Gói cơ bản trải nghiệm tạo bộ bài giảng AI."}
                             </p>
                           </div>
                           <button 
@@ -525,7 +525,7 @@ function UserProfileContent() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1.5 text-xs font-bold text-gray-800">
                             <BookOpen className="w-3.5 h-3.5 text-[var(--color-primary-500,#034ce4)]" />
-                            <span>Khóa học</span>
+                            <span>Bộ bài giảng</span>
                           </div>
                           <span className="text-xs font-mono font-bold text-[var(--color-primary-600)]">
                             {subStatus?.currentCourseCount ?? 0} / {subStatus?.maxCourses ?? "∞"}

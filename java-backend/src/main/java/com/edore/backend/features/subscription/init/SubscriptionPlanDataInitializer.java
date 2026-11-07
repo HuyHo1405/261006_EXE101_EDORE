@@ -31,12 +31,12 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
 
         // 1. Starter Plan
         List<String> starterFeatures = List.of(
-                "Khởi tạo tối đa 3 Khóa học",
-                "AI phân tích theo bộ dữ liệu nội bộ chuẩn hóa (không cần tải file)",
-                "Biên soạn tiến trình kịch bản bài giảng cơ bản",
-                "Trả bài sôi nổi: Vòng quay may mắn (Lucky Wheel)",
-                "Lưu trữ và tái sử dụng ngân hàng kịch bản (tối đa 5 kịch bản/khóa)",
-                "Xuất kịch bản bài học dạng văn bản",
+                "Tạo tối đa 3 Bộ bài giảng",
+                "AI hỗ trợ soạn bài dựa trên nguồn tư liệu Lịch sử được chọn lọc sẵn (không cần tải file)",
+                "Gợi ý khung nội dung và các hoạt động trong bài học",
+                "Kiểm tra bài cũ thuận tiện: Vòng quay chọn học sinh",
+                "Lưu lại và sử dụng lại các kịch bản bài giảng (tối đa 5 kịch bản/bộ bài giảng)",
+                "Tải xuống nội dung bài giảng dưới dạng văn bản",
                 "Hỗ trợ kỹ thuật qua Email (dengocrong123@gmail.com)"
         );
         upsertPlan(existingPlans, "starter", "Gói Cơ Bản", "Công cụ đồng hành soạn giảng. Trải nghiệm kịch bản AI thế hệ mới miễn phí hàng tháng.",
@@ -44,10 +44,10 @@ public class SubscriptionPlanDataInitializer implements CommandLineRunner {
 
         // 2. Pro Plan
         List<String> proFeatures = List.of(
-                "Không giới hạn số lượng Khóa học",
+                "Không giới hạn số lượng Bộ bài giảng",
                 "Khai thác toàn bộ kho dữ liệu nội bộ chuyên sâu môn Lịch sử",
-                "Dòng thời gian tương tác & chuyển bước bài giảng đầy đủ",
-                "Xuất file câu hỏi trắc nghiệm, doc bài giảng & mẫu Kahoot",
+                "Theo dõi và điều khiển các hoạt động theo tiến trình bài học",
+                "Tải xuống bộ câu hỏi trắc nghiệm Word/PDF, nội dung bài giảng và mẫu trò chơi Kahoot",
                 "Lưu trữ và tái sử dụng ngân hàng kịch bản không giới hạn"
         );
         upsertPlan(existingPlans, "pro", "Gói Chuyên Nghiệp", "Giải pháp toàn diện cho giáo viên chuyên nghiệp. Mở khóa toàn bộ sức mạnh AI kịch bản.",

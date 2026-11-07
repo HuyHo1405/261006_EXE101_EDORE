@@ -64,7 +64,7 @@ export function ScriptGrid({
           Chưa có kịch bản nào
         </h3>
         <p className="mt-1.5 max-w-sm text-xs font-body text-slate-600 dark:text-slate-300 leading-relaxed">
-          Khóa học này chưa có kịch bản bài giảng. Hãy tạo kịch bản mới để bắt đầu soạn bài bằng AI.
+          Bộ bài giảng này chưa có kịch bản bài giảng. Hãy tạo kịch bản mới để bắt đầu soạn bài bằng AI.
         </p>
         <Button
           onClick={onCreateScript}

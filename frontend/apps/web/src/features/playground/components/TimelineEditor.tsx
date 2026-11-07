@@ -246,7 +246,7 @@ export default function TimelineEditor({
     <div className="flex flex-col justify-between min-h-full font-body">
       {/* ─── Top Breadcrumb Bar ─── */}
       <DashboardBreadcrumb
-        courseTitle={courseTitle || "Khóa học của tôi"}
+        courseTitle={courseTitle || "Bộ bài giảng của tôi"}
         courseHref={courseId ? `/dashboard?courseId=${courseId}` : "/dashboard"}
         scriptTitle={
           activeIdx === -1

@@ -19,7 +19,7 @@ export function CourseCard({ course, onSelect, onDelete, onEdit }: CourseCardPro
 
   const displayColor = course.displayColor || "#034ce4";
   const categoryNames = Array.isArray(course.categoryNames) ? course.categoryNames : [];
-  const title = course.title || "Khóa học chưa đặt tên";
+  const title = course.title || "Bộ bài giảng chưa đặt tên";
   const description = course.description || "Chưa có mô tả";
   const scriptCount = course.scriptCount ?? 0;
 
@@ -104,7 +104,7 @@ export function CourseCard({ course, onSelect, onDelete, onEdit }: CourseCardPro
                       className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                      <span>Xóa khóa học</span>
+                      <span>Xóa bộ bài giảng</span>
                     </button>
                   </div>
                 </>
