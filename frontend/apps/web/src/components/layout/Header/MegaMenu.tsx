@@ -155,7 +155,7 @@ export function MegaMenu({
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-6 flex flex-col md:flex-row gap-6 md:gap-0">
           {/* ── Cột 1: Bộ bài giảng của tôi (Gắn trực tiếp vào các course hiện có) ─ */}
           <div className="flex-[1.4] min-w-0 px-0 md:px-6 first:pl-0 border-b md:border-b-0 md:border-r border-slate-200/80 dark:border-slate-800 pb-4 md:pb-0">
-            <p className="font-body text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-3">
+            <p className="font-body text-xs font-extrabold uppercase tracking-wider text-slate-900 dark:text-slate-100 mb-3">
               Bộ bài giảng của tôi
             </p>
             {isLoading ? (
@@ -174,7 +174,7 @@ export function MegaMenu({
                     <li key={c.id}>
                       <Link
                         href={c.href}
-                        className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body font-semibold text-slate-800 dark:text-slate-200 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-3.5"
+                        className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body font-bold text-slate-900 dark:text-slate-100 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-3.5"
                         onClick={onClose}
                         title={label}
                       >
@@ -190,11 +190,11 @@ export function MegaMenu({
                   <li>
                     <Link
                       href="/dashboard?action=create-course"
-                      className="group flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-body text-slate-400 dark:text-slate-500 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-4"
+                      className="group flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-body text-slate-500 dark:text-slate-400 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-4"
                       onClick={onClose}
                     >
-                      <SquarePlus className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-[var(--color-primary-600)] dark:group-hover:text-[var(--color-primary-400)] group-hover:scale-110 transition-all shrink-0" />
-                      <span className="truncate font-semibold text-slate-500 dark:text-slate-400 group-hover:text-[var(--color-primary-600)] dark:group-hover:text-[var(--color-primary-400)] transition-colors">
+                      <SquarePlus className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-[var(--color-primary-600)] dark:group-hover:text-[var(--color-primary-400)] group-hover:scale-110 transition-all shrink-0" />
+                      <span className="truncate font-bold text-slate-600 dark:text-slate-400 group-hover:text-[var(--color-primary-600)] dark:group-hover:text-[var(--color-primary-400)] transition-colors">
                         Bộ bài giảng mới
                       </span>
                     </Link>
@@ -206,7 +206,7 @@ export function MegaMenu({
 
           {/* ── Cột 2: Công cụ giảng dạy (1 cột) ───────────────────────── */}
           <div className="flex-1 min-w-0 px-0 md:px-6 border-b md:border-b-0 md:border-r border-slate-200/80 dark:border-slate-800 pb-4 md:pb-0">
-            <p className="font-body text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-3">
+            <p className="font-body text-xs font-extrabold uppercase tracking-wider text-slate-900 dark:text-slate-100 mb-3">
               Công cụ giảng dạy
             </p>
             <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
@@ -217,7 +217,7 @@ export function MegaMenu({
                   <li key={t.id}>
                     <Link
                       href={t.href}
-                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body font-semibold text-slate-800 dark:text-slate-200 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-3.5"
+                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body font-bold text-slate-900 dark:text-slate-100 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-3.5"
                       onClick={onClose}
                     >
                       <span className="truncate">{label}</span>
@@ -235,7 +235,7 @@ export function MegaMenu({
 
           {/* ── Cột 3: Tài khoản ───────────────────────────── */}
           <div className="flex-1 min-w-0 px-0 md:px-6 last:pr-0">
-            <p className="font-body text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-3">
+            <p className="font-body text-xs font-extrabold uppercase tracking-wider text-slate-900 dark:text-slate-100 mb-3">
               Tài khoản
             </p>
             <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
@@ -244,7 +244,7 @@ export function MegaMenu({
                   <li key={link.id}>
                     <Link
                       href={link.href}
-                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body font-semibold text-slate-800 dark:text-slate-200 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-3.5"
+                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body font-bold text-slate-900 dark:text-slate-100 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-3.5"
                       onClick={onClose}
                     >
                       <span className="truncate">{link.label}</span>
@@ -256,7 +256,7 @@ export function MegaMenu({
                   <li>
                     <Link
                       href="/login"
-                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-header font-bold uppercase tracking-[-0.01em] text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)] rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:pl-3.5 transition-all duration-200"
+                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body font-bold uppercase tracking-[-0.01em] text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)] rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:pl-3.5 transition-all duration-200"
                       onClick={onClose}
                     >
                       <span>Đăng nhập</span>
@@ -272,7 +272,7 @@ export function MegaMenu({
                       onClose();
                       onLogout?.();
                     }}
-                    className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-body font-semibold text-red-500 dark:text-red-400 rounded-xl transition-all duration-200 ease-out hover:bg-rose-100/60 dark:hover:bg-rose-950/40 hover:text-red-600 dark:hover:text-red-300 hover:pl-4 cursor-pointer"
+                    className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-body font-bold text-red-500 dark:text-red-400 rounded-xl transition-all duration-200 ease-out hover:bg-rose-100/60 dark:hover:bg-rose-950/40 hover:text-red-600 dark:hover:text-red-300 hover:pl-4 cursor-pointer"
                   >
                     <LogOut className="w-4 h-4" />
                     Đăng xuất
