@@ -76,7 +76,14 @@ public class OrderServiceImpl implements OrderService {
             Optional<Order> pendingOpt = orderRepository.findFirstByUserIdAndStatusOrderByCreatedAtDesc(userId, OrderStatus.PENDING);
             if (pendingOpt.isPresent()) {
                 Order pendingOrder = pendingOpt.get();
-                if (pendingOrder.getSubscriptionPlan().getId().equals(request.subscriptionPlanId())) {
+                // Tự động hủy đơn PENDING nếu quá 15 phút (timeout cổng thanh toán PayOS)
+                Instant fifteenMinsAgo = Instant.now().minusSeconds(15 * 60);
+                if (pendingOrder.getCreatedAt() != null && pendingOrder.getCreatedAt().isBefore(fifteenMinsAgo)) {
+                    log.info("[Order] Existing PENDING order {} for user {} timed out (> 15 mins). Auto-cancelling it.",
+                            pendingOrder.getId(), userId);
+                    pendingOrder.setStatus(OrderStatus.CANCELLED);
+                    orderRepository.save(pendingOrder);
+                } else if (pendingOrder.getSubscriptionPlan().getId().equals(request.subscriptionPlanId())) {
                     log.info("[Order] User {} already has PENDING order {} for plan {}. Reusing existing order.",
                             userId, pendingOrder.getId(), request.subscriptionPlanId());
                     return toResponse(pendingOrder);

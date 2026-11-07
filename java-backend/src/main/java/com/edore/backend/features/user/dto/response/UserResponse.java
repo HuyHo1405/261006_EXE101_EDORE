@@ -15,5 +15,18 @@ public record UserResponse(
         String email,
 
         @Schema(example = "0912345678")
-        String phone
-) {}
+        String phone,
+
+        @Schema(example = "ROLE_USER")
+        String role,
+
+        @Schema(example = "true")
+        Boolean isActive,
+
+        @Schema(example = "Gói Chuyên Nghiệp")
+        String plan
+) {
+    public UserResponse(UUID id, String fullName, String email, String phone) {
+        this(id, fullName, email, phone, "ROLE_USER", true, "Gói Cơ Bản (Free)");
+    }
+}

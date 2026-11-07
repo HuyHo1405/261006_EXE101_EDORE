@@ -259,7 +259,7 @@ export default function Home() {
                     Công cụ hỗ trợ giảng dạy
                   </h3>
                   <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Dựa trên nội dung sách giáo khoa được tích hợp, EDORE hỗ trợ phân tích kiến thức và gợi ý kịch bản bài giảng theo chương trình GDPT 2018.
+                    Khuấy động không khí lớp học với Vòng quay gọi tên trả bài ngẫu nhiên; dễ dàng xuất ngân hàng câu hỏi trắc nghiệm, giáo án Word/PDF và mẫu trò chơi Kahoot.
                   </p>
                 </div>
                 <Link href="/dashboard/tra-bai" className="pt-4 flex items-center text-xs font-bold text-purple-600 dark:text-purple-400 group-hover:translate-x-1 transition-transform">

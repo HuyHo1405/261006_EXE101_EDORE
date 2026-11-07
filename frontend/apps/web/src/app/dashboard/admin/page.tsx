@@ -22,6 +22,7 @@ import {
   Globe,
   BarChart3,
   Eye,
+  EyeOff,
   Smartphone,
   Laptop,
   Compass,
@@ -98,6 +99,56 @@ export default function AdminDashboardPage() {
   const [userStatusFilter, setUserStatusFilter] = useState<string>("ALL");
   const [userSearchQuery, setUserSearchQuery] = useState<string>("");
   const [selectedUser, setSelectedUser] = useState<AdminUserResponse | null>(null);
+  const [showFullEmail, setShowFullEmail] = useState<boolean>(false);
+
+  // Helper hàm ẩn/mask email để bảo vệ quyền riêng tư người dùng
+  const maskEmail = (email?: string) => {
+    if (!email) return "N/A";
+    if (showFullEmail) return email;
+    const parts = email.split("@");
+    if (parts.length !== 2) return email;
+    const [name, domain] = parts;
+    if (name.length <= 2) {
+      return `${name[0]}***@${domain}`;
+    }
+    const visiblePrefix = name.slice(0, 2);
+    const visibleSuffix = name.length > 4 ? name.slice(-1) : "";
+    return `${visiblePrefix}***${visibleSuffix}@${domain}`;
+  };
+
+  // Map gói subscription chính xác cho từng người dùng từ dữ liệu Orders & Roles thực tế
+  const enrichedUsers = useMemo(() => {
+    return allUsers.map((usr) => {
+      // 1. Kiểm tra vai trò Admin
+      const isUserAdmin =
+        usr.role === "ROLE_ADMIN" ||
+        usr.email?.toLowerCase().includes("admin");
+
+      // 2. Tìm đơn hàng PAID mới nhất của user (nếu có)
+      const userPaidOrder = (allOrders || [])
+        .filter((o) => (o.userId === usr.id || (usr.email && o.userId === usr.email)) && o.status === "PAID")
+        .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())[0];
+
+      // 3. Xác định gói dịch vụ
+      let mappedPlan = usr.plan;
+      if (!mappedPlan || mappedPlan === "Gói Cơ Bản") {
+        if (userPaidOrder?.subscriptionPlanName) {
+          mappedPlan = userPaidOrder.subscriptionPlanName;
+        } else if (isUserAdmin) {
+          mappedPlan = "Quản Trị Viên (Full)";
+        } else {
+          mappedPlan = "Gói Cơ Bản (Free)";
+        }
+      }
+
+      return {
+        ...usr,
+        role: isUserAdmin ? "ROLE_ADMIN" : (usr.role || "ROLE_USER"),
+        plan: mappedPlan,
+        isActive: usr.isActive ?? true,
+      };
+    });
+  }, [allUsers, allOrders]);
 
   // Biểu đồ Doanh thu 7 ngày thực tế (100% từ Database Orders / Payments)
   const revenueChartData = useMemo(() => {
@@ -131,20 +182,30 @@ export default function AdminDashboardPage() {
     return result.map(({ name, revenue, orders }) => ({ name, revenue, orders }));
   }, [allOrders]);
 
-  // Biểu đồ Phân bổ Gói Cước Thực Tế từ Database Orders
+  // Biểu đồ Phân bổ Gói Cước Thực Tế dựa trên người dùng & đơn hàng đã kích hoạt
   const planPieChartData = useMemo(() => {
     const countMap: Record<string, number> = {};
-    (allOrders || []).forEach((o) => {
-      const name = o.subscriptionPlanName || "Gói Dịch Vụ";
-      countMap[name] = (countMap[name] || 0) + 1;
-    });
+
+    if (enrichedUsers.length > 0) {
+      enrichedUsers.forEach((u) => {
+        const planName = u.plan || "Gói Cơ Bản (Free)";
+        countMap[planName] = (countMap[planName] || 0) + 1;
+      });
+    } else {
+      (allOrders || []).forEach((o) => {
+        if (o.status === "PAID") {
+          const name = o.subscriptionPlanName || "Gói Dịch Vụ";
+          countMap[name] = (countMap[name] || 0) + 1;
+        }
+      });
+    }
 
     const entries = Object.entries(countMap);
     if (entries.length === 0) {
-      return [{ name: "Chưa có đơn hàng", value: 1 }];
+      return [{ name: "Chưa có dữ liệu", value: 1 }];
     }
     return entries.map(([name, value]) => ({ name, value }));
-  }, [allOrders]);
+  }, [enrichedUsers, allOrders]);
 
   const loadData = async () => {
     try {
@@ -217,7 +278,7 @@ export default function AdminDashboardPage() {
   });
 
   // Filter users
-  const filteredUsers = allUsers.filter((usr) => {
+  const filteredUsers = enrichedUsers.filter((usr) => {
     const matchesStatus =
       userStatusFilter === "ALL" ||
       (userStatusFilter === "ACTIVE" && (usr.isActive !== false && usr.status !== "SUSPENDED")) ||
@@ -228,7 +289,8 @@ export default function AdminDashboardPage() {
       (usr.fullName && usr.fullName.toLowerCase().includes(userSearchQuery.toLowerCase())) ||
       (usr.email && usr.email.toLowerCase().includes(userSearchQuery.toLowerCase())) ||
       (usr.phone && usr.phone.includes(userSearchQuery)) ||
-      (usr.id && usr.id.toLowerCase().includes(userSearchQuery.toLowerCase()));
+      (usr.id && usr.id.toLowerCase().includes(userSearchQuery.toLowerCase())) ||
+      (usr.plan && usr.plan.toLowerCase().includes(userSearchQuery.toLowerCase()));
 
     return matchesStatus && matchesQuery;
   });
@@ -263,9 +325,12 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="p-4 bg-blue-50/80 rounded-2xl border border-blue-100 text-xs text-blue-900 text-left space-y-1.5">
-            <p className="font-bold">Tài khoản Quản trị viên mặc định của hệ thống:</p>
-            <p>• Email: <code className="font-mono font-bold text-blue-700 bg-white px-1.5 py-0.5 rounded">admin@sba.com</code></p>
-            <p>• Mật khẩu: <code className="font-mono font-bold text-blue-700 bg-white px-1.5 py-0.5 rounded">P@ssw0rd123</code></p>
+            <p className="font-bold flex items-center gap-1.5">
+              <Shield className="w-4 h-4 text-blue-600" /> Khu vực dành riêng cho Quản trị viên
+            </p>
+            <p className="text-gray-600 leading-relaxed">
+              Vui lòng đăng nhập bằng tài khoản được cấp quyền Quản trị hệ thống (ROLE_ADMIN) để truy cập bảng điều khiển.
+            </p>
           </div>
 
           <div className="pt-2 flex flex-col gap-2">
@@ -303,7 +368,7 @@ export default function AdminDashboardPage() {
               Quyền Truy Cập Bị Từ Chối
             </h2>
             <p className="text-xs sm:text-sm text-gray-600 font-sans leading-relaxed">
-              Tài khoản hiện tại của bạn là <strong>{user?.email}</strong> với quyền hạn <strong>ROLE_USER</strong> (Giáo viên / Người dùng thông thường).
+              Tài khoản hiện tại của bạn là <strong>{maskEmail(user?.email)}</strong> với quyền hạn <strong>ROLE_USER</strong> (Giáo viên / Người dùng thông thường).
             </p>
             <p className="text-xs text-red-600 font-semibold">
               Tài khoản thường không có quyền truy cập các API Quản trị hệ thống backend.
@@ -311,9 +376,12 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 text-left space-y-1.5">
-            <p className="font-bold">Để kiểm tra tính năng Admin thật, hãy đăng nhập bằng tài khoản Quản trị viên:</p>
-            <p>• Email: <code className="font-mono font-bold text-amber-800 bg-white px-1.5 py-0.5 rounded">admin@sba.com</code></p>
-            <p>• Mật khẩu: <code className="font-mono font-bold text-amber-800 bg-white px-1.5 py-0.5 rounded">P@ssw0rd123</code></p>
+            <p className="font-bold flex items-center gap-1.5">
+              <ShieldAlert className="w-4 h-4 text-amber-600" /> Quyền hạn không đủ
+            </p>
+            <p className="text-gray-600 leading-relaxed">
+              Tài khoản hiện tại không có quyền quản trị viên. Vui lòng liên hệ Quản trị hệ thống hoặc đăng nhập bằng tài khoản Quản trị viên.
+            </p>
           </div>
 
           <div className="pt-2 flex flex-col gap-2">
@@ -812,7 +880,19 @@ export default function AdminDashboardPage() {
                     <thead>
                       <tr className="bg-gray-50 border-b border-gray-200 text-[11px] font-mono uppercase text-gray-500">
                         <th className="py-3 px-4">Họ và tên</th>
-                        <th className="py-3 px-4">Email</th>
+                        <th className="py-3 px-4">
+                          <div className="flex items-center gap-1.5">
+                            <span>Email</span>
+                            <button
+                              type="button"
+                              onClick={() => setShowFullEmail((prev) => !prev)}
+                              className="p-1 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                              title={showFullEmail ? "Ẩn email (Bảo vệ thông tin)" : "Hiện đầy đủ email"}
+                            >
+                              {showFullEmail ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                            </button>
+                          </div>
+                        </th>
                         <th className="py-3 px-4">Số điện thoại</th>
                         <th className="py-3 px-4">Vai trò (Role)</th>
                         <th className="py-3 px-4">Gói cước</th>
@@ -829,7 +909,7 @@ export default function AdminDashboardPage() {
                               {usr.fullName || "Người dùng Edore"}
                             </td>
                             <td className="py-3.5 px-4 font-mono text-xs text-gray-600">
-                              {usr.email}
+                              {maskEmail(usr.email)}
                             </td>
                             <td className="py-3.5 px-4 font-mono text-xs text-gray-600">
                               {usr.phone || "Chưa cập nhật"}
@@ -844,8 +924,14 @@ export default function AdminDashboardPage() {
                               </span>
                             </td>
                             <td className="py-3.5 px-4">
-                              <span className="inline-block px-2 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                                {usr.plan || "Gói Cơ Bản"}
+                              <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                                usr.plan?.toLowerCase().includes("chuyên nghiệp") || usr.plan?.toLowerCase().includes("pro")
+                                  ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                                  : usr.plan?.toLowerCase().includes("quản trị")
+                                  ? "bg-purple-50 text-purple-800 border border-purple-200"
+                                  : "bg-amber-50 text-amber-800 border border-amber-200"
+                              }`}>
+                                {usr.plan || "Gói Cơ Bản (Free)"}
                               </span>
                             </td>
                             <td className="py-3.5 px-4">
@@ -1152,9 +1238,19 @@ export default function AdminDashboardPage() {
                 <span className="text-gray-500 text-xs">Họ và tên:</span>
                 <span className="font-bold text-gray-900">{selectedUser.fullName || "Chưa cập nhật"}</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-gray-50">
+              <div className="flex justify-between items-center py-1.5 border-b border-gray-50">
                 <span className="text-gray-500 text-xs">Địa chỉ Email:</span>
-                <span className="font-mono text-xs text-blue-600">{selectedUser.email}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-mono text-xs text-blue-600">{maskEmail(selectedUser.email)}</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowFullEmail((prev) => !prev)}
+                    className="p-0.5 rounded text-gray-400 hover:text-blue-600 transition-colors"
+                    title={showFullEmail ? "Ẩn email" : "Hiện đầy đủ email"}
+                  >
+                    {showFullEmail ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-50">
                 <span className="text-gray-500 text-xs">Số điện thoại:</span>
@@ -1166,7 +1262,15 @@ export default function AdminDashboardPage() {
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-50">
                 <span className="text-gray-500 text-xs">Gói cước:</span>
-                <span className="font-bold text-amber-700">{selectedUser.plan || "Gói Cơ Bản (Free)"}</span>
+                <span className={`font-bold ${
+                  selectedUser.plan?.toLowerCase().includes("chuyên nghiệp") || selectedUser.plan?.toLowerCase().includes("pro")
+                    ? "text-emerald-700"
+                    : selectedUser.plan?.toLowerCase().includes("quản trị")
+                    ? "text-purple-700"
+                    : "text-amber-700"
+                }`}>
+                  {selectedUser.plan || "Gói Cơ Bản (Free)"}
+                </span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-50">
                 <span className="text-gray-500 text-xs">Trạng thái tài khoản:</span>

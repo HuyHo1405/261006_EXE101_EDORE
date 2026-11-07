@@ -4,6 +4,9 @@ import com.edore.backend.core.dto.response.PageResponseDTO;
 import com.edore.backend.core.exception.ApiException;
 import com.edore.backend.features.auth.entity.User;
 import com.edore.backend.features.auth.repository.UserRepository;
+import com.edore.backend.features.subscription.entity.Subscription;
+import com.edore.backend.features.subscription.model.SubscriptionStatus;
+import com.edore.backend.features.subscription.repository.SubscriptionRepository;
 import com.edore.backend.features.user.code.UserResponseCode;
 import com.edore.backend.features.user.dto.request.UserFilterRequestDTO;
 import com.edore.backend.features.user.dto.request.UserUpdateRequest;
@@ -18,6 +21,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,6 +31,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     @Override
     public UserResponse getProfile(UUID id) {
@@ -77,11 +83,29 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserResponse toResponse(User user) {
+        String role = user.getRoles() != null && user.getRoles().stream()
+                .anyMatch(r -> r.getName() != null && r.getName().name().contains("ADMIN"))
+                ? "ROLE_ADMIN" : "ROLE_USER";
+
+        String plan = "Gói Cơ Bản (Free)";
+        if ("ROLE_ADMIN".equals(role)) {
+            plan = "Quản Trị Viên (Full)";
+        } else if (subscriptionRepository != null) {
+            Optional<Subscription> subOpt = subscriptionRepository.findTopByUserIdAndStatusAndEndDateAfterOrderByEndDateDesc(
+                    user.getId(), SubscriptionStatus.ACTIVE, Instant.now());
+            if (subOpt.isPresent() && subOpt.get().getSubscriptionPlan() != null) {
+                plan = subOpt.get().getSubscriptionPlan().getName();
+            }
+        }
+
         return new UserResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getPhone()
+                user.getPhone(),
+                role,
+                user.getIsActive(),
+                plan
         );
     }
 }

@@ -174,7 +174,13 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setStatus(PaymentStatus.FAILED);
             paymentRepository.save(payment);
 
-            log.info("[Webhook] Payment FAILED/CANCELLED for orderCode={}", effectiveOrderCode);
+            Order order = payment.getOrder();
+            if (order != null && order.getStatus() == OrderStatus.PENDING) {
+                order.setStatus(OrderStatus.CANCELLED);
+                orderRepository.save(order);
+            }
+
+            log.info("[Webhook] Payment FAILED/CANCELLED for orderCode={}, order marked as CANCELLED", effectiveOrderCode);
             return PaymentWebhookResponseDTO.builder()
                     .success(true)
                     .message("Payment failure recorded.")
@@ -212,6 +218,13 @@ public class PaymentServiceImpl implements PaymentService {
                 orderRepository.save(order);
 
                 activateSubscription(order);
+            } else if ("CANCELLED".equalsIgnoreCase(liveStatus) || "EXPIRED".equalsIgnoreCase(liveStatus) || "FAILED".equalsIgnoreCase(liveStatus)) {
+                log.info("[Payment] Live status is {} for orderCode={}. Updating order & payment to CANCELLED/FAILED.", liveStatus, orderCode);
+                payment.setStatus(PaymentStatus.FAILED);
+                paymentRepository.save(payment);
+
+                order.setStatus(OrderStatus.CANCELLED);
+                orderRepository.save(order);
             }
         }
 
