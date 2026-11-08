@@ -10,6 +10,14 @@ export interface AuthUser {
   plan: "free" | "pro";
 }
 
+export const isUserAdmin = (user?: { roles?: string[]; email?: string } | null): boolean => {
+  if (!user) return false;
+  return Boolean(
+    user.roles?.some((r) => r.toUpperCase().includes("ADMIN")) ||
+    user.email?.toLowerCase().includes("admin")
+  );
+};
+
 export interface AuthState {
   user: AuthUser | null;
   accessToken: string | null;

@@ -2,6 +2,7 @@
 
 import React, { useState, Suspense } from "react";
 import { AuthGuard } from "@/features/auth/components/AuthGuard";
+import { useAuthStore, isUserAdmin } from "@/features/auth/stores/useAuthStore";
 import { DashboardAside } from "@/features/course/components/DashboardAside";
 import { DashboardHeader, DashboardToolbar, DashboardCourseActions } from "@/features/course/components/DashboardHeader";
 import { CourseGrid } from "@/features/course/components/CourseGrid";
@@ -27,6 +28,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 function DashboardContent() {
   const router = useRouter();
+  const user = useAuthStore((s) => s.user);
+  const _hasHydrated = useAuthStore((s) => s._hasHydrated);
+
+  // Admin tự động chuyển sang trang Dashboard Admin, không vào trang giáo viên
+  React.useEffect(() => {
+    if (_hasHydrated && isUserAdmin(user)) {
+      router.replace("/dashboard/admin");
+    }
+  }, [_hasHydrated, user, router]);
   const searchParams = useSearchParams();
   const courseIdParam = searchParams.get("courseId") || searchParams.get("course") || "";
   const categoryIdParam = searchParams.get("categoryId") || searchParams.get("category") || "";

@@ -51,8 +51,14 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     }
 
     try {
-      await loginMutation.mutateAsync({ email: trimmedEmail, password });
-      if (onSuccess) {
+      const res = await loginMutation.mutateAsync({ email: trimmedEmail, password });
+      const isAdminAccount =
+        res?.result?.roles?.some((r) => r.toUpperCase().includes("ADMIN")) ||
+        trimmedEmail.toLowerCase().includes("admin");
+
+      if (isAdminAccount) {
+        router.push("/dashboard/admin");
+      } else if (onSuccess) {
         onSuccess();
       } else {
         router.push("/dashboard");

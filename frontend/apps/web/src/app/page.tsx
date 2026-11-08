@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { useAuthStore } from "@/features/auth/stores/useAuthStore";
+import { useRouter } from "next/navigation";
+import { useAuthStore, isUserAdmin } from "@/features/auth/stores/useAuthStore";
 import { Button } from "@/components/ui/button";
 import { CreativeFlowIllustration } from "@/components/illustrations/CreativeFlowIllustration";
 import { JoinIllustration } from "@/components/illustrations/JoinIllustration";
@@ -63,8 +64,25 @@ const formatFeatureText = (text: string): string => {
 };
 
 export default function Home() {
-  const { user, isAuthenticated } = useAuthStore();
+  const router = useRouter();
+  const { user, isAuthenticated, _hasHydrated } = useAuthStore();
   const [plans, setPlans] = useState<SubscriptionPlanDTO[]>([]);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  const handlePlayVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.play();
+      setHasStarted(true);
+    }
+  };
+
+  // Admin đã đăng nhập tự động đi thẳng vào trang Dashboard Admin
+  useEffect(() => {
+    if (_hasHydrated && isAuthenticated && isUserAdmin(user)) {
+      router.replace("/dashboard/admin");
+    }
+  }, [_hasHydrated, isAuthenticated, user, router]);
   const [isLoadingPlans, setIsLoadingPlans] = useState(true);
 
   useEffect(() => {
@@ -310,36 +328,59 @@ export default function Home() {
           </div>
 
 
-          {/* ── VIDEO PLAYER CONTAINER PLACEHOLDER ────────────────────────────── */}
+          {/* ── VIDEO PLAYER CONTAINER ────────────────────────────── */}
           <AnimateOnScroll>
-            <div className="relative w-full min-h-[380px] md:min-h-[480px] bg-gradient-to-br from-[var(--color-primary-900)] via-[var(--color-primary-800)] to-slate-900 rounded-2xl md:rounded-3xl border border-blue-900/40 shadow-2xl overflow-hidden flex flex-col items-center justify-center p-6 text-center group">
+            <div className="relative w-full aspect-video max-h-[760px] bg-slate-950 rounded-2xl md:rounded-3xl border border-slate-700/60 dark:border-slate-800 shadow-2xl overflow-hidden flex items-center justify-center group">
+              <video
+                ref={videoRef}
+                src="/vid-huong-dan.mp4"
+                poster="/vid-huong-dan-poster.jpg"
+                controls={hasStarted}
+                playsInline
+                preload="metadata"
+                onPlay={() => setHasStarted(true)}
+                className="w-full h-full object-contain bg-black"
+              >
+                Trình duyệt của bạn không hỗ trợ phát thẻ video.
+              </video>
 
-              {/* Lớp trang trí UI mockups đằng sau */}
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-400 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[11px] font-mono text-slate-200 border border-white/10">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                VIDEO HƯỚNG DẪN NỀN TẢNG (MINH HỌA)
-              </div>
-
-              {/* Nút Play tương tác ở chính giữa */}
-              <div className="relative z-10 flex flex-col items-center gap-4">
-                <button
-                  type="button"
-                  aria-label="Phát video hướng dẫn"
-                  className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white text-[var(--color-primary-600)] flex items-center justify-center shadow-2xl group-hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer border-4 border-white/20 hover-elastic-button"
+              {/* Lớp Overlay trước khi bấm phát */}
+              {!hasStarted && (
+                <div
+                  onClick={handlePlayVideo}
+                  className="absolute inset-0 bg-slate-950/45 hover:bg-slate-950/35 backdrop-blur-[1px] transition-all duration-300 cursor-pointer flex flex-col items-center justify-center p-6 text-center z-10"
                 >
-                  <PlayCircle className="w-10 h-10 md:w-12 md:h-12 fill-[var(--color-primary-600)] stroke-white" />
-                </button>
+                  {/* Badge trên góc trái */}
+                  <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-black/60 backdrop-blur-md rounded-full text-[11px] font-mono text-slate-200 border border-white/10 shadow-xs">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    VIDEO HƯỚNG DẪN THAO TÁC NỀN TẢNG
+                  </div>
 
-                <div className="space-y-1">
-                  <span className="text-sm md:text-base font-bold text-white tracking-wide block">
-                    Xem Video Hướng Dẫn Soạn Kịch Bản Nhanh Chóng
-                  </span>
-                  <span className="text-xs text-blue-200/80 font-mono block">
-                    Thời lượng: 1 phút 45 giây • Độ phân giải 4K HD
-                  </span>
+                  {/* Nút Play tương tác ở chính giữa */}
+                  <div className="relative z-10 flex flex-col items-center gap-4">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePlayVideo();
+                      }}
+                      aria-label="Phát video hướng dẫn"
+                      className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white text-[var(--color-primary-600)] flex items-center justify-center shadow-2xl group-hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer border-4 border-white/30 hover-elastic-button"
+                    >
+                      <PlayCircle className="w-10 h-10 md:w-12 md:h-12 fill-[var(--color-primary-600)] stroke-white ml-0.5" />
+                    </button>
+
+                    <div className="space-y-1.5 drop-shadow-md">
+                      <span className="text-base md:text-xl font-bold text-white tracking-wide block">
+                        Xem Video Hướng Dẫn Soạn Kịch Bản &amp; Sử Dụng Edore
+                      </span>
+                      <span className="text-xs md:text-sm text-blue-200/90 font-mono block">
+                        Thời lượng: 4 phút 16 giây • Độ phân giải 4K Ultra HD
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </AnimateOnScroll>
         </section>

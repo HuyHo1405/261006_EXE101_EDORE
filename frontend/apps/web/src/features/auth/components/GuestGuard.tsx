@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "../stores/useAuthStore";
+import { useAuthStore, isUserAdmin } from "../stores/useAuthStore";
 
 export function GuestGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const _hasHydrated = useAuthStore((state) => state._hasHydrated);
   const [mounted, setMounted] = useState(false);
@@ -16,9 +17,13 @@ export function GuestGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (mounted && _hasHydrated && isAuthenticated) {
-      router.replace("/dashboard");
+      if (isUserAdmin(user)) {
+        router.replace("/dashboard/admin");
+      } else {
+        router.replace("/dashboard");
+      }
     }
-  }, [mounted, _hasHydrated, isAuthenticated, router]);
+  }, [mounted, _hasHydrated, isAuthenticated, user, router]);
 
   if (!mounted || !_hasHydrated) {
     return null; // Giữ nguyên màn hình chờ hydration

@@ -240,18 +240,22 @@ export function MegaMenu({
             </p>
             <ul className="flex flex-col gap-1 list-none p-0 m-0" role="list">
               {isAuthenticated
-                ? accountLinks.map((link) => (
-                  <li key={link.id}>
-                    <Link
-                      href={link.href}
-                      className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body font-bold text-slate-900 dark:text-slate-100 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-3.5"
-                      onClick={onClose}
-                    >
-                      <span className="truncate">{link.label}</span>
-                      <NavHoverIcon href={link.href} pathname={pathname} />
-                    </Link>
-                  </li>
-                ))
+                ? accountLinks.map((link) => {
+                    const effectiveHref = isAdmin && link.id === "dashboard-overview" ? "/dashboard/admin" : link.href;
+                    const effectiveLabel = isAdmin && link.id === "dashboard-overview" ? "Bảng điều khiển Quản trị" : link.label;
+                    return (
+                      <li key={link.id}>
+                        <Link
+                          href={effectiveHref}
+                          className="group flex items-center justify-between w-full text-left px-3 py-2 text-sm font-body font-bold text-slate-900 dark:text-slate-100 rounded-xl transition-all duration-200 ease-out hover:bg-slate-200/60 dark:hover:bg-slate-800/80 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-400)] hover:pl-3.5"
+                          onClick={onClose}
+                        >
+                          <span className="truncate">{effectiveLabel}</span>
+                          <NavHoverIcon href={effectiveHref} pathname={pathname} />
+                        </Link>
+                      </li>
+                    );
+                  })
                 : (
                   <li>
                     <Link

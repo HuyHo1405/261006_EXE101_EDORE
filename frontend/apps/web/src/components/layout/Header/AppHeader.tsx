@@ -9,7 +9,8 @@ import { UserAvatar } from "./UserAvatar";
 import { MegaMenu, CourseMenuItem } from "./MegaMenu";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { useAuthStore } from "@/features/auth/stores/useAuthStore";
+import { useAuthStore, isUserAdmin } from "@/features/auth/stores/useAuthStore";
+import { ShieldCheck } from "lucide-react";
 import { useMyCourses } from "@/features/course/queries/courseQueries";
 
 interface User {
@@ -48,7 +49,7 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
   }, []);
 
   const user = (mounted && _hasHydrated) ? storeUser : initialUser;
-  const isAdmin = Boolean(storeUser?.roles?.some((r) => r.includes("ADMIN")));
+  const isAdmin = isUserAdmin(storeUser);
 
   // Fetch courses dynamically for MegaMenu column 1
   const { data: coursesPage, isLoading: isLoadingCourses } = useMyCourses(
@@ -223,14 +224,14 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
             <div className="flex items-center gap-2">
               {/* Cụm công cụ dạng "Viên thuốc" xếp khít nhau (Pill Shape) */}
               <div className="flex items-center p-1 gap-1 bg-[#F0F2F8] dark:bg-slate-800/90 border border-[var(--color-neutral-300)]/60 dark:border-slate-700/80 rounded-xl shadow-inner overflow-hidden shrink-0">
-                {/* Nút Thư viện */}
+                {/* Nút Thư viện / Dashboard (Admin chuyển thẳng sang Admin Dashboard) */}
                 <Link
-                  href="/dashboard"
-                  title="Thư viện của tôi"
-                  aria-label="Thư viện của tôi"
+                  href={isAdmin ? "/dashboard/admin" : "/dashboard"}
+                  title={isAdmin ? "Quản trị hệ thống (Admin Dashboard)" : "Thư viện của tôi"}
+                  aria-label={isAdmin ? "Quản trị hệ thống" : "Thư viện của tôi"}
                   className="w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)] hover:bg-white dark:hover:bg-slate-700 hover:text-[var(--color-primary-600)] dark:hover:text-[var(--color-primary-300)] hover:shadow-xs transition-all duration-200 shrink-0"
                 >
-                  <Folder className="w-5 h-5" />
+                  {isAdmin ? <ShieldCheck className="w-5 h-5 text-blue-600" /> : <Folder className="w-5 h-5" />}
                 </Link>
 
                 {/* Nút Tạo mới có chữ chuẩn như Dashboard */}
@@ -292,14 +293,25 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
                       </span>
                     </Link>
 
-                    <Link
-                      href="/dashboard"
-                      onClick={closeUserDropdown}
-                      className="w-full px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-300 hover:bg-[#EAEFFD] dark:hover:bg-slate-800 hover:text-[var(--color-primary-700)] dark:hover:text-[var(--color-primary-400)] rounded-lg flex items-center gap-2.5 transition-all"
-                    >
-                      <Folder className="w-4 h-4 text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)]" />
-                      Thư viện của tôi
-                    </Link>
+                    {isAdmin ? (
+                      <Link
+                        href="/dashboard/admin"
+                        onClick={closeUserDropdown}
+                        className="w-full px-3 py-2 text-xs font-bold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-lg flex items-center gap-2.5 transition-all mb-1 border border-blue-200 dark:border-blue-800"
+                      >
+                        <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        Bảng điều khiển Quản trị (Admin)
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/dashboard"
+                        onClick={closeUserDropdown}
+                        className="w-full px-3 py-2 text-xs font-bold text-[var(--color-neutral-700)] dark:text-slate-300 hover:bg-[#EAEFFD] dark:hover:bg-slate-800 hover:text-[var(--color-primary-700)] dark:hover:text-[var(--color-primary-400)] rounded-lg flex items-center gap-2.5 transition-all"
+                      >
+                        <Folder className="w-4 h-4 text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)]" />
+                        Thư viện của tôi
+                      </Link>
+                    )}
 
                     <Link
                       href={plusActionHref}
@@ -373,12 +385,12 @@ function AppHeaderContent({ user: initialUser = null }: AppHeaderProps) {
 
                 <div className="space-y-1">
                   <Link
-                    href="/dashboard"
+                    href={isAdmin ? "/dashboard/admin" : "/dashboard"}
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                   >
-                    <Folder className="w-4 h-4 text-[var(--color-primary-500)]" />
-                    Thư viện bài giảng
+                    {isAdmin ? <ShieldCheck className="w-4 h-4 text-blue-600" /> : <Folder className="w-4 h-4 text-[var(--color-primary-500)]" />}
+                    {isAdmin ? "Bảng điều khiển Quản trị" : "Thư viện bài giảng"}
                   </Link>
 
                   <Link
