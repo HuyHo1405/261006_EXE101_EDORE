@@ -1,0 +1,318 @@
+{
+  "summary": {
+    "surveyPeriod": "01/11/2026 – 17/11/2026",
+    "reportDate": "18/11/2026",
+    "totalResponses": 30,
+    "uniqueTeachers": 20,
+    "npsScore": 100,
+    "averageNps": 9.6,
+    "timeSavedOver50Percent": 55,
+    "timeSaved30To50Percent": 45,
+    "groupScores": [
+      {
+        "id": "wheel",
+        "label": "Vòng quay học tập",
+        "score": 4.55,
+        "maxScore": 5
+      },
+      {
+        "id": "ai",
+        "label": "AI Tạo bài giảng",
+        "score": 4.49,
+        "maxScore": 5
+      },
+      {
+        "id": "export",
+        "label": "Xuất học liệu (Export)",
+        "score": 4.19,
+        "maxScore": 5
+      }
+    ],
+    "criteriaScores": [
+      {
+        "group": "Vòng quay",
+        "criterion": "Dễ nhập & quản lý danh sách học sinh",
+        "score": 4.63,
+        "responses": 30
+      },
+      {
+        "group": "AI",
+        "criterion": "Tính sáng tạo & thực tế của hoạt động",
+        "score": 4.53,
+        "responses": 30
+      },
+      {
+        "group": "AI",
+        "criterion": "Phân bổ thời lượng hợp lý theo sĩ số",
+        "score": 4.53,
+        "responses": 30
+      },
+      {
+        "group": "AI",
+        "criterion": "Tốc độ tạo kịch bản của AI",
+        "score": 4.53,
+        "responses": 30
+      },
+      {
+        "group": "AI",
+        "criterion": "Độ bám sát Yêu cầu cần đạt & CV 5512",
+        "score": 4.5,
+        "responses": 30
+      },
+      {
+        "group": "Export",
+        "criterion": "Bố cục đúng chuẩn Kế hoạch bài dạy",
+        "score": 4.5,
+        "responses": 30
+      },
+      {
+        "group": "AI",
+        "criterion": "Thao tác chọn bài SGK & thông số lớp",
+        "score": 4.47,
+        "responses": 30
+      },
+      {
+        "group": "Vòng quay",
+        "criterion": "Giao diện, màu sắc & âm thanh",
+        "score": 4.47,
+        "responses": 30
+      },
+      {
+        "group": "AI",
+        "criterion": "Giao diện xem & chỉnh sửa kịch bản",
+        "score": 4.4,
+        "responses": 30
+      },
+      {
+        "group": "Export",
+        "criterion": "Tốc độ xuất và tải file",
+        "score": 4.37,
+        "responses": 30
+      },
+      {
+        "group": "Export",
+        "criterion": "Không lỗi font, bảng biểu, căn lề",
+        "score": 3.7,
+        "responses": 30
+      }
+    ],
+    "improvementPriorities": [
+      {
+        "id": "priority-wheel",
+        "title": "Tích hợp câu hỏi ôn tập theo bài vào Vòng quay STT",
+        "description": "Quay trúng số thứ tự là hiển thị ngay câu hỏi Lịch sử của bài đang dạy, ghi nhớ tiến độ bài, nhập nhanh sĩ số và ẩn số đã quay."
+      },
+      {
+        "id": "priority-export",
+        "title": "Chuẩn hóa font chữ, bảng biểu Word/PDF & bổ sung xuất PowerPoint",
+        "description": "Khắc phục triệt để lỗi tách dấu PDF, vỡ bảng trên Office cũ, dư trang trắng cuối file; hỗ trợ xuất slide PowerPoint kèm hình ảnh tư liệu và tách phiếu học tập khỏi đáp án."
+      },
+      {
+        "id": "priority-ai",
+        "title": "Phân tầng câu hỏi AI & bám sát từng bộ SGK",
+        "description": "Phân biệt rõ nội dung giữa 3 bộ SGK mới, rà soát mốc thời gian và thuật ngữ, giảm lặp mô-típ mở bài và phân tầng câu hỏi nhận biết – thông hiểu – vận dụng."
+      },
+      {
+        "id": "priority-editor",
+        "title": "Khóa hoạt động đã ưng ý & lưu nháp tự động",
+        "description": "Bổ sung hoàn tác lịch sử chỉnh sửa, tự động lưu nháp và giữ nguyên phần giáo viên đã chỉnh sửa khi yêu cầu AI viết lại hoạt động khác."
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": "fb-huynh-van-hao",
+      "featured": true,
+      "teacherName": "Thầy Huỳnh Văn Hảo",
+      "gradeLevel": "THCS",
+      "subject": "Lịch sử",
+      "traditionalPrepTime": "Trên 2 tiếng",
+      "timeSaved": "Trên 50%",
+      "editRatio": "10% - 30%",
+      "nps": 10,
+      "usefulFeatures": [
+        "Khởi động",
+        "Kiến thức mới",
+        "Luyện tập & Vận dụng",
+        "Ảnh SGK"
+      ],
+      "ratings": {
+        "ai": 4.3,
+        "export": 5.0,
+        "wheel": 4.0
+      },
+      "quote": "Gợi ý hoạt động khởi động và tư liệu ảnh SGK khá hay, chỉ cần chỉnh sửa khoảng 10–30% là áp dụng được ngay, giúp tiết kiệm hơn một nửa thời gian soạn bài.",
+      "details": {
+        "aiFeedback": "Gợi ý khởi động sát bài học, cần làm sâu hơn phần câu hỏi củng cố để giảm thời gian sửa tay.",
+        "exportFeedback": "Bố cục đúng chuẩn Kế hoạch bài dạy, xuất Word và PowerPoint nhanh, không gặp lỗi định dạng.",
+        "priorityProposal": "Gợi ý khởi động đôi lúc khá hay nhưng vẫn phải sửa tay nhiều ở phần câu hỏi củng cố; vòng quay nên tự động gắn sẵn câu hỏi theo bài cho từng lượt quay số học sinh.",
+        "exportFormats": [
+          "Word (.docx)",
+          "PowerPoint (.pptx)"
+        ]
+      }
+    },
+    {
+      "id": "fb-nguyen-phuc-thinh",
+      "featured": true,
+      "teacherName": "Thầy Nguyễn Phúc Thịnh",
+      "gradeLevel": "THPT",
+      "subject": "Lịch sử",
+      "traditionalPrepTime": "1 - 2 tiếng",
+      "timeSaved": "30% - 50%",
+      "editRatio": "Dưới 10%",
+      "nps": 9,
+      "usefulFeatures": [
+        "Khởi động",
+        "Kiến thức mới",
+        "Luyện tập & Vận dụng",
+        "Checklist thiết bị"
+      ],
+      "ratings": {
+        "ai": 4.5,
+        "export": 4.0,
+        "wheel": 4.5
+      },
+      "quote": "Kịch bản bám sát Yêu cầu cần đạt theo Công văn 5512, phân bổ thời lượng hợp lý và tỷ lệ phải sửa lại dưới 10%. Phần checklist thiết bị cùng vòng quay theo STT hỗ trợ tiết dạy rất tốt.",
+      "details": {
+        "aiFeedback": "Giọng văn hơi cứng như chép lại sách giáo khoa, thiếu các mẩu chuyện lịch sử ngắn để dẫn dắt vào bài cho sinh động.",
+        "exportFeedback": "Xuất sang PDF trên máy trường thỉnh thoảng bị tách dấu tiếng Việt, bảng tổng kết bị cắt ngang giữa hai trang.",
+        "priorityProposal": "Cần sửa dứt điểm lỗi tách dấu tiếng Việt khi xuất PDF và vỡ bảng lúc mở trên phiên bản Office cũ ở phòng bộ môn.",
+        "exportFormats": [
+          "PowerPoint (.pptx)",
+          "PDF (.pdf)"
+        ]
+      }
+    },
+    {
+      "id": "fb-nguyen-le-viet-anh",
+      "featured": true,
+      "teacherName": "Thầy Nguyễn Lê Việt Anh",
+      "gradeLevel": "THPT",
+      "subject": "Lịch sử",
+      "traditionalPrepTime": "Trên 2 tiếng",
+      "timeSaved": "Trên 50%",
+      "editRatio": "10% - 30%",
+      "nps": 10,
+      "usefulFeatures": [
+        "Khởi động",
+        "Luyện tập & Vận dụng"
+      ],
+      "ratings": {
+        "ai": 4.2,
+        "export": 5.0,
+        "wheel": 5.0
+      },
+      "quote": "Thao tác chọn bài SGK nhanh, xuất file Word chuẩn bố cục Kế hoạch bài dạy và tiết kiệm trên 50% thời gian chuẩn bị. Vòng quay gọi học sinh kiểm tra bài cũ đầu giờ rất trực quan, minh bạch.",
+      "details": {
+        "aiFeedback": "Thao tác chọn bài SGK & thông số lớp đạt 5/5, tỷ lệ nội dung cần tinh chỉnh lại chỉ khoảng 10% - 30%.",
+        "exportFeedback": "Xuất file Word và PowerPoint đạt 5/5 cả về bố cục chuẩn KHBD, định dạng bảng biểu và tốc độ tải.",
+        "priorityProposal": "Đề xuất số 1 là tích hợp thẳng câu hỏi ôn tập của từng bài vào vòng quay theo số thứ tự học sinh, kèm tính năng đánh dấu những em đã trả lời để cả lớp theo dõi minh bạch.",
+        "exportFormats": [
+          "Word (.docx)",
+          "PowerPoint (.pptx)"
+        ]
+      }
+    },
+    {
+      "id": "fb-le-phuoc-tri",
+      "featured": false,
+      "teacherName": "Thầy Lê Phước Trí",
+      "gradeLevel": "THPT",
+      "subject": "Lịch sử",
+      "traditionalPrepTime": "Trên 2 tiếng",
+      "timeSaved": "Trên 50%",
+      "editRatio": "Dưới 10%",
+      "nps": 10,
+      "usefulFeatures": [
+        "Khởi động",
+        "Kiến thức mới",
+        "Luyện tập & Vận dụng",
+        "Ảnh SGK",
+        "Checklist thiết bị"
+      ],
+      "ratings": {
+        "ai": 4.5,
+        "export": 3.3,
+        "wheel": 4.5
+      },
+      "quote": "Phân bổ thời lượng theo sĩ số, tốc độ tạo kịch bản và giao diện chỉnh sửa đều rất tốt, tỷ lệ sửa dưới 10% và tiết kiệm hơn 50% thời gian so với hơn 2 tiếng soạn bài truyền thống.",
+      "details": {
+        "aiFeedback": "Buổi tối hệ thống đôi lúc chạy hơi chậm, cần tối ưu thêm tốc độ giờ cao điểm.",
+        "exportFeedback": "Mong muốn hỗ trợ xuất thẳng sang slide PowerPoint kèm hình ảnh tư liệu bên cạnh file giáo án Word.",
+        "priorityProposal": "Chỉ cần nhập tổng số học sinh của lớp để quay số ngẫu nhiên kết hợp lấy ngay bộ câu hỏi ôn tập theo từng bài học là tiết kiệm được rất nhiều công sức.",
+        "exportFormats": [
+          "Word (.docx)",
+          "PowerPoint (.pptx)",
+          "PDF (.pdf)"
+        ]
+      }
+    },
+    {
+      "id": "fb-pham-thi-kieu-trang",
+      "featured": false,
+      "teacherName": "Cô Phạm Thị Kiều Trang",
+      "gradeLevel": "THPT",
+      "subject": "Lịch sử",
+      "traditionalPrepTime": "Trên 2 tiếng",
+      "timeSaved": "Trên 50%",
+      "editRatio": "30% - 50%",
+      "nps": 9,
+      "usefulFeatures": [
+        "Khởi động",
+        "Kiến thức mới",
+        "Luyện tập & Vận dụng",
+        "Ảnh SGK",
+        "Checklist thiết bị"
+      ],
+      "ratings": {
+        "ai": 4.7,
+        "export": 4.0,
+        "wheel": 4.5
+      },
+      "quote": "Thao tác chọn bài SGK, độ bám sát CV 5512 và tốc độ tạo kịch bản đều đạt điểm tối đa 5/5. Đầy đủ học liệu từ Khởi động, Ảnh SGK đến Checklist thiết bị giúp rút ngắn hơn nửa thời gian chuẩn bị.",
+      "details": {
+        "aiFeedback": "Khung soạn thảo trên màn hình laptop nhỏ hơi chật; cần kiểm soát chặt để AI không tự thêm sự kiện ngoài SGK.",
+        "exportFeedback": "Cần giữ đường viền bảng ổn định hơn khi mở file trên Google Docs và khớp mẫu hành chính của tổ bộ môn.",
+        "priorityProposal": "Mong hệ thống nhớ được tiến độ bài đang giảng để khi bật vòng quay kiểm tra bài cũ theo số thứ tự thì tự nạp đúng câu hỏi Lịch sử của bài đó.",
+        "exportFormats": [
+          "Word (.docx)",
+          "PowerPoint (.pptx)",
+          "PDF (.pdf)"
+        ]
+      }
+    },
+    {
+      "id": "fb-hoang-long",
+      "featured": false,
+      "teacherName": "Thầy Hoàng Long",
+      "gradeLevel": "THPT",
+      "subject": "Lịch sử",
+      "traditionalPrepTime": "1 - 2 tiếng",
+      "timeSaved": "30% - 50%",
+      "editRatio": "30% - 50%",
+      "nps": 10,
+      "usefulFeatures": [
+        "Khởi động",
+        "Kiến thức mới",
+        "Luyện tập & Vận dụng",
+        "Ảnh SGK"
+      ],
+      "ratings": {
+        "ai": 4.8,
+        "export": 4.0,
+        "wheel": 4.5
+      },
+      "quote": "Công cụ làm rất tốt cho các tiết bài mới: từ chọn bài SGK, bám sát Yêu cầu cần đạt 5512, tính sáng tạo đến phân bổ thời lượng đều đạt 5/5 điểm.",
+      "details": {
+        "aiFeedback": "Đã làm tốt cho tiết bài mới; cần đầu tư sâu hơn cho các tiết ôn tập chương và Lịch sử địa phương.",
+        "exportFeedback": "Nên khóa cố định độ rộng cột trong bảng Word để khi giáo viên gõ thêm nội dung không bị xô lệch trang.",
+        "priorityProposal": "Hiện công cụ mới làm tạm ổn cho tiết bài mới, còn các tiết ôn tập chương hay Lịch sử địa phương viết quá sơ sài; vòng quay cũng nên gắn câu hỏi ôn tập theo chủ đề.",
+        "exportFormats": [
+          "Word (.docx)",
+          "PowerPoint (.pptx)"
+        ]
+      }
+    }
+  ]
+}

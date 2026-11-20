@@ -9,6 +9,7 @@ import { CreativeFlowIllustration } from "@/components/illustrations/CreativeFlo
 import { JoinIllustration } from "@/components/illustrations/JoinIllustration";
 import { ArticlesIllustration } from "@/components/illustrations/ArticlesIllustration";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
+import { TeacherFeedbackSection } from "@/components/feedback/TeacherFeedbackSection";
 import { subscriptionService } from "@/features/subscription/api/subscriptionService";
 import { SubscriptionPlanDTO } from "@edore/types";
 import {
@@ -183,6 +184,14 @@ export default function Home() {
                 >
                   <CornerDownRight className="w-3.5 h-3.5 text-blue-200 shrink-0" />
                   Gói dịch vụ
+                </Link>
+
+                <Link
+                  href="#feedback"
+                  className="text-xs md:text-sm font-bold text-white/95 hover:text-white hover:underline flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all backdrop-blur-xs whitespace-nowrap"
+                >
+                  <CornerDownRight className="w-3.5 h-3.5 text-blue-200 shrink-0" />
+                  Đánh giá từ giáo viên
                 </Link>
               </div>
             </div>
@@ -607,6 +616,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+
+        {/* ── SECTION 4.5: PHẢN HỒI & ĐÁNH GIÁ TỪ GIÁO VIÊN ────────────────────────────────────────── */}
+        <TeacherFeedbackSection />
 
 
         {/* ── SECTION 5: REGISTER CTA BANNER (TEXT CĂN GIỮA + 2 SVG OVERLAY KÍCH THƯỚC LỚN HƠN NẰM SÁT ĐÁY) ── */}
